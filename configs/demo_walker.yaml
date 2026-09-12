@@ -1,0 +1,54 @@
+# ---------------------------------------------------------------
+# A third person walking the length of the corridor.
+#
+#   ./scripts/run_sim.sh  --config configs/demo_walker.yaml
+#   ./scripts/run_nav2.sh --config configs/demo_walker.yaml
+#
+# Not part of the B2/B3 comparison. A moving obstacle changes what those
+# scenarios measure, so it is kept out of the shared environment and
+# switched on here instead.
+#
+# The walker follows a fixed script and ignores the AMR. That is
+# deliberate: a person who re-routed around the robot would behave
+# differently in B2 than in B3, and the two runs would stop being
+# comparable. Deciding whether the robot yields is the robot's job in
+# this study, not the person's.
+#
+# Expect the AMR to yield for long stretches. A person in the `moving`
+# state gets the full 1.20 m radius, which in a 3.4 m corridor leaves
+# 0.51 m beside them; the AMR needs 0.68 m. That is the honest
+# consequence of the configured radii, not a bug: a robot that will not
+# crowd someone walking toward it has to wait for them to pass.
+#
+# Everything not listed here is inherited from common.yaml.
+# ---------------------------------------------------------------
+base: configs/common.yaml
+
+# A longer corridor, only here.
+#
+# The walker has to start clear of the AMR's start and goal, which the
+# layout check keeps a 0.75 m standoff from, and clear of the end walls.
+# In the 12 m corridor the two scenarios share there is not enough room
+# at either end for both. Lengthening it for this demo leaves B2 and B3
+# untouched; the pinch point they turn on is in the middle and does not
+# move.
+corridor:
+  length: 16.0
+
+humans:
+  c:
+    enabled: true
+    position: [7.0, -0.25]
+    # One crossing, then they stay at the far end. The interesting
+    # moment is the state change on arrival: under the state-adaptive
+    # policy the Comfort Space shrinks from the moving radius to the
+    # stationary one and the corridor opens, while under the static
+    # policy it stays 1.20 m and nothing changes.
+    route:
+      - [-7.0, -0.25]
+  character:
+    c: F_Medical_01
+    commands:
+      # The walker's own command is built from humans.c.route, so this
+      # entry only covers the case where the route is empty.
+      moving: "Idle 100000"

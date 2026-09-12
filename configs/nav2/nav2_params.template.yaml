@@ -1,0 +1,277 @@
+# ---------------------------------------------------------------
+# Nav2 parameters for Comfort_AMR.
+#
+# THIS IS A TEMPLATE. scripts/generate_nav2_params.py substitutes its
+# placeholders from configs/common.yaml and writes
+# configs/nav2/nav2_params.yaml, which is what Nav2 actually reads.
+# Regenerating on every launch is what keeps the AMR's footprint, speed
+# limits and goal tolerance from drifting away from the rest of the
+# experiment.
+#
+# Derived from the ROS 2 Jazzy nav2_bringup defaults
+# (/opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml), with:
+#
+#   * amcl removed. The simulation knows the robot's start pose exactly,
+#     so a static map->odom transform replaces localisation. Keeping AMCL
+#     would inject pose estimation error into a comparison that is
+#     supposed to isolate the Comfort Space policy.
+#   * MPPI replaced by DWB. MPPI regenerates sampling noise every cycle,
+#     so two runs of the same scenario differ. B2 and B3 must differ only
+#     in the Comfort Space policy, and a stochastic controller breaks
+#     that. DWB is deterministic given the same costmap.
+#   * one obstacle layer instead of the reference repository's two, which
+#     both read /scan and therefore marked every reading twice.
+#   * robot_base_frame set to base_footprint to match the AMR USD's TF.
+#   * enable_stamped_cmd_vel false, because the USD's ActionGraph
+#     subscribes to geometry_msgs/Twist, not TwistStamped.
+# ---------------------------------------------------------------
+
+map_server:
+  ros__parameters:
+    yaml_filename: "${MAP_YAML}"
+
+bt_navigator:
+  ros__parameters:
+    global_frame: map
+    robot_base_frame: ${BASE_FRAME}
+    odom_topic: /odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
+    wait_for_service_timeout: 1000
+    action_server_result_timeout: 900.0
+    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+    navigate_through_poses:
+      plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+    error_code_names:
+      - compute_path_error_code
+      - follow_path_error_code
+
+controller_server:
+  ros__parameters:
+    controller_frequency: 20.0
+    costmap_update_timeout: 0.30
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    # The AMR USD subscribes to geometry_msgs/Twist.
+    enable_stamped_cmd_vel: false
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      # If the robot has not moved this far in this long, Nav2 gives up
+      # on the current path and recovers. Deliberately generous: a robot
+      # edging through a narrow Comfort Space gap is slow on purpose, and
+      # we want our own deadlock detector to make that call, not Nav2's.
+      required_movement_radius: 0.5
+      movement_time_allowance: 15.0
+
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: ${XY_TOLERANCE}
+      yaw_goal_tolerance: ${YAW_TOLERANCE}
+
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: True
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: ${MAX_VEL_X}
+      max_vel_y: 0.0
+      max_vel_theta: ${MAX_VEL_THETA}
+      min_speed_xy: 0.0
+      max_speed_xy: ${MAX_VEL_X}
+      min_speed_theta: 0.0
+      acc_lim_x: 1.0
+      acc_lim_y: 0.0
+      acc_lim_theta: 2.0
+      decel_lim_x: -1.0
+      decel_lim_y: 0.0
+      decel_lim_theta: -2.0
+      vx_samples: 20
+      vy_samples: 5
+      vtheta_samples: 20
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      xy_goal_tolerance: ${XY_TOLERANCE}
+      trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: True
+      stateful: True
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign",
+                "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: ${BASE_OBSTACLE_SCALE}
+      PathAlign.scale: 32.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.scale: 24.0
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["GridBased"]
+    costmap_update_timeout: 1.0
+    GridBased:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+      # false on purpose. The map is generated from the corridor config
+      # and has no unknown space, so allowing unknown would only let the
+      # planner route through areas the experiment never defined.
+      allow_unknown: false
+
+behavior_server:
+  ros__parameters:
+    local_costmap_topic: local_costmap/costmap_raw
+    global_costmap_topic: global_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_footprint_topic: global_costmap/published_footprint
+    cycle_frequency: 10.0
+    enable_stamped_cmd_vel: false
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait"]
+    spin:
+      plugin: "nav2_behaviors::Spin"
+    backup:
+      plugin: "nav2_behaviors::BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors::DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors::Wait"
+    local_frame: odom
+    global_frame: map
+    robot_base_frame: ${BASE_FRAME}
+    transform_tolerance: 0.1
+    simulate_ahead_time: 2.0
+    max_rotational_vel: ${MAX_VEL_THETA}
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: ${BASE_FRAME}
+      rolling_window: true
+      width: 6
+      height: 6
+      resolution: 0.05
+      footprint: "${FOOTPRINT}"
+      plugins: ["obstacle_layer", "inflation_layer"]
+      # Filters run after the plugins, so the Comfort Space cost is not
+      # inflated a second time and the painted radius is the radius the
+      # planner sees.
+      filters: ["comfort_filter"]
+      comfort_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/costmap_filter_info"
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 8.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 6.0
+          obstacle_min_range: 0.0
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: ${COST_SCALING}
+        inflation_radius: ${INFLATION_RADIUS}
+      always_send_full_costmap: True
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      # 3 Hz rather than Nav2's default 1 Hz. A person walking at 1 m/s
+      # moves a whole metre between updates at 1 Hz, so the planner works
+      # from a map that far out of date and keeps re-planning around
+      # where they used to be. The laser only manages about 7 Hz, which
+      # is the ceiling; nothing above it would be fresher.
+      update_frequency: ${GLOBAL_UPDATE_HZ}
+      publish_frequency: 2.0
+      global_frame: map
+      robot_base_frame: ${BASE_FRAME}
+      resolution: 0.05
+      track_unknown_space: false
+      footprint: "${FOOTPRINT}"
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      filters: ["comfort_filter"]
+      comfort_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/costmap_filter_info"
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 8.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 6.0
+          obstacle_min_range: 0.0
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: ${COST_SCALING}
+        inflation_radius: ${INFLATION_RADIUS}
+      always_send_full_costmap: True
+
+collision_monitor:
+  ros__parameters:
+    base_frame_id: ${BASE_FRAME}
+    odom_frame_id: odom
+    # Sits after the Comfort Space gate, so it is the last thing between
+    # navigation and the wheels. See navigation.collision_monitor in
+    # configs/common.yaml for why the order is that way round.
+    cmd_vel_in_topic: cmd_vel_safe
+    cmd_vel_out_topic: cmd_vel
+    state_topic: collision_monitor_state
+    transform_tolerance: 0.2
+    source_timeout: 1.0
+    base_shift_correction: True
+    stop_pub_timeout: 2.0
+    enable_stamped_cmd_vel: false
+    polygons: ["FootprintApproach"]
+    FootprintApproach:
+      type: "polygon"
+      action_type: "approach"
+      footprint_topic: "/local_costmap/published_footprint"
+      time_before_collision: ${CM_TIME_BEFORE_COLLISION}
+      simulation_time_step: ${CM_SIM_STEP}
+      min_points: ${CM_MIN_POINTS}
+      visualize: False
+      enabled: True
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: /scan
+      min_height: ${SCAN_MIN_HEIGHT}
+      max_height: ${SCAN_MAX_HEIGHT}
+      enabled: True

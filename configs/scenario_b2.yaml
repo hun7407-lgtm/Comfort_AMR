@@ -1,0 +1,30 @@
+# ---------------------------------------------------------------
+# Scenario B2: Static Comfort Space.
+#
+# Every human is given the same Comfort Space radius regardless of what
+# they are doing. This is the baseline the study argues against.
+#
+#   ./scripts/run_b2.sh
+#
+# ONLY `scenario` and `comfort_space` may appear in this file.
+# comfort_core.config raises if anything else does, because B2 and B3
+# must differ in the Comfort Space policy and in nothing else.
+# Everything physical comes from configs/common.yaml.
+#
+# > Initial engineering parameter for prototype validation.
+# > Not an experimentally validated human comfort distance.
+# ---------------------------------------------------------------
+
+scenario:
+  name: b2
+  label: "Static Comfort Space"
+
+comfort_space:
+  policy: static
+
+  # 1.20 m, applied to everyone. With the corridor at 3.4 m and the two
+  # stations 2.0 m apart along x, two circles of this size overlap each
+  # other and both walls, leaving 0.00 m of usable width. The AMR needs
+  # 0.68 m, so it cannot pass without entering someone's Comfort Space,
+  # and the yield policy stops it rather than intrude.
+  static_radius: 1.20

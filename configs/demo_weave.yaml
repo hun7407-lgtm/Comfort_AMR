@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------
+# DEMONSTRATION ONLY. Not part of the B2/B3 experiment.
+#
+# Shows the AMR steering around obstacles instead of driving into them.
+#
+# The two humans are moved onto the corridor centre line and given a
+# large radius, so the straight path is closed and only one side of each
+# is wide enough. The AMR has to go above the first and below the second,
+# which traces a visible S.
+#
+# The oversized radius stands in for the Comfort Space, which is not
+# implemented until STEP 7. In the real scenarios the humans stay
+# person-sized and the Comfort Space is what the AMR steers around.
+#
+#   ./scripts/run_sim.sh --config configs/demo_weave.yaml
+#   ./scripts/run_goto_goal.sh --config configs/demo_weave.yaml
+#
+# Everything not listed here is inherited from common.yaml.
+# ---------------------------------------------------------------
+base: configs/common.yaml
+
+humans:
+  radius: 1.0
+  a:
+    position: [-3.0, -0.5]
+  b:
+    position: [3.0, 0.5]
+
+stations:
+  # Follow the humans to the opposite walls so the scene still reads as
+  # two people working at two stations.
+  a:
+    position: [-3.0, -1.7]
+  b:
+    position: [3.0, 1.7]
+
+# Why these numbers and not tighter ones
+# --------------------------------------
+# An earlier version put the humans at x = -2 and +2 with radius 1.2.
+# Geometrically that was passable, and the placeholder controller in
+# scripts/goto_goal.py drove it. Nav2 could not: it left only 1.6 m of x
+# in which to move 1.7 m sideways, which a differential base cannot do at
+# 0.4 m/s, and the robot wedged itself between the second human and the
+# wall until the trial timed out.
+#
+# Separating the humans along x gives 4.0 m of run for a 1.5 m lateral
+# shift. The lesson matters beyond this demo: a gap being wide enough is
+# not the same as a path through it being drivable, and Nav2's inflation
+# eats into the gap on top of that.

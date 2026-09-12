@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------
+# Scenario B3: Human State-Adaptive Comfort Space.
+#
+# The radius depends on what the person is doing. Someone absorbed in
+# their workstation is not attending to the corridor, so the space that
+# has to be kept clear behind them is smaller than for someone who might
+# step out into it.
+#
+#   ./scripts/run_b3.sh
+#
+# The physical environment is byte-identical to B2: same corridor, same
+# station and human positions, same states, same AMR, same planner, same
+# speeds, same seed. Compare this file against configs/scenario_b2.yaml
+# and the whole difference is visible at once:
+#
+#   diff configs/scenario_b2.yaml configs/scenario_b3.yaml
+#
+# > Initial engineering parameter for prototype validation.
+# > Not an experimentally validated human comfort distance.
+# ---------------------------------------------------------------
+
+scenario:
+  name: b3
+  label: "Human State-Adaptive Comfort Space"
+
+comfort_space:
+  policy: state_adaptive
+
+  # R = f(state). The values sit either side of B2's single 1.20 m, so
+  # the adaptive policy is not simply "smaller everywhere": a moving
+  # person keeps the full radius.
+  state_radius:
+    moving: 1.20
+    stationary: 0.90
+    station_engaged: 0.60
+
+  # Human A is station_engaged (0.60 m) and Human B is stationary
+  # (0.90 m), which leaves 1.51 m of usable width where B2 left 0.00 m.
+  # The AMR needs 0.68 m.

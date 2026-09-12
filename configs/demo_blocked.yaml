@@ -1,0 +1,30 @@
+# ---------------------------------------------------------------
+# DEMONSTRATION ONLY. Not part of the B2/B3 experiment.
+#
+# Shows what a blocked corridor looks like: the AMR drives at the gap,
+# cannot fit, and the trial ends without reaching the goal.
+#
+# The two humans are given an unrealistically large physical radius so
+# that their bodies alone seal the corridor. That is a stand-in for the
+# Comfort Space, which is not implemented until STEP 7. In the real B2
+# scenario the humans stay person-sized and it is the Comfort Space that
+# closes the passage.
+#
+#   ./scripts/run_sim.sh --config configs/demo_blocked.yaml
+#   ./scripts/run_goto_goal.sh --config configs/demo_blocked.yaml
+#
+# Everything not listed here is inherited from common.yaml.
+# ---------------------------------------------------------------
+base: configs/common.yaml
+
+humans:
+  # Face to face at the same x, so there is no weaving around them.
+  radius: 1.15
+  a:
+    position: [0.0, 0.8]
+  b:
+    position: [0.0, -0.8]
+
+navigation:
+  # No point waiting two minutes to learn it is stuck.
+  max_trial_time: 40.0

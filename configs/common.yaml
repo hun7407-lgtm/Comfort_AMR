@@ -1,0 +1,611 @@
+# ---------------------------------------------------------------
+# Comfort_AMR - common configuration
+#
+# Everything in this file is SHARED BY B2 AND B3.
+# The two scenarios must differ only in Comfort Space Policy, so
+# nothing here may be overridden by a scenario config.
+#
+# Loaded by comfort_core.config.load_config().
+# Paths are relative to the project root.
+# ---------------------------------------------------------------
+
+simulation:
+  # 1/60 s. Isaac Sim's default and a safe starting point for a
+  # differential drive robot. Lower it if the wheels jitter.
+  physics_dt: 0.016666666666666666
+  rendering_dt: 0.016666666666666666
+  stage_units_in_meters: 1.0
+  gravity: -9.81
+
+  physx:
+    # Pin the solver's step to physics_dt. Without an explicit value the
+    # scene can integrate a whole slow frame in one step, which is how a
+    # viewport stall turns into an unstable articulation. Isaac Sim
+    # crashed once in a GUI run with "Illegal BroadPhaseUpdateData"
+    # before this was set.
+    # 0 means "derive it from physics_dt", which is what you want.
+    time_steps_per_second: 0
+
+    # TGS handles articulations with stiff joints better than PGS.
+    solver_type: TGS
+
+    # Damps small residual velocities so a resting articulation settles
+    # instead of buzzing. The AMR has four free-spinning caster joints
+    # and the source USD authors no mass anywhere, so the casters have
+    # very little inertia and are the most likely thing to go unstable.
+    enable_stabilization: true
+
+    # Continuous collision detection. Off on purpose: nothing here moves
+    # anywhere near fast enough to tunnel through a wall at 60 Hz, and
+    # CCD interacts badly with articulations.
+    enable_ccd: false
+
+    min_position_iterations: 8
+    min_velocity_iterations: 1
+
+  articulation:
+    # The source USD authors no mass and no velocity limits anywhere, so
+    # the four free-spinning caster wheels have very little inertia and
+    # nothing stops them running away. Observed twice: the articulation
+    # went to NaN, PhysX reported "Illegal BroadPhaseUpdateData", and the
+    # reported robot position jumped by kilometres. Once it took the
+    # whole simulator down.
+    #
+    # Clamping velocity and giving the solver more iterations costs
+    # nothing at these speeds; the AMR drives at 0.4 m/s and its wheels
+    # turn at about 3 rad/s.
+    max_angular_velocity: 30.0     # rad/s per link
+    max_linear_velocity: 10.0      # m/s per link
+    solver_position_iterations: 32
+    solver_velocity_iterations: 4
+    # Damping on the passive caster joints. OFF.
+    #
+    # Added at first on the theory that a caster spun up by a shove would
+    # feed energy back into the solver. It was applied to the swivel
+    # joints as well as the wheel joints, which gave both a drive with a
+    # zero velocity target: the casters resisted steering and rolling,
+    # skidded instead of turning, and the back of the AMR visibly hopped
+    # while driving.
+    #
+    # The divergence it was meant to prevent is already handled by the
+    # velocity clamp and the extra solver iterations above. Leave this at
+    # zero unless a caster is seen running away again, and if it is
+    # needed, apply it to the wheel joints only.
+    caster_joint_damping: 0.0
+
+environment:
+  ground:
+    prim_path: /Environment/GroundPlane
+    size: 50.0
+    z_position: 0.0
+  lighting:
+    dome_prim_path: /Environment/DomeLight
+    dome_intensity: 1000.0
+    distant_prim_path: /Environment/DistantLight
+    distant_intensity: 3000.0
+    # Elevation angle of the key light, degrees above the horizon.
+    distant_elevation_deg: 45.0
+
+amr:
+  # Imported from https://github.com/dongtak2/AMR-Digital-Twin
+  # See docs/AMR_DIGITAL_TWIN_REFERENCE.md
+  usd_path: assets/amr/AMR_09_02_V2.usd
+
+  # The USD's default prim is /World and it holds AMR + AMR_Controller.
+  # Referencing it onto /World keeps every internal prim path identical
+  # to the original, so the ActionGraph's absolute relationship targets
+  # (/World/AMR, /World/AMR/base_link) stay valid without remapping.
+  reference_prim_path: /World
+  articulation_path: /World/AMR
+  chassis_path: /World/AMR/base_link
+
+  drive_joints:
+    - left_wheel_joint
+    - right_wheel_joint
+
+  # Read from the USD's DifferentialController node. Do not change these
+  # without changing the USD: they must agree or odometry drifts.
+  wheel_radius: 0.127
+  wheel_base: 0.48
+
+  # Footprint from the reference repository's README. Used to decide
+  # whether a gap between two Comfort Spaces is wide enough to drive
+  # through, and later to size the Nav2 footprint.
+  footprint_length: 0.70
+  footprint_width: 0.48
+
+  spawn:
+    # x and y are NOT set here. They come from navigation.start, so the
+    # robot cannot be spawned somewhere other than where the trial says
+    # it begins.
+    #
+    # z is the AMR's authored resting height: the value on /World/AMR's
+    # xformOp:translate in the source USD. Keep it unless the robot
+    # spawns intersecting the floor.
+    z: 0.23368247683103632
+    yaw_deg: 0.0
+
+ros:
+  # The ROS 2 bridge extension must be enabled before the stage plays,
+  # otherwise the AMR_Controller ActionGraph nodes fail to initialise.
+  enable_bridge: true
+  # Both Isaac Sim and the ROS 2 nodes must agree on these.
+  domain_id: 0
+  # Topic names are baked into the USD's ActionGraph. Listed here for
+  # reference and for the checks in scripts/check_ros_topics.sh.
+  topics:
+    cmd_vel: /cmd_vel
+    odom: /odom
+    joint_states: /joint_states
+    clock: /clock
+    lidar_cloud: /lidar/cloud
+    scan: /scan
+  frames:
+    odom: odom
+    base: base_footprint
+    chassis: base_link
+    lidar: lidar_link
+
+  # Where the LiDAR sits and which slice of the cloud becomes /scan.
+  #
+  # These live here rather than in the launch file because the Comfort
+  # Space visualisation has to stay underneath the slice. The RTX sensor
+  # traces against anything that renders, discs included, and a disc that
+  # rose into the scan band would turn a drawn region into a measured
+  # obstacle. Drawing must not change what the robot perceives.
+  scan:
+    # World height of lidar_link: base_footprint -> base_link is 0.21 m
+    # and base_link -> lidar_link adds 0.10 m, both from the source USD.
+    lidar_world_z: 0.31
+    # Relative to lidar_link.
+    min_height: -0.20
+    max_height: 1.20
+    angle_increment: 0.0087
+    range_min: 0.20
+    range_max: 20.0
+
+# ---------------------------------------------------------------
+# The shared physical environment.
+#
+# B2 and B3 run in exactly this environment. Nothing below may be
+# overridden by a scenario config; comfort_core.config enforces that.
+# See docs/EXPERIMENT.md section 2.
+#
+# Layout, looking down the +x axis with +y to the left:
+#
+#     y = +width/2  ######################################  wall
+#                        [Station A]
+#                         (Human A)
+#     y = 0         S >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> G
+#                                       (Human B)
+#                                      [Station B]
+#     y = -width/2  ######################################  wall
+#
+# The two stations sit against opposite walls and are staggered along x,
+# so the humans in front of them pinch the corridor from both sides.
+# ---------------------------------------------------------------
+corridor:
+  enabled: true
+  # Along x. Start and goal must both fall inside this.
+  length: 12.0
+  # Along y, measured between the inner faces of the two walls.
+  #
+  # 3.9 m sits at the top of a narrow feasible band, and the band is
+  # what fixes it:
+  #
+  #   at most 3.97 m, or the two static Comfort Spaces stop meeting in
+  #     the middle and B2 is no longer sealed;
+  #   at least 3.74 m, or the AMR cannot get past a person walking down
+  #     the corridor at all, and every trial with a walker deadlocks
+  #     regardless of policy.
+  #
+  # Station spacing along x is the other half of this: two Comfort
+  # Spaces that do not overlap in x never block anything, because the
+  # AMR simply weaves between them. See docs/EXPERIMENT.md section 5.
+  width: 3.9
+  center: [0.0, 0.0]
+  wall_height: 1.5
+  wall_thickness: 0.1
+  # Caps at each end of the corridor. They enclose the experiment so a
+  # runaway AMR cannot simply leave the scene.
+  end_walls: true
+
+stations:
+  # x, y, z extents of the station box, in metres.
+  #
+  # The box IS the collider. Any equipment placed on top of it is visual
+  # only, so the shape the planner and the geometry checks reason about
+  # stays exactly this size and stays in this file. Putting a UR10e in
+  # as a physical object would also hand the solver six more joints,
+  # which the articulation stability work did not budget for.
+  # Depth is 0.45 rather than 0.6 so the person standing 0.45 m in front
+  # of the station is clear of it instead of half inside the box.
+  size: [0.8, 0.45, 0.9]
+
+  # Equipment stood on the station, purely for the picture. Set
+  # enabled: false to go back to plain boxes.
+  equipment:
+    enabled: true
+    # Cloud asset paths, relative to the Isaac assets root.
+    a: "/Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxD_01.usd"
+    b: "/Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01.usd"
+    # Scale applied to the referenced asset, and how far above the
+    # station's top face to sit it.
+    scale: 1.0
+    z_lift: 0.0
+
+  a:
+    # Against the +y wall: 1.7 - 0.45/2 = 1.475 puts its back on the wall.
+    position: [-1.0, 1.475]
+  b:
+    position: [1.0, -1.475]
+
+humans:
+  # A standing person, approximated as an upright cylinder. Detection
+  # and articulated motion are out of scope; what matters is the
+  # position, the state and the Comfort Space around it.
+  radius: 0.25
+  height: 1.70
+  # Where the states come from. "ground_truth" reads them from this
+  # file; "sensor" is not implemented. See comfort_core/human_state.py.
+  state_source: ground_truth
+
+  # Animated characters instead of plain cylinders.
+  #
+  # The cylinder above stays, as an INVISIBLE collider. The character
+  # asset ships with no physics at all (29 prims, none of them a
+  # collider), and using its mesh for collision would bury the size of a
+  # person inside an asset instead of keeping it here in the config.
+  # This way the physics that B2 and B3 were verified against does not
+  # change, while the LiDAR and the viewport see an actual person.
+  character:
+    enabled: true
+    # Under {assets_root}/Isaac/People/Characters/<name>/<name>.usd
+    a: F_Business_02
+    b: M_Medical_01
+    # Which way they face. "station" turns them toward their own
+    # station, which is what station_engaged is supposed to look like.
+    facing: station
+    # Added to the computed heading. Character assets are not all
+    # authored facing +x, and this is the correction for whichever way
+    # the chosen asset happens to point.
+    facing_offset_deg: 0.0
+    # omni.anim.people command per state. Idle takes a duration in
+    # seconds; the trial is over long before these expire.
+    commands:
+      station_engaged: "Idle 100000"
+      stationary: "Idle 100000"
+      moving: "Idle 100000"
+
+  a:
+    # 0.45 m in front of Station A, facing it.
+    position: [-1.0, 0.95]
+    state: station_engaged
+  b:
+    position: [1.0, -0.95]
+    state: stationary
+
+  # A third person who walks the length of the corridor.
+  #
+  # OFF in the shared config. Switching it on adds a moving obstacle,
+  # which changes what B2 and B3 measure, so it belongs in a variant
+  # config rather than in the environment both scenarios share. See
+  # configs/demo_walker.yaml.
+  c:
+    enabled: false
+    # Starts at the far end, in a lane at y = -0.25.
+    #
+    # The lane has to clear three things at once: the AMR's start and
+    # goal, which the layout check enforces a 0.75 m standoff from, and
+    # both standing humans, which the walker would otherwise walk
+    # straight through now that character-to-character avoidance is off.
+    # y = -0.25 leaves 1.20 m to Human A and 0.70 m to Human B.
+    position: [5.8, -0.25]
+    state: moving
+    # Waypoints walked in order, then repeated. Straight segments: the
+    # corridor needs no navigation mesh, and omni.anim.people walks
+    # directly between points when one is not enabled.
+    route:
+      - [-5.8, -0.25]
+      - [5.8, -0.25]
+    # The walker ignores the AMR on purpose. If a person re-routed
+    # around the robot, B2 and B3 would diverge the moment the robot
+    # behaved differently, and the two runs would no longer be
+    # comparable. Keeping the person on a fixed script keeps everything
+    # except the Comfort Space policy identical between them.
+    avoid_robot: false
+
+# ---------------------------------------------------------------
+# Comfort Space.
+#
+# This is the ONE section a scenario config is allowed to change, along
+# with `scenario`. comfort_core.config refuses to load a scenario file
+# that touches anything else, because B2 and B3 must differ here and
+# nowhere else. See docs/EXPERIMENT.md section 3.
+#
+# What the radius means
+# ---------------------
+# The distance from the human's centre to the NEAREST PART OF THE AMR,
+# not to the AMR's centre. That is the quantity a person actually
+# experiences: how close the machine got to them.
+#
+# Nav2 plans for a point at the robot's centre, so the circle painted
+# into the costmap has to be larger than the comfort radius by the AMR's
+# inscribed radius (half its width). comfort_core.comfort_space does
+# that conversion in one place; do not do it again anywhere else.
+#
+# > Initial engineering parameter for prototype validation.
+# > Not an experimentally validated human comfort distance.
+# ---------------------------------------------------------------
+comfort_space:
+  # "circle"  every Comfort Space is round
+  # "ellipse" a person who is moving gets one stretched along their
+  #           heading, because that is where they are about to be. A
+  #           standing person stays round either way.
+  shape: ellipse
+
+  # How much longer the moving ellipse is along the heading than across
+  # it, at reference_speed. 1.0 would make it a circle again.
+  moving_elongation: 1.8
+
+  # Speed-dependent Comfort Space, for the state-adaptive policy only.
+  #
+  # A radius that flips between two values the instant someone stops is
+  # not how personal space works, and it makes the corridor open and
+  # close in a single frame. Scaling with speed instead means the space
+  # grows as a person walks faster, shrinks as they slow, and settles at
+  # the resting radius when they stand still, which is the same radius
+  # the people at the stations get.
+  #
+  # The static policy ignores all of this on purpose. That is what makes
+  # it static: one radius, whatever the person is doing. The whole
+  # difference between B2 and B3 lives here.
+  dynamic:
+    enabled: true
+    # The speed at which state_radius.moving and moving_elongation apply
+    # in full. Below it both are interpolated down toward the values for
+    # a person at rest.
+    reference_speed: 1.0
+    # What a moving person's Comfort Space collapses to once they stop.
+    at_rest_state: stationary
+
+  # Below this speed a person is treated as being at rest. Only used to
+  # label the state in the results; the radius itself is continuous.
+  moving_speed_threshold: 0.15
+
+  # "static"          every human gets static_radius
+  # "state_adaptive"  radius comes from state_radius below
+  policy: static
+
+  static_radius: 1.20
+
+  state_radius:
+    moving: 1.20
+    stationary: 0.90
+    station_engaged: 0.60
+
+  # Never let a Comfort Space be smaller than the person. A radius below
+  # the body radius would be meaningless and would let the planner route
+  # through them.
+  min_radius: 0.30
+
+  # How the Comfort Space reaches Nav2.
+  #
+  # It is NOT a wall and NOT a collider. In Isaac Sim it is drawn with no
+  # physics at all, so the AMR can drive straight through it. In the
+  # costmap it is a high but finite cost, so the planner treats it as
+  # expensive rather than impossible and will route through it when
+  # there is no alternative. Modelling a person's comfort zone as a solid
+  # obstacle would not survive review.
+  #
+  # What produces the deadlock in B2 is the yield policy below, not the
+  # cost. See docs/EXPERIMENT.md section 8.
+  costmap:
+    enabled: true
+    # Mask value 0..100 handed to nav2_costmap_2d::KeepoutFilter, which
+    # scales it to a cost of 0..254. 100 would be lethal.
+    #
+    # 98 lands near 249, just under the 253 the planner treats as
+    # impassable. High enough that NavFn routes around a Comfort Space
+    # whenever any alternative exists, so the yield gate stays a safety
+    # net instead of the thing that stops the robot. At 90 the planner
+    # was happy to skim the boundary and the gate then had to stop it
+    # every few metres, which turned a passable B3 into a deadlock.
+    #
+    # Still not lethal: where there is no way round, the planner will
+    # commit to crossing, and it is the yield policy that declines.
+    mask_value: 98
+    # A softer band painted OUTSIDE the Comfort Space, so the planner has
+    # a reason to keep away from the boundary rather than clip it.
+    #
+    # The mask is a step function: full cost inside the circle, nothing
+    # outside. NavFn minimises length plus cost, and a path that grazes
+    # the edge for a few cells is cheaper than the detour around it. It
+    # therefore produced paths that ran along the boundary, the yield
+    # gate stopped the robot every time it drifted a few centimetres
+    # over, and a B3 that was geometrically passable deadlocked.
+    #
+    # The buffer does NOT change the boundary. The gate still enforces
+    # exactly the configured radius, and that is the number the results
+    # report. This only biases the planner away from the line.
+    buffer_width: 0.35
+    buffer_value: 55
+
+    # Republish rate.
+    #
+    # A person walking at 1 m/s moves 20 cm between publications at
+    # 5 Hz and 50 cm at 2 Hz, and the planner sees a Comfort Space that
+    # far behind them. The sensor itself only manages about 7 Hz, so
+    # there is nothing to gain above that.
+    publish_rate_hz: 5.0
+
+  # The yield policy.
+  #
+  # A socially aware AMR does not barge through someone's personal space
+  # just because the costmap says it is merely expensive. When the next
+  # move would put the robot inside a Comfort Space, it stops and waits.
+  #
+  # This is what makes B2 deadlock: with a static radius there is no way
+  # through that does not intrude, so the robot waits forever. B3 shrinks
+  # the radius of the person who is not watching the corridor, a gap
+  # opens, and the robot never has to intrude at all.
+  yield:
+    enabled: true
+    # Seconds of commanded motion to look ahead when deciding whether the
+    # next move would intrude.
+    lookahead_seconds: 0.6
+    # Extra clearance kept outside the Comfort Space boundary, so the
+    # robot does not sit exactly on the line and chatter.
+    margin: 0.05
+
+  visualization:
+    # Drawing is separate from cost. Turning this off must not change
+    # any trial result; isaac_sim/utils/comfort_viz.py only creates
+    # visual prims with no collider.
+    enabled: true
+    # A thin disc on the floor reads more clearly than a tall cylinder
+    # and does not hide the robot behind it.
+    height: 0.02
+    z_offset: 0.01
+    opacity: 0.35
+    color: [0.15, 0.55, 0.95]
+
+# ---------------------------------------------------------------
+# Start and goal, and the simple controller that drives between them.
+#
+# Start and goal sit on the corridor centre line, one at each end,
+# with the pinch point between them. Both are controlled variables:
+# B2 and B3 share whatever is set here.
+# See docs/EXPERIMENT.md section 2.
+# ---------------------------------------------------------------
+navigation:
+  start: [-5.0, 0.0]
+  goal: [5.0, 0.0]
+
+  # The trial counts as reached once the base is this close to the goal.
+  goal_tolerance: 0.25
+
+  # Clearance the AMR wants on each side when squeezing through a gap.
+  # A gap narrower than footprint_width + 2 * passage_margin counts as
+  # impassable. This is what decides whether B2 is actually blocked.
+  passage_margin: 0.10
+
+  # Speed ceiling. Shared by every scenario so B2 and B3 cannot differ
+  # in how fast the robot is allowed to drive.
+  max_linear_speed: 0.4
+  max_angular_speed: 0.8
+
+  # Proportional gains for the STEP 5 go-to-goal controller. This
+  # controller is a placeholder: PHASE D replaces it with Nav2.
+  k_linear: 0.8
+  k_angular: 1.5
+
+  # Above this heading error the robot turns in place instead of
+  # driving, which keeps a differential base from arcing wide.
+  heading_align_threshold_deg: 30.0
+
+  # Hard ceiling on one trial, in simulated seconds.
+  max_trial_time: 120.0
+
+  # Simulated time at which the trial begins.
+  #
+  # Nav2 takes half a minute of wall clock to come up, and the scripted
+  # people start walking the moment the scene plays. Without a rendezvous
+  # the walker has already crossed the corridor and sat down before the
+  # AMR is even given its goal, so the two never meet.
+  #
+  # Both sides key off this one number: the walker idles until it, and
+  # the trial waits for it. Being on the simulation clock rather than the
+  # wall clock means B2 and B3 see the same encounter even though their
+  # bringup takes slightly different amounts of real time.
+  #
+  # Raise it if the log warns that the trial started late.
+  trial_start_sim_time: 45.0
+
+  # Simulated seconds to let the costmap fill before asking the planner
+  # whether a route exists. Right after Nav2 starts, the obstacle layer
+  # has seen nothing and every corridor looks open; asking then reports a
+  # path through a wall of people. The global costmap updates at 1 Hz.
+  planner_warmup: 6.0
+
+  # No global plan for this long means the planner cannot find a route,
+  # which is PLANNING_FAILURE rather than DEADLOCK. Nav2's behaviour tree
+  # replans about once a second, so anything above a couple of seconds is
+  # a real failure and not a slow cycle.
+  planning_failure_duration: 5.0
+
+  deadlock:
+    # A trial is deadlocked when a route exists but the robot stops
+    # getting closer to the goal.
+    #
+    # Progress is measured as the best distance-to-goal achieved so far,
+    # not as displacement. A robot pinned at a Comfort Space boundary
+    # does not sit still: Nav2 keeps re-planning and the recovery
+    # behaviours nudge it back and forth at 0.1 m/s. Displacement-based
+    # tests read that shuffling as movement and never fire. Measured on
+    # B2: 85.7 of 120 simulated seconds spent yielding, zero net
+    # progress, and the trial still came out as TIMEOUT.
+    #
+    # Closing this much distance to the goal counts as progress.
+    d_threshold: 0.15        # m
+    # Going this long without that much progress is a deadlock.
+    duration: 12.0           # simulated seconds
+    # Kept for the yielding case, where the robot really does hold still.
+    v_threshold: 0.02        # m/s
+
+  # Physical safety layer, separate from the Comfort Space.
+  #
+  # nav2_collision_monitor watches the raw laser and stops the robot
+  # before it hits anything. It cannot see a Comfort Space: that lives
+  # in the costmap as a filter mask, and this reads sensor points only.
+  # So the two do different jobs, and the chain is
+  #
+  #   controller -> comfort_gate -> collision_monitor -> AMR
+  #
+  # Social first, physical last. The zone is deliberately tight, a little
+  # outside the robot's own footprint, so that in a normal trial it never
+  # fires: the deadlock in B2 has to come from the Comfort Space policy,
+  # not from a safety stop, or the study proves nothing.
+  collision_monitor:
+    enabled: true
+    # Seconds of predicted travel before a collision at which to stop.
+    time_before_collision: 0.9
+    simulation_time_step: 0.1
+    # Laser returns needed inside the zone before it acts, which keeps a
+    # single stray point from halting the robot.
+    min_points: 5
+
+  avoidance:
+    # Steer around obstacles instead of driving blindly at the goal.
+    #
+    # This is a placeholder for Nav2, which arrives in PHASE D. It reads
+    # obstacle positions from this config rather than from a sensor, so
+    # it is not a perception system. It exists because B2 and B3 need a
+    # navigator that reacts to Comfort Space radii, and having one now
+    # means the comparison can run before Nav2 is integrated.
+    #
+    # It works by looking ahead along the corridor, measuring the free
+    # gaps at that cross-section, and aiming at the usable gap closest
+    # to the goal line. Set enabled: false for the blind controller.
+    enabled: true
+
+    # How far ahead to look, in metres. Too short and the robot commits
+    # late and clips obstacles; too long and it starts dodging things it
+    # has not reached yet.
+    lookahead: 1.5
+
+    # The placeholder controller reuses navigation.planning_failure_duration
+    # above: if no gap is wide enough for that long, there is no feasible
+    # path. See docs/EXPERIMENT.md section 9.
+
+# ---------------------------------------------------------------
+# STEP 3 verification thresholds.
+# Used by isaac_sim/scripts/spawn_amr.py to decide pass/fail.
+# ---------------------------------------------------------------
+spawn_check:
+  settle_seconds: 2.0
+  # The AMR must not sink into or fall through the floor. Measured as
+  # the change in base_link height between the first and last step.
+  max_z_drift: 0.05
+  # With no command applied the robot must stay put.
+  max_xy_drift: 0.05

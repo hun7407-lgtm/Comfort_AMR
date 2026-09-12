@@ -1,0 +1,68 @@
+# ---------------------------------------------------------------
+# ROS 2 workspace build artifacts
+# ---------------------------------------------------------------
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# ---------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ---------------------------------------------------------------
+# Isaac Sim / Omniverse generated files
+# ---------------------------------------------------------------
+# Kit writes shader/asset caches and logs next to the launched script
+.thumbs/
+*.usd.lock
+kit_*.log
+omni.*.log
+.nvidia-omniverse/
+
+# ---------------------------------------------------------------
+# Experiment output
+# ---------------------------------------------------------------
+# Per-trial CSV is committed on purpose (small, it is the result).
+# Anything heavy that a trial may emit is not.
+results/**/*.mp4
+results/**/*.avi
+results/**/*.png
+results/**/*.jpg
+results/**/*.bag
+results/**/*.db3
+results/**/*.usd
+results/**/rosbag2_*/
+
+# ---------------------------------------------------------------
+# Editor / OS
+# ---------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# ---------------------------------------------------------------
+# Generated files
+# ---------------------------------------------------------------
+# Regenerated from configs/common.yaml on every launch by
+# scripts/generate_map.py and scripts/generate_nav2_params.py. Committing
+# them would let a stale copy disagree with the config it came from,
+# which is exactly the drift those generators exist to prevent.
+configs/nav2/corridor_map.pgm
+configs/nav2/corridor_map.yaml
+configs/nav2/nav2_params.yaml
+
+# Written when the scene is built, from the humans' configured states.
+results/character_commands.txt
+
+# ---------------------------------------------------------------
+# Local, machine-specific overrides
+# ---------------------------------------------------------------
+# Written by scripts/setup_env.sh; holds absolute paths for THIS machine.
+scripts/local_env.sh
