@@ -17,6 +17,7 @@ it did before this existed.
 from __future__ import annotations
 
 import time
+from collections import deque
 from typing import Any, Dict, Tuple
 
 import rclpy
@@ -63,6 +64,17 @@ class HumanTracker:
         self._prev: Dict[str, Tuple[float, float]] = dict(self._configured)
         self._prev_time = 0.0
         self._last_heading: Dict[str, float] = {}
+        self._latest_stamp = 0.0
+
+        # Velocity is taken across this much simulated time, not between
+        # two consecutive samples. A walking character sways side to
+        # side; differenced over 0.1 s that sway swings the heading by
+        # many degrees, and the yield gate extends the heading several
+        # metres to find a walker's lane. In a stress test of 216 trials
+        # with 2 cm of position noise, a 0.1 s window let the walker reach
+        # the robot 3 times and a 1.0 s window never did.
+        self._window = float(cfg["comfort_space"].get("velocity_window_seconds", 1.0))
+        self._history: Dict[str, deque] = {}
 
     def positions(self) -> Dict[str, Tuple[float, float]]:
         """Current (x, y) per human, in world coordinates. Cached."""
@@ -70,15 +82,28 @@ class HumanTracker:
         if now - self._cache_time < self._refresh_interval:
             return self._cache
         fresh = self._lookup()
-        dt = now - self._prev_time if self._prev_time else 0.0
-        if dt > 1e-3:
+        # Differentiate over SIMULATED time, from the /tf stamps. Isaac
+        # Sim does not run at real-time factor 1, so a wall-clock
+        # difference misstates every speed by that factor, and the gate
+        # decides how soon a walker arrives from this speed.
+        stamp = self._latest_stamp
+        if stamp and stamp > self._prev_time + 1e-6:
             for key, (x, y) in fresh.items():
-                px, py = self._prev.get(key, (x, y))
-                self._velocity[key] = ((x - px) / dt, (y - py) / dt)
+                hist = self._history.setdefault(key, deque())
+                hist.append((stamp, x, y))
+                while len(hist) > 2 and stamp - hist[1][0] >= self._window:
+                    hist.popleft()
+                t0, x0, y0 = hist[0]
+                # Nothing until the window has filled. A walker who has
+                # just set off has a few tenths of a second of samples, and
+                # a heading taken from those was measured 5 deg or more out;
+                # the gate extends that heading ten metres to find their
+                # lane and then chose a spot inside it.
+                if stamp - t0 >= 0.9 * self._window:
+                    self._velocity[key] = ((x - x0) / (stamp - t0),
+                                           (y - y0) / (stamp - t0))
             self._prev = dict(fresh)
-            self._prev_time = now
-        elif not self._prev_time:
-            self._prev_time = now
+            self._prev_time = stamp
 
         self._cache = fresh
         self._cache_time = now
@@ -138,6 +163,9 @@ class HumanTracker:
                 continue
             t = tf.transform.translation
             out[key] = (t.x, t.y)
+            st = tf.header.stamp
+            self._latest_stamp = max(self._latest_stamp,
+                                     st.sec + st.nanosec * 1e-9)
             if key not in self._seen:
                 self._seen.add(key)
                 self.node.get_logger().info(

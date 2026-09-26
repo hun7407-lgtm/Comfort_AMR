@@ -34,6 +34,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
+import numpy as np
 import rclpy
 import yaml
 from nav2_msgs.msg import CostmapFilterInfo
@@ -44,6 +45,7 @@ from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSProfile, QoSReli
 
 from comfort_core import load_config, resolve_path
 from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
+from comfort_core.evasion import Person, predicted_sweep, snap_to_corridor
 from comfort_core.human_state import make_state_provider
 from human_tracker import HumanTracker
 
@@ -152,6 +154,19 @@ class ComfortPublisher(Node):
         info.multiplier = 1.0
         self.info_pub.publish(info)
 
+        # Where each walker's Comfort Space is about to be. See
+        # paint_prediction.
+        pr = cs["costmap"].get("predict", {})
+        self.predict = bool(pr.get("enabled", False))
+        self.predict_horizon = float(pr.get("horizon_seconds", 4.0))
+        self.predict_step = float(pr.get("step_seconds", 0.25))
+        self.predict_near = int(pr.get("value_near", 90))
+        self.predict_far = int(pr.get("value_far", 40))
+        self.snap_deg = float(cs["yield"].get("evade", {}).get("corridor_heading_snap_deg", 15.0))
+        if not (0 <= self.predict_far <= self.predict_near < self.mask_value):
+            raise ValueError("comfort_space.costmap.predict values must satisfy "
+                             "0 <= value_far <= value_near < mask_value")
+
         rate = float(cs["costmap"].get("publish_rate_hz", 2.0))
         self.timer = self.create_timer(1.0 / max(rate, 0.1), self.publish_mask)
         self.published = 0
@@ -199,6 +214,9 @@ class ComfortPublisher(Node):
                     if data[index] < value:
                         data[index] = value
 
+        if self.predict:
+            self.paint_prediction(data, shapes)
+
         # Buffer first, then the Comfort Space over the top of it, so the
         # boundary keeps the full value and only the outside is softened.
         for shape in shapes:
@@ -208,6 +226,53 @@ class ComfortPublisher(Node):
 
         grid.data = list(data)
         return grid
+
+    def paint_prediction(self, data: bytearray, shapes) -> None:
+        """Paint where each walker's Comfort Space will be, fading with time.
+
+        The same straight-line sweep the yield gate uses to choose where to
+        wait (comfort_core.evasion.predicted_sweep), so the planner and the
+        gate act on one prediction. Painted weaker the further ahead it
+        is, and always below the Comfort Space itself: it steers the
+        planner toward the side the walker is not coming down, early,
+        without turning the corridor into a wall.
+
+        Only people measured as walking get a prediction, so a scene of
+        standing people is unaffected.
+        """
+        g = self.geom
+        w, h, res = g["width"], g["height"], g["resolution"]
+        ox, oy, _ = g["origin"]
+        grid = np.frombuffer(data, dtype=np.uint8).reshape(h, w)
+        speeds = self.tracker.speeds()
+        for shape in shapes:
+            speed = speeds.get(shape.key, 0.0)
+            if speed < self.speed_threshold:
+                continue
+            person = snap_to_corridor(Person(shape.key, shape.x, shape.y,
+                                             shape.heading, speed), self.snap_deg)
+            sweep = predicted_sweep(person, shape.along, shape.across,
+                                    self.predict_horizon, self.predict_step)
+            for t, future in sweep[1:]:
+                frac = t / max(self.predict_horizon, 1e-6)
+                value = int(round(self.predict_near
+                                  - (self.predict_near - self.predict_far) * frac))
+                reach = future.bounding_radius
+                c0 = max(int((future.x - reach - ox) / res), 0)
+                c1 = min(int((future.x + reach - ox) / res) + 1, w)
+                r0 = max(int((future.y - reach - oy) / res), 0)
+                r1 = min(int((future.y + reach - oy) / res) + 1, h)
+                if c0 >= c1 or r0 >= r1:
+                    continue
+                xs = ox + (np.arange(c0, c1) + 0.5) * res - future.x
+                ys = oy + (np.arange(r0, r1) + 0.5) * res - future.y
+                X, Y = np.meshgrid(xs, ys)
+                c, s = np.cos(future.heading), np.sin(future.heading)
+                u = X * c + Y * s
+                v = -X * s + Y * c
+                inside = (u / future.along) ** 2 + (v / future.across) ** 2 <= 1.0
+                window = grid[r0:r1, c0:c1]
+                np.maximum(window, np.where(inside, value, 0).astype(np.uint8), out=window)
 
     def current_shapes(self):
         """The Comfort Spaces as they are right now.
@@ -237,11 +302,15 @@ class ComfortPublisher(Node):
                             self.tracker.headings(), robot_grow(self.cfg))
 
     def publish_shapes(self, shapes) -> None:
+        # Six numbers per person: x, y, along, across, heading, speed.
+        # The gate needs the speed to tell a walker it must step aside for
+        # from a person standing still, whom it simply waits for.
+        speeds = self.tracker.speeds()
         msg = Float32MultiArray()
         flat = []
         for shape in shapes:
             flat.extend([shape.x, shape.y, shape.along, shape.across,
-                         shape.heading])
+                         shape.heading, speeds.get(shape.key, 0.0)])
         msg.data = flat
         self.circle_pub.publish(msg)
 
@@ -285,7 +354,7 @@ class ComfortPublisher(Node):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/common.yaml")
-    parser.add_argument("--scenario", default=None, help="b2, b3 or a path")
+    parser.add_argument("--scenario", default=None, help="b1, b2, b3 or a path")
     parser.add_argument("--map", default="configs/nav2/corridor_map.yaml")
     parser.add_argument("--mask-topic", default="/comfort_mask")
     parser.add_argument("--info-topic", default="/costmap_filter_info")

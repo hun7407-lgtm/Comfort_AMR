@@ -25,6 +25,11 @@ not by a wall, which is the point.
 
 Publishes /comfort_yield (std_msgs/Bool) so a trial can record how long
 it spent yielding and to whom.
+
+A person walking at the robot is the exception. Stopping in their lane
+means waiting to be walked into, so for them the gate steps the robot
+aside instead, on a timer of its own rather than on Nav2's commands, and
+publishes /comfort_evading while it does. See comfort_core/evasion.py.
 """
 
 from __future__ import annotations
@@ -45,6 +50,7 @@ from std_msgs.msg import Bool, Float32MultiArray, String
 
 from comfort_core import load_config, odom_to_world
 from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
+from comfort_core.evasion import EvasionController, Person
 from comfort_core.human_state import make_state_provider
 from comfort_core.shapes import ComfortShape
 
@@ -88,22 +94,47 @@ class ComfortGate(Node):
         self.pose = None
         self.yielding = False
 
+        # Stepping aside for walkers.
+        self.evade_enabled = bool(y.get("evade", {}).get("enabled", False))
+        self.evader = EvasionController(cfg, log=lambda m: self.get_logger().info(m))
+        self.grow = robot_grow(cfg)
+        self.people: list[Person] = []
+        self.sim_now = 0.0
+        self.evade_pub = self.create_publisher(Bool, "/comfort_evading", 10)
+        # One word for what the gate is doing, for the video overlay and
+        # for anyone reading a log: DRIVING, YIELDING, STEPPING ASIDE,
+        # WAITING, RESUMING.
+        self.state_pub = self.create_publisher(String, "/comfort_gate_state", 10)
+        self.hold_still = bool(y.get("hold_still", True))
+        if self.enabled and self.evade_enabled:
+            # Independent of Nav2's command stream. If Nav2 went quiet
+            # during a recovery the robot would otherwise freeze in the
+            # middle of the manoeuvre, which is the one place it must not.
+            self.create_timer(0.05, self._evade_tick)
+
         self.get_logger().info(
             f"policy={self.policy.name} enabled={self.enabled} "
             f"shapes={[(s.key, round(s.along, 2), round(s.across, 2)) for s in self.shapes]} "
             f"({in_topic} -> {out_topic})")
 
     def _on_shapes(self, msg: Float32MultiArray) -> None:
+        # x, y, along, across, heading, speed per person.
         data = list(msg.data)
-        if len(data) % 5:
+        n = 6
+        if len(data) % n:
             return
         self.shapes = [
-            ComfortShape(str(i // 5), data[i], data[i + 1],
+            ComfortShape(str(i // n), data[i], data[i + 1],
                          data[i + 2], data[i + 3], data[i + 4])
-            for i in range(0, len(data), 5)
+            for i in range(0, len(data), n)
+        ]
+        self.people = [
+            Person(str(i // n), data[i], data[i + 1], data[i + 4], data[i + 5])
+            for i in range(0, len(data), n)
         ]
 
     def _on_odom(self, msg: Odometry) -> None:
+        self.sim_now = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
         p = msg.pose.pose.position
         self.pose = odom_to_world(
             self.cfg, (p.x, p.y, yaw_from_quaternion(msg.pose.pose.orientation)))
@@ -140,7 +171,47 @@ class ComfortGate(Node):
                 worst = (shape, max(depth, 0.0), (x, y), (nx, ny))
         return worst
 
+    def _evade_tick(self) -> None:
+        """Let the walker controller decide; publish its command if it has one.
+
+        The decisions live in comfort_core.evasion.EvasionController so
+        that the offline stress test runs exactly this logic.
+        """
+        if self.pose is None:
+            return
+        # The controller wants each person's own Comfort Space, not the
+        # copy enlarged by the robot's half width for the planner.
+        grow = self.grow
+        raw = {sh.key: ComfortShape(sh.key, sh.x, sh.y, max(sh.along - grow, 0.0),
+                                    max(sh.across - grow, 0.0), sh.heading)
+               for sh in self.shapes}
+        was_active = self.evader.active
+        out = self.evader.step(self.sim_now, self.pose, self.people, raw)
+        if out is None:
+            if was_active:
+                self._publish_flags(evading=False, state="DRIVING")
+            return
+        cmd = Twist()
+        cmd.linear.x, cmd.angular.z = out
+        self.pub.publish(cmd)
+        self.yielding = True
+        self._publish_flags(evading=True, state=self.evader.state)
+
+    def _publish_flags(self, evading: bool, state: str | None = None) -> None:
+        flag = Bool()
+        flag.data = evading
+        self.evade_pub.publish(flag)
+        flag = Bool()
+        flag.data = self.yielding
+        self.yield_pub.publish(flag)
+        label = String()
+        label.data = state or ("YIELDING" if self.yielding else "DRIVING")
+        self.state_pub.publish(label)
+
     def _on_cmd(self, cmd: Twist) -> None:
+        if self.evader.active:
+            # The sidestep owns the wheels until the walker has passed.
+            return
         intrusion = None
         if self.enabled:
             intrusion = self._intrusion(cmd)
@@ -163,22 +234,22 @@ class ComfortGate(Node):
                 reason.data = shape.key
                 self.reason_pub.publish(reason)
             self.yielding = True
-            # Rotation is allowed while yielding. Turning in place does
-            # not carry the robot into anyone, and forbidding it would
-            # stop Nav2 from ever lining up with an alternative route.
+            # Stand still by default. Rotation used to be passed through so
+            # Nav2 could line up with an alternative route, but a robot
+            # turning on the spot does not look like a robot yielding.
             held = Twist()
-            held.angular.z = cmd.angular.z
+            if not self.hold_still:
+                held.angular.z = cmd.angular.z
             self.pub.publish(held)
 
-        flag = Bool()
-        flag.data = self.yielding
-        self.yield_pub.publish(flag)
+        self._publish_flags(evading=False,
+                            state="YIELDING" if self.yielding else "DRIVING")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/common.yaml")
-    parser.add_argument("--scenario", default=None, help="b2, b3 or a path")
+    parser.add_argument("--scenario", default=None, help="b1, b2, b3 or a path")
     parser.add_argument("--in-topic", default="/cmd_vel_nav")
     parser.add_argument("--out-topic", default="/cmd_vel")
     args, _ = parser.parse_known_args()
