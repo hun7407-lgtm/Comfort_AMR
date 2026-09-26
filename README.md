@@ -198,33 +198,41 @@ planner는 로봇 중심점으로 계획하므로 실제로 피해야 하는 원
 
 **반지름의 정의**는 사람 중심에서 **AMR의 가장 가까운 부분**까지입니다.
 AMR 중심까지가 아닙니다. 사람이 실제로 느끼는 거리가 그쪽이기 때문입니다.
-변환은 `comfort_core/comfort_space.py`의 `costmap_radii()` 한 곳에서만 합니다.
+변환은 `comfort_core/comfort_space.py`의 `robot_grow()` 한 곳에서만 합니다.
 
 시각화는 그리기만 합니다. 충돌체를 만들지 않으므로 꺼도 결과가 달라지지 않습니다.
 
-## 11. Build
+## 11. Run a scenario
 
 ```bash
-./scripts/build_ros2.sh
+./scripts/run_b1.sh              # Comfort Space 없음 (기준선)
+./scripts/run_b2.sh              # Static Comfort Space
+./scripts/run_b3.sh              # Human State-Adaptive Comfort Space
 ```
 
-_(아직 미구현. ROS 2 패키지를 만드는 STEP 4에서 추가)_
-
-## 12. Run B2
+Isaac Sim, Nav2, Comfort Space 발행, 양보 게이트를 띄우고 trial 하나를
+끝까지 돌린 뒤 정리합니다. 종료 코드 0은 SUCCESS입니다.
 
 ```bash
-./scripts/run_b2.sh
+./scripts/run_b3.sh --headless                            # 창 없이
+./scripts/run_b3.sh --config configs/demo_walker.yaml     # 걷는 사람 추가
+./scripts/run_b3.sh --record --record-costmap             # 영상 저장
 ```
 
-_(아직 미구현. PHASE E)_
+`--record`는 장면 영상, `--record-costmap`은 Nav2가 보는 화면을 남깁니다.
+저장 위치는 `results/videos/<version>/<시나리오>/<조건>/`이고,
+버전 폴더 이름은 `configs/common.yaml`의 `recording.version`입니다.
 
-## 13. Run B3
+## 12. 센서로 사람 추정하기 (선택)
 
 ```bash
-./scripts/run_b3.sh
+./scripts/run_people_tracker.sh --evaluate
 ```
 
-_(아직 미구현. PHASE E)_
+시나리오가 도는 동안 따로 실행합니다. `/scan`에서 사람을 군집으로 찾아
+위치와 속도를 추정해 `/comfort_detections`로 발행하고, `--evaluate`는
+정답과 비교한 오차를 마지막에 출력합니다. B1/B2/B3 비교는 정답 기반으로
+돌아가며, 이 추정은 그 옆에서 평가만 합니다.
 
 ## 14. Results
 
@@ -251,11 +259,18 @@ Comfort_AMR/
 │   ├── layout.py            복도 기하, 통과 가능 판정          [작성됨]
 │   ├── comfort_space.py     ComfortSpacePolicy 와 두 구현     [작성됨]
 │   ├── human_state.py       HumanStateProvider 와 두 구현     [작성됨]
+│   ├── shapes.py            원과 타원 Comfort Space            [작성됨]
+│   ├── clearance.py         로봇 외곽과 사람 사이 물리적 거리   [작성됨]
+│   ├── intrusion.py         Comfort Space 침범 깊이            [작성됨]
+│   ├── evasion.py           걷는 사람 양보: 대기 자리와 정지    [작성됨]
+│   ├── tracking.py          스캔 군집화와 사람 추적            [작성됨]
 │   └── metrics.py           trial 판정과 CSV 기록             [STEP 10]
 ├── configs/
-│   ├── common.yaml          B2/B3 공통. geometry, AMR, 판정 threshold
+│   ├── common.yaml          공통. geometry, AMR, 판정 threshold
+│   ├── scenario_b1.yaml     Comfort Space 없음 (기준선)
 │   ├── scenario_b2.yaml     static policy 만
 │   ├── scenario_b3.yaml     state-adaptive policy 만
+│   ├── demo_walker.yaml     걷는 사람을 넣는 변형
 │   └── nav2/                Nav2 파라미터 (reference 저장소에서 가져옴)
 ├── isaac_sim/
 │   ├── environments/
@@ -265,9 +280,13 @@ Comfort_AMR/
 │   │   └── run_amr_sim.py   상시 실행되는 시뮬레이션 진입점    [작성됨]
 │   └── utils/
 │       ├── scene_setup.py   ground/light/physics, AMR 배치    [작성됨]
-│       └── comfort_viz.py   Comfort Space 원 그리기            [작성됨]
+│       ├── comfort_viz.py   Comfort Space 원 그리기            [작성됨]
+│       ├── human_motion.py  걷는 사람 콜라이더 동기화          [작성됨]
+│       ├── human_tf.py      사람 위치 /tf 발행                 [작성됨]
+│       └── recorder.py      장면 영상 프레임 저장              [작성됨]
 ├── ros2_ws/src/comfort_amr/ ROS 2 패키지 (nodes, launch)
 ├── results/{b2,b3}/         실험 결과 CSV
+├── results/videos/          녹화 (버전/시나리오/조건별, git에는 제외)
 ├── scripts/                 실행 스크립트
 └── docs/                    SETUP / EXPERIMENT / AMR reference / GIT workflow
 ```
