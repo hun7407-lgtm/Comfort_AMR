@@ -1,0 +1,31 @@
+# ---------------------------------------------------------------
+# Scenario B1: no Comfort Space. The baseline.
+#
+# People are obstacles and nothing more. Nav2 sees them only through the
+# LiDAR, inflated like any wall; no Comfort Space is painted into the
+# costmap, none is drawn, and the yield gate is switched off, so every
+# velocity command Nav2 produces reaches the robot unchanged. The safety
+# layer (nav2_collision_monitor) stays on, as it does in B2 and B3: it
+# prevents contact, it says nothing about comfort.
+#
+#   ./scripts/run_b1.sh
+#
+# Stepping aside for a walker (comfort_space.yield.evade) is part of the
+# yield gate, so it is off here too. A B1 robot facing a walker has only
+# Nav2's own reactive avoidance and the collision monitor.
+#
+# The physical environment is identical to B2 and B3. The whole
+# difference is visible with
+#
+#   diff configs/scenario_b1.yaml configs/scenario_b3.yaml
+# ---------------------------------------------------------------
+
+scenario:
+  name: b1
+  label: "No Comfort Space (Nav2 only)"
+
+comfort_space:
+  policy: none
+
+  yield:
+    enabled: false

@@ -1,7 +1,7 @@
 # Experiment Definition: B2 vs B3
 
-> 이 문서는 실험 설계를 먼저 확정하기 위한 것입니다.
-> 구현은 roadmap의 PHASE E에서 진행하며, 그 전까지 이 문서가 기준입니다.
+> 이 문서가 실험의 기준입니다. 구현은 `scripts/run_b1.sh`,
+> `scripts/run_b2.sh`, `scripts/run_b3.sh`로 돌아갑니다.
 
 ---
 
@@ -35,11 +35,17 @@ B2와 B3에서 **반드시 동일해야 하는** 항목입니다.
 
 Comfort Space Policy **하나뿐**입니다.
 
-| | B2 | B3 |
-|---|---|---|
-| Policy | `StaticComfortPolicy` | `StateAdaptiveComfortPolicy` |
-| Radius 결정 | 모든 사람에게 동일한 `static_radius` | `R_i = f(state_i)` |
-| Config | `configs/scenario_b2.yaml` | `configs/scenario_b3.yaml` |
+| | B1 | B2 | B3 |
+|---|---|---|---|
+| Policy | `NoComfortPolicy` | `StaticComfortPolicy` | `StateAdaptiveComfortPolicy` |
+| Radius 결정 | 없음 | 모든 사람에게 동일한 `static_radius` | `R_i = f(state_i)` |
+| 양보 게이트 | 꺼짐 | 켜짐 | 켜짐 |
+| Config | `configs/scenario_b1.yaml` | `configs/scenario_b2.yaml` | `configs/scenario_b3.yaml` |
+
+B1은 기준선입니다. 사람은 LiDAR에 보이는 장애물일 뿐이고, Comfort Space도
+양보도 없습니다. 침범량은 세 시나리오 모두 같은 잣대로 재야 비교가 되므로
+`evaluation.comfort_reference`가 가리키는 정책(기본값 B3)의 Comfort Space로
+측정합니다.
 
 두 시나리오 config에는 policy 관련 키만 들어갑니다.
 geometry나 planner 값이 시나리오 config에 나타나면 설계 위반입니다.
@@ -179,10 +185,13 @@ Comfort Space를 viewport에 그리는 코드가 navigation 결과에 영향을 
 
 | 결과 | 구현 |
 |---|---|
-| `SUCCESS` | STEP 5 완료 |
-| `TIMEOUT` | STEP 5 완료 |
-| `DEADLOCK` | STEP 10 |
-| `PLANNING_FAILURE` | PHASE D 이후. planner가 붙어야 의미가 생깁니다 |
+| `SUCCESS` | 구현됨 |
+| `TIMEOUT` | 구현됨 |
+| `DEADLOCK` | 구현됨. 양보로 인한 정체와 진척 없음을 따로 봅니다 |
+| `PLANNING_FAILURE` | 구현됨. 출발 전 planner에 경로를 직접 물어봅니다 |
+
+trial마다 사람별 최소 물리 거리, 겹친 시간, Comfort Space 침범 깊이와
+머문 시간, 비켜선 시간도 함께 출력합니다.
 
 `PLANNING_FAILURE`와 `DEADLOCK`을 구분하는 것이 핵심입니다.
 전자는 경로 자체가 만들어지지 않은 것이고,

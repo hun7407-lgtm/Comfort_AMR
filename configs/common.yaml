@@ -162,6 +162,18 @@ ros:
     max_height: 1.20
     angle_increment: 0.0087
     range_min: 0.20
+    # Minimum distance the LiDAR itself reports, written onto the sensor
+    # when the scene is built (isaac_sim/utils/scene_setup.py). The AMR
+    # USD ships 1.00 m, which blinded the robot over the last metre: a
+    # person walking into it gave 3 returns at 1.10 m and none at 0.69 m,
+    # and disappeared from the costmap just before contact. Comment this
+    # out to keep whatever the asset authors.
+    sensor_near_range: 0.25
+    # Fraction of light a surface must return for the sensor to report a
+    # hit. The asset ships 0.1. Being tested: a walking person gives no
+    # returns at all between about 5 and 9 m while standing people at
+    # 4-6 m are seen every sweep, and this threshold is the suspect.
+    sensor_min_reflectance: 0.01
     range_max: 20.0
 
 # ---------------------------------------------------------------
@@ -266,10 +278,12 @@ humans:
     # Which way they face. "station" turns them toward their own
     # station, which is what station_engaged is supposed to look like.
     facing: station
-    # Added to the computed heading. Character assets are not all
-    # authored facing +x, and this is the correction for whichever way
-    # the chosen asset happens to point.
-    facing_offset_deg: 0.0
+    # Added to the computed heading. The heading assumes a character
+    # authored facing +x, but F_Business_02 and M_Medical_01 are both
+    # authored facing -y. Measured, not guessed: with 0.0 a camera on the
+    # corridor side saw human a's face and human b's back, i.e. both stood
+    # 90 deg clockwise of their stations. Re-check if a character changes.
+    facing_offset_deg: 90.0
     # omni.anim.people command per state. Idle takes a duration in
     # seconds; the trial is over long before these expire.
     commands:
@@ -369,9 +383,14 @@ comfort_space:
     # What a moving person's Comfort Space collapses to once they stop.
     at_rest_state: stationary
 
-  # Below this speed a person is treated as being at rest. Only used to
-  # label the state in the results; the radius itself is continuous.
+  # Below this speed a person is treated as being at rest. Labels the
+  # state in the results and decides who the yield gate steps aside for;
+  # the radius itself is continuous.
   moving_speed_threshold: 0.15
+  # Simulated seconds a person's velocity is averaged over. Shorter lets
+  # a character's side-to-side sway swing the estimated heading; see
+  # scripts/human_tracker.py.
+  velocity_window_seconds: 1.0
 
   # "static"          every human gets static_radius
   # "state_adaptive"  radius comes from state_radius below
@@ -430,6 +449,30 @@ comfort_space:
     # report. This only biases the planner away from the line.
     buffer_width: 0.35
     buffer_value: 55
+    # Where a walker's Comfort Space is about to be, painted ahead of them
+    # and fading with time. Steers the planner to the side of the corridor
+    # the walker is not coming down, early, so the robot is often already
+    # out of the way when the yield gate looks. Uses the same prediction
+    # as comfort_space.yield.evade.comfort. Only walking people get one.
+    #
+    # OFF by default. Measured in Isaac Sim (B3 with walker, 3 runs each):
+    # with it on, 1 collision and 1 deadlock; with it off, 3 successes.
+    # A costmap has no time axis, so the whole sweep is painted as if the
+    # walker were everywhere on it at once. The planner then routed down
+    # one wall while the yield gate had chosen to wait against the other,
+    # and the two fought. The gate uses the same prediction with time
+    # (comfort_core.evasion), which is where it belongs.
+    predict:
+      enabled: false
+      # Long enough to reach from a walker at the far end to the robot at
+      # the start (about 10 m at 1.1 m/s). At 4 s the painted sweep ended
+      # halfway down the corridor and the planner never saw it in time.
+      horizon_seconds: 8.0
+      step_seconds: 0.25
+      # Mask values at the near and far end of the horizon; both below
+      # mask_value, so the prediction never outweighs the present.
+      value_near: 90
+      value_far: 40
 
     # Republish rate.
     #
@@ -458,6 +501,112 @@ comfort_space:
     # robot does not sit exactly on the line and chatter.
     margin: 0.05
 
+    # Hold still while yielding to someone who is standing, rather than
+    # turning on the spot. Rotation was allowed so Nav2 could line up with
+    # an alternative route, but on video it reads as the robot fidgeting
+    # rather than waiting. The deadlock test does not depend on it: a
+    # yielding robot is detected by how long it yields, not by how still
+    # it is (scripts/nav2_goal.py, continuous_yield_seconds).
+    hold_still: true
+
+    # Stepping aside for someone walking at the robot. See
+    # comfort_core/evasion.py.
+    #
+    # Stopping is the right way to yield to a person standing still and
+    # the wrong way to yield to one walking straight at you: a robot held
+    # in their lane is simply waited for. Measured before this existed, a
+    # walker at 1.1 m/s ran into the parked robot, 6 cm of overlap for a
+    # full second. The gate had only reacted once they were 2.5 m away,
+    # about two seconds out, and a differential drive cannot turn and
+    # clear a lane in two seconds.
+    #
+    # Only people measured as moving are considered, so with nobody
+    # walking (B2 and B3 as compared) this never acts.
+    evade:
+      enabled: true
+      # Act once a walker would reach the robot within this many seconds.
+      # Clearing the lane takes about 3.5 s from a standstill (turn about
+      # 60 deg, drive about 0.7 m); this leaves margin on top.
+      horizon_seconds: 6.0
+      # Kept between the walker's body and the robot's circumscribed
+      # circle when waiting beside their lane. Includes the walker's own
+      # sway: the character's tracked position swings about +-0.09 m
+      # either side of its scripted line (measured, y = -0.16 to -0.34
+      # on a route at -0.25).
+      lateral_margin: 0.20
+      # How close counts as being at the waiting point. Generous on
+      # purpose: the last few centimetres cost time and look like
+      # fidgeting, and the point itself is chosen with margin.
+      arrive_tolerance: 0.15
+      heading_gain: 2.0
+
+      # Where to wait, chosen by predicted Comfort Space intrusion rather
+      # than by physical clearance alone. See comfort_core/evasion.py,
+      # choose_comfort_spot. Falls back to the physical sidestep above
+      # whenever no candidate qualifies.
+      #
+      # Measured offline over 108 approaches (walker 1.0-1.4 m/s, sway,
+      # 2 cm tracking noise): median depth into the walker's Comfort Space
+      # 0.40 m -> 0.26 m, approaches with no intrusion at all 5 -> 41,
+      # collisions 0 -> 0.
+      # A walker heading within this many degrees of the corridor's axis
+      # is taken to be walking along it. See evasion.snap_to_corridor.
+      # 0 turns it off.
+      corridor_heading_snap_deg: 15.0
+
+      comfort:
+        enabled: true
+        # Act once the walker's predicted space would reach the robot
+        # within this many seconds.
+        horizon_seconds: 10.0
+        sweep_step: 0.25
+        # Candidate grid: across the corridor every lateral_step, and
+        # this far further from the walker along their line. Kept short:
+        # backing a long way can put the robot where the walker stops.
+        lateral_step: 0.10
+        back_offsets: [0.0, 0.5]
+        # For estimating how long a spot takes to reach. Below the limits
+        # Nav2 is given, since reaching late costs comfort.
+        reach_linear_speed: 0.35
+        reach_angular_speed: 0.70
+        reach_slack_seconds: 1.0
+        # How often a better spot is looked for, and how much better it
+        # must be to move there.
+        reevaluate_period: 0.5
+        switch_margin: 0.05
+        # The spot is committed to once chosen. It is only re-picked if
+        # the walker's predicted space would reach it, that is if its
+        # score falls below this (1.0 = right on the boundary). Chasing
+        # whatever scored best made the robot creep while it waited.
+        rechoose_below_k: 1.0
+        # Gap kept between the footprint and a wall while waiting. At
+        # 0.05 m the robot sat in the wall's high-cost band and Nav2 could
+        # not find a way out once handed back.
+        wall_margin: 0.15
+        body_margin: 0.10
+        yaw_tolerance: 0.08
+        # Assumed error in the walker's estimated heading. Extended over
+        # the distance to them, it widens the lane a spot must stay out of.
+        heading_sigma_deg: 3.0
+
+        # Waiting should look like waiting.
+        hold:
+          # Once in position the robot stops dead. It only corrects itself
+          # again if it slides this far off, so a centimetre of drift or a
+          # slightly revised waiting point does not turn the wait into a
+          # twitch.
+          # Bigger than the slide a standing turn causes. Measured in
+          # Isaac Sim: lining up along the corridor moved the robot 0.22 m,
+          # and anything tighter would read that as drift and set it off
+          # driving again.
+          drift_tolerance: 0.45
+          # A beat of stillness after the walker has passed, before moving
+          # off, so the restart reads as a decision.
+          resume_delay_seconds: 0.7
+        # Being this far outside the boundary (k = 1.15) is enough; past
+        # it, the nearer spot on the robot's own side wins.
+        enough_k: 1.15
+
   visualization:
     # Drawing is separate from cost. Turning this off must not change
     # any trial result; isaac_sim/utils/comfort_viz.py only creates
@@ -469,6 +618,82 @@ comfort_space:
     z_offset: 0.01
     opacity: 0.35
     color: [0.15, 0.55, 0.95]
+
+# ---------------------------------------------------------------
+# Estimating people from the LiDAR instead of from the scene.
+#
+# Used by scripts/people_tracker.py and comfort_core/tracking.py. The
+# B2/B3 comparison still runs on ground truth; this is evaluated against
+# it. See comfort_core/human_state.py for why the seam is there.
+#
+# > Engineering parameters for prototype validation, not validated
+# > pedestrian detection thresholds.
+# ---------------------------------------------------------------
+perception:
+  tracking:
+    # Consecutive returns further apart than this start a new cluster.
+    cluster_gap: 0.25
+    min_points: 2
+    # A person seen side on is roughly 0.3-0.6 m wide; walls are longer.
+    min_extent: 0.05
+    max_extent: 1.20
+    # How far a cluster may move between scans and still be the same one.
+    # At 10 Hz a person walking 1.5 m/s moves 0.15 m.
+    gate: 0.80
+    # Velocity is taken across this much time, for the same reason the
+    # ground-truth tracker uses a window: a walking gait swings the
+    # apparent centre about.
+    velocity_window: 1.0
+    confirm_hits: 3
+    max_misses: 5
+    # A walking person gives one cluster per leg. Closer than this and
+    # they are treated as one person; without it each leg became its own
+    # track and a standing person's centre jumped between them.
+    merge_distance: 0.45
+    # Clusters within this distance of a wall or a workstation are
+    # structure, which the robot already has in its static map.
+    structure_margin: 0.25
+
+# ---------------------------------------------------------------
+# How trials are scored.
+# ---------------------------------------------------------------
+evaluation:
+  # Comfort Space intrusion is measured against this scenario's policy in
+  # EVERY scenario, so B1 (which has none) and B2 (whose space is larger)
+  # are judged by the same yardstick as B3. See scripts/nav2_goal.py.
+  comfort_reference: b3
+
+# ---------------------------------------------------------------
+# Video recording, used only with scripts/run_scenario.sh --record.
+#
+# A fixed camera looking down on the whole corridor. Frames are taken on
+# the simulation clock and encoded at the same rate, so the video plays at
+# simulated real time. See isaac_sim/utils/recorder.py.
+# ---------------------------------------------------------------
+recording:
+  # Folder the videos of this behaviour go into, under results/videos.
+  # Bump it when the robot's behaviour changes, so recordings of the old
+  # and new behaviour sit side by side instead of mixing.
+  #   v1_physical_sidestep    step aside only as far as bodies need
+  #   v2_comfort_aware_yield  wait where the walker's Comfort Space is not
+  #   v3_scan_clearing_fix    empty LiDAR beams clear the costmap, so the
+  #                           robot no longer brakes for stale marks
+  #   v4_visible_yield        one waiting spot, chosen once, held still
+  version: v4_visible_yield
+  fps: 10
+  resolution: [1280, 720]
+  jpeg_quality: 90
+  # Placed for the longest corridor in use (16 m, demo_walker.yaml): high
+  # enough to fit it across the frame, tilted slightly so the people and
+  # the AMR read as 3D rather than as outlines.
+  camera:
+    position: [0.0, -5.5, 17.0]
+    look_at: [0.0, 0.0, 0.0]
+    focal_length: 18.0
+  # Nothing happens before the trial starts; recording from here keeps
+  # the video to the part worth watching. Defaults to
+  # navigation.trial_start_sim_time when omitted.
+  # start_sim_time: 44.0
 
 # ---------------------------------------------------------------
 # Start and goal, and the simple controller that drives between them.

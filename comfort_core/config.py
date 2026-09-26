@@ -97,7 +97,7 @@ def load_config(
     """Load `common.yaml`, optionally overlaid with one scenario config.
 
     Args:
-        scenario: "b2", "b3", or a path to a scenario YAML. None loads
+        scenario: "b1", "b2", "b3", or a path to a scenario YAML. None loads
             the common config alone, which is what the STEP 3 and STEP 4
             hardware checks need.
         common_path: override for the shared config, for tests.
@@ -113,7 +113,7 @@ def load_config(
         config["scenario"] = {"name": "common", "policy": None}
         return config
 
-    if scenario in ("b2", "b3"):
+    if scenario in ("b1", "b2", "b3"):
         scenario_path = resolve_path(f"configs/scenario_{scenario}.yaml")
     else:
         scenario_path = resolve_path(scenario)

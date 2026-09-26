@@ -134,7 +134,29 @@ class StateAdaptiveComfortPolicy(ComfortSpacePolicy):
         return "state_adaptive"
 
 
+class NoComfortPolicy(ComfortSpacePolicy):
+    """No Comfort Space at all. Scenario B1, the baseline.
+
+    People are left to Nav2 exactly as any other obstacle: whatever the
+    LiDAR marks, inflated by the costmap. Nothing is painted into the
+    Comfort Space mask, nothing is drawn, and the yield gate has nobody to
+    yield to. What remains is what an AMR does with no notion of personal
+    space, which is the reference B2 and B3 are measured against.
+    """
+
+    def __init__(self, cfg: Dict[str, Any]):
+        pass
+
+    def radius_for(self, key: str, state: str, speed: float = 0.0) -> float:
+        return 0.0
+
+    @property
+    def name(self) -> str:
+        return "none"
+
+
 POLICIES = {
+    "none": NoComfortPolicy,
     "static": StaticComfortPolicy,
     "state_adaptive": StateAdaptiveComfortPolicy,
 }
@@ -161,20 +183,6 @@ def robot_grow(cfg: Dict[str, Any]) -> float:
     return float(cfg["amr"]["footprint_width"]) / 2.0
 
 
-def costmap_radii(cfg: Dict[str, Any], radii: Dict[str, float]) -> Dict[str, float]:
-    """Convert comfort radii into the radii to paint into a costmap.
-
-    The configured radius is the distance from the human to the nearest
-    part of the AMR. A planner works with a point at the robot's centre,
-    so the painted circle has to be bigger by the AMR's inscribed radius,
-    or the robot's body would end up closer than the radius allows.
-
-    Done here, once, so no caller has to remember it.
-    """
-    inscribed = robot_grow(cfg)
-    return {key: r + inscribed for key, r in radii.items()}
-
-
 def shapes(cfg: Dict[str, Any], axes: Dict[str, Tuple[float, float]],
            positions: Dict[str, tuple] | None = None,
            headings: Dict[str, float] | None = None,
@@ -196,22 +204,12 @@ def shapes(cfg: Dict[str, Any], axes: Dict[str, Tuple[float, float]],
         if positions and key in positions:
             x, y = positions[key][0], positions[key][1]
         along, across = axes[key]
+        if along <= 0.0 and across <= 0.0:
+            # No Comfort Space for this person (policy "none"). Skipped
+            # here rather than grown into a robot-sized circle, which
+            # would quietly give B1 a Comfort Space after all.
+            continue
         heading = float((headings or {}).get(key, 0.0))
         out.append(ComfortShape(key, float(x), float(y),
                                 along + grow, across + grow, heading))
     return out
-
-
-def circles(cfg: Dict[str, Any], radii: Dict[str, float],
-            positions: Dict[str, tuple] | None = None):
-    """Yield (key, x, y, radius) for every human, in a stable order.
-
-    Kept for callers that only need round Comfort Spaces. New code
-    should use `shapes`, which also covers the moving case.
-    """
-    for key, x, y in human_positions(cfg):
-        if key not in radii:
-            continue
-        if positions and key in positions:
-            x, y = positions[key][0], positions[key][1]
-        yield key, float(x), float(y), radii[key]

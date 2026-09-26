@@ -31,11 +31,17 @@ from nav2_msgs.action import ComputePathToPose, NavigateToPose
 from nav2_msgs.msg import CollisionMonitorState
 from nav_msgs.msg import Odometry
 from rclpy.action import ActionClient
+from rclpy.duration import Duration
 from rclpy.node import Node
 from std_msgs.msg import Bool
+from tf2_ros import Buffer, TransformListener
 
 from comfort_core import load_config, odom_to_world
-from comfort_core.layout import corridor_bounds
+from comfort_core.clearance import clearance, footprint_half_extents
+from comfort_core.comfort_space import make_policy, shapes as build_shapes
+from comfort_core.human_state import make_state_provider
+from comfort_core.intrusion import footprint_outline, intrusion
+from comfort_core.layout import corridor_bounds, human_positions
 
 
 def yaw_from_quaternion(q) -> float:
@@ -63,12 +69,23 @@ class TrialResult:
     invalid_reason: str = ""
     start_pose: tuple = (0.0, 0.0, 0.0)
     final_pose: tuple = (0.0, 0.0, 0.0)
+    # Closest physical approach to each person, footprint to cylinder.
+    # key -> (clearance in m, trial time in s). <= 0 means contact.
+    min_clearance: dict = field(default_factory=dict)
+    contact_seconds: float = 0.0
+    evade_seconds: float = 0.0
+    # Deepest intrusion into each person's reference Comfort Space.
+    # key -> (depth in m, k_min, trial time). k_min < 1 means inside.
+    comfort_worst: dict = field(default_factory=dict)
+    comfort_seconds: dict = field(default_factory=dict)
+    comfort_reference: str = ""
 
 
 class Nav2Trial(Node):
-    def __init__(self, cfg):
+    def __init__(self, cfg, common_path: str = "configs/common.yaml"):
         super().__init__("comfort_amr_nav2_trial")
         self.cfg = cfg
+        self._common_path = common_path
         nav = cfg["navigation"]
 
         self.goal = (float(nav["goal"][0]), float(nav["goal"][1]))
@@ -101,6 +118,9 @@ class Nav2Trial(Node):
                                  self._on_humans_moving, 10)
         self.humans_moving = False
         self.waited_for_humans = 0.0
+        # Time spent stepping out of a walker's lane.
+        self.create_subscription(Bool, "/comfort_evading", self._on_evading, 10)
+        self.evading = False
 
         # The safety layer stops the robot for physical contact, the
         # yield gate stops it for social reasons. Recording them apart is
@@ -115,6 +135,28 @@ class Nav2Trial(Node):
         self.yielding = False
         self.yield_seconds = 0.0
         self._yield_since: float | None = None
+        # Where each person actually is, for the clearance record. Read
+        # from the same /tf frames the Comfort Space follows, whose stamps
+        # are simulated time like the odometry's.
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.human_keys = [k for k, _x, _y in human_positions(cfg)]
+        self._configured_humans = {k: (x, y) for k, x, y in human_positions(cfg)}
+
+        # Comfort Space intrusion is measured against ONE reference
+        # policy in every scenario, not against each scenario's own. B1
+        # has no Comfort Space, and B2's larger one would make B2 look
+        # worse for the same distance; judging all three by the same
+        # yardstick is what makes the numbers comparable.
+        from human_tracker import HumanTracker
+        ref = str(cfg.get("evaluation", {}).get("comfort_reference", "b3"))
+        self.ref_name = ref
+        self.ref_cfg = load_config(scenario=ref, common_path=self._common_path)
+        self.ref_policy = make_policy(self.ref_cfg)
+        self.declared_states = make_state_provider(cfg).states()
+        self.tracker = HumanTracker(self, cfg)
+        self.half_extents = footprint_half_extents(cfg)
+
         self.client = ActionClient(self, NavigateToPose, "navigate_to_pose")
         # Asked once, before driving, to separate "no route exists" from
         # "a route exists and the robot is stuck on it".
@@ -138,6 +180,9 @@ class Nav2Trial(Node):
                 self.safety_stop_seconds += now - self._safety_since
                 self._safety_since = None
         self.safety_action = msg.action_type
+
+    def _on_evading(self, msg: Bool) -> None:
+        self.evading = bool(msg.data)
 
     def _on_humans_moving(self, msg: Bool) -> None:
         self.humans_moving = bool(msg.data)
@@ -200,6 +245,20 @@ class Nav2Trial(Node):
         p = self.latest.pose.pose
         return odom_to_world(self.cfg, (p.position.x, p.position.y,
                                         yaw_from_quaternion(p.orientation)))
+
+    def human_positions_now(self) -> dict:
+        """(x, y) per person from /tf, or the configured spot until it arrives."""
+        out = {}
+        for key in self.human_keys:
+            try:
+                tf = self.tf_buffer.lookup_transform(
+                    "world", f"human_{key}", rclpy.time.Time(),
+                    timeout=Duration(seconds=0.0))
+                t = tf.transform.translation
+                out[key] = (t.x, t.y)
+            except Exception:
+                out[key] = self._configured_humans[key]
+        return out
 
     def speed(self) -> float:
         t = self.latest.twist.twist
@@ -392,6 +451,37 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
 
         distance = math.hypot(node.goal[0] - x, node.goal[1] - y)
 
+        # Record how close the robot actually came to each person. The
+        # Comfort Space is what it should keep; this is what it kept, and
+        # the only direct evidence of whether somebody walked into it.
+        touching = False
+        for key, (hx, hy) in node.human_positions_now().items():
+            gap = clearance(node.cfg, (x, y, yaw), hx, hy)
+            best = res.min_clearance.get(key)
+            if best is None or gap < best[0]:
+                res.min_clearance[key] = (gap, now - t_start)
+            touching = touching or gap <= 0.0
+        if touching:
+            res.contact_seconds += tick_delta
+
+        # Social distance: the reference Comfort Space, sized from each
+        # person's state and current speed exactly as the policy does.
+        res.comfort_reference = node.ref_name
+        axes = node.ref_policy.axes(node.declared_states, node.tracker.speeds())
+        ref_shapes = build_shapes(node.ref_cfg, axes, node.human_positions_now(),
+                                  node.tracker.headings(), 0.0)
+        outline = footprint_outline((x, y, yaw), *node.half_extents)
+        for shape in ref_shapes:
+            k, depth = intrusion(shape, outline)
+            worst = res.comfort_worst.get(shape.key)
+            if worst is None or depth > worst[0] or (depth == 0.0 and k < worst[1]):
+                res.comfort_worst[shape.key] = (depth, k, now - t_start)
+            if k < 1.0:
+                res.comfort_seconds[shape.key] = (
+                    res.comfort_seconds.get(shape.key, 0.0) + tick_delta)
+        if node.evading:
+            res.evade_seconds += tick_delta
+
         def finish(label: str) -> TrialResult:
             res.result = label
             res.travel_time = now - t_start
@@ -449,7 +539,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
             print(f"  t={now - t_start:6.1f}s  pos=({x:6.2f},{y:6.2f})  "
                   f"dist={distance:5.2f}m  v={node.speed():4.2f}m/s  "
                   f"stuck={now - last_progress_t:4.1f}s"
-                  f"{'  YIELDING' if node.yielding else ''}", flush=True)
+                  f"{'  EVADING' if node.evading else '  YIELDING' if node.yielding else ''}", flush=True)
             last_report = now
 
     return res
@@ -458,7 +548,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/common.yaml")
-    parser.add_argument("--scenario", default=None, help="b2, b3 or a path")
+    parser.add_argument("--scenario", default=None, help="b1, b2, b3 or a path")
     parser.add_argument("--goal", nargs=2, type=float, metavar=("X", "Y"))
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
@@ -468,7 +558,7 @@ def main() -> int:
         cfg["navigation"]["goal"] = list(args.goal)
 
     rclpy.init()
-    node = Nav2Trial(cfg)
+    node = Nav2Trial(cfg, args.config)
 
     print("\n=== Trial (Nav2) ===", flush=True)
     sc = cfg.get("scenario", {})
@@ -512,6 +602,17 @@ def main() -> int:
     if res.waited_for_humans:
         print(f"  waited for people  : {res.waited_for_humans:.1f} simulated s "
               f"(not counted as a deadlock)", flush=True)
+    for key, (gap, at) in sorted(res.min_clearance.items()):
+        print(f"  closest to {key:<7s} : {gap:+.3f} m at t={at:.1f} s"
+              f"{'  CONTACT' if gap <= 0.0 else ''}", flush=True)
+    print(f"  contact time       : {res.contact_seconds:.1f} simulated s", flush=True)
+    print(f"  stepped aside      : {res.evade_seconds:.1f} simulated s", flush=True)
+    print(f"  comfort reference  : {res.comfort_reference} "
+          f"(same yardstick in every scenario)", flush=True)
+    for key, (depth, k, at) in sorted(res.comfort_worst.items()):
+        inside = res.comfort_seconds.get(key, 0.0)
+        print(f"  intrusion into {key:<3s} : {depth:.2f} m deep at t={at:.1f} s, "
+              f"{inside:.1f} s inside (k_min {k:.2f})", flush=True)
 
     return 0 if res.result == "SUCCESS" else 1
 
