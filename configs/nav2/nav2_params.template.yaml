@@ -189,6 +189,14 @@ local_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
+          # Treat an empty beam as "clear all the way out", not as no
+          # information. pointcloud_to_laserscan publishes infinity for a
+          # beam that hit nothing (use_inf true), and Nav2 discards those
+          # by default, so nothing along them is ever cleared. Measured
+          # without it: a patch of about 90 cells sat in the middle of the
+          # corridor with no scan return within 0.45 m of it, and the AMR
+          # braked from 0.40 to 0.20 m/s on its way past.
+          inf_is_valid: True
           raytrace_max_range: 8.0
           raytrace_min_range: 0.0
           obstacle_max_range: 6.0
@@ -233,6 +241,14 @@ global_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
+          # Treat an empty beam as "clear all the way out", not as no
+          # information. pointcloud_to_laserscan publishes infinity for a
+          # beam that hit nothing (use_inf true), and Nav2 discards those
+          # by default, so nothing along them is ever cleared. Measured
+          # without it: a patch of about 90 cells sat in the middle of the
+          # corridor with no scan return within 0.45 m of it, and the AMR
+          # braked from 0.40 to 0.20 m/s on its way past.
+          inf_is_valid: True
           raytrace_max_range: 8.0
           raytrace_min_range: 0.0
           obstacle_max_range: 6.0

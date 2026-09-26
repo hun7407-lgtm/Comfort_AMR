@@ -300,6 +300,50 @@ def patch_lidar_graph(cfg: Dict[str, Any]) -> list[str]:
     return ["RTX LiDAR fullScan enabled (was publishing partial sweeps)"]
 
 
+def patch_lidar_sensor(cfg: Dict[str, Any]) -> list[str]:
+    """Set the LiDAR's minimum measuring distance and detection threshold.
+
+    The AMR USD authors omni:sensor:Core:nearRangeM as 1.0 m, so the
+    sensor reports nothing closer than a metre. Measured with a person
+    walking into the robot: 3 returns at 1.10 m, none at 0.69 m, and the
+    person vanished from the costmap for the last stretch before contact,
+    which is exactly where the robot needs to see them. Real scanning
+    LiDARs start at 0.1-0.5 m, so the asset's value is the outlier.
+
+    The asset itself is left alone; the change is made on the stage after
+    it is referenced, like the graph patches above.
+    """
+    scan = cfg["ros"]["scan"]
+    wanted = {
+        "omni:sensor:Core:nearRangeM": ("minimum range", scan.get("sensor_near_range"), "m"),
+        "omni:sensor:Core:minReflectance": ("minimum reflectance",
+                                            scan.get("sensor_min_reflectance"), ""),
+    }
+    if all(v[1] is None for v in wanted.values()):
+        return []
+    stage = get_current_stage()
+    path = f"{cfg['amr']['chassis_path']}/{cfg['ros']['frames']['lidar']}"
+    prim = stage.GetPrimAtPath(path)
+    if not prim.IsValid():
+        return [f"no LiDAR prim at {path}; sensor left as authored"]
+
+    notes = []
+    for name, (label, value, unit) in wanted.items():
+        if value is None:
+            continue
+        attr = prim.GetAttribute(name)
+        if not attr:
+            notes.append(f"{path} has no {name.split(':')[-1]}; left as authored")
+            continue
+        was = attr.Get()
+        if was is not None and abs(float(was) - float(value)) < 1e-9:
+            continue
+        attr.Set(float(value))
+        suffix = f" {unit}" if unit else ""
+        notes.append(f"LiDAR {label} {float(was):.3g}{suffix} -> {float(value):.3g}{suffix}")
+    return notes
+
+
 def build_scene(cfg: Dict[str, Any], usd_path: str, verbose: bool = True):
     """Build the complete STEP 3/4 scene: physics, ground, light, AMR.
 
@@ -349,7 +393,7 @@ def build_scene(cfg: Dict[str, Any], usd_path: str, verbose: bool = True):
         f"spawned at start ({start_x}, {start_y})")
 
     for change in (patch_odometry_graph(cfg) + patch_lidar_graph(cfg)
-                   + stabilise_articulation(cfg)):
+                   + patch_lidar_sensor(cfg) + stabilise_articulation(cfg)):
         say(f"patched: {change}")
 
     for note in human_tf.publish_human_frames(cfg):

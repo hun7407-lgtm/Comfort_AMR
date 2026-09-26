@@ -120,7 +120,15 @@ def _facing_yaw(cfg: Dict[str, Any], key: str, hx: float, hy: float) -> float:
 
 
 def hide_human_cylinders(cfg: Dict[str, Any]) -> int:
-    """Make the human colliders invisible, leaving their physics intact."""
+    """Make the human colliders invisible, leaving their physics intact.
+
+    The RTX LiDAR traces what renders, so an invisible collider is also
+    invisible to the sensor and the characters are what the robot sees.
+    Set humans.character.hide_colliders false to keep them visible, which
+    is how their contribution to /scan can be measured.
+    """
+    if not cfg["humans"]["character"].get("hide_colliders", True):
+        return 0
     stage = get_current_stage()
     hidden = 0
     for key, _x, _y in human_positions(cfg):
