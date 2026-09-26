@@ -30,6 +30,7 @@ omni.*.log
 # Per-trial CSV is committed on purpose (small, it is the result).
 # Anything heavy that a trial may emit is not.
 results/**/*.mp4
+results/**/*.gif
 results/**/*.avi
 results/**/*.png
 results/**/*.jpg
@@ -37,6 +38,11 @@ results/**/*.bag
 results/**/*.db3
 results/**/*.usd
 results/**/rosbag2_*/
+
+# The write-ups under results/notion are documentation rather than trial
+# output: a markdown summary plus a few small stills, kept together so
+# the notes still make sense on their own.
+!results/notion/**
 
 # ---------------------------------------------------------------
 # Editor / OS

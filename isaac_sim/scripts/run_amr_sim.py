@@ -31,10 +31,13 @@ def parse_args():
     parser.add_argument("--config", default="configs/common.yaml",
                         help="path to the common config")
     parser.add_argument("--scenario", default=None,
-                        help="b2, b3 or a path to a scenario config")
+                        help="b1, b2, b3 or a path to a scenario config")
     parser.add_argument("--max-seconds", type=float, default=0.0,
                         help="stop after this many simulated seconds "
                              "(0 = run until interrupted)")
+    parser.add_argument("--record", default=None, metavar="DIR",
+                        help="save camera frames of the run into DIR; "
+                             "see isaac_sim/utils/recorder.py")
     return parser.parse_args()
 
 
@@ -90,6 +93,14 @@ def main() -> int:
     )
     simulation_context.reset()
 
+    recorder = None
+    if args.record:
+        from isaac_sim.utils.recorder import FrameRecorder
+        label = cfg.get("scenario", {}).get("name", "common").upper()
+        recorder = FrameRecorder(cfg, Path(args.record), label)
+        print(f"  recording frames to {args.record} from "
+              f"{recorder.start:.0f} simulated s", flush=True)
+
     topics = cfg["ros"]["topics"]
     print("\n=== Simulation running ===", flush=True)
     print(f"  ROS_DOMAIN_ID = {os.environ.get('ROS_DOMAIN_ID', '0')}", flush=True)
@@ -113,6 +124,8 @@ def main() -> int:
         simulation_context.step(render=True)
         # Keep the walking humans' colliders under their characters.
         walkers.update(physics_dt)
+        if recorder is not None:
+            recorder.maybe_capture(simulation_context.current_time)
         steps += 1
         if max_steps and steps >= max_steps:
             print(f"  reached --max-seconds {args.max_seconds}", flush=True)

@@ -35,6 +35,7 @@ PATTERNS=(
     # configured, and B3 looked like it deadlocked.
     "scripts/comfort_[g]ate.py"
     "scripts/comfort_[p]ublisher.py"
+    "scripts/costmap_[r]ecorder.py"
 )
 
 # Never kill this script or anything it is running inside. pgrep -f
