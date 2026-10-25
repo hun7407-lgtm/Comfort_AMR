@@ -62,10 +62,38 @@ results/**/rosbag2_*/
 # which is exactly the drift those generators exist to prevent.
 configs/nav2/corridor_map.pgm
 configs/nav2/corridor_map.yaml
+configs/nav2/factory_map.pgm
+configs/nav2/factory_map.yaml
 configs/nav2/nav2_params.yaml
+
+# nav3d/maps/* is committed on purpose, for the opposite reason to the
+# generated maps above: it is NOT regenerated per run. It is built once
+# by ./scripts/run_mapping.sh and then shared by every 3D trial, so the
+# file is an input to the experiment, not an artefact of it. Losing it
+# would mean B1, B2 and B3 could no longer be compared against the runs
+# already recorded.
 
 # Written when the scene is built, from the humans' configured states.
 results/character_commands.txt
+
+# Per-trial console logs. One batch of 24 trials writes 2 MB of them
+# and they are machine-specific scrollback: the result of a trial is
+# its CSV row and its JSON, both of which are committed. Keeping the
+# logs made a batch directory ten times larger than the data in it.
+results/**/logs/
+
+# Captures from the real robot. Big, binary, and not what the
+# repository is for -- the code that produced them is committed and
+# the write-up that interprets them is committed.
+results/**/*.ply
+results/**/*.deb
+results/**/cloud_viewer/*.bin
+
+# assets/scene/*.usd is committed on purpose, even though
+# scripts/build_factory_scene.sh writes it: it is what you open in Isaac
+# Sim to edit, and read_factory_scene.sh brings those edits back to the
+# config. Nothing above ignores it; this note is here so it is not added
+# to the generated list by mistake.
 
 # ---------------------------------------------------------------
 # Local, machine-specific overrides
