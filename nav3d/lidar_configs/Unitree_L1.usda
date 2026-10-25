@@ -1,0 +1,97 @@
+#usda 1.0
+(
+    defaultPrim = "Unitree_L1"
+    doc = """Unitree 4D LiDAR L1, as measured on the NSL AMR.
+
+Not a datasheet transcription. The scan pattern here comes from a 39 s
+stationary recording of the real sensor, analysed by
+nav3d/analyze_lidar_bag.py:
+
+    vertical    0 .. 90 deg      (88.3 measured; L2 would be 96)
+    horizontal  360 deg
+    rate        9.4 Hz, 593 points per message, 5889 points/s
+    range       0.28 .. 13.0 m seen indoors; 0.05 .. 30 m rated
+    mounting    0.31 m above the floor, no rotation
+
+The 18 elevations below are spread to match the measured density, which
+is not uniform: the real sensor concentrates returns near the horizon
+and near the zenith and thins out in between.
+
+What this does NOT reproduce: the L1 is non-repetitive -- its `ring`
+field is a sweep index, not a laser line, and each sweep paints
+different directions, so coverage fills in over a second or two. This
+is a fixed grid: the right points on average, but the same directions
+every revolution."""
+)
+
+def OmniLidar "Unitree_L1" (
+    prepend apiSchemas = ["OmniSensorGenericLidarCoreAPI"]
+)
+{
+    float omni:sensor:Core:avgPowerW = 0.009
+    float omni:sensor:Core:azimuthErrorMean = 0.0
+    float omni:sensor:Core:azimuthErrorStd = 0.05
+    float omni:sensor:Core:elevationErrorMean = 0.0
+    float omni:sensor:Core:elevationErrorStd = 0.05
+    float[] omni:sensor:Core:emitterState:s001:azimuthDeg = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    uint[] omni:sensor:Core:emitterState:s001:channelId = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+    float[] omni:sensor:Core:emitterState:s001:distanceCorrectionM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s001:elevationDeg = [1.9000, 4.4000, 6.9000, 11.4000, 13.4000, 15.4000, 17.4000, 22.7300, 26.0700, 32.7300, 36.0700, 44.4000, 52.7300, 56.0700, 64.4000, 74.4000, 82.7300, 86.0700]
+    uint[] omni:sensor:Core:emitterState:s001:fireTimeNs = [0, 42087, 84175, 126262, 168350, 210437, 252525, 294612, 336700, 378787, 420875, 462962, 505050, 547138, 589225, 631313, 673400, 715488]
+    float[] omni:sensor:Core:emitterState:s001:focalDistM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s001:focalSlope = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s001:horOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s001:reportRateDiv = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s001:vertOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s002:azimuthDeg = [2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270, 2.7270]
+    uint[] omni:sensor:Core:emitterState:s002:channelId = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+    float[] omni:sensor:Core:emitterState:s002:distanceCorrectionM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s002:elevationDeg = [2.3000, 4.8000, 7.3000, 11.8000, 13.8000, 15.8000, 17.8000, 23.1300, 26.4700, 33.1300, 36.4700, 44.8000, 53.1300, 56.4700, 64.8000, 74.8000, 83.1300, 86.4700]
+    uint[] omni:sensor:Core:emitterState:s002:fireTimeNs = [0, 42087, 84175, 126262, 168350, 210437, 252525, 294612, 336700, 378787, 420875, 462962, 505050, 547138, 589225, 631313, 673400, 715488]
+    float[] omni:sensor:Core:emitterState:s002:focalDistM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s002:focalSlope = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s002:horOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s002:reportRateDiv = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s002:vertOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s003:azimuthDeg = [5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550, 5.4550]
+    uint[] omni:sensor:Core:emitterState:s003:channelId = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+    float[] omni:sensor:Core:emitterState:s003:distanceCorrectionM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s003:elevationDeg = [2.7000, 5.2000, 7.7000, 12.2000, 14.2000, 16.2000, 18.2000, 23.5300, 26.8700, 33.5300, 36.8700, 45.2000, 53.5300, 56.8700, 65.2000, 75.2000, 83.5300, 86.8700]
+    uint[] omni:sensor:Core:emitterState:s003:fireTimeNs = [0, 42087, 84175, 126262, 168350, 210437, 252525, 294612, 336700, 378787, 420875, 462962, 505050, 547138, 589225, 631313, 673400, 715488]
+    float[] omni:sensor:Core:emitterState:s003:focalDistM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s003:focalSlope = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s003:horOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s003:reportRateDiv = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s003:vertOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s004:azimuthDeg = [8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820, 8.1820]
+    uint[] omni:sensor:Core:emitterState:s004:channelId = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+    float[] omni:sensor:Core:emitterState:s004:distanceCorrectionM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s004:elevationDeg = [3.1000, 5.6000, 8.1000, 12.6000, 14.6000, 16.6000, 18.6000, 23.9300, 27.2700, 33.9300, 37.2700, 45.6000, 53.9300, 57.2700, 65.6000, 75.6000, 83.9300, 87.2700]
+    uint[] omni:sensor:Core:emitterState:s004:fireTimeNs = [0, 42087, 84175, 126262, 168350, 210437, 252525, 294612, 336700, 378787, 420875, 462962, 505050, 547138, 589225, 631313, 673400, 715488]
+    float[] omni:sensor:Core:emitterState:s004:focalDistM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s004:focalSlope = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s004:horOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s004:reportRateDiv = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float[] omni:sensor:Core:emitterState:s004:vertOffsetM = [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    float omni:sensor:Core:farRangeM = 30.0
+    token omni:sensor:Core:intensityMappingType = "LINEAR"
+    token omni:sensor:Core:intensityProcessing = "NORMALIZATION"
+    uint omni:sensor:Core:maxReturns = 1
+    float omni:sensor:Core:minReflectance = 0.01
+    float omni:sensor:Core:nearRangeM = 0.05
+    uint omni:sensor:Core:numberOfChannels = 18
+    uint omni:sensor:Core:numberOfEmitters = 18
+    uint omni:sensor:Core:emitterStateCount = 4
+    uint omni:sensor:Core:stateResolutionStep = 1
+    uint omni:sensor:Core:pulseTimeNs = 6
+    float omni:sensor:Core:rangeAccuracyM = 0.02
+    float omni:sensor:Core:rangeResolutionM = 0.004
+    token omni:sensor:Core:rayType = "IDEALIZED"
+    uint omni:sensor:Core:reportRateBaseHz = 1320
+    token omni:sensor:Core:rotationDirection = "CW"
+    uint omni:sensor:Core:scanRateBaseHz = 10
+    token omni:sensor:Core:scanType = "ROTARY"
+    bool omni:sensor:Core:skipDroppingInvalidPoints = 1
+    float omni:sensor:Core:startAzimuthOffsetDeg = 0
+    string omni:sensor:modelName = "Unitree_L1"
+}

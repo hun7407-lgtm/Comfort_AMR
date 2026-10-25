@@ -121,6 +121,20 @@ amr:
   reference_prim_path: /World
   articulation_path: /World/AMR
   chassis_path: /World/AMR/base_link
+  lidar_prim_path: /World/AMR/base_link/lidar_link
+
+  # The sensor definition the LiDAR prim references.
+  #
+  # Empty keeps whatever the asset ships with, which is Isaac's
+  # Example_Rotary: 128 emitters over -15 to +15 degrees. The real
+  # machine has a Unitree 4D LiDAR L1 that looks upward, 1.9 to 86
+  # degrees, and only the upward pattern can see that a person is a
+  # column reaching past 0.90 m rather than a low wide obstacle.
+  #
+  # nav3d/lidar_configs/Unitree_L1.usda was measured off the real
+  # sensor: 594 points a frame against the machine's 593, elevations
+  # +1.8 to +86.2 against 0 to +89.
+  lidar_profile: nav3d/lidar_configs/Unitree_L1.usda
 
   drive_joints:
     - left_wheel_joint
@@ -335,6 +349,42 @@ humans:
     # Under {assets_root}/Isaac/People/Characters/<name>/<name>.usd
     a: F_Business_02
     b: M_Medical_01
+    # Whether the collider cylinders are rendered, which is a sensing
+    # decision rather than an aesthetic one: the RTX LiDAR traces what
+    # renders.
+    #
+    # Hidden: the characters themselves are what the robot sees.
+    #
+    # This was false for a while, with the collider cylinders left
+    # visible so the LiDAR had something to hit. The reason was a
+    # measurement -- with the characters alone, stress seed 5 had the
+    # robot drive into a standing worker for 3.2 s while the
+    # protective field reacted for 0.4 s, and the same seed with the
+    # cylinders visible had it drive in 0.0 s and keep 0.89 m. A
+    # protective field that cannot see a person is not a protective
+    # field, so the cylinders stayed and the cost was cosmetic: a grey
+    # drum standing where a person was.
+    #
+    # That measurement was taken through the ASSET'S OWN sensor:
+    # -15 to +15 degrees, with 10.9 degrees between azimuth columns,
+    # which is 0.38 m apart at 2 m. A leg fits between two of those
+    # columns, and the beams never reached above a person's waist. The
+    # sensor is now the real machine's Unitree L1, looking upward, with
+    # four times the columns, and the characters are traced perfectly
+    # well:
+    #
+    #                   cylinders       characters only
+    #     0-2 m         100%            100%  (131 of 131)
+    #     2-4 m         92.9%           95.1% (547 of 575)
+    #     4-6 m         67.3%           55.8%
+    #     position      0.05 m          0.06 m median
+    #     false alarms  0               2 in 585 sweeps
+    #
+    # The fall-off past 4 m is the honest difference: a cylinder is
+    # 0.50 m of solid return at every height, and a person is thinner
+    # than that and has gaps. The near field, which is where Comfort
+    # Space is decided, is if anything better.
+    hide_colliders: true
     # Which way they face. "station" turns them toward their own
     # station, which is what station_engaged is supposed to look like.
     facing: station

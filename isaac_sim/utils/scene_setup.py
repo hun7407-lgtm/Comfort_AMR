@@ -18,11 +18,13 @@ from isaacsim.core.api.objects import GroundPlane
 from isaacsim.core.utils.stage import add_reference_to_stage, get_current_stage
 from pxr import Gf, PhysxSchema, Sdf, Usd, UsdGeom, UsdLux, UsdPhysics
 
+from comfort_core import resolve_path
 from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
 from comfort_core.human_state import make_state_provider
+from comfort_core.factory_layout import clearance_summary, validate_factory
 from comfort_core.layout import passage_report, validate
 from isaac_sim.utils import comfort_viz, human_motion, human_tf
-from isaac_sim.environments import corridor, people
+from isaac_sim.environments import corridor, factory, people
 
 
 def setup_physics_scene(cfg: Dict[str, Any], prim_path: str = "/physicsScene") -> Usd.Prim:
@@ -341,6 +343,45 @@ def patch_lidar_graph(cfg: Dict[str, Any]) -> list[str]:
     return ["RTX LiDAR fullScan enabled (was publishing partial sweeps)"]
 
 
+def patch_lidar_profile(cfg: Dict[str, Any]) -> list[str]:
+    """Point the AMR's LiDAR at a different sensor definition.
+
+    The asset ships referencing Isaac's `Example_Rotary`: 128 emitters
+    spread over -15 to +15 degrees. The real machine carries a Unitree
+    4D LiDAR L1, which looks UPWARD -- 1.9 to 86 degrees -- and that
+    difference decides whether a person can be told from a pillar.
+    At 2 m, a +-15 degree sensor mounted at 0.31 m sees nothing above
+    0.84 m: no head, no shoulders, no "column that reaches past
+    0.90 m". The upward pattern is the whole reason the real robot's
+    detector works.
+
+    The profile is swapped by replacing the prim's REFERENCE, not by
+    editing its attributes. Editing the emitter arrays of a sensor that
+    already exists aborts the renderer with "Malformed model parameter
+    length" -- the plugin caches those arrays when the sensor is
+    created and re-reads only the count. See
+    results/notion/261011/261011_실기연결_LiDAR프로파일.md, which lists
+    that and three more traps found the hard way.
+    """
+    profile = cfg.get("amr", {}).get("lidar_profile")
+    if not profile:
+        return []
+    path = resolve_path(profile)
+    if not path.is_file():
+        return [f"lidar profile {profile} not found; left the asset's own"]
+
+    stage = get_current_stage()
+    prim = stage.GetPrimAtPath(cfg["amr"]["lidar_prim_path"])
+    if not prim.IsValid():
+        return [f"no lidar prim at {cfg['amr']['lidar_prim_path']}"]
+
+    refs = prim.GetReferences()
+    refs.ClearReferences()
+    refs.AddReference(str(path))
+    return [f"LiDAR profile -> {path.name} "
+            f"(was the asset's own Example_Rotary)"]
+
+
 def patch_lidar_sensor(cfg: Dict[str, Any]) -> list[str]:
     """Set the LiDAR's minimum measuring distance and detection threshold.
 
@@ -451,7 +492,8 @@ def build_scene(cfg: Dict[str, Any], usd_path: str, verbose: bool = True):
         f"spawned at start ({start_x}, {start_y})")
 
     for change in (patch_odometry_graph(cfg) + patch_lidar_graph(cfg)
-                   + patch_lidar_sensor(cfg) + stabilise_articulation(cfg)):
+                   + patch_lidar_profile(cfg) + patch_lidar_sensor(cfg)
+                   + stabilise_articulation(cfg)):
         say(f"patched: {change}")
 
     for note in human_tf.publish_human_frames(cfg):
