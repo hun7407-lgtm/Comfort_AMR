@@ -794,8 +794,44 @@ navigation:
 
   # Speed ceiling. Shared by every scenario so B2 and B3 cannot differ
   # in how fast the robot is allowed to drive.
-  max_linear_speed: 0.4
-  max_angular_speed: 0.8
+  #
+  # 0.80 m/s. It was 0.40, which came from a reference repository's
+  # README and was never checked against the machine: at 0.40 the robot
+  # is a third of walking pace and every person in the bay overtakes
+  # it, which makes the traffic in a trial nothing like the traffic on
+  # a floor.
+  #
+  # The platform's own manual gives no rated speed, only the step
+  # conversion -- 120 steps a wheel turn, 250 mm wheel, so 1 step is
+  # 6.545 mm and a speed command in steps/s is sps x 0.006545 m/s. Its
+  # worked examples command 100 and 200 sps, which are 0.65 and
+  # 1.31 m/s, so the platform is built for about a metre a second.
+  #
+  # 0.80 m/s. It was 1.20 for a day, which is about what the manual's
+  # own 200 sps example commands, and the bay would not take it: in ten
+  # randomised trials at 1.20 not one robot reached its goal. The
+  # protective field goes as v^2 -- 1.12 m ahead at 0.80 m/s and
+  # 1.80 m at 1.20 -- and a 1.80 m field in a 1.5 m aisle is in
+  # contact with something almost all the time.
+  #
+  # That is a real constraint rather than a modelling artefact, and it
+  # is worth saying in the write-up: in an aisle this narrow the
+  # geometry sets the speed, not the motors.
+  #
+  # Replace it with the real figure when the machine is read: the
+  # number to look for is the controller's own cmd_vel limit.
+  max_linear_speed: 0.8
+  # 2.0 rad/s, because the turning radius is v / omega and the aisle is
+  # 1.5 m wide. At 1.2 m/s with omega 1.2 the robot needs a metre to
+  # come round, which it does not have between two painted lines: it
+  # cut the corner out of the lane into the machine zone, where the map
+  # is solid, and then could not plan its way back -- measured, stress
+  # seed 2, stranded at (8.44, 2.84) for the rest of the trial.
+  #
+  # At 2.0 the radius is 0.60 m, which fits. A differential drive with
+  # a 0.48 m wheel base reaches it at 1.44 m/s a wheel, well inside
+  # what the hub motors do.
+  max_angular_speed: 2.0
 
   # Proportional gains for the STEP 5 go-to-goal controller. This
   # controller is a placeholder: PHASE D replaces it with Nav2.
@@ -871,7 +907,40 @@ navigation:
   collision_monitor:
     enabled: true
     # Seconds of predicted travel before a collision at which to stop.
-    time_before_collision: 0.9
+    #
+    # DERIVED, not set. scripts/generate_nav2_params.py computes it
+    # from the same ISO 3691-4 sum as the protective field:
+    #
+    #   reaction + v / (2 * decel) + stop_margin / v
+    #
+    # which is the stopping distance at the top speed, read as a
+    # duration. At 0.40 m/s that is 1.08 s; at 0.80 m/s, 0.96 s.
+    #
+    # It used to be written here by hand, and the hand-written 0.90 s
+    # was 0.07 m short of the standard -- B1 made contact with people
+    # in all three bays. Tying it to the speed means raising the speed
+    # can never leave it stale again. Set a number here to override.
+    # time_before_collision: 1.10
+    # The hard protective field, the last resort behind the approach
+    # layer above. It is a velocity_polygon: ISO 3691-4 sizes a
+    # protective field by the distance the vehicle still covers after it
+    # sees something,
+    #
+    #     reaction_time * v  +  v^2 / (2 * decel)  +  stop_margin
+    #
+    # measured forward from the front of the footprint, so one field per
+    # speed band. scripts/generate_nav2_params.py does the arithmetic.
+    #
+    # Sideways the field adds scanner_tolerance only. A fixed field of
+    # footprint + stop_margin on every side is 0.49 m half-width, and in
+    # a 1.5 m aisle (lane edge 0.75 m from the centreline) it caught the
+    # floor outside the lane and stopped the robot permanently -- B1
+    # deadlocked with the nearest person 13 m away.
+    stop_margin: 0.25        # 0.10 scanner tolerance + 0.15 clearance
+    reaction_time: 0.25      # ISO 3691-4 worst-case sense-to-brake delay
+    decel: 1.0               # m/s^2, the platform's braking limit
+    scanner_tolerance: 0.10  # lateral measurement error of the LiDAR
+    reverse_speed: 0.25      # fastest backup Nav2's recovery commands
     simulation_time_step: 0.1
     # Laser returns needed inside the zone before it acts, which keeps a
     # single stray point from halting the robot.

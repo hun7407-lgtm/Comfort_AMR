@@ -69,7 +69,7 @@ controller_server:
       # edging through a narrow Comfort Space gap is slow on purpose, and
       # we want our own deadlock detector to make that call, not Nav2's.
       required_movement_radius: 0.5
-      movement_time_allowance: 15.0
+      movement_time_allowance: ${PROGRESS_ALLOWANCE}
 
     general_goal_checker:
       stateful: True
@@ -170,7 +170,26 @@ local_costmap:
       height: 6
       resolution: 0.05
       footprint: "${FOOTPRINT}"
-      plugins: ["obstacle_layer", "inflation_layer"]
+      # The static layer is in the LOCAL costmap too, and that is not
+      # redundant. Without it the controller drives by laser alone:
+      # the painted lanes exist only in the map the global planner
+      # uses, so to the controller the floor beside a lane is empty and
+      # cutting a corner across it costs nothing. It did exactly that
+      # at every junction -- left the lane by 0.2 to 0.6 m, and the
+      # global planner then refused to plan from a pose its own map
+      # calls solid: "GridBased plugin failed to plan from
+      # (-9.34, -2.70)", 43 times in one wave of ten trials.
+      #
+      # The two have to agree about where the floor is. Widening the
+      # junctions only moved the wall the robot cut through.
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        enabled: True
+        # The rolling window needs the map republished to a late
+        # subscriber, or the layer comes up empty and silently stays
+        # that way.
+        map_subscribe_transient_local: True
       # Filters run after the plugins, so the Comfort Space cost is not
       # inflated a second time and the painted radius is the radius the
       # planner sees.
@@ -274,7 +293,73 @@ collision_monitor:
     base_shift_correction: True
     stop_pub_timeout: 2.0
     enable_stamped_cmd_vel: false
-    polygons: ["FootprintApproach"]
+    # Two layers, both needed for ISO 3691-4's "stop before contact".
+    #
+    #   ProtectiveStop   a protective field that GROWS WITH SPEED, which
+    #                    is how the standard constructs it and how real
+    #                    AMRs are set up. Anything inside stops the
+    #                    wheels.
+    #   FootprintApproach  slows as time-to-collision falls, so the stop
+    #                    field is rarely reached.
+    #
+    # A fixed field does not work in a 1.5 m aisle. Tried: footprint
+    # plus 0.25 m all round is 0.49 m half-width, the lane edge is
+    # 0.75 m from the centreline, and the moment the robot drifted
+    # 0.03 m over the line the field caught the floor outside and the
+    # robot stopped for good -- on a wall, not on a person.
+    #
+    # Each band is the standard's own sum at that band's top speed:
+    # reaction (0.25 s) + braking (v^2 / 2a, a = 1.0 m/s^2) + 0.25 m of
+    # margin, measured from the front of the footprint. Sideways the
+    # field is the half-width plus the 0.10 m scanner tolerance only --
+    # 0.34 m, which leaves 0.41 m to the lane edge.
+    #
+    # The approach time below is the same sum read as a duration. At
+    # 0.40 m/s: reaction 0.10 m + braking 0.08 m + margin 0.25 m =
+    # 0.43 m, which is 1.07 s of travel. It was 0.90 s (0.36 m) and B1
+    # made contact with people in all three bays.
+    polygons: ["ProtectiveStop", "FootprintApproach"]
+    ProtectiveStop:
+      type: "velocity_polygon"
+      action_type: "stop"
+      min_points: ${CM_MIN_POINTS}
+      visualize: False
+      enabled: True
+      holonomic: false
+      # Checked in this order; the last one is the fallback for any
+      # velocity the others miss, so it carries the field for a
+      # creeping robot and the catch-all range.
+      velocity_polygons: ["cruise", "mid", "slow", "reverse", "stopped"]
+      cruise:
+        points: "${CM_FIELD_CRUISE}"
+        linear_min: ${CM_BAND_MID}
+        linear_max: 4.0
+        theta_min: -3.0
+        theta_max: 3.0
+      mid:
+        points: "${CM_FIELD_MID}"
+        linear_min: ${CM_BAND_SLOW}
+        linear_max: ${CM_BAND_MID}
+        theta_min: -3.0
+        theta_max: 3.0
+      slow:
+        points: "${CM_FIELD_SLOW}"
+        linear_min: 0.05
+        linear_max: ${CM_BAND_SLOW}
+        theta_min: -3.0
+        theta_max: 3.0
+      reverse:
+        points: "${CM_FIELD_REVERSE}"
+        linear_min: -4.0
+        linear_max: -0.05
+        theta_min: -3.0
+        theta_max: 3.0
+      stopped:
+        points: "${CM_FIELD_STOPPED}"
+        linear_min: -4.0
+        linear_max: 4.0
+        theta_min: -3.0
+        theta_max: 3.0
     FootprintApproach:
       type: "polygon"
       action_type: "approach"
