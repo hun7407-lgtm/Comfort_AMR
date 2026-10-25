@@ -1,0 +1,259 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Corridor Cloud</title>
+<style>
+  :root { --bg:#111317; --fg:#e8e8ea; --dim:#9aa0a6; --line:#2a2e35; --accent:#4da3ff; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--fg);
+              font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; overflow:hidden; }
+  canvas { display:block; }
+  .panel { position:fixed; background:#0d0f13d9; border:1px solid var(--line);
+           border-radius:8px; padding:12px 14px; }
+  #hud { top:14px; left:14px; max-width:320px; }
+  #hud h1 { margin:0 0 6px; font-size:14px; font-weight:600; }
+  #hud p { margin:3px 0; color:var(--dim); }
+  #hud b { color:var(--fg); }
+  .row { display:flex; align-items:center; gap:8px; margin-top:9px; }
+  .row label { color:var(--dim); width:78px; flex:none; }
+  input[type=range] { flex:1; accent-color:var(--accent); }
+  #time { left:14px; right:14px; bottom:14px; }
+  #timebar { display:flex; align-items:center; gap:12px; }
+  #play { width:46px; height:30px; flex:none; background:#1b1f27; color:var(--fg);
+          border:1px solid var(--line); border-radius:6px; cursor:pointer; font:inherit; }
+  #play:hover { border-color:var(--accent); }
+  #scrub { flex:1; accent-color:var(--accent); }
+  #clock { width:200px; flex:none; text-align:right; color:var(--dim); }
+  #clock b { color:var(--fg); }
+  .modes { display:flex; gap:6px; margin-top:9px; }
+  .modes button { flex:1; background:#1b1f27; color:var(--dim); border:1px solid var(--line);
+                  border-radius:6px; padding:5px 0; cursor:pointer; font:inherit; font-size:12px; }
+  .modes button.on { color:#fff; border-color:var(--accent); background:#17314d; }
+  #help { position:fixed; top:14px; right:14px; color:var(--dim); text-align:right; }
+  #help kbd { background:#1b1f27; border:1px solid var(--line); border-radius:4px;
+              padding:1px 6px; color:var(--fg); }
+  #loading { position:fixed; inset:0; display:grid; place-items:center; font-size:15px; }
+</style>
+<div id="loading">loading 1,034,128 points…</div>
+
+<div id="hud" class="panel" hidden>
+  <h1>Corridor point cloud</h1>
+  <p><b>1,034,128</b> points in <b>782</b> sweeps &middot; 95.7 s</p>
+  <p>2026-10-18 &middot; <b>robot stationary</b>, a person walks toward it</p>
+  <p>colour = height &middot; white = person</p>
+  <div class="modes">
+    <button id="mAcc" class="on">accumulate</button>
+    <button id="mSweep">one sweep</button>
+    <button id="mTrail">short trail</button>
+  </div>
+  <div class="row"><label>point size</label><input id="sz" type="range" min="1" max="6" step="0.5" value="2"></div>
+  <div class="row"><label>height max</label><input id="hi" type="range" min="1" max="2.8" step="0.1" value="2.8"></div>
+  <div class="row"><label>speed</label><input id="spd" type="range" min="0.25" max="8" step="0.25" value="2"></div>
+  <div class="row"><label><input id="hl" type="checkbox" checked> person</label>
+    <span style="color:#9aa0a6;font-size:12px">highlighted white</span></div>
+</div>
+
+<div id="help" hidden>
+  <kbd>drag</kbd> rotate &nbsp; <kbd>wheel</kbd> zoom<br>
+  <kbd>right-drag</kbd> pan &nbsp; <kbd>R</kbd> reset<br>
+  <kbd>space</kbd> play/pause &nbsp; <kbd>&larr;</kbd><kbd>&rarr;</kbd> step
+</div>
+
+<div id="time" class="panel" hidden>
+  <div id="timebar">
+    <button id="play">&#9654;</button>
+    <input id="scrub" type="range" min="0" max="781" step="1" value="781">
+    <div id="clock"><b>95.7</b> s &nbsp; sweep <b>782</b>/782</div>
+  </div>
+</div>
+
+<script src="three.min.js"></script>
+<script>
+  if (!window.THREE) document.write(
+    '<scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></scr'+'ipt>');
+</script>
+<script>
+const CENTER_Z = 1.3;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111317);
+const cam = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.05, 500);
+const renderer = new THREE.WebGLRenderer({antialias:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const grid = new THREE.GridHelper(24, 24, 0x394150, 0x242a33);
+grid.rotation.x = Math.PI/2;                 // z is up in the data
+scene.add(grid);
+
+// ---- orbit (OrbitControls is not in the cdnjs r128 build; this is forty lines)
+const target = new THREE.Vector3(0, 0, CENTER_Z);
+let dist = 15, yaw = -2.2, pitch = 0.35;
+function place() {
+  const cp = Math.cos(pitch), sp = Math.sin(pitch);
+  cam.position.set(target.x + dist*cp*Math.cos(yaw),
+                   target.y + dist*cp*Math.sin(yaw),
+                   target.z + dist*sp);
+  cam.up.set(0,0,1);
+  cam.lookAt(target);
+}
+let drag = null;
+renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+renderer.domElement.addEventListener('pointerdown', e => {
+  drag = {x:e.clientX, y:e.clientY, btn:e.button};
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+addEventListener('pointerup', () => drag = null);
+addEventListener('pointermove', e => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  drag.x = e.clientX; drag.y = e.clientY;
+  if (drag.btn === 2 || e.shiftKey) {
+    const fwd = cam.getWorldDirection(new THREE.Vector3());
+    const right = new THREE.Vector3().crossVectors(fwd, cam.up).normalize();
+    const up = new THREE.Vector3().crossVectors(right, fwd).normalize();
+    const k = dist * 0.0012;
+    target.addScaledVector(right, -dx*k).addScaledVector(up, dy*k);
+  } else {
+    yaw -= dx * 0.005;
+    pitch = Math.max(-1.45, Math.min(1.45, pitch + dy * 0.005));
+  }
+  place();
+});
+addEventListener('wheel', e => {
+  dist = Math.max(0.6, Math.min(80, dist * Math.exp(e.deltaY * 0.0012)));
+  place();
+}, {passive:true});
+addEventListener('resize', () => {
+  cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+function ramp(t) {
+  t = Math.max(0, Math.min(1, t));
+  return [Math.min(1, Math.max(0, 1.6*t - 0.35)),
+          Math.max(0, 1 - Math.abs(t - 0.5) * 2.1),
+          Math.min(1, Math.max(0, 1.25 - 2.0*t))];
+}
+
+// ---- state
+let geo, mat, zs, flg, frames, offs, pts, robot, path;
+let mode = 'acc', cur = 0, playing = false, lastT = 0;
+// Playback position is kept as a FLOAT. Stepping the integer frame once per
+// rendered frame instead played at the display's refresh rate -- 60 sweeps a
+// second rather than the 8.17 the sensor ran at.
+let curF = 0;
+
+Promise.all([
+  fetch('cloud.bin').then(r => r.arrayBuffer()),
+  fetch('frames.json').then(r => r.json()),
+  fetch('flags.bin').then(r => r.arrayBuffer()).catch(() => null)
+]).then(([buf, meta, fb]) => {
+  flg = fb ? new Uint8Array(fb) : null;
+  const pos = new Float32Array(buf);
+  const n = pos.length / 3;
+  frames = meta.frames;
+  offs = new Int32Array(frames.length + 1);
+  for (let i = 0; i < frames.length; i++) offs[i+1] = offs[i] + frames[i].n;
+
+  zs = new Float32Array(n);
+  for (let i = 0; i < n; i++) zs[i] = pos[i*3+2];
+  geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(n*3), 3));
+  recolour(2.8);
+  mat = new THREE.PointsMaterial({size: 0.022, vertexColors: true, sizeAttenuation: true});
+  pts = new THREE.Points(geo, mat);
+  scene.add(pts);
+
+  // the robot, and the path it drove
+  const g = new THREE.BoxGeometry(0.864, 0.570, 0.35);
+  robot = new THREE.Mesh(g, new THREE.MeshBasicMaterial({color:0x3ce63c, wireframe:true}));
+  scene.add(robot);
+  const pg = new THREE.BufferGeometry();
+  const pv = new Float32Array(frames.length*3);
+  frames.forEach((f,i) => { pv[i*3]=f.x; pv[i*3+1]=f.y; pv[i*3+2]=0.02; });
+  pg.setAttribute('position', new THREE.BufferAttribute(pv, 3));
+  path = new THREE.Line(pg, new THREE.LineBasicMaterial({color:0x2f6f2f}));
+  scene.add(path);
+
+  document.getElementById('loading').remove();
+  for (const id of ['hud','help','time']) document.getElementById(id).hidden = false;
+  document.getElementById('scrub').max = frames.length - 1;
+  setFrame(frames.length - 1);
+  place();
+  requestAnimationFrame(loop);
+});
+
+function recolour(hi) {
+  const c = geo.getAttribute('color');
+  const mark = document.getElementById('hl') ? document.getElementById('hl').checked : true;
+  for (let i = 0; i < zs.length; i++) {
+    if (mark && flg && flg[i]) {        // the person, picked out by shape per 1 s window
+      c.array[i*3] = 1; c.array[i*3+1] = 1; c.array[i*3+2] = 1;
+    } else {
+      const [r,g,b] = ramp((zs[i] - 0.3) / (hi - 0.3));
+      c.array[i*3] = r; c.array[i*3+1] = g; c.array[i*3+2] = b;
+    }
+  }
+  c.needsUpdate = true;
+}
+
+const TRAIL = 25;                       // sweeps kept in "short trail", about 2.5 s
+function setFrame(k) {
+  cur = Math.max(0, Math.min(frames.length - 1, k));
+  let start, count;
+  if (mode === 'acc')        { start = 0;                       count = offs[cur+1]; }
+  else if (mode === 'sweep') { start = offs[cur];                count = frames[cur].n; }
+  else                       { const a = Math.max(0, cur-TRAIL+1);
+                               start = offs[a];                 count = offs[cur+1]-offs[a]; }
+  geo.setDrawRange(start, count);
+  const f = frames[cur];
+  robot.position.set(f.x, f.y, 0.175);
+  robot.rotation.set(0, 0, f.yaw);
+  path.geometry.setDrawRange(0, cur + 1);
+  document.getElementById('scrub').value = cur;
+  document.getElementById('clock').innerHTML =
+    `<b>${f.t.toFixed(1)}</b> s &nbsp; sweep <b>${cur+1}</b>/${frames.length}` +
+    `&nbsp; <span style="color:#9aa0a6">${count.toLocaleString()} pts</span>`;
+}
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  if (playing && frames) {
+    const rate = parseFloat(document.getElementById('spd').value);
+    if (!lastT) lastT = now;
+    const dt = Math.min((now - lastT) / 1000, 0.25);   // cap, so a stall does not jump
+    lastT = now;
+    curF += dt * 8.17 * rate;              // 782 sweeps / 95.7 s = 8.17 Hz
+    if (curF >= frames.length - 1) { curF = frames.length - 1; setFrame(curF); setPlaying(false); }
+    else if (Math.floor(curF) !== cur) setFrame(Math.floor(curF));
+  }
+  renderer.render(scene, cam);
+}
+
+function setPlaying(p) {
+  playing = p; lastT = 0;
+  document.getElementById('play').innerHTML = p ? '&#10074;&#10074;' : '&#9654;';
+  if (p && cur >= frames.length - 1) { curF = 0; setFrame(0); }
+}
+document.getElementById('play').onclick = () => setPlaying(!playing);
+document.getElementById('scrub').oninput = e => { setPlaying(false); curF = +e.target.value; setFrame(curF); };
+document.getElementById('sz').oninput = e => { mat.size = 0.011 * e.target.value; };
+document.getElementById('hi').oninput = e => recolour(parseFloat(e.target.value));
+document.getElementById('hl').onchange = () =>
+  recolour(parseFloat(document.getElementById('hi').value));
+for (const [id, m] of [['mAcc','acc'], ['mSweep','sweep'], ['mTrail','trail']]) {
+  document.getElementById(id).onclick = () => {
+    mode = m;
+    for (const o of ['mAcc','mSweep','mTrail'])
+      document.getElementById(o).classList.toggle('on', o === id);
+    setFrame(cur);
+  };
+}
+addEventListener('keydown', e => {
+  if (e.key === 'r' || e.key === 'R') { target.set(0,0,CENTER_Z); dist=15; yaw=-2.2; pitch=0.35; place(); }
+  else if (e.code === 'Space') { e.preventDefault(); setPlaying(!playing); }
+  else if (e.key === 'ArrowRight') { setPlaying(false); curF = cur + (e.shiftKey ? 10 : 1); setFrame(curF); }
+  else if (e.key === 'ArrowLeft')  { setPlaying(false); curF = cur - (e.shiftKey ? 10 : 1); setFrame(curF); }
+});
+</script>

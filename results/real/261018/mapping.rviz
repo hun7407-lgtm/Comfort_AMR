@@ -1,0 +1,63 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Cell Size: 1
+      Plane Cell Count: 40
+      Color: 80; 80; 80
+      Enabled: true
+    - Class: rviz_default_plugins/Map
+      Name: Map
+      Enabled: true
+      Topic:
+        Value: /map
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Color Scheme: map
+      Alpha: 1
+    - Class: rviz_default_plugins/LaserScan
+      Name: Scan
+      Enabled: true
+      Topic:
+        Value: /scan
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Size (Pixels): 4
+      Style: Points
+      Color: 255; 220; 60
+      Color Transformer: FlatColor
+      Decay Time: 0
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Show Names: true
+      Marker Scale: 0.6
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      Description Topic:
+        Value: /robot_description
+        Durability Policy: Transient Local
+      Alpha: 0.8
+  Global Options:
+    Fixed Frame: map
+    Background Color: 38; 38; 38
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Measure
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: TopDown
+      Scale: 60
+      Target Frame: base_footprint
+      X: 0
+      Y: 0
+Window Geometry:
+  Height: 900
+  Width: 1500
