@@ -115,6 +115,11 @@ class HumanTracker:
         return {k: (vx * vx + vy * vy) ** 0.5
                 for k, (vx, vy) in self._velocity.items()}
 
+    def velocities(self) -> Dict[str, tuple]:
+        """Estimated ground velocity per human, (vx, vy) in m/s."""
+        self.positions()
+        return dict(self._velocity)
+
     def headings(self) -> Dict[str, float]:
         """Direction of travel per human, radians from +x.
 

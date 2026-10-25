@@ -288,6 +288,40 @@ humans:
   # file; "sensor" is not implemented. See comfort_core/human_state.py.
   state_source: ground_truth
 
+  # Settings for the estimator, used when state_source is "sensor" and
+  # by every trial's state-estimation report regardless.
+  #
+  # The rule a LiDAR can actually run (comfort_core/human_state.py):
+  #
+  #   moving          speed over the threshold
+  #   station_engaged stopped, within station_radius of a working
+  #                   position the MAP marks, (and facing it, if a
+  #                   facing tolerance is set)
+  #   stationary      stopped anywhere else
+  #
+  state_estimator:
+    # Two speeds so a person walking at about the threshold does not
+    # flicker between states several times a second.
+    moving_speed: 0.15      # over this, they are walking
+    settle_speed: 0.10      # under this, a walker has stopped
+    # How far from the marked working position still counts as being at
+    # it. Not free: in the U bay a working position is 0.45 m from the
+    # edge of the aisle, so anything from 0.45 m up would read a person
+    # who stopped in the traffic lane as a worker at a machine. The
+    # layout check in human_state.py refuses that.
+    station_radius: 0.40
+    # Seconds a new reading has to hold before it is believed.
+    hold: 0.6
+    # Where a person stands in front of a corridor station, measured
+    # from the face of it. 0.30 reproduces configs/common.yaml's own
+    # engaged person at (-1.0, 0.95).
+    stand_gap: 0.30
+    # Also require that they face the machine, within this many degrees.
+    # Off by default: a 2D scan gives position and speed but not which
+    # way a torso points. Turn it on when the estimate comes from
+    # something that does.
+    facing_tolerance_deg: null
+
   # Animated characters instead of plain cylinders.
   #
   # The cylinder above stays, as an INVISIBLE collider. The character
@@ -322,6 +356,16 @@ humans:
     position: [-1.0, 0.95]
     state: station_engaged
   b:
+    # Standing still, and NOT at a machine: station b was moved 0.80 m
+    # along the corridor instead, so its working position is now at
+    # (1.8, -0.95) and this person stands 0.80 m clear of it.
+    #
+    # The person had to stay exactly here and the machine had to move,
+    # not the other way round. Where the PEOPLE stand is what makes
+    # this corridor passable or not, and every B2 and B3 result in the
+    # study is about that geometry. See docs/RESEARCH_DESIGN.md
+    # section 2 for why a `stationary` person cannot stand in a
+    # working position.
     position: [1.0, -0.95]
     state: stationary
 
@@ -348,11 +392,18 @@ humans:
     route:
       - [-5.8, -0.25]
       - [5.8, -0.25]
-    # The walker ignores the AMR on purpose. If a person re-routed
+    # The walker ignores the AMR on purpose, and this stays false in
+    # every scenario. It is a premise of the study, not a shortcut:
+    # avoiding is the robot's job, so people here do not do any of it.
+    # See docs/RESEARCH_DESIGN.md section 1. If a person re-routed
     # around the robot, B2 and B3 would diverge the moment the robot
-    # behaved differently, and the two runs would no longer be
-    # comparable. Keeping the person on a fixed script keeps everything
-    # except the Comfort Space policy identical between them.
+    # behaved differently and the runs would no longer be comparable,
+    # and a policy would look safer only because the test got easier.
+    #
+    # The consequence is recorded rather than hidden: a person walking
+    # into a robot that has already stopped is counted as "person
+    # walked in", separately from "robot drove in", which is the only
+    # contact figure the comparison uses.
     avoid_robot: false
 
 # ---------------------------------------------------------------

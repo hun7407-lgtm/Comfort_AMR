@@ -23,7 +23,7 @@ import numpy as np
 from isaacsim.core.prims import SingleRigidPrim
 from isaacsim.core.utils.stage import get_current_stage
 
-from pxr import Usd
+from pxr import Gf, Usd
 
 from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
 from comfort_core.human_state import make_state_provider
@@ -40,7 +40,15 @@ class WalkerSync:
         humans = cfg["humans"]
 
         for key, _x, _y in human_positions(cfg):
-            if str(humans[key].get("state", "")) != "moving":
+            # Anybody who moves at all. `state: moving` is somebody who
+            # is already walking when the trial starts; `walk` is
+            # somebody who is at a machine and leaves it part way
+            # through. Both need their collider -- and so their Comfort
+            # Space and the clearance the trial measures -- to go with
+            # them. Without this the person walked and her Comfort
+            # Space stayed at the machine.
+            if (str(humans[key].get("state", "")) != "moving"
+                    and not humans[key].get("walk")):
                 continue
             root = f"/World/Characters/human_{key}"
             collider = f"/Environment/Corridor/human_{key}"
@@ -71,6 +79,7 @@ class WalkerSync:
         # with it. Moving it through the rigid body wrapper sets the
         # kinematic target, which is the supported way.
         self._bodies: Dict[str, SingleRigidPrim] = {}
+        self._usd_ops: Dict[str, Any] = {}
         self._ticks = 0
 
     def __bool__(self) -> bool:
@@ -91,6 +100,22 @@ class WalkerSync:
         self._speeds[key] = speed
         if speed > 1e-3:
             self._headings[key] = math.atan2(vy, vx)
+
+    def _write_usd(self, prim_path: str, x: float, y: float) -> None:
+        """Put the pose on the prim itself, for whoever reads the stage."""
+        from pxr import UsdGeom
+        op = self._usd_ops.get(prim_path)
+        if op is None:
+            prim = get_current_stage().GetPrimAtPath(prim_path)
+            if not prim.IsValid():
+                return
+            xform = UsdGeom.Xformable(prim)
+            op = next((o for o in xform.GetOrderedXformOps()
+                       if o.GetOpType() == UsdGeom.XformOp.TypeTranslate), None)
+            if op is None:
+                op = xform.AddTranslateOp()
+            self._usd_ops[prim_path] = op
+        op.Set(Gf.Vec3d(float(x), float(y), self.height / 2.0))
 
     def _redraw(self) -> None:
         """Resize and move the drawn Comfort Spaces to match the walkers.
@@ -154,9 +179,41 @@ class WalkerSync:
                 position=np.array([x, y, self.height / 2.0]),
                 orientation=np.array([1.0, 0.0, 0.0, 0.0]),
             )
+            # And the same pose into USD, by hand.
+            #
+            # set_world_pose puts it in the physics view. With this
+            # scene's settings PhysX does NOT write a kinematic body's
+            # transform back to the stage, and the ROS transform
+            # publisher reads the stage: measured, the character and the
+            # physics body were both at (2.62, 3.18) while USD still
+            # said (3.60, 5.60), so every clearance the trial recorded
+            # was to the spot the person had left. Nothing errored.
+            self._write_usd(collider_path, x, y)
             if report:
+                # Both poses, because they are not the same thing and
+                # the difference is the whole failure mode: the
+                # character is what walks, the collider is what the
+                # Comfort Space, /tf and every clearance measurement
+                # follow. A line that printed only the character's
+                # position looked perfectly healthy while the collider
+                # stood still at the machine.
                 got = body.get_world_pose()[0]
-                print(f"  [walker] {_key}: ({x:+.2f},{y:+.2f}) "
+                # And what USD says, which is a third thing again: the
+                # ROS transform publisher reads the stage, not the
+                # physics view, so this is the pose the rest of the
+                # system actually sees.
+                prim = stage.GetPrimAtPath(collider_path)
+                usd_xy = "?"
+                try:
+                    from pxr import UsdGeom as _UsdGeom
+                    m = _UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(0)
+                    t = m.ExtractTranslation()
+                    usd_xy = f"({t[0]:+.2f},{t[1]:+.2f})"
+                except Exception:  # noqa: BLE001
+                    pass
+                print(f"  [walker] {_key}: character ({x:+.2f},{y:+.2f}) "
+                      f"collider ({float(got[0]):+.2f},{float(got[1]):+.2f}) "
+                      f"usd {usd_xy} "
                       f"{self._speeds.get(_key, 0.0):.2f} m/s", flush=True)
 
         self._redraw()

@@ -111,11 +111,17 @@ def _facing_yaw(cfg: Dict[str, Any], key: str, hx: float, hy: float) -> float:
     """Degrees of rotation about Z so the character faces their station."""
     if str(cfg["humans"]["character"].get("facing", "station")) != "station":
         return 0.0
+    offset = float(cfg["humans"]["character"].get("facing_offset_deg", 0.0))
+    # A person can say which way they face. The factory bay has no
+    # `stations` entry per person -- the machines are scene geometry --
+    # so without this everyone there would face the same way.
+    own = cfg["humans"].get(key)
+    if isinstance(own, dict) and own.get("facing_deg") is not None:
+        return float(own["facing_deg"]) + offset
     station = cfg["stations"].get(key)
     if not isinstance(station, dict):
         return 0.0
     sx, sy = (float(v) for v in station["position"])
-    offset = float(cfg["humans"]["character"].get("facing_offset_deg", 0.0))
     return math.degrees(math.atan2(sy - hy, sx - hx)) + offset
 
 
@@ -143,6 +149,10 @@ def add_station_equipment(cfg: Dict[str, Any]) -> List[str]:
     """Reference a piece of equipment onto the top of each station."""
     eq = cfg["stations"].get("equipment", {})
     if not eq.get("enabled", False):
+        return []
+    # No corridor, no corridor stations: in the factory bay these would
+    # be two boxes floating over the assembly line.
+    if not cfg.get("corridor", {}).get("enabled", True):
         return []
 
     assets_root = get_assets_root_path()
@@ -276,9 +286,21 @@ def spawn_characters(cfg: Dict[str, Any]) -> List[str]:
             # characters stayed in bind pose looking like a T.
             agent_name = f"human_{key}"
             state = make_state_provider(cfg).states().get(key, "stationary")
-            route = cfg["humans"][key].get("route") or []
-            if state == "moving" and route:
-                delay = float(cfg["navigation"].get("trial_start_sim_time", 0.0))
+            spec = cfg["humans"][key]
+            rendezvous = float(cfg["navigation"].get("trial_start_sim_time", 0.0))
+            # Two ways to be given a walk.
+            #
+            #   route:            set off at the rendezvous. A person who
+            #                     is walking when the trial begins.
+            #   walk.start_at:    set off that many seconds INTO the
+            #                     trial. A person who is working, stops,
+            #                     and walks off mid-trial -- which is
+            #                     what makes an obstacle appear in a
+            #                     lane that was clear a moment ago.
+            walk = spec.get("walk") or {}
+            route = walk.get("route") or spec.get("route") or []
+            delay = rendezvous + float(walk.get("start_at", 0.0))
+            if route:
                 command_lines.extend(_route_commands(agent_name, route, delay))
             else:
                 command = char_cfg.get("commands", {}).get(state, "Idle 100000")
@@ -401,7 +423,24 @@ def _write_command_file(lines: List[str]) -> str:
     from comfort_core import resolve_path
     out = resolve_path("results/character_commands.txt")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    # MERGED, not overwritten. Two things call this: the experiment's
+    # own people, and the figures that belong to the machines. They are
+    # spawned by separate passes, and whichever wrote the file last used
+    # to erase the other one's commands -- the symptom was a worker who
+    # had been given a walk standing at her machine for the whole trial
+    # with no error anywhere.
+    #
+    # Commands are keyed on the agent name in the first column. A pass
+    # that names an agent replaces every line that agent had; agents it
+    # does not mention are left alone.
+    fresh = {line.split(" ", 1)[0] for line in lines if line.strip()}
+    kept = []
+    if out.is_file():
+        for line in out.read_text(encoding="utf-8").splitlines():
+            if line.strip() and line.split(" ", 1)[0] not in fresh:
+                kept.append(line)
+    out.write_text("\n".join(kept + list(lines)) + "\n", encoding="utf-8")
     return str(out)
 
 
