@@ -31,7 +31,8 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from comfort_core.clearance import footprint_half_extents
-from comfort_core.layout import corridor_bounds
+from comfort_core.layout import (drivable_area, inside_drivable,
+                                 obstacle_boxes, refuge_centres, scene_bounds)
 
 
 @dataclass(frozen=True)
@@ -129,7 +130,7 @@ def choose_target(cfg: Dict[str, Any], person: Person,
     no room there or if waiting there would put the robot against another
     person. Of the acceptable sides the nearer one wins.
     """
-    bounds = corridor_bounds(cfg)
+    bounds = scene_bounds(cfg)
     inset = p.robot_radius + 0.05
     ahead, aside = lane_coordinates(person, *robot_xy)
     c, s = math.cos(person.heading), math.sin(person.heading)
@@ -242,7 +243,6 @@ def _wrap(angle: float) -> float:
 # ----------------------------------------------------------------------
 
 from comfort_core.intrusion import footprint_outline, intrusion  # noqa: E402
-from comfort_core.layout import placed_entries  # noqa: E402
 from comfort_core.shapes import ComfortShape  # noqa: E402
 
 
@@ -262,9 +262,13 @@ class ComfortParams:
     yaw_tolerance: float
     heading_sigma: float
     enough_k: float
+    soonest_when_late: bool
     rechoose_k: float           # re-pick the spot only if its score falls below this
     hold_drift: float           # how far the robot may drift before correcting again
     resume_delay: float         # stay still this long after the walker has passed
+    lane_inset: float           # keep the footprint this far inside the lane
+    release_distance: float     # give up waiting once they are this far off
+    max_wait: float             # and give up anyway after this long
 
     @classmethod
     def from_config(cls, cfg: Dict[str, Any]) -> "ComfortParams":
@@ -284,9 +288,13 @@ class ComfortParams:
             yaw_tolerance=float(c.get("yaw_tolerance", 0.08)),
             heading_sigma=math.radians(float(c.get("heading_sigma_deg", 3.0))),
             enough_k=float(c.get("enough_k", 1.15)),
+            soonest_when_late=bool(c.get("soonest_when_late", False)),
             rechoose_k=float(c.get("rechoose_below_k", 1.0)),
             hold_drift=float(c.get("hold", {}).get("drift_tolerance", 0.25)),
             resume_delay=float(c.get("hold", {}).get("resume_delay_seconds", 0.7)),
+            lane_inset=float(c.get("lane_inset", 0.15)),
+            release_distance=float(c.get("release_distance", 5.0)),
+            max_wait=float(c.get("max_wait_seconds", 20.0)),
         )
 
 
@@ -311,6 +319,27 @@ def first_intrusion(sweep, outline) -> Optional[Tuple[float, float]]:
         if k < 1.0:
             return t, k
     return None
+
+
+def reach_position(pose: Tuple[float, float, float],
+                   target: Tuple[float, float], cp: "ComfortParams") -> float:
+    """Time to be standing on a spot, whatever way the robot ends up facing.
+
+    This is what the walker cares about: out of the lane. Asking
+    reach_time for a final heading equal to the bearing quietly charges
+    a half turn whenever the quickest way there is in reverse -- 11.4 s
+    for a spot the robot reaches in 6.9 -- and every candidate then
+    looks hopeless.
+    """
+    x, y, yaw = pose
+    tx, ty = target
+    dist = math.hypot(tx - x, ty - y)
+    if dist < 0.05:
+        return 0.0
+    bearing = math.atan2(ty - y, tx - x)
+    e = abs(_wrap(bearing - yaw))
+    turn = min(e, math.pi - e)
+    return turn / cp.reach_angular + dist / cp.reach_linear
 
 
 def reach_time(pose: Tuple[float, float, float], target: Tuple[float, float, float],
@@ -345,15 +374,9 @@ class Spot:
     deadline: float   # seconds before the walker's space arrives there
 
 
-def station_boxes(cfg: Dict[str, Any]):
-    """Axis-aligned (xmin, xmax, ymin, ymax) of each station."""
-    st = cfg["stations"]
-    sx, sy = (float(v) for v in st["size"][:2])
-    out = []
-    for key in placed_entries(st):
-        x, y = (float(v) for v in st[key]["position"])
-        out.append((x - sx / 2, x + sx / 2, y - sy / 2, y + sy / 2))
-    return out
+# Kept as a name because scripts import it; the scene decides what a
+# static obstacle is now, not the corridor.
+station_boxes = obstacle_boxes
 
 
 def choose_comfort_spot(cfg: Dict[str, Any], person: Person, along: float, across: float,
@@ -396,9 +419,10 @@ def choose_comfort_spot(cfg: Dict[str, Any], person: Person, along: float, acros
 
     Returns None when no candidate qualifies.
     """
-    bounds = corridor_bounds(cfg)
+    bounds = scene_bounds(cfg)
     half_length, half_width = footprint_half_extents(cfg)
     boxes = station_boxes(cfg)
+    drivable = drivable_area(cfg)
     x0, y0, yaw0 = pose
     h = person.heading
     hc = math.cos(h)
@@ -424,23 +448,71 @@ def choose_comfort_spot(cfg: Dict[str, Any], person: Person, along: float, acros
     y_hi = bounds.y_max - inset
     n_lat = int((y_hi - y_lo) / cp.lateral_step) + 1
 
+    # Where along the corridor to try. Beside the robot, a little
+    # further from the walker -- and, in a bay too narrow to stand
+    # aside in, at the refuges cut into the work zones. Without those
+    # the search never looks more than half a metre from where the
+    # robot already is, and in a 1.5 m aisle there is nothing there.
+    anchor = x0 if anchor_x is None else anchor_x
+    candidate_x = [anchor + hc * back for back in cp.back_offsets]
+    candidate_x += [rx for rx, _ in refuge_centres(cfg)]
+
     best, best_score = None, None
-    for back in cp.back_offsets:
-        # Further from the walker along their line. Only the x part is
-        # used: the grid below already spans the corridor's width.
-        cx = (x0 if anchor_x is None else anchor_x) + hc * back
+    for cx in candidate_x:
         for i in range(n_lat):
             cy = y_lo + i * cp.lateral_step
             if not (bounds.x_min + half_length + cp.wall_margin <= cx
                     <= bounds.x_max - half_length - cp.wall_margin):
                 continue
             outline = footprint_outline((cx, cy, yaw), half_length, half_width)
+            # Aisles and refuges only, where the scene says so -- and a
+            # way of getting there that stays on them. Without the path
+            # check the search will happily pick a refuge on the far
+            # side of the bay and set off across the shop floor.
+            # Inside the drivable floor with room to spare, not just
+            # inside it. A spot whose footprint ends exactly on the
+            # painted line becomes a spot OUTSIDE the line as soon as
+            # the drive to it overshoots by a few centimetres, and once
+            # the robot is off the lane the planner will not plan from
+            # where it stands: three stress waves in a row ended with a
+            # trial sitting 0.2 to 0.3 m outside an aisle, yielding,
+            # with nav2 ABORTED and no cause recorded.
+            #
+            # The margin is negative here -- the footprint has to be
+            # this far INSIDE -- which is why it is subtracted.
+            if not inside_drivable(drivable, outline, -cp.lane_inset):
+                continue
+            if not _path_drivable(drivable, (x0, y0), (cx, cy)):
+                continue
+            # And the way there must not go through anybody.
+            #
+            # The spot itself was checked against the other people;
+            # the route to it was not, so the robot drove straight at a
+            # worker standing beside the aisle on its way to a
+            # perfectly good waiting point. It approached her almost
+            # sideways, which is exactly where a forward protective
+            # field cannot help: measured, 31 s pressed against w3 in
+            # stress seed 5, the field never fired because she was
+            # 0.76 m abeam and the field reaches 0.34 m to the side.
+            if not _path_clear_of(others, (x0, y0), (cx, cy),
+                                  p.human_radius + p.robot_radius):
+                continue
             if any(bx0 - cp.body_margin <= ox <= bx1 + cp.body_margin
                    and by0 - cp.body_margin <= oy <= by1 + cp.body_margin
                    for ox, oy in outline for bx0, bx1, by0, by1 in boxes):
                 continue
-            body_ok = all(math.hypot(ox - o.x, oy - o.y) >= p.human_radius + cp.body_margin
-                          for o in others for ox, oy in outline)
+            # Clear of other people WHATEVER WAY THE ROBOT ENDS UP
+            # FACING, so the circumscribed circle rather than the
+            # outline. The robot turns on the spot once it gets there
+            # -- to face the goal again before handing back -- and a
+            # spot checked at one heading is not clear at another: a
+            # 0.70 x 0.48 m body swings its corners 0.42 m from its
+            # centre. Measured: it waited 0.80 m from a standing
+            # worker, which the outline test passed, then turned and
+            # its corner touched her.
+            body_ok = all(math.hypot(cx - o.x, cy - o.y)
+                          >= p.human_radius + p.robot_radius + cp.body_margin
+                          for o in others)
             if not body_ok:
                 continue
             # Physically clear of the walker's line too, with room for
@@ -448,14 +520,26 @@ def choose_comfort_spot(cfg: Dict[str, Any], person: Person, along: float, acros
             # metres, that error moves the line sideways by ahead * tan.
             # The extra 0.15 m keeps a chosen spot from sitting right on
             # the limit at which it would be abandoned again.
+            #
+            # Measured from the robot's outline, not from a circle round
+            # it. Waiting square to the aisle, the robot puts 0.24 m of
+            # itself toward the walker, not the 0.42 m of its
+            # circumscribed radius, and charging it the difference ruled
+            # out refuges it fits in with room to spare.
             ahead_c, aside = lane_coordinates(person, cx, cy)
-            if abs(aside) < (p.lane_half_width + 0.15
-                             + max(ahead_c, 0.0) * math.tan(cp.heading_sigma)):
+            slack = (p.human_radius + cp.body_margin + 0.15
+                     + max(ahead_c, 0.0) * math.tan(cp.heading_sigma))
+            if min(abs(lane_coordinates(person, ox, oy)[1])
+                   for ox, oy in outline) < slack:
                 continue
             if side is not None and aside * side < 0.0:
                 continue
 
             reach = reach_time(pose, (cx, cy, yaw), cp)
+            # Time to be out of the lane, which is what the walker
+            # cares about: squaring up to the corridor afterwards can
+            # happen while waiting.
+            settle = reach_position(pose, (cx, cy), cp)
             crosses = aside * aside_robot < 0.0
             if crosses and reach + cp.reach_slack > cross_deadline:
                 continue
@@ -466,13 +550,64 @@ def choose_comfort_spot(cfg: Dict[str, Any], person: Person, along: float, acros
 
             deadline = (ahead_c - along - half_length) / max(person.speed, 1e-3)
             spot = Spot(cx, cy, yaw, 1 if aside > 0 else -1, k, reach, deadline)
-            # More room beyond the boundary is worth having, up to a point,
-            # because the prediction is a few degrees out. Past that, stay
-            # on the robot's own side of the walker, then go the shortest way.
-            score = (min(round(k, 2), cp.enough_k), not crosses, -reach)
+            # More room beyond the boundary is worth having, up to a
+            # point, because the prediction is a few degrees out. Past
+            # that, stay on the robot's own side of the walker, then go
+            # the shortest way.
+            #
+            # When nothing can be reached before the walker arrives --
+            # a 1.5 m aisle with a pull-off a metre and a half away --
+            # the roomiest spot is the wrong answer: the robot is still
+            # crossing the lane when they meet. Then the one it can get
+            # to soonest wins instead. Off by default, because in a
+            # corridor wide enough to stand aside in, arriving a second
+            # late costs nothing and the extra room is worth having.
+            in_time = settle + cp.reach_slack <= deadline
+            if cp.soonest_when_late and not in_time:
+                score = (False, -settle, min(round(k, 2), cp.enough_k),
+                         not crosses)
+            else:
+                score = (True, min(round(k, 2), cp.enough_k), not crosses,
+                         -reach)
             if best is None or score > best_score:
                 best, best_score = spot, score
     return best
+
+
+def _path_clear_of(people, start: Tuple[float, float],
+                   end: Tuple[float, float], radius: float,
+                   step: float = 0.15) -> bool:
+    """Whether the straight line between two points misses everybody.
+
+    `radius` is the distance to keep from a person's centre: their
+    radius plus the robot's circumscribed radius, because the robot may
+    be at any heading along the way.
+    """
+    dx, dy = end[0] - start[0], end[1] - start[1]
+    n = max(int(math.hypot(dx, dy) / step), 1)
+    for i in range(n + 1):
+        px = start[0] + dx * i / n
+        py = start[1] + dy * i / n
+        for person in people:
+            if math.hypot(px - person.x, py - person.y) < radius:
+                return False
+    return True
+
+
+def _path_drivable(rects, start: Tuple[float, float],
+                   end: Tuple[float, float], step: float = 0.2) -> bool:
+    """Whether the straight line between two points stays drivable.
+
+    A straight line is not the path Nav2 will take, but if even that
+    leaves the aisles then the spot is on the wrong side of something.
+    """
+    if rects is None:
+        return True
+    dx, dy = end[0] - start[0], end[1] - start[1]
+    n = max(int(math.hypot(dx, dy) / step), 1)
+    points = [(start[0] + dx * i / n, start[1] + dy * i / n)
+              for i in range(n + 1)]
+    return inside_drivable(rects, points)
 
 
 def goal_facing_yaw(cfg: Dict[str, Any], x: float) -> float:
@@ -543,6 +678,12 @@ class EvasionController:
         self._direction = 1.0
         self._last_trace = -math.inf
         self._passed_at: Optional[float] = None
+        # When this sidestep began, and whether the walker has already
+        # been reported as out of range. Both only exist so that
+        # waiting for somebody can end for a reason other than their
+        # walking past.
+        self._started_at: Optional[float] = None
+        self._said_far = False
         self.anchor_x: Optional[float] = None
 
     @property
@@ -571,9 +712,31 @@ class EvasionController:
             self._maybe_start(now, pose, people, raw)
             if self.walker is None:
                 return None
+            self._started_at = now
 
         person = by_key.get(self.walker)
-        if self.mode == "finishing" or person is None or has_passed(person, (x, y), self.p):
+        # Two more ways to be done with somebody, besides their walking
+        # past. Without them the robot waits for a walker who is never
+        # going to pass it: these people walk 30 m round a U-shaped
+        # bay, so one can spend half a minute in another aisle
+        # entirely, still "ahead" of the robot along her own line,
+        # while the robot stands still waiting for her. Measured --
+        # one sidestep at t = 8 s and then nothing for the next 40 s.
+        gone = far = False
+        if person is not None:
+            gap = math.hypot(person.x - x, person.y - y)
+            far = gap > self.cp.release_distance
+            gone = (self._started_at is not None
+                    and now - self._started_at > self.cp.max_wait)
+            if far and not self._said_far:
+                self._said_far = True
+                self.log(f"walker {self.walker} is {gap:.1f} m away, which is "
+                         f"further than waiting for them is worth")
+            if gone:
+                self.log(f"waited {now - self._started_at:.0f} s for walker "
+                         f"{self.walker} and they have not passed; driving on")
+        if (self.mode == "finishing" or person is None or far or gone
+                or has_passed(person, (x, y), self.p)):
             # A beat of stillness after they pass, so the restart reads as
             # a decision rather than a twitch.
             if self._passed_at is None:

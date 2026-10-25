@@ -43,10 +43,11 @@ from std_msgs.msg import Bool, Float32MultiArray
 from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
 
-from comfort_core import load_config, resolve_path
+from comfort_core import load_config, nav2_map, resolve_path
 from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
 from comfort_core.evasion import Person, predicted_sweep, snap_to_corridor
 from comfort_core.human_state import make_state_provider
+from detection_tracker import DetectionTracker
 from human_tracker import HumanTracker
 
 # KeepoutFilter's type code.
@@ -118,8 +119,41 @@ class ComfortPublisher(Node):
         self.policy = make_policy(cfg)
         # Where the humans actually are, which is not the same as where
         # the config put them once one of them starts walking.
-        self.tracker = HumanTracker(self, cfg)
+        # Where the people in the control loop come from.
+        #
+        #   tf     the true poses out of the simulator. Every Comfort
+        #          Space is then placed perfectly, which isolates the
+        #          policy from the perception and is the right setting
+        #          for comparing B1, B2 and B3 as policies.
+        #   lidar  the robot's own detections off /comfort_detections.
+        #          Nothing in the loop then knows more than the robot
+        #          does, which is the setting that says whether a
+        #          policy survives being run on a real machine.
+        #
+        # The measurement path in nav2_goal always uses the true poses,
+        # whichever this is: a study that measured its own intrusions
+        # through its own perception could not tell a policy that keeps
+        # its distance from one that fails to notice it did not.
+        source = str(cfg.get("perception", {}).get("source", "tf"))
+        if source == "lidar":
+            if str(cfg.get("humans", {}).get("state_source")) != "sensor":
+                raise ValueError(
+                    "perception.source is 'lidar', so humans.state_source "
+                    "must be 'sensor': a detection carries a track number, "
+                    "not a config name, and the declared states cannot be "
+                    "looked up for it. Setting one without the other would "
+                    "silently feed the policy the true states for people "
+                    "the robot has not even seen.")
+            self.tracker = DetectionTracker(self, cfg)
+            self.get_logger().info(
+                "people come from the LiDAR (/comfort_detections)")
+        elif source == "tf":
+            self.tracker = HumanTracker(self, cfg)
+        else:
+            raise ValueError(f"perception.source is {source!r}; "
+                             "expected 'tf' or 'lidar'")
         self.speed_threshold = float(cs.get("moving_speed_threshold", 0.15))
+        self._mute_ticks = 0
         self._reported_states: dict = {}
 
         self.mask_pub = self.create_publisher(OccupancyGrid, mask_topic, LATCHED)
@@ -283,8 +317,15 @@ class ComfortPublisher(Node):
         arrive, which under the state-adaptive policy is what opens the
         corridor.
         """
-        declared = self.provider.states()
         speeds = self.tracker.speeds()
+        # With state_source: sensor the provider works the states out
+        # from positions, speeds and the map, so it has to be given the
+        # observations before it is asked. The ground-truth provider
+        # has nothing to update and says so by not having the method.
+        if hasattr(self.provider, "update"):
+            self.provider.update(self.tracker.positions(), speeds,
+                                 self.get_clock().now().nanoseconds * 1e-9)
+        declared = self.provider.states()
         observed = self.tracker.observed_states(declared, self.speed_threshold)
         if observed != self._reported_states:
             changed = {k: v for k, v in observed.items()
@@ -300,6 +341,32 @@ class ComfortPublisher(Node):
         axes = self.policy.axes(declared, speeds)
         return build_shapes(self.cfg, axes, self.tracker.positions(),
                             self.tracker.headings(), robot_grow(self.cfg))
+
+    def warn_if_mute(self, shapes) -> None:
+        """Shout if the policy has people and yet no Comfort Spaces.
+
+        A policy that produces nothing is indistinguishable from B1
+        from the outside: the robot drives straight past everybody and
+        every number in the summary looks ordinary except a yield time
+        of zero. It happened for real -- the detections are named `p1`
+        and the shape builder was iterating the config's `w1`, so
+        twelve B2 and B3 trials silently ran as B1 -- and the only way
+        to catch it from inside the node is to notice the combination.
+        """
+        if not self.policy.gives_space():
+            return
+        if shapes or not self.tracker.positions():
+            self._mute_ticks = 0
+            return
+        self._mute_ticks += 1
+        if self._mute_ticks in (10, 100, 1000):
+            self.get_logger().error(
+                f"{len(self.tracker.positions())} people are being tracked "
+                f"and the policy is producing NO Comfort Spaces "
+                f"({self._mute_ticks} ticks running). The scenario is "
+                f"running as if it were B1. Keys: tracked "
+                f"{sorted(self.tracker.positions())[:4]}, states "
+                f"{sorted(self.provider.states())[:4]}")
 
     def publish_shapes(self, shapes) -> None:
         # Six numbers per person: x, y, along, across, heading, speed.
@@ -319,6 +386,7 @@ class ComfortPublisher(Node):
         grid = self.build_mask()
         self.mask_pub.publish(grid)
         self.publish_shapes(shapes)
+        self.warn_if_mute(shapes)
 
         speeds = self.tracker.speeds()
         flag = Bool()
@@ -355,7 +423,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/common.yaml")
     parser.add_argument("--scenario", default=None, help="b1, b2, b3 or a path")
-    parser.add_argument("--map", default="configs/nav2/corridor_map.yaml")
+    parser.add_argument("--map", default=None,
+                        help="map yaml; defaults to the one for this scene")
     parser.add_argument("--mask-topic", default="/comfort_mask")
     parser.add_argument("--info-topic", default="/costmap_filter_info")
     args, _ = parser.parse_known_args()
@@ -365,7 +434,11 @@ def main() -> int:
         print("comfort_space.costmap.enabled is false; nothing to publish")
         return 0
 
-    geometry = read_map_geometry(resolve_path(args.map))
+    # The mask has to line up with the map Nav2 loaded, pixel for pixel,
+    # so it follows the same rule: the factory config gets the factory
+    # map without anyone having to pass it twice.
+    map_yaml = args.map or nav2_map(cfg)
+    geometry = read_map_geometry(resolve_path(map_yaml))
 
     rclpy.init()
     node = ComfortPublisher(cfg, geometry, args.mask_topic, args.info_topic)

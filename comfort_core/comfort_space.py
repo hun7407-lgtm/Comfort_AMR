@@ -46,6 +46,17 @@ class ComfortSpacePolicy(ABC):
     def name(self) -> str:
         """Short label recorded with every trial."""
 
+    def gives_space(self) -> bool:
+        """Whether this policy asks for any room around people at all.
+
+        True for everything except B1. It lets a node tell "nobody has
+        a Comfort Space because the policy says so" from "nobody has a
+        Comfort Space because something is broken", which from the
+        outside look identical -- the robot drives straight past
+        everybody either way.
+        """
+        return True
+
     def radii(self, states: Dict[str, str],
               speeds: Dict[str, float] | None = None) -> Dict[str, float]:
         return {key: self.radius_for(key, state, (speeds or {}).get(key, 0.0))
@@ -147,6 +158,9 @@ class NoComfortPolicy(ComfortSpacePolicy):
     def __init__(self, cfg: Dict[str, Any]):
         pass
 
+    def gives_space(self) -> bool:
+        return False
+
     def radius_for(self, key: str, state: str, speed: float = 0.0) -> float:
         return 0.0
 
@@ -198,11 +212,28 @@ def shapes(cfg: Dict[str, Any], axes: Dict[str, Tuple[float, float]],
     point has to avoid.
     """
     out: List[ComfortShape] = []
-    for key, x, y in human_positions(cfg):
-        if key not in axes:
-            continue
+    # Over the people the POLICY was given, not the people the config
+    # declares.
+    #
+    # They are the same set when the poses come from the simulator, and
+    # a different set entirely when they come from the robot's own
+    # LiDAR: a detection is `p1`, not `w4`, because the sensor does not
+    # know anyone's name. Iterating the config silently produced no
+    # Comfort Spaces at all for detected people -- B2 and B3 then drove
+    # exactly like B1 and the trial summary read "yield 0.0 s" with
+    # nothing else out of place. Measured over 12 trials before anyone
+    # noticed.
+    configured = {key: (x, y) for key, x, y in human_positions(cfg)}
+    for key in axes:
         if positions and key in positions:
             x, y = positions[key][0], positions[key][1]
+        elif key in configured:
+            x, y = configured[key]
+        else:
+            # Nothing says where this person is, so there is nothing to
+            # keep clear of. Better to leave them out than to invent a
+            # position for them.
+            continue
         along, across = axes[key]
         if along <= 0.0 and across <= 0.0:
             # No Comfort Space for this person (policy "none"). Skipped

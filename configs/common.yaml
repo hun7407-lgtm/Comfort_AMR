@@ -684,6 +684,30 @@ comfort_space:
         # it, the nearer spot on the robot's own side wins.
         enough_k: 1.15
 
+        # When to stop waiting for somebody who never passes.
+        #
+        # The sidestep used to end one way only: the walker walks past
+        # the robot. In a U-shaped bay a person can walk 30 m round the
+        # far side without ever passing it, and the robot stood still
+        # for the rest of the trial -- one sidestep at t = 8 s and no
+        # movement after that.
+        #
+        # 5 m: past this they are not the reason to be standing still.
+        # 20 s: and if they are still in range and still have not
+        # passed, drive on anyway and let the planner and the Comfort
+        # Space cost deal with them.
+        release_distance: 5.0
+        max_wait_seconds: 20.0
+
+        # How far inside the painted floor a waiting spot has to be.
+        #
+        # Not zero. A spot that only just fits is outside the moment
+        # the drive to it overshoots, and a robot off the lane is a
+        # robot the planner refuses to plan for -- which is how three
+        # waves in a row ended with a trial parked 0.2 to 0.3 m into a
+        # machine zone with nav2 ABORTED.
+        lane_inset: 0.15
+
   visualization:
     # Drawing is separate from cost. Turning this off must not change
     # any trial result; isaac_sim/utils/comfort_viz.py only creates
@@ -780,6 +804,40 @@ recording:
 # B2 and B3 share whatever is set here.
 # See docs/EXPERIMENT.md section 2.
 # ---------------------------------------------------------------
+# Getting unstuck, in every scenario including B1.
+#
+# These are fault recoveries, not courtesies: a robot that cannot move
+# is not a result about Comfort Space, it is a trial thrown away.
+recovery:
+  # Backing off when the safety layer has held the robot still.
+  #
+  # The collision monitor's stop is INVISIBLE to Nav2: it zeroes the
+  # velocity command on its way to the wheels, so the controller
+  # believes it is driving, reports no failure, and Nav2 never runs a
+  # recovery or looks for another route. With a person standing 0.6 m
+  # ahead -- which under this study's premise they will, since people
+  # here do not get out of the robot's way -- the robot waits for as
+  # long as the trial lasts. Measured: held 13 s at (-2.54, 4.86),
+  # 2.15 m from the goal, recorded as a deadlock with no cause.
+  #
+  # Backing off a little puts the obstruction outside the forward
+  # field, which lets the planner route around a person who is now
+  # properly in the costmap. The reverse field is checked by the
+  # monitor in its own right, and the Comfort Spaces behind the robot
+  # are checked by the gate, so this cannot back into anybody.
+  backoff:
+    enabled: true
+    # How long the safety layer must have been holding before the
+    # robot gives up on going forward. Long enough that somebody
+    # walking across the robot's path is simply waited for.
+    after_seconds: 5.0
+    speed: 0.12          # m/s, creep
+    distance: 0.40       # m, then stop and let Nav2 replan
+    # Do not keep doing it. If backing off twice has not helped, the
+    # obstruction is not one the robot can get around and standing
+    # still is the honest outcome.
+    max_attempts: 2
+
 navigation:
   start: [-5.0, 0.0]
   goal: [5.0, 0.0]
