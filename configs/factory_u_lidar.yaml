@@ -1,0 +1,17 @@
+# The U bay, with the control loop fed by the robot's own LiDAR.
+#
+# Everything the Comfort Space policy acts on here was detected by the
+# robot: positions and speeds from the 3D cloud, states worked out from
+# those against the map. Nobody the sensor cannot see has a Comfort
+# Space, which is the condition a real machine works under.
+#
+# Measurement is unchanged -- nav2_goal scores intrusions and contacts
+# against the true poses -- so these trials are comparable with every
+# other trial in the study. What differs is only what the robot knew.
+base: configs/factory_u.yaml
+
+perception:
+  source: lidar
+
+humans:
+  state_source: sensor

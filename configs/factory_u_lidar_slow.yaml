@@ -1,0 +1,24 @@
+# The U bay on the robot's own LiDAR, at 0.5 m/s.
+#
+# The question this config exists to answer: at 0.8 m/s the policy
+# driven by perception kept 0.29 m less clearance than the same policy
+# driven by the simulator's own poses, and made contact (closest
+# -0.047 m against +0.245 m, deepest intrusion 0.70 m against 0.41 m),
+# while reaching the goal just as often. The explanation on offer is
+# that this LiDAR only finds people reliably within about 4 m, so at
+# 0.8 m/s there is no room to route around somebody -- only to react
+# to them.
+#
+# If that is the explanation, slowing down should restore the
+# clearance, and the argument becomes an ISO-flavoured one the study
+# can make: a robot's speed belongs to its sensing range, not to its
+# drivetrain. If it does not, the clearance is being lost somewhere
+# else and the explanation is wrong.
+#
+# Run configs/factory_u_slow.yaml beside it. Without the ground-truth
+# arm at the same speed there is no way to tell "slower is simply
+# better" from "slower compensates for what the sensor cannot see".
+base: configs/factory_u_lidar.yaml
+
+navigation:
+  max_linear_speed: 0.5

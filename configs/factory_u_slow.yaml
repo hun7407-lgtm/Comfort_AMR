@@ -1,0 +1,9 @@
+# The U bay at 0.5 m/s, on the simulator's own poses.
+#
+# The control arm for configs/factory_u_lidar_slow.yaml: the same
+# speed, everything known perfectly. See that file for what the pair
+# is for.
+base: configs/factory_u.yaml
+
+navigation:
+  max_linear_speed: 0.5

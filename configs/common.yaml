@@ -781,6 +781,51 @@ comfort_space:
 # > pedestrian detection thresholds.
 # ---------------------------------------------------------------
 perception:
+  # Where the people in the CONTROL loop come from.
+  #
+  #   tf     the true poses out of the simulator, so every Comfort
+  #          Space is placed perfectly. Isolates the policy from the
+  #          perception, which is what comparing B1, B2 and B3 as
+  #          policies needs.
+  #   lidar  the robot's own detections. Nothing in the loop then knows
+  #          more than the robot does. Requires humans.state_source:
+  #          sensor, since a detection has a track number and not a
+  #          name.
+  #
+  # Measurement is unaffected: nav2_goal scores intrusions against the
+  # true poses either way.
+  source: tf
+
+  # Finding people in the sensor data.
+  #
+  # Ported from the real machine: see
+  # results/real/amr_deploy/bin/detect_person.py, whose thresholds were
+  # tuned on a recording of the actual corridor. A person is a column
+  # that reaches past min_top, has at least min_extent of vertical
+  # extent, and is between min_spread and max_spread wide. The width
+  # bounds carry most of the weight: the lower one rejects slivers of
+  # wall, the upper one rejects benches and loaded carts, which are
+  # wide and stop low.
+  #
+  # None of this survives being flattened into a LaserScan. `source:
+  # scan` is kept for comparison and cannot tell a person from a
+  # pillar -- that is the point of the comparison.
+  detector:
+    source: cloud
+    z_min: 0.20          # m above the floor; below this is the floor itself
+    z_max: 2.00          # above this is the ceiling and the services
+    min_top: 0.90        # a person reaches at least this high
+    min_extent: 0.50     # and is at least this tall as a cluster
+    min_spread: 0.20     # narrower is a wall sliver
+    max_spread: 0.90     # wider is furniture
+    min_points: 8        # 550 points a sweep, so a person is tens of them
+    gap: 0.35            # single-linkage distance
+    # Seconds of sweeps stacked before clustering. One sweep leaves
+    # five to seven returns on a person at 4 m, too few to cluster;
+    # three sweeps is enough. Longer smears a walker along their path
+    # and the width test then rejects them.
+    window_seconds: 0.3
+
   tracking:
     # Consecutive returns further apart than this start a new cluster.
     cluster_gap: 0.25

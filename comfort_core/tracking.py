@@ -169,7 +169,20 @@ class PeopleTracker:
         0.87 m, worst speed error 1.03 -> 1.41 m/s.
         """
         clusters = cluster_scan(points, self.p)
-        centres = [c.centre for c in clusters]
+        return self.update_detections([c.centre for c in clusters], now)
+
+    def update_detections(self, centres: Sequence[Point], now: float) -> List[Track]:
+        """Feed positions that have already been found, one per person.
+
+        The 3D detector clusters the cloud itself and tests the shape of
+        each cluster before it reports anything, so its output is one
+        position per person and must not be clustered again: a single
+        position is one point with no extent, and `cluster_scan` drops
+        it for having too few returns and too little extent. Measured --
+        the detector reported two correctly shaped people per frame and
+        the tracker reported nobody.
+        """
+        centres = list(centres)
         claimed = set()
 
         for track in self.tracks:
