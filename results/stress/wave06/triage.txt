@@ -1,0 +1,14 @@
+
+=== 10 trials: 4 without a fault, 6 to look at ===
+
+  CONTACT  x1
+    stress_0005      b3  drove into w3, 2.1 s, closest -0.038 m
+
+  STUCK  x5
+    stress_0002      b3  DEADLOCK  (safety 0 s [])
+    stress_0003      b3  DEADLOCK  (safety 1 s [FootprintApproach])
+    stress_0004      b3  no progress for 12 s while yielding  (safety 9 s [ProtectiveStop])
+    stress_0008      b3  DEADLOCK  (safety 1 s [ProtectiveStop])
+    stress_0010      b3  DEADLOCK  (safety 1 s [FootprintApproach])
+
+  of the 10: 5 reached the goal, 0 stopped on a Comfort Space (not a fault)

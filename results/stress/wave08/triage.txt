@@ -1,0 +1,16 @@
+
+=== 14 trials: 4 without a fault, 10 to look at ===
+
+  STUCK  x10
+    stress_0001      b3  DEADLOCK  (safety 0 s [ProtectiveStop])
+    stress_0002      b3  DEADLOCK  (safety 0 s [])
+    stress_0003      b3  DEADLOCK  (safety 1 s [FootprintApproach])
+    stress_0008      b3  no progress for 12 s while yielding  (safety 8 s [ProtectiveStop])
+    stress_0009      b3  no progress for 12 s, safety layer holding it for the last 6  (safety 34 s [FootprintApproach])
+    stress_0010      b3  DEADLOCK  (safety 1 s [ProtectiveStop])
+    stress_0012      b3  DEADLOCK  (safety 2 s [ProtectiveStop])
+    stress_0011      b3  DEADLOCK  (safety 0 s [ProtectiveStop])
+    stress_0014      b3  DEADLOCK  (safety 0 s [])
+    stress_0013      b3  DEADLOCK  (safety 1 s [ProtectiveStop])
+
+  of the 14: 3 reached the goal, 1 stopped on a Comfort Space (not a fault)

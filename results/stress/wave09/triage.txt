@@ -1,0 +1,13 @@
+
+=== 8 trials: 3 without a fault, 5 to look at ===
+
+  CONTACT  x2
+    stress_0001      b3  drove into w7, 0.4 s, closest -0.075 m
+    stress_0005      b3  drove into w11, 30.9 s, closest -0.047 m
+
+  STUCK  x3
+    stress_0010      b3  DEADLOCK  (safety 1 s [ProtectiveStop])
+    stress_0005      b3  DEADLOCK  (safety 0 s [])
+    stress_0005      b3  DEADLOCK  (safety 0 s [ProtectiveStop])
+
+  of the 8: 3 reached the goal, 1 stopped on a Comfort Space (not a fault)

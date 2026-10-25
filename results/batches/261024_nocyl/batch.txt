@@ -1,0 +1,23 @@
+batch     : 261024_172737
+scenarios : b1
+configs   : configs/factory_u.yaml
+repeats   : 3
+trials    : 3
+commit    : d03e9db
+started   : 2026-10-24T17:27:37+09:00
+finished  : 2026-10-24T17:33:44+09:00
+ran       : 3 of 3
+no result : 0
+minutes   : 6
+
+=== 3 trials recorded ===
+
+  layout        scn    n  arrived  deadlock  timeout  median s   median m   yield s  closest  intrusion  people in  ROBOT HIT  safety s  state
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------
+  factory_u     b1     3       3         0        0      24.8       13.4       0.0   -0.016       0.67          1          0       1.2  0.996
+
+  arrived   reached the goal          deadlock  gave up, a route existed
+  closest   metres, footprint to person; negative is contact
+  intrusion metres into the reference Comfort Space, deepest in the trial
+  ROBOT HIT trials where the robot drove into somebody. B1 must be 0.
+  state     map-based state estimate vs the truth, 1.0 is perfect

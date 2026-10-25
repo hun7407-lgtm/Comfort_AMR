@@ -1,0 +1,7 @@
+batch     : 261024_173431
+scenarios : b1,b2,b3
+configs   : configs/factory_u.yaml,configs/factory_u_lidar.yaml
+repeats   : 4
+trials    : 24
+commit    : d03e9db
+started   : 2026-10-24T17:34:31+09:00

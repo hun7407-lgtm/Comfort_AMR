@@ -1,0 +1,179 @@
+{
+  "row": {
+    "stamp": "2026-10-22T20:26:28",
+    "scenario": "b3",
+    "policy": "state_adaptive",
+    "config": "configs/stress/stress_0001.yaml",
+    "map": "configs/nav2/factory_map.yaml",
+    "result": "DEADLOCK",
+    "valid": true,
+    "invalid_reason": "",
+    "goal_reached": false,
+    "planning_success": true,
+    "deadlock": true,
+    "deadlock_cause": "yielding to a Comfort Space",
+    "travel_time": 57.8,
+    "travel_distance": 3.24,
+    "final_distance_to_goal": 14.104,
+    "yield_seconds": 51.92,
+    "waited_for_humans": 33.2,
+    "evade_seconds": 0.0,
+    "safety_seconds": 0.0,
+    "safety_polygon": "",
+    "contact_seconds": 2.87,
+    "contact_robot_seconds": 0.0,
+    "contact_person_seconds": 2.87,
+    "min_clearance": -0.08,
+    "min_clearance_who": "w7",
+    "comfort_reference": "b3",
+    "worst_intrusion": 0.66,
+    "worst_intrusion_who": "w11",
+    "comfort_seconds_total": 5.32,
+    "people_intruded": 2,
+    "state_rule": "sensor:station_map",
+    "state_agreement": 0.9965,
+    "state_readings": 582624,
+    "people": 12,
+    "walkers": 0,
+    "start_x": -4.6,
+    "start_y": -5.47,
+    "goal_x": 7.4,
+    "goal_y": 5.49,
+    "max_trial_time": 120.0,
+    "static_radius": 1.2,
+    "radius_moving": 1.2,
+    "radius_stationary": 0.9,
+    "radius_engaged": 0.6,
+    "commit": ""
+  },
+  "min_clearance": {
+    "w1": [
+      6.918670123978712,
+      4.383333561999997
+    ],
+    "w10": [
+      1.9161507061162273,
+      2.500000131
+    ],
+    "w11": [
+      -0.010043418899839202,
+      13.883334057999996
+    ],
+    "w12": [
+      5.057751120417577,
+      57.783336347
+    ],
+    "w2": [
+      6.456805446082439,
+      5.6333336279999955
+    ],
+    "w3": [
+      6.643029965875741,
+      39.050002037
+    ],
+    "w4": [
+      8.424588649869717,
+      39.700002071
+    ],
+    "w5": [
+      9.3151208610104,
+      41.166668814000005
+    ],
+    "w6": [
+      7.5196545825638905,
+      57.783336347
+    ],
+    "w7": [
+      -0.08014659831927101,
+      38.766668689
+    ],
+    "w8": [
+      0.9254493760207092,
+      39.616668733
+    ],
+    "w9": [
+      0.4787897664376045,
+      38.81666869199999
+    ]
+  },
+  "comfort_worst": {
+    "w1": [
+      0.0,
+      11.94778353996452,
+      4.383333561999997
+    ],
+    "w10": [
+      0.0,
+      3.6102511768603787,
+      2.500000131
+    ],
+    "w11": [
+      0.6600434188998396,
+      0.26661842344462267,
+      13.883334057999996
+    ],
+    "w12": [
+      0.0,
+      8.846251867362628,
+      57.783336347
+    ],
+    "w2": [
+      0.0,
+      11.178009076804065,
+      5.6333336279999955
+    ],
+    "w3": [
+      0.0,
+      7.658922184306379,
+      39.050002037
+    ],
+    "w4": [
+      0.0,
+      14.457647749782861,
+      39.700002071
+    ],
+    "w5": [
+      0.0,
+      10.627912067789335,
+      41.166668814000005
+    ],
+    "w6": [
+      0.0,
+      12.949424304273153,
+      57.783336347
+    ],
+    "w7": [
+      0.43014659831927077,
+      0.2830890028012154,
+      38.766668689
+    ],
+    "w8": [
+      0.0,
+      1.306054862245233,
+      39.616668733
+    ],
+    "w9": [
+      0.0,
+      1.2146496107293403,
+      38.81666869199999
+    ]
+  },
+  "comfort_seconds": {
+    "w11": 1.9166667669999953,
+    "w7": 3.4000001769999955
+  },
+  "state_confusion": {
+    "station_engaged>station_engaged": 360806,
+    "stationary>stationary": 168988,
+    "moving>stationary": 483,
+    "moving>station_engaged": 485,
+    "moving>moving": 50790,
+    "stationary>moving": 539,
+    "station_engaged>moving": 533
+  },
+  "final_pose": [
+    -2.5072798813596684,
+    -4.552715346421714,
+    -1.926416313839889
+  ]
+}

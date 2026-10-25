@@ -1,0 +1,15 @@
+
+=== 10 trials: 3 without a fault, 7 to look at ===
+
+  CONTACT  x2
+    stress_0004      b3  drove into w11, 0.0 s, closest -0.028 m
+    stress_0010      b3  drove into w7, 0.1 s, closest -0.065 m
+
+  STUCK  x5
+    stress_0001      b3  no progress for 12 s, safety layer holding it for the last 2  (safety 8 s [ProtectiveStop])
+    stress_0002      b3  DEADLOCK  (safety 0 s [])
+    stress_0003      b3  DEADLOCK  (safety 0 s [])
+    stress_0005      b3  DEADLOCK  (safety 8 s [ProtectiveStop])
+    stress_0006      b3  DEADLOCK  (safety 0 s [])
+
+  of the 10: 2 reached the goal, 1 stopped on a Comfort Space (not a fault)

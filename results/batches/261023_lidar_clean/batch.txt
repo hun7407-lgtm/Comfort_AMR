@@ -1,0 +1,28 @@
+batch     : 261023_060338
+scenarios : b1,b2,b3
+configs   : configs/factory_u.yaml,configs/factory_u_lidar.yaml
+repeats   : 4
+trials    : 24
+commit    : d03e9db
+started   : 2026-10-23T06:03:38+09:00
+finished  : 2026-10-23T06:59:58+09:00
+ran       : 24 of 24
+no result : 1
+minutes   : 56
+
+=== 23 trials recorded ===
+
+  layout        scn    n  arrived  deadlock  timeout  median s   median m   yield s  closest  intrusion  people in  ROBOT HIT  safety s  state
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------
+  factory_u     b1     4       3         1        0      26.1       13.8       0.0   -0.026       0.67          1          0       1.8  0.996
+  factory_u     b2     3       0         3        0         -          -      29.5   -0.024       0.67          1          0      38.7  0.996
+  factory_u     b3     4       3         1        0      27.9       14.2       4.9    0.226       0.42          1          0       0.0  0.996
+  factory_u_lidar b1     4       0         4        0         -          -       0.0   -0.025       0.68          1          0      28.3  0.996
+  factory_u_lidar b2     4       0         3        0         -          -      16.4    0.147       0.50          1          0      23.2  0.996
+  factory_u_lidar b3     4       2         2        0      29.6       14.2      11.4    0.016       0.63          1          0       9.7  0.996
+
+  arrived   reached the goal          deadlock  gave up, a route existed
+  closest   metres, footprint to person; negative is contact
+  intrusion metres into the reference Comfort Space, deepest in the trial
+  ROBOT HIT trials where the robot drove into somebody. B1 must be 0.
+  state     map-based state estimate vs the truth, 1.0 is perfect

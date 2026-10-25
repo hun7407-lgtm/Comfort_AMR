@@ -160,11 +160,33 @@ USD가 자체 완결이 아닙니다. 두 개의 외부 참조가 있습니다.
 | 대상 | 경로 | 상태 |
 |---|---|---|
 | LiDAR 센서 정의 | `https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Sensors/NVIDIA/Example_Rotary.usda` | HTTP 200, 접근 가능 |
-| base_link 텍스처 | `./textures/diffuse.jpg` | **원본 저장소에 없음** |
+| base_link 텍스처 | `./textures/diffuse.jpg` | 확보해서 `assets/amr/textures/`에 둠 (2026-10-10) |
 
 LiDAR reference는 Isaac Sim 5.1 공식 클라우드 에셋이라 인터넷만 되면 자동으로 받아집니다.
-텍스처는 누락되어 있어 `base_link`가 흰색으로 렌더링됩니다.
-외형 문제일 뿐 물리와 navigation에는 영향이 없으므로 지금은 무시합니다.
+텍스처는 한동안 누락 상태였고, 그동안 AMR 전체가 질감 없는 단색 검정으로
+렌더링됐습니다. 2026-10-10에 원본 `textures.zip`을 받아 넣었습니다.
+
+**두는 자리** — USD 파일 *옆*이 아니라 그 아래 `textures/` 폴더입니다. 참조가
+`./textures/diffuse.jpg`이므로 다음 위치여야 합니다.
+
+```
+assets/amr/AMR_09_02_V2.usd
+assets/amr/textures/diffuse.jpg     <- 여기
+```
+
+USD는 고칠 필요가 없습니다. 파일만 그 자리에 있으면 됩니다.
+
+`diffuse.jpg`는 4096 x 4096 RGB 한 장이고, 머티리얼이 `Material_0` 하나뿐이라
+섀시, 바퀴, 캐스터, LiDAR 하우징, 상판 배선까지 전부 이 한 장에서 나옵니다.
+UV는 이미 펼쳐져 있습니다. 함께 들어 있는 `color_0C0C0C.exr`는 이 USD의 어떤
+애셋 속성도 참조하지 않지만, 원본 아카이브 구성 그대로 두었습니다.
+
+다른 Scene에 reference로 들어가도 똑같이 해결됩니다. 상대 경로는 그것을 기술한
+레이어(= AMR USD) 기준으로 풀리기 때문에, 공장 Scene에 박아 넣어도 경로를
+다시 써줄 필요가 없습니다. 실제로 새 stage에 reference해서 렌더링해 확인했습니다.
+
+커밋 대상입니다. 이게 저장소에 없어서 생긴 문제였고, 1.3 MB면 USD 옆에 두기에
+부담이 없습니다.
 
 ---
 

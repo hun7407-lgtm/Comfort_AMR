@@ -1,0 +1,15 @@
+
+=== 9 trials: 0 without a fault, 9 to look at ===
+
+  DIVERGED  x9
+    stress_0001      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0001      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0001      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0005      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0005      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0005      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0010      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0010      b3  the comfort gate published nothing; it is not running, so no command c
+    stress_0010      b3  the comfort gate published nothing; it is not running, so no command c
+
+  of the 9: 0 reached the goal, 0 stopped on a Comfort Space (not a fault)

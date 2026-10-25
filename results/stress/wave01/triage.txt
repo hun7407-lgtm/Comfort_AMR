@@ -1,0 +1,4 @@
+
+=== 4 trials: 4 without a fault, 0 to look at ===
+
+  of the 4: 0 reached the goal, 0 stopped on a Comfort Space (not a fault)

@@ -1,0 +1,12 @@
+
+=== 9 trials: 3 without a fault, 6 to look at ===
+
+  STUCK  x6
+    stress_0002      b3  DEADLOCK  (safety 0 s [])
+    stress_0001      b3  no progress for 12 s while yielding  (safety 7 s [ProtectiveStop])
+    stress_0004      b3  no progress for 12 s, safety layer holding it for the last 2  (safety 25 s [ProtectiveStop])
+    stress_0003      b3  DEADLOCK  (safety 0 s [])
+    stress_0006      b3  no progress for 12 s, safety layer holding it for the last 7  (safety 20 s [ProtectiveStop])
+    stress_0010      b3  DEADLOCK  (safety 1 s [ProtectiveStop])
+
+  of the 9: 2 reached the goal, 1 stopped on a Comfort Space (not a fault)

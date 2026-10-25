@@ -1,0 +1,16 @@
+
+=== 9 trials: 1 without a fault, 8 to look at ===
+
+  CONTACT  x3
+    stress_0010      b3  drove into w1, 17.7 s, closest -0.052 m
+    stress_0010      b3  drove into w1, 16.5 s, closest -0.052 m
+    stress_0010      b3  drove into w1, 19.1 s, closest -0.052 m
+
+  STUCK  x5
+    stress_0001      b3  no progress for 12 s while yielding  (safety 0 s [])
+    stress_0001      b3  no progress for 12 s while yielding  (safety 0 s [])
+    stress_0005      b3  DEADLOCK  (safety 1 s [ProtectiveStop])
+    stress_0001      b3  no progress for 12 s while yielding  (safety 0 s [])
+    stress_0005      b3  DEADLOCK  (safety 0 s [invalid source])
+
+  of the 9: 0 reached the goal, 1 stopped on a Comfort Space (not a fault)
