@@ -1,0 +1,76 @@
+# RViz layout for looking at the real AMR's LiDAR, live or from a bag.
+#
+#   ros2 bag play ~/Downloads/amr_bags/amr_static --loop
+#   rviz2 -d nav3d/real_lidar.rviz
+#
+# Decay time is 30 s on purpose. The L1 is a non-repetitive scanner:
+# any single sweep is a sparse scattering of ~600 points and tells you
+# very little. Letting them pile up for half a minute is what turns it
+# into a picture of the room, and it is also how the sensor is meant to
+# be read.
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+    Property Tree Widget:
+      Expanded: [/PointCloud21]
+    Tree Height: 700
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Cell Size: 1
+      Plane Cell Count: 40
+      Color: 160; 160; 164
+      Alpha: 0.4
+      Reference Frame: <Fixed Frame>
+    - Class: rviz_default_plugins/PointCloud2
+      Name: PointCloud2
+      Enabled: true
+      Topic:
+        Value: /lidar/cloud
+        Depth: 20
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Style: Points
+      Size (Pixels): 2
+      Alpha: 1
+      Decay Time: 30
+      Color Transformer: AxisColor
+      Axis: Z
+      Autocompute Intensity Bounds: true
+      Position Transformer: XYZ
+      Queue Size: 20
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Show Names: true
+      Show Axes: true
+      Show Arrows: false
+      Marker Scale: 0.5
+  Global Options:
+    Background Color: 32; 32; 36
+    Fixed Frame: base_footprint
+    Frame Rate: 30
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+      Line color: 128; 128; 0
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Current View
+      Distance: 14
+      Pitch: 0.45
+      Yaw: 3.1
+      Focal Point: {X: -3, Y: 0, Z: 0.5}
+      Target Frame: <Fixed Frame>
+    Saved: ~
+Window Geometry:
+  Height: 900
+  Width: 1500
+  Displays: {collapsed: false}

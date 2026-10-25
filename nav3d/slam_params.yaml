@@ -1,0 +1,87 @@
+# ---------------------------------------------------------------
+# slam_toolbox tuning for the mapping run.
+#
+# Read by nav3d/mapping.launch.py, which overrides the frames, the scan
+# topic, the range and the grid resolution from the scene config -- those
+# are facts about this project, not tuning, and a second copy of them
+# here is how the map ends up at a different resolution than the costmap
+# that loads it.
+#
+# Derived from the Jazzy defaults
+# (/opt/ros/jazzy/share/slam_toolbox/config/mapper_params_online_async.yaml),
+# changed where a 12 m bay differs from the outdoor-ish defaults:
+#
+#   minimum_travel_distance  0.5 -> 0.20   The whole bay is 12 m across. At
+#   minimum_travel_heading   0.5 -> 0.20   half a metre between keyframes a
+#   minimum_time_interval    0.5 -> 0.20   lap contributes about forty scans,
+#                                          and the corners -- where the scan
+#                                          geometry changes fastest -- fall
+#                                          between them.
+#   map_update_interval      5.0 -> 1.00   So the map being saved is the map
+#                                          the lap just finished, not one up
+#                                          to five seconds stale.
+#   enable_interactive_mode true -> false  Nothing here drags nodes around in
+#                                          rviz, and it costs memory.
+#
+# Everything else is left at the default on purpose. The scan is clean
+# synthetic data from a known-good odometry source, which is the easiest
+# input a scan matcher ever gets; the defaults handle it.
+# ---------------------------------------------------------------
+slam_toolbox:
+  ros__parameters:
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    mode: mapping
+    use_map_saver: true
+    debug_logging: false
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    map_update_interval: 1.0
+    restamp_tf: false
+    min_laser_range: 0.0
+    minimum_time_interval: 0.2
+    transform_timeout: 0.2
+    tf_buffer_duration: 30.0
+    stack_size_to_use: 40000000
+    enable_interactive_mode: false
+
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.2
+    minimum_travel_heading: 0.2
+    check_min_dist_and_heading_precisely: false
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+    min_pass_through: 2
+    occupancy_threshold: 0.1

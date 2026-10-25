@@ -1,0 +1,13 @@
+# placed in world coordinates by nav3d/place_map.py
+# origin was [-1.2660, -8.5530, 0.0000] in the frame SLAM
+# built it in, which starts at navigation.start.
+image: factory_bay.pgm
+mode: trinary
+resolution: 0.05
+origin:
+- -6.066
+- -6.303
+- 0.0
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196

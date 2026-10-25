@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------
+# The loop bay, navigated with the LiDAR used as a 3D sensor and on a
+# map the robot built itself.
+#
+#   ./scripts/run_mapping.sh --config configs/factory_3d.yaml   (once)
+#   ./scripts/run_b3.sh --headless --config configs/factory_3d.yaml
+#
+# Same building, same people, same policy as configs/factory.yaml --
+# only the perception changes, so the two can be compared directly and
+# the earlier results stay valid. The 2D version is not touched.
+#
+# What is different:
+#
+#   costmaps   a VoxelLayer fed by /lidar/cloud, so obstacles are
+#              marked at the height they are at rather than flattened
+#              into one band. A trolley frame at 0.9 m and a shelf
+#              overhang at 1.6 m are different things again.
+#   map        built by slam_toolbox from a mapping run and saved, then
+#              shared by every trial. Building it once is deliberate:
+#              with a fresh map per trial, B1, B2 and B3 would each
+#              navigate on different geometry and the comparison would
+#              stop being about the policy.
+# ---------------------------------------------------------------
+base: configs/factory.yaml
+
+nav2:
+  template: nav3d/nav2_params_3d.template.yaml
+  # Written by ./scripts/run_mapping.sh. Until that has been run once,
+  # trials on this config have no map to load.
+  map: nav3d/maps/factory_bay.yaml
+  voxel:
+    # Above the painted markings, up to a tall person.
+    min_height: 0.10
+    max_height: 1.80
+    z_resolution: 0.12
+    z_voxels: 16
+    # One hit marks a column of the voxel grid: at 10 Hz and 128 beams
+    # a thin profile upright gets few returns, and missing it is worse
+    # than the odd speckle, which the clearing pass removes anyway.
+    mark_threshold: 0
+    unknown_threshold: 15
+
+# Recordings land in their own folder, beside the 2D ones.
+recording:
+  version: v7_factory_3d
