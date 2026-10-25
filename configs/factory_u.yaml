@@ -1,0 +1,675 @@
+# ---------------------------------------------------------------
+# The bay with a U-shaped assembly line.
+#
+#   ./scripts/build_factory_scene.sh --config configs/factory_u.yaml
+#   ./scripts/view_factory_scene.sh  --config configs/factory_u.yaml
+#
+# Why a U
+# -------
+# A washing machine line is about thirty metres of belt. Laid out
+# straight that is a bay nobody could walk the length of, and the loop
+# the AMR drives would be thirty metres a side. Folded into a U the same
+# belt fits in 24 m, both ends of the line are at the same end of the
+# building -- parts in and finished goods out through one door -- and
+# the robot's loop stays short enough to be worth driving.
+#
+# How it is arranged, from the outside in on each side:
+#
+#     wall        racks, pallets, parts carts waiting to be collected
+#     AMR aisle   1.5 m, with pull-off refuges cut into the racking
+#     operator    stands here, facing the belt
+#     belt        one leg of the U
+#     core        the inside of the U: process cabinets, and the
+#                 transfer curve at the east end joining the two legs
+#
+# The operator faces the belt, so their **back is to the AMR aisle**.
+# That is the situation this study exists to measure, and here it is
+# the normal working posture of ten people rather than a contrived
+# one. The robot passes behind someone who cannot see it coming.
+#
+# Everything else -- AMR, ROS topics, Nav2 limits, Comfort Space policy,
+# trial rules, materials, ceiling, wall fittings -- is inherited from
+# configs/factory.yaml, so this is a layout change and nothing else.
+# ---------------------------------------------------------------
+base: configs/factory.yaml
+
+factory:
+  # 24 x 16 m, against the loop bay's 12 x 12.
+  column_pitch: 6.0
+  bays: 4
+  width: 16.0
+
+  # Columns stand at x = -12, -6, 0, +6, +12 on both walls. Anything
+  # against the wall has to miss them, which is why the racking below
+  # sits at the odd multiples of three.
+  # The depths are not round numbers because they are not free: the
+  # U-turn is a real conveyor asset (ConveyorBelt_A14) whose two ends
+  # are 3.77 m apart, so the belt centrelines have to be at y = +-1.885
+  # and everything else follows from that. Trying to meet a fixed asset
+  # with a layout chosen first is what leaves a gap in the belt.
+  rows:
+    - {name: zone_south,  kind: zone,  depth: 3.04}
+    - {name: aisle_south, kind: aisle, depth: 1.50}
+    - {name: line_south,  kind: zone,  depth: 2.15}
+    - {name: core,        kind: zone,  depth: 2.62}
+    - {name: line_north,  kind: zone,  depth: 2.15}
+    - {name: aisle_north, kind: aisle, depth: 1.50}
+    - {name: zone_north,  kind: zone,  depth: 3.04}
+
+  # No separate pull-off refuges. They are the empty slots in the cart
+  # blocks below -- see `cart_bays`. A 1.5 x 0.9 m box every 4 m that
+  # nothing could be parked in, next to a cart park the robot was
+  # forbidden to wait in, was two markings for one piece of floor.
+  refuges:
+    enabled: false
+
+  # Cart staging blocks, and the pull-offs in the same breath.
+  #
+  # Three blocks a side at a 6 m pitch, each 3 slots along the aisle by
+  # 2 deep -- six slots of 1.40 x 1.05 m, packed, opening straight on
+  # to the aisle. A slot holds one library dolly (1.26 x 0.85 m) with
+  # 0.07 m either side, or one AMR (0.70 x 0.48 m) with room to turn.
+  #
+  # They are not all full, and that is the point. Carts fill the BACK
+  # row first, left to right, so whatever is empty is on the aisle
+  # frontage where the robot can reach it:
+  #
+  #     wall  [cart][cart][cart]   <- row 1, filled first
+  #     aisle [cart][    ][    ]   <- row 2, the pull-offs
+  #
+  # A block with 4 carts leaves two front slots free; the middle block
+  # has 3, so its whole frontage is free. 22 carts, 14 free slots.
+  #
+  # Depth: 2 x 1.05 = 2.10 m of a 3.04 m zone, leaving 0.94 m against
+  # the wall, which is where the 0.55 m racking stands.
+  cart_bays:
+    enabled: true
+    cols: 3
+    rows: 2
+    slot: [1.40, 1.05]
+    at: [-6.0, 0.0, 6.0]
+    carts: [4, 3, 4]
+    # What the carts carry: a loaded EUR pallet, one per cart.
+    #
+    # The dolly is a pallet dolly -- an open frame whose whole job is
+    # to carry a pallet -- so the load is the matching library asset
+    # rather than bins scattered on the deck. 1.20 x 0.80 m pallet on
+    # a 1.26 x 0.85 m deck, 8 Euro cases in two layers on top of it.
+    # Total height with the dolly 1.03 m, which is also what the LiDAR
+    # sees: a loaded cart reads as a solid block, not an open frame.
+    #
+    # `margin: 0.02` because the pallet nearly fills the deck; the
+    # default 0.06 would declare it too big and stop the build.
+    loads:
+      - {prop: pallet_load, cols: 1, rows: 1, margin: 0.02}
+
+    # Storage side only. A block cut into the line side would be a
+    # block where an operator is standing.
+    in: [zone_north, zone_south]
+
+  cross_aisles:
+    enabled: true
+    # 2.0 m, wider than the 1.5 m working aisles.
+    #
+    # A right-angle junction between two 1.5 m lanes is where the
+    # driving kept failing. The robot cut the corner, ended up 0.1 to
+    # 0.2 m outside the painted floor, and NavFn then refused to plan
+    # from a pose whose footprint touches a solid cell -- so the trial
+    # ended with "GridBased plugin failed to plan from (-9.54, 0.42)"
+    # and no explanation visible from the outside. Four of ten trials
+    # in the fourth stress wave died at x = +-9.4 to +-9.5, which is
+    # the inner edge of these crossings to the centimetre.
+    #
+    # Geometrically a differential drive CAN turn there -- it can
+    # rotate on the spot -- but it cannot while running at 0.8 m/s
+    # with a 0.34 m inflation radius off both walls, which leaves
+    # 0.82 m of low-cost channel and nothing at all round the inside
+    # of the corner.
+    #
+    # Widening the crossings and not the aisles is deliberate: the
+    # 1.5 m aisle beside the line is the geometry this study is about,
+    # and nobody works at a junction. Plants widen them for the same
+    # reason.
+    width: 2.0
+    at: [-10.5, 10.5]
+
+  # The run: the length of the north aisle, behind five operators.
+  route:
+    aisle: aisle_north
+    end_margin: 3.0
+    offset: 0.0
+
+  # ---------------------------------------------------------------
+  # What is parked on the floor.
+#
+  # The parts carts live in the staging blocks (`cart_bays` above),
+  # not here: back row first, so the empty front slots are the ones
+  # the robot can pull into when it has to let someone past.
+  # ---------------------------------------------------------------
+  clutter:
+    enabled: true
+    # Empty on purpose, not absent: the parts carts live in the staging
+    # blocks now. Leaving this out would inherit the loop bay's list,
+    # whose coordinates belong to a 12 x 12 m room and land in these
+    # aisles.
+    trolleys: []
+    #        x      y     yaw  levels
+    stacks:
+      - [ 9.20,  6.60,  0.0, 3]
+      - [ 9.20, -6.60,  0.0, 2]
+
+  # Only the painted lanes are driveable in the occupancy map.
+  # Without this the planner finds the clear metre in front of the
+  # racking and drives the length of the building through the storage
+  # area, passing nobody -- which makes a Comfort Space study pointless.
+  map:
+    lanes_only: true
+    # Slack either side of the paint, so stepping over the line to let
+    # someone past is not fatal.
+    #
+    # 0.25 m = the robot's half-width (0.24) plus a centimetre. A robot
+    # sitting exactly on the lane edge has its far side 0.24 m past the
+    # line, and the planner refuses to plan from a pose whose footprint
+    # touches a solid cell, so the carve has to cover at least that.
+    #
+    # It was 0.45, which opened the aisle to 2.4 m in the map against
+    # 1.5 m of paint. The robot used the extra: avoiding two people
+    # crossing, it drifted 0.33 m north of the lane, which in this bay
+    # is the frontage of a cart block, and froze beside a parked cart.
+    # An aisle that is 1.5 m wide in the drawing has to be 1.5 m wide
+    # to the planner, or the geometry the whole study rests on is not
+    # the geometry being driven.
+    lane_margin: 0.25
+
+  paint:
+    # No direction arrows on the floor. They were decoration, and a
+    # one-way marking is a claim about how the bay is run that this
+    # layout does not actually make -- both aisles carry traffic both
+    # ways.
+    arrows: false
+
+  usd_path: assets/scene/factory_u.usd
+
+# ---------------------------------------------------------------
+# A drum washing machine line, ten processes.
+#
+# The belt is two straight legs and a transfer curve. The ten processes
+# are the ten posts along it: S1-S5 down the north leg, round the
+# curve, S6-S10 back along the south leg. Each post has an operator on
+# the aisle side of the belt and its own cabinet or jig on the inside
+# of the U, where the services run.
+#
+# Nothing here reproduces a specific machine or a specific plant's
+# process sheet. The sequence is the ordinary one for a front-loader:
+# shell, tub, drum, balance, suspension, water in, water out, wiring,
+# door, test.
+# ---------------------------------------------------------------
+equipment:
+  enabled: true
+  worker_offset: 0.45
+  stand_gap: 0.55
+  wall_gap: 0.10
+
+  # The belt is NVIDIA's conveyor library, not drawn here: the legs are
+  # ConveyorBelt_A05 repeated and the U-turn is A14, which is the same
+  # family and the same 1.15 m belt width, so they bolt together
+  # without a seam. Building the straights and referencing the curve
+  # would have put a white aluminium belt next to a blue roller one.
+  modules:
+    line:   {length: 2.00, depth: 1.15, height: 1.17}
+    u_turn: {length: 2.57, depth: 4.93, height: 1.17}
+    cart:   {length: 1.26, depth: 0.85, height: 0.44}
+    # What is loaded on the carts. Measured off the model, same as
+    # everything else here, so the size check can do its job.
+    pallet_load: {length: 1.200, depth: 0.800, height: 0.590}
+
+  stations:
+    # --- the belt -------------------------------------------------
+    # North leg, S1..S5. x -8.25 .. +6.75, operators every 3 m.
+    # 7 x 2.00 m = 14.0 m, centred so the east end lands at x = +6.50,
+    # which is exactly where the U-turn's flat face is.
+    - name: belt_north
+      module: line
+      band: line_north
+      x: -0.50
+      segments: 7
+      workers:
+        - {along: -6.0, side: north}    # S1  캐비닛 투입
+        - {along: -3.0, side: north}    # S2  외조 조립
+        - {along:  0.0, side: north}    # S3  내조/모터
+        - {along:  3.0, side: north}    # S4  밸런스 웨이트
+        - {along:  6.0, side: north}    # S5  댐퍼/서스펜션
+
+    # The transfer curve at the east end, running across instead of
+    # along. It touches both legs at x = +6.75.
+    # The transfer curve. Its flat faces are 3.77 m apart and land on
+    # the two legs' east ends; the bulge runs out to x = +9.07, which
+    # keeps it clear of the cross aisle at x = +9.75.
+    - name: belt_turn
+      module: u_turn
+      band: core
+      side: north
+      x: 7.785
+      y: 0.0
+      worker: false
+
+    # South leg, S6..S10, worked from the south aisle.
+    - name: belt_south
+      module: line
+      band: line_south
+      x: -0.50
+      segments: 7
+      workers:
+        - {along:  6.0, side: south}    # S6  급수 밸브
+        - {along:  3.0, side: south}    # S7  배수 펌프
+        - {along:  0.0, side: south}    # S8  배선/PCB
+        - {along: -3.0, side: south}    # S9  도어/개스킷
+        - {along: -6.0, side: south}    # S10 누수/시운전
+
+    # --- process cabinets, inside the U ---------------------------
+    # One per post, on the far side of the belt from the operator, in
+    # the core band where the air and power drops are.
+    - {name: jig_s1,  module: control_cabinet, band: core, side: north, x: -6.50, y:  1.00, worker: false}
+    - {name: jig_s2,  module: control_cabinet, band: core, side: north, x: -3.50, y:  1.00, worker: false}
+    - {name: jig_s3,  module: control_cabinet, band: core, side: north, x: -0.50, y:  1.00, worker: false}
+    - {name: jig_s4,  module: control_cabinet, band: core, side: north, x:  2.50, y:  1.00, worker: false}
+    - {name: jig_s5,  module: control_cabinet, band: core, side: north, x:  5.50, y:  1.00, worker: false}
+    - {name: jig_s6,  module: control_cabinet, band: core, side: south, x:  5.50, y: -1.00, worker: false}
+    - {name: jig_s7,  module: control_cabinet, band: core, side: south, x:  2.50, y: -1.00, worker: false}
+    - {name: jig_s8,  module: control_cabinet, band: core, side: south, x: -0.50, y: -1.00, worker: false}
+    - {name: jig_s9,  module: control_cabinet, band: core, side: south, x: -3.50, y: -1.00, worker: false}
+    - {name: jig_s10, module: control_cabinet, band: core, side: south, x: -6.50, y: -1.00, worker: false}
+
+    # --- storage, against both walls ------------------------------
+    # Clear of the columns at x = -12, -6, 0, +6, +12.
+    # One picker on the storage side, opposite a belt operator, so at
+    # that x the aisle is squeezed from both sides. Without it the
+    # storage side is all racking and nobody stands near the lane:
+    # 0.75 m would stay free even at a 1.20 m Comfort Space and B2 and
+    # B3 would stop differing.
+    # x = 3.00 is the 1.8 m gap between the cart blocks at 0 and +6.
+    # It was 5.50, which is inside the +6 block now. The picker is
+    # opposite w4/w7 at 2.50 rather than exactly opposite an operator,
+    # which still squeezes the aisle from both sides within a robot
+    # length.
+    - {name: pick_n, module: trolley, band: zone_north, x:  3.00, y:  6.425}
+    - {name: pick_s, module: trolley, band: zone_south, x:  3.00, y: -6.425}
+
+    # Racking, against the wall. It clears the cart blocks in y --
+    # 0.55 m deep at y 7.45..8.00, the blocks stop at 7.06 -- so it
+    # only has to miss the columns at x = -12, -6, 0, +6, +12.
+    - {name: rack_n1, module: shelf,        band: zone_north, x:  3.00, align: wall}
+    - {name: rack_n2, module: shelf,        band: zone_north, x:  8.00, align: wall}
+    - {name: pall_n3, module: pallet_stack, band: zone_north, x: -9.20, align: wall}
+    - {name: rack_s1, module: shelf,        band: zone_south, x:  3.00, align: wall}
+    - {name: rack_s2, module: shelf,        band: zone_south, x:  8.00, align: wall}
+    - {name: pall_s3, module: pallet_stack, band: zone_south, x: -9.20, align: wall}
+
+# ---------------------------------------------------------------
+# The cart the AMR tows.
+#
+# 1.10 x 0.65 m is not an arbitrary pick: it is the largest cart that
+# can be towed round the corner between two 1.5 m lanes. Swept-path
+# check, hitch on a straight-arc-straight line, worst excursion
+# outside the painted lanes:
+#
+#   cart          drawbar   smallest turn radius that stays in lane
+#   1.10 x 0.65    0.35 m   0.80 m
+#   1.20 x 0.80    0.35 m   1.35 m      (tight; a Euro pallet cart)
+#   1.40 x 0.80      any    does not fit at any radius
+#
+# So the planner has to be told not to turn tighter than 0.80 m once a
+# cart is hooked on. The robot alone clears the same corner at 0.60 m.
+#
+# The cart is dragged kinematically rather than jointed -- see
+# isaac_sim/utils/towing.py for why a solver at the hitch would make
+# two runs of the same scenario differ.
+# ---------------------------------------------------------------
+amr:
+  spawn:
+    # Facing the aisle in the slot it starts in. Spawned nose-in it
+    # would be inside its own protective field before it was even
+    # given a goal: the slot is 1.05 m deep with a loaded cart behind
+    # it. -90 is south, which is where the lane is from a slot on the
+    # north side.
+    yaw_deg: -90.0
+
+  tow:
+    # Off. The rig is about 2.45 m long with a cart on the hook
+    # (0.43 robot + 0.45 hook + 0.35 bar + 1.26 cart), and a pull-off
+    # refuge is 1.50 x 0.90 m. A robot that tows cannot get out of
+    # anyone's way in this bay: a metre of cart stays in the aisle
+    # however neatly it parks. Yielding is the manoeuvre this study
+    # measures, so a vehicle that cannot yield measures nothing.
+    #
+    # The AMR's job is still to move carts -- it just drives to them
+    # instead of dragging one around. isaac_sim/utils/towing.py works
+    # and stays; turn this on again if the refuges are ever made deep
+    # enough (2.5 m plus) and towing becomes the research question.
+    enabled: false
+    # The library dolly, measured: 1.26 long x 0.85 wide x 0.44 high.
+    cart_size: [1.26, 0.85, 0.44]
+    drawbar: 0.35
+    hook_offset: 0.45
+    # The drawbar stop. Real hitches have one; without it the cart
+    # folds back past the robot and into its own LiDAR.
+    max_fold_deg: 85.0
+    kind: cart
+    prim_path: /World/Cart
+
+# ---------------------------------------------------------------
+# The rest of the fleet.
+#
+# Three AMRs working the bay alongside the one under test. They are
+# not planning: they route on a lane network -- the two aisle
+# centrelines joined by the two crossings, with a short spur out to
+# each place -- the way a real fleet controller runs virtual paths.
+# Letting them find their own way across the floor would have them
+# cutting through pull-off refuges and parked carts, and would make
+# the traffic the measured robot meets different in every run.
+#
+# The measured robot is NOT one of these. It keeps Nav2 and the
+# Comfort Space costmap, because that is what the study measures. The
+# occupancy map is restricted to the same lanes, so both travel the
+# same corridors anyway.
+#
+# Giving way:
+#   people   the scenario's own Comfort Space, at the scenario's own
+#            radii -- so a fleet AMR gives a person what B2 or B3 says
+#            they are owed, and in B1 gives them nothing, like the
+#            robot under test
+#   machines plain clearance, no Comfort Space. A robot is not owed
+#            personal space; whoever is in front goes first
+# ---------------------------------------------------------------
+fleet:
+  # OFF. One AMR in the bay for now -- the one under test. The fleet
+  # works and the roadmap is still below; `enabled: true` brings all
+  # three back.
+  enabled: false
+  # Same as the robot under test. It was 0.35 against the measured
+  # robot's 0.40, which made every fleet AMR a rolling roadblock: the
+  # robot under test caught up with one in a 1.5 m aisle, could not
+  # pass, and the trial ended in a deadlock that had nothing to do with
+  # anybody's comfort. A fleet of identical machines runs at one speed.
+  speed: 0.8
+  turn_speed_deg: 60.0
+  pause: 2.0
+  look_ahead: 0.9
+  robot_clearance: 1.2
+
+  # The lanes. Centre of each aisle, centre of each crossing.
+  lanes:
+    north_y:  4.215
+    south_y: -4.215
+    west_x:  -10.5
+    east_x:   10.5
+
+  # Where an AMR can be sent. Checked against the navigable floor.
+  #
+  # Every place is a cart slot, bar the two docks on the crossings
+  # (parts in at the west end, finished goods out at the east).
+  #
+  #   carts_*  the front-row cart in the west block, which is the one
+  #            a robot can actually reach -- nothing is parked in
+  #            front of it
+  #   drop_*   an EMPTY front slot. Delivering means putting a cart in
+  #            a marked slot, so the destination is the empty slot,
+  #            not a spot on the floor beside the lane.
+  #
+  # Front row centres are y +-5.485, so a standing AMR is off the lane.
+  # The slot at x -4.60 is left out on purpose: that is the measured
+  # robot's goal, and a fleet AMR parked in it would deadlock the
+  # trial under test for a reason that has nothing to do with comfort.
+  places:
+    dock_west: [-10.50,  0.00]
+    dock_east: [ 10.50,  0.00]
+    carts_n:   [ -7.40,  5.485]
+    carts_s:   [ -7.40, -5.485]
+    drop_n1:   [ -6.00,  5.485]
+    drop_n2:   [ -1.40,  5.485]
+    drop_n3:   [  0.00,  5.485]
+    drop_n4:   [  1.40,  5.485]
+    drop_n5:   [  6.00,  5.485]
+    drop_s1:   [ -6.00, -5.485]
+    drop_s2:   [ -1.40, -5.485]
+    drop_s3:   [  0.00, -5.485]
+    drop_s4:   [  1.40, -5.485]
+    drop_s5:   [  6.00, -5.485]
+
+  # Each one collects from a cart block, delivers to the line, and
+  # goes back for more. The jobs repeat.
+  amrs:
+    a1:
+      start: dock_west
+      jobs: [carts_n, drop_n4, carts_n, drop_n2, dock_west]
+    a2:
+      start: dock_east
+      jobs: [carts_s, drop_s3, carts_s, drop_s5, dock_east]
+    a3:
+      # Not drop_n1: that is 1.25 m from where walker c starts, which
+      # is inside a 1.20 m Comfort Space, so a3 was held before it
+      # moved at all.
+      start: drop_n5
+      jobs: [carts_n, drop_n5, carts_s, drop_s1]
+
+recording:
+  version: v8_factory_u
+
+# The errand: start at the east end of the north aisle, drive its
+# length against the oncoming walker, then turn off into the west cart
+# block and park in the empty slot next to a parked cart. That is what
+# the AMR is for -- it works the cart blocks -- and it puts the whole
+# traverse in the aisle where the people are.
+#
+# The goal is slot carts_n1_r2c3: front row, 1.40 x 1.05 m, centre
+# (-4.60, 5.485). Off the lane, so arriving does not block the aisle,
+# and empty, so arriving is possible.
+navigation:
+  # Both ends are empty cart slots, which is where an AMR that works
+  # the staging blocks actually waits between jobs. It backs out of
+  # the east slot, drives the length of the north aisle and parks in
+  # the west one.
+  #
+  #   start  carts_n3_r2c3, front row, east block
+  #   goal   carts_n1_r2c3, front row, west block
+  # Not the middle of the slot: 0.17 m nearer its mouth.
+  #
+  # The stopped protective field reaches 0.564 m from the robot's
+  # centre at its farthest corner -- 0.45 m forward by 0.34 m across,
+  # and the robot can be parked at any heading. A slot centre is
+  # 0.525 m from the loaded cart in the row behind, so a robot parked
+  # in the middle of a slot has that cart inside its own protective
+  # field and the collision monitor refuses every command, including
+  # the rotation that would square it up.
+  #
+  # Measured, and it accounted for nearly every deadlock in the bay:
+  # fifteen of sixteen trials that drove the whole route ended
+  # 0.25-0.29 m from a goal they needed to be 0.25 m from, frozen at a
+  # heading of -126 to -147 degrees with the field over the cart. The
+  # ones that succeeded were the ones whose heading happened to land
+  # inside the goal checker's 20 degrees before the monitor clamped
+  # them -- the difference between a success and a deadlock was luck,
+  # not policy.
+  #
+  # At y 5.32 the footprint is still wholly inside the 1.05 m slot
+  # (4.97 to 5.67) and the field clears the cart by 0.13 m whichever
+  # way the robot is facing.
+  start: [7.40, 5.32]
+  goal:  [-4.60, 5.32]
+  # Park facing the aisle, not the back of the block. -90 is south,
+  # which is where the lane is from a slot on the north side.
+  #
+  # Nose-in parking is a trap here: the slot is 1.05 m deep with a
+  # loaded cart behind it, so the robot's protective field reaches
+  # 0.17 m into that cart and the collision monitor then refuses every
+  # command, including reverse. Facing out, the field points down the
+  # open aisle.
+  goal_yaw_deg: -90.0
+  goal_yaw_tolerance: 0.35
+
+
+assets:
+  # The belt, from NVIDIA's conveyor library. `natural` and `pivot` are
+  # measured off the assets, not guessed: both have their origin at one
+  # end rather than in the middle, and A14's turn is not symmetric
+  # about its own origin either.
+  modules:
+    line:
+      # The base config builds its conveyor from aluminium profile.
+      # Clearing `build` is what switches this one to the model.
+      build: null
+      path: /Isaac/Props/Conveyors/ConveyorBelt_A05.usd
+      natural: [2.00, 1.15, 1.17]
+      pivot: [1.00, 0.00]
+    u_turn:
+      path: /Isaac/Props/Conveyors/ConveyorBelt_A14.usd
+      natural: [2.57, 4.93, 1.17]
+      pivot: [1.285, -1.96]
+    # The parts cart. Its long side is authored along y, so it is
+    # turned a quarter turn to lie along the direction it is pulled in.
+    cart:
+      path: /Isaac/Props/Dolly/dolly.usd
+      natural: [0.85, 1.26, 0.44]
+      pivot: [0.0, 0.0]
+      yaw_deg: 90.0
+    # The load on the cart: a EUR pallet with eight Euro cases
+    # (600 x 400 x 210, lids on) stacked two layers high.
+    #
+    # `prim` matters here. The file is a little scene -- /pallet_loaded
+    # and a 50 x 50 m ground plane -- so only the pallet is referenced.
+    # Pull in the file whole and that ground plane is laid through the
+    # middle of the bay.
+    pallet_load:
+      path: /Isaac/Props/Pallet/o3dyn_pallet.usd
+      prim: /pallet_loaded
+      natural: [1.200, 0.800, 0.590]
+      pivot: [0.0, 0.0]
+      # The asset is built for physics demos and carries a rigid body.
+      # Left on, every pallet fell off its cart during the few seconds
+      # of timeline the build plays to settle the characters, and ended
+      # up on the floor at a slight angle. Scenery here does not move.
+      static: true
+
+  dressing:
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd,
+       at: [-10.5, 6.90], yaw_deg: 0.0}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd,
+       at: [10.5, -6.90], yaw_deg: 0.0}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_FireExtinguisher_02.usd,
+       at: [-11.85, 6.60], yaw_deg: 90.0, z: 0.9}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlastic_A_01.usd,
+       at: [-9.00, 7.20], yaw_deg: 0.0, z: 1.08}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01.usd,
+       at: [3.00, 7.20], yaw_deg: 0.0, z: 1.3}
+
+# ---------------------------------------------------------------
+# Ten operators and three people walking.
+#
+# The ten stand at the belt, backs to the aisle, which is the posture
+# the Comfort Space study is about. Their positions are the station
+# worker spots, written out so a trial can state exactly where
+# everyone stood.
+#
+#   w1..w5    north leg, S1..S5, facing south into the belt
+#   w6..w10   south leg, S6..S10, facing north into the belt
+#   c         walks the north aisle, the one the robot runs
+#   d, e      walk the south aisle, so the bay is busy without
+#             making the robot's own lane impassable
+# ---------------------------------------------------------------
+humans:
+  w1:  {position: [-6.50,  3.01], state: station_engaged, facing_deg: -90.0}
+  w2:  {position: [-3.50,  3.01], state: station_engaged, facing_deg: -90.0}
+  # Not at a machine, and that is the point: a person standing in a
+  # worker's spot facing the machine IS a worker to any sensor, so
+  # `stationary` has to mean standing somewhere that is not a
+  # working position. 1.50 m from the nearest one.
+  w3:  {position: [-2.00,  3.01], state: stationary,      facing_deg:  90.0}
+
+  w4:  {position: [ 2.50,  3.01], state: station_engaged, facing_deg: -90.0}
+  w5:  {position: [ 4.00,  3.01], state: stationary,      facing_deg:  90.0}
+  w6:  {position: [ 5.50, -3.01], state: station_engaged, facing_deg:  90.0}
+  # The belt half of the swap, and the long way round the U: nobody
+  # walks across a conveyor, so changing sides means going round one
+  # end of it. 32 m, about half a minute, and she is in one aisle or
+  # the other for the whole trial.
+  #
+  # West along the south aisle, up the west crossing, east along the
+  # north aisle, and off the lane into the spot w11 has left. Starts
+  # `station_engaged` (0.60 m), ends `stationary` (0.90 m).
+  w7:
+    position: [2.50, -3.01]
+    state: station_engaged
+    facing_deg: 90.0
+    walk:
+      start_at: 5.0
+      route:
+        - [  2.50, -4.21]
+        - [-10.20, -4.21]
+        - [-10.20,  4.21]
+        - [ -3.00,  4.21]
+        - [ -3.00,  5.60]
+  w8:  {position: [-2.00, -3.01], state: stationary,      facing_deg: -90.0}
+  w9:  {position: [-3.50, -3.01], state: station_engaged, facing_deg:  90.0}
+  w10: {position: [-6.50, -3.01], state: station_engaged, facing_deg:  90.0}
+
+  # The two pickers on the storage side, in the gap between the cart
+  # blocks, opposite w4 and w7 across the belt.
+  # The storage half of the swap, and the person the robot meets.
+  #
+  # She stands in the gap between the west and middle cart blocks, NOT
+  # beside the robot's own slot. It used to be (3.60, 5.60), 3.8 m from
+  # where the robot starts: she stepped into the lane almost on top of
+  # it, and at a closing speed of 2.2 m/s with no avoidance on her side
+  # there was nothing either of them could do about it. An encounter
+  # has to start far enough away to be one.
+  #
+  # From here she enters the lane about 10 m ahead of the robot and
+  # they meet half way down the aisle.
+  #
+  # 2.6 m clear of the nearest working position, so the map reads her
+  # as `stationary` (0.90 m); she ends at S7's machine, which makes her
+  # `station_engaged` (0.60 m).
+  w11:
+    position: [-3.00, 5.60]
+    state: stationary
+    facing_deg: -90.0
+    walk:
+      start_at: 5.0
+      route:
+        - [ -3.00,  4.21]
+        - [ 10.20,  4.21]
+        - [ 10.20, -4.21]
+        - [  2.50, -4.21]
+        - [  2.50, -3.01]
+
+  w12: {position: [ 3.00, -5.55], state: station_engaged, facing_deg: -90.0}
+
+  # No pre-positioned walkers any more.
+  #
+  # c, d and e used to stand on the lane centrelines for the whole
+  # 45 s rendezvous and then set off. Two things were wrong with that.
+  # The obstacle was in the map from the first frame, so nothing about
+  # it was dynamic and the costmap never had to react to anything
+  # appearing. And standing on the centreline they blocked the fleet
+  # before the trial even began: all three fleet AMRs were jammed
+  # behind a stationary walker at t = 0.
+  #
+  # What replaces them is above: workers who are at their machines when
+  # the trial starts and walk out into the aisle part way through it.
+  c: {enabled: false}
+  d: {enabled: false}
+  e: {enabled: false}
+
+  character:
+    w1: F_Business_02
+    w2: M_Medical_01
+    w3: M_Medical_01
+    w4: F_Business_02
+    w5: M_Medical_01
+    w6: M_Medical_01
+    w7: F_Business_02
+    w8: M_Medical_01
+    w9: M_Medical_01
+    w10: F_Business_02
+    w11: M_Medical_01
+    w12: F_Business_02

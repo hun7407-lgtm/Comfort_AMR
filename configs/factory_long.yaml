@@ -1,0 +1,164 @@
+# ---------------------------------------------------------------
+# The same bay, laid out as one long corridor.
+#
+#   ./scripts/build_factory_scene.sh --config configs/factory_long.yaml
+#   ./scripts/view_factory_scene.sh --config configs/factory_long.yaml
+#
+# configs/factory.yaml is a square bay with two aisles joined into a
+# loop. This one is the other shape a plant comes in: a single 24 m
+# run with work on both sides and nowhere to turn off except the
+# refuges. Everything else -- the models, the paint, the Comfort Space
+# policy, the trial rules -- is inherited, so the two scenes differ in
+# layout and nothing else.
+#
+# It is the harder case for yielding. There is no second aisle to go
+# round by, so a walker coming the other way can only be dealt with by
+# pulling into a refuge and waiting.
+# ---------------------------------------------------------------
+base: configs/factory.yaml
+
+factory:
+  # Four bays of column grid, one aisle down the middle.
+  bays: 4
+  width: 7.5
+  rows:
+    - {name: zone_south, kind: zone,  depth: 3.0}
+    - {name: aisle_main, kind: aisle, depth: 1.5}
+    - {name: zone_north, kind: zone,  depth: 3.0}
+
+  refuges:
+    enabled: true
+    spacing: 6.0
+    width: 1.5
+    depth: 0.9
+    end_margin: 2.0
+
+  # No crossings: that is the point of this variant.
+  cross_aisles:
+    enabled: false
+
+  route:
+    aisle: aisle_main
+    end_margin: 1.5
+    offset: 0.0
+
+  clutter:
+    enabled: true
+    trolleys:
+      - [-10.80,  2.60,   0.0]
+      - [ -3.20,  2.70,  90.0, panel_cart]
+      - [  7.80,  2.60,   0.0]
+      - [ -8.00, -3.20,   0.0]
+      - [  2.60, -3.45,  90.0]
+    stacks:
+      - [-11.40,  1.60,  0.0, 3]
+      - [  1.20,  2.90,  0.0, 2]
+      - [ -6.00, -3.30,  0.0, 3]
+      - [  9.00, -3.20, 10.0, 2]
+
+  usd_path: assets/scene/factory_long.usd
+  root_prim: /World/Factory
+
+equipment:
+  # Free frontage between the refuges is [-12,-10], [-8.5,-4], [-2.5,2],
+  # [3.5,8] and [9.5,12]. The assembly line runs the whole south side,
+  # which is what a 24 m bay is for.
+  stations:
+    # North side, along the aisle.
+    - {name: bench_n1,  module: bench,   band: zone_north, x: -6.25}
+    - {name: cell_n1,   module: cell,    band: zone_north, x: -0.25}
+    - {name: bench_n2,  module: bench,   band: zone_north, x:  5.75}
+    - {name: cart_n1,   module: trolley, band: zone_north, x: 10.75, worker: false}
+    # North side, against the wall.
+    - {name: shelf_n1,  module: shelf,   band: zone_north, x: -9.00, align: wall}
+    - {name: shelf_n2,  module: shelf,   band: zone_north, x:  3.00, align: wall}
+    - {name: shelf_n3,  module: shelf,   band: zone_north, x:  9.50, align: wall}
+    - {name: panel_n1,  module: control_cabinet, band: zone_north, x: -2.00, align: wall}
+
+    # South side: one twenty metre line, worked from the aisle.
+    - name: line_main
+      module: line
+      band: zone_south
+      x: 0.0
+      segments: 8
+      workers:
+        - {along: -7.5, side: north}
+        - {along: -5.0, side: north}
+        - {along: -1.0, side: north}
+        - {along:  4.5, side: north}
+        - {along:  7.0, side: north}
+    # South side, against the wall.
+    - {name: pallet_s1, module: pallet_stack, band: zone_south, x: -11.00, align: wall}
+    - {name: cart_s1,   module: trolley,      band: zone_south, x:  11.20, worker: false}
+
+navigation:
+  start: [-10.5, 0.0]
+  goal: [10.5, 0.0]
+
+# Four people beside the run, and one walking it end to end.
+humans:
+  w1: {position: [-6.25, 1.20], state: station_engaged, facing_deg: 90.0}
+  w2: {position: [-0.25, 1.20], state: station_engaged, facing_deg: 90.0}
+  # Between two machines, not in front of one: `stationary` has to be
+  # somewhere a sensor can tell apart from a working position. See
+  # docs/RESEARCH_DESIGN.md section 2.
+  # In the working position in front of a machine, facing it, which is
+  # what `station_engaged` means now (docs/RESEARCH_DESIGN.md section
+  # 2). It was labelled `stationary` while standing exactly here, which
+  # nothing the robot can measure could tell apart from the engaged
+  # people either side of it. Moving the person instead was tried and
+  # moved the experiment with them.
+  w3: {position: [-5.00, -1.20], state: station_engaged, facing_deg: -90.0}
+  w4: {position: [5.75, 1.20],  state: station_engaged, facing_deg: 90.0}
+  c:
+    enabled: true
+    position: [11.4, 0.0]
+    state: moving
+    route:
+      - [-11.4, 0.0]
+    avoid_robot: false
+  # Work clothes rather than office or hospital ones.
+  character:
+    w1: male_adult_construction_05_new
+    w2: male_adult_construction_01_new
+    w3: male_adult_construction_03
+    w4: male_adult_construction_01_new
+    c: male_adult_construction_05_new
+
+# Parked trolleys and stock, and the props that sit on the benches. The
+# square bay's lists are for its own geometry, so both are replaced.
+assets:
+  dressing:
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd, at: [-10.60, 1.50]}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd, at: [7.00, -1.50]}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_FireExtinguisher_02.usd,
+       at: [-11.85, 2.20], yaw_deg: 90.0, z: 0.90}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlastic_A_01.usd,
+       at: [-6.25, 2.14], z: 1.08}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlastic_A_01.usd,
+       at: [5.75, 2.14], z: 1.08}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01.usd,
+       at: [-9.00, 3.30], z: 1.30}
+
+recording:
+  version: v6_factory_long
+
+# ---------------------------------------------------------------
+# Yielding in a 1.5 m aisle.
+#
+# In the corridor the robot can always reach a stand-aside spot before
+# the walker arrives, so it picks the roomiest one. Here the pull-offs
+# are a metre and a half away and the robot turns, drives and turns
+# again to get into one: measured, every candidate is a second or two
+# late. Picking the roomiest then leaves it crossing the lane as the
+# walker arrives, which is how both B2 and B3 ended up touching them.
+#
+# So when nothing can be reached in time, the soonest wins instead.
+# Off by default; this is a property of a narrow aisle, not of the
+# policy, and the corridor results stay as they were measured.
+# ---------------------------------------------------------------
+comfort_space:
+  yield:
+    evade:
+      comfort:
+        soonest_when_late: true

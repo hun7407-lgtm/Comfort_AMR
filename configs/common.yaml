@@ -10,9 +10,20 @@
 # ---------------------------------------------------------------
 
 simulation:
-  # 1/60 s. Isaac Sim's default and a safe starting point for a
-  # differential drive robot. Lower it if the wheels jitter.
-  physics_dt: 0.016666666666666666
+  # 1/120 s, with rendering left at 1/60.
+  #
+  # It was 1/60 for both, which held while the robot drove at 0.40 m/s.
+  # At 0.80 m/s the articulation diverged inside ten seconds -- the
+  # odometry reported the robot 30 m outside the building and the
+  # trial had to be discarded. Authoring the missing mass helped and
+  # did not fix it; halving the step did. The free-spinning casters
+  # carry almost no inertia, and at twice the speed a 60 Hz step
+  # resolves their contacts badly enough to feed energy into the
+  # solver.
+  #
+  # Costs wall-clock time, not simulated time: a trial is the same
+  # length, it just takes longer to compute.
+  physics_dt: 0.008333333333333333
   rendering_dt: 0.016666666666666666
   stage_units_in_meters: 1.0
   gravity: -9.81
@@ -56,6 +67,18 @@ simulation:
     # turn at about 3 rad/s.
     max_angular_velocity: 30.0     # rad/s per link
     max_linear_velocity: 10.0      # m/s per link
+
+    # Mass, which the USD does not author anywhere. Left to PhysX it is
+    # derived from each collision shape at the density of water, so a
+    # caster weighs grams and has next to no inertia -- survivable at
+    # 0.40 m/s, and at 0.80 m/s the articulation diverged in under ten
+    # seconds and reported the robot 30 m outside the building.
+    #
+    # 31 kg is the platform manual's figure for the real machine.
+    mass:
+      total: 31.0     # kg, the whole robot
+      wheel: 1.2      # kg, each driven wheel (250 mm, in-wheel motor)
+      caster: 0.3     # kg, each caster
     solver_position_iterations: 32
     solver_velocity_iterations: 4
     # Damping on the passive caster joints. OFF.
@@ -250,7 +273,10 @@ stations:
     # Against the +y wall: 1.7 - 0.45/2 = 1.475 puts its back on the wall.
     position: [-1.0, 1.475]
   b:
-    position: [1.0, -1.475]
+    # 0.80 m along from where it was, to clear the stationary person at
+    # (1.0, -0.95). Same wall, same depth, so the gap the robot drives
+    # through is unchanged.
+    position: [1.8, -1.475]
 
 humans:
   # A standing person, approximated as an upright cylinder. Detection

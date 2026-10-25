@@ -107,6 +107,7 @@ def build_humans(cfg: Dict[str, Any]) -> List[FixedCylinder]:
     height = float(humans["height"])
 
     out = []
+    movers = []
     for key, x, y in human_positions(cfg):
         cylinder = FixedCylinder(
             prim_path=f"{ENV_ROOT}/human_{key}",
@@ -115,9 +116,25 @@ def build_humans(cfg: Dict[str, Any]) -> List[FixedCylinder]:
             height=height,
             color=HUMAN_COLOR,
         )
-        if str(humans[key].get("state", "")) == "moving":
+        # Anybody who moves at any point in the trial. `state: moving`
+        # is somebody already walking when it starts; `walk` is a
+        # worker who leaves her machine part way through.
+        #
+        # A static collider cannot be moved. The pose set on it goes
+        # into the physics view and never reaches USD, so /tf keeps
+        # publishing the spawn point: the character walked across the
+        # aisle, the collider stayed at the machine, and every
+        # clearance the trial measured was to where she used to be.
+        # Nothing reported an error -- reading the pose back returned
+        # the value just written.
+        if (str(humans[key].get("state", "")) == "moving"
+                or humans[key].get("walk")):
             _make_kinematic(cylinder.prim)
+            movers.append(key)
         out.append(cylinder)
+    if movers:
+        print(f"  kinematic collider(s) for {', '.join(sorted(movers))} "
+              f"(these follow a walking character)", flush=True)
     return out
 
 

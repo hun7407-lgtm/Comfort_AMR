@@ -10,7 +10,10 @@ wall-clock time would speed up or slow down the video with the frame
 rate of the machine.
 
 Only the camera is added. It has no collider and is not seen by the
-LiDAR, so recording does not change what the robot perceives. It does
+LiDAR, so recording does not change what the robot perceives. A scene
+may also ask for prims to be hidden while recording -- the factory
+hides its ceiling, or the camera films the roof -- and `hide_prims`
+explains why that is safe too. It does
 cost render time; Nav2 runs on wall-clock time in this project, so check
 a recorded trial's result against an unrecorded one before relying on it.
 
@@ -28,6 +31,37 @@ from typing import Any, Dict
 import numpy as np
 
 
+def hide_prims(paths) -> list:
+    """Take the lid off the building so the camera can see inside.
+
+    The recording camera looks down from 17 m. The bay has a ceiling at
+    5 m, so without this every factory video is a flat white rectangle --
+    which is exactly what the first factory recordings were.
+
+    This cannot change what the robot perceives, which is the rule the
+    rest of this file is built around. The LiDAR sits at 0.31 m and
+    reaches 10 degrees above horizontal out to 20 m, so the highest
+    point it can return is 3.84 m: below the 4.55 m light fittings and
+    the 5 m deck. Nothing hidden here was ever in a scan.
+
+    Returns the paths actually hidden, so the log says what went.
+    """
+    from isaacsim.core.utils.prims import get_prim_at_path, is_prim_path_valid
+    from pxr import UsdGeom
+
+    gone = []
+    for path in paths:
+        if not is_prim_path_valid(path):
+            continue
+        imageable = UsdGeom.Imageable(get_prim_at_path(path))
+        if imageable:
+            # Only works on a typed prim; the scene builder makes these
+            # groups Xforms for exactly this reason.
+            imageable.MakeInvisible()
+            gone.append(path)
+    return gone
+
+
 class FrameRecorder:
     def __init__(self, cfg: Dict[str, Any], out_dir: Path, label: str):
         import omni.replicator.core as rep
@@ -42,6 +76,10 @@ class FrameRecorder:
                                    cfg["navigation"].get("trial_start_sim_time", 0.0)))
         self.trial_start = float(cfg["navigation"].get("trial_start_sim_time", 0.0))
         width, height = (int(v) for v in rec["resolution"])
+
+        hidden = hide_prims(rec.get("hide", []))
+        if hidden:
+            print(f"  recording: hid {', '.join(hidden)}", flush=True)
 
         cam = rep.create.camera(
             position=tuple(float(v) for v in rec["camera"]["position"]),

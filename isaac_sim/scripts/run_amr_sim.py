@@ -53,7 +53,8 @@ from isaacsim.core.utils.stage import create_new_stage  # noqa: E402
 
 from comfort_core import load_config, resolve_path  # noqa: E402
 from isaac_sim.environments import people  # noqa: E402
-from isaac_sim.utils import scene_setup  # noqa: E402
+from isaac_sim.utils import fleet as fleet_mod  # noqa: E402
+from isaac_sim.utils import scene_setup, towing  # noqa: E402
 
 _stop = False
 
@@ -93,6 +94,34 @@ def main() -> int:
     )
     simulation_context.reset()
 
+    # Start the timeline, or nobody walks.
+    #
+    # omni.anim.people drives a character through the animation graph,
+    # and that graph is only evaluated while the timeline is playing.
+    # Stepping physics is not enough. Without this the walking people
+    # stand on their start squares for the whole run: measured, 200 s
+    # with every walker at 0.00-0.02 m/s.
+    #
+    # The scene builder has always done this (see wait_for_assets in
+    # isaac_sim/scripts/build_factory_scene.py). The simulation never
+    # did, so every trial so far has been run against people who were
+    # standing still, whatever their route said.
+    import omni.timeline  # noqa: PLC0415 - needs the app to be up
+
+    omni.timeline.get_timeline_interface().play()
+
+    # The towed cart is built after reset so it can read where the AMR
+    # actually settled, not where it was asked to spawn.
+    fleet = fleet_mod.Fleet(cfg)
+    if len(fleet):
+        print(f"  {len(fleet)} fleet AMR(s) routing on the lane network",
+              flush=True)
+
+    cart = towing.TowedCart(cfg)
+    if cart.enabled:
+        print(f"  towing a {cart.length:.2f} x {cart.depth:.2f} m cart on a "
+              f"{cart.bar:.2f} m drawbar", flush=True)
+
     recorder = None
     if args.record:
         from isaac_sim.utils.recorder import FrameRecorder
@@ -124,6 +153,8 @@ def main() -> int:
         simulation_context.step(render=True)
         # Keep the walking humans' colliders under their characters.
         walkers.update(physics_dt)
+        cart.update(physics_dt)
+        fleet.update(physics_dt)
         if recorder is not None:
             recorder.maybe_capture(simulation_context.current_time)
         steps += 1

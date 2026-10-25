@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 @dataclass(frozen=True)
@@ -34,6 +34,167 @@ def corridor_bounds(cfg: Dict[str, Any]) -> Bounds:
     half_len = float(c["length"]) / 2.0
     half_wid = float(c["width"]) / 2.0
     return Bounds(cx - half_len, cx + half_len, cy - half_wid, cy + half_wid)
+
+
+def scene_bounds(cfg: Dict[str, Any]) -> Bounds:
+    """The free-space rectangle of whichever scene is configured.
+
+    The corridor is one long box; the factory bay is a square with
+    machines in it. Everything that used to ask for the corridor asks
+    for this instead, so the same yielding and tracking code works in
+    both without knowing which it is in.
+    """
+    if "factory" in cfg:
+        from comfort_core.factory_layout import build_layout
+        layout = build_layout(cfg)
+        return Bounds(layout.x_min, layout.x_max, layout.y_min, layout.y_max)
+    return corridor_bounds(cfg)
+
+
+def obstacle_boxes(cfg: Dict[str, Any]) -> List[Tuple[float, float, float, float]]:
+    """Axis-aligned (xmin, xmax, ymin, ymax) of everything static.
+
+    The robot may not wait inside one of these, and a scan return from
+    one of them is not a person. Corridor stations or factory machines,
+    depending on the scene.
+    """
+    if "factory" in cfg:
+        from comfort_core.factory_layout import build_layout
+        layout = build_layout(cfg)
+        boxes = [(s.footprint.x_min, s.footprint.x_max,
+                  s.footprint.y_min, s.footprint.y_max)
+                 for s in layout.stations]
+        # Columns and parked carts belong here too. A person detector
+        # that only knows about machines calls a building column a
+        # person: it is a narrow column reaching well past head height,
+        # which is exactly the shape the detector looks for.
+        half = float(cfg["factory"].get("column_size", 0.3)) / 2.0
+        boxes += [(cx - half, cx + half, cy - half, cy + half)
+                  for cx, cy in layout.columns]
+        boxes += [(s.x_min, s.x_max, s.y_min, s.y_max)
+                  for s in layout.cart_slots_taken]
+        return boxes
+    st = cfg["stations"]
+    sx, sy = (float(v) for v in st["size"][:2])
+    out = []
+    for key in placed_entries(st):
+        x, y = (float(v) for v in st[key]["position"])
+        out.append((x - sx / 2, x + sx / 2, y - sy / 2, y + sy / 2))
+    return out
+
+
+def drivable_area(cfg: Dict[str, Any]) -> Optional[List[Tuple[float, float, float, float]]]:
+    """Rectangles the robot may occupy, or None for "anywhere inside".
+
+    The corridor is one open box, so there is nothing to say. The
+    factory bay is mostly work zones, and a robot that waits in one is
+    standing where someone works.
+    """
+    if "factory" not in cfg:
+        return None
+    from comfort_core.factory_layout import build_layout, drivable_rects
+    return [(r.x_min, r.x_max, r.y_min, r.y_max)
+            for r in drivable_rects(build_layout(cfg))]
+
+
+def plannable_area(cfg: Dict[str, Any]) -> Optional[List[Tuple[float, float, float, float]]]:
+    """Rectangles the PLANNER can plan from -- the occupancy map's own.
+
+    Not the same thing as `drivable_area`, and the difference cost a
+    trial forty seconds of fighting itself.
+
+    `drivable_area` is about where the robot may legitimately come to
+    rest: it leaves out the work zones, because a robot waiting in one
+    is standing where somebody works. The occupancy map is drawn from
+    `navigable_rects` instead -- the robot may be SENT into a cart
+    block, it just may not hide in one -- and it is painted with a
+    skirt of `lane_margin` around every lane, because there is no wall
+    at the edge of painted floor and treating one as a wall strands the
+    robot the first time it steps over the line.
+
+    So Nav2 will quite legitimately drive to a pose that
+    `drivable_area` calls off-limits. The gate, reading that pose as
+    "off the painted floor", creeped the robot back; Nav2 steered out
+    again; and the two fought for forty seconds -- measured in the U
+    bay, oscillating between y 4.37 and 5.24 at x 2.2 with the goal
+    6.9 m west, until Nav2 gave up on the goal.
+
+    The recovery exists for a robot standing where the planner CANNOT
+    plan. That boundary is this one.
+    """
+    if "factory" not in cfg:
+        return None
+    from comfort_core.factory_layout import build_layout, navigable_rects
+    margin = float(cfg.get("factory", {}).get("map", {})
+                   .get("lane_margin", 0.0))
+    return [(r.x_min - margin, r.x_max + margin,
+             r.y_min - margin, r.y_max + margin)
+            for r in navigable_rects(build_layout(cfg))]
+
+
+def refuge_centres(cfg: Dict[str, Any]) -> List[Tuple[float, float]]:
+    """Middle of every refuge, as somewhere worth trying to wait.
+
+    Empty for the corridor, which has none: it is wide enough to stand
+    aside in the lane the robot is already in.
+    """
+    if "factory" not in cfg:
+        return []
+    from comfort_core.factory_layout import build_layout
+    return [r.centre for r in build_layout(cfg).refuges]
+
+
+def work_spots(cfg: Dict[str, Any],
+               stand_gap: float = 0.30) -> List[Tuple[float, float, float]]:
+    """Where a person stands when they are working at a machine.
+
+    This is the prior an AMR carries in its map: not where people are,
+    but where the floor says somebody would be standing if they were
+    working. It is the only way a LiDAR can tell a worker from a person
+    who has simply stopped -- range data cannot see what someone is
+    attending to, but the map knows there is a bench here and that
+    anyone standing still in front of it is using it.
+
+    Factory bays have the spots directly: the layout puts a worker in
+    front of each machine. The corridor has stations without declared
+    worker spots, so the spot is taken to be in front of the station,
+    `stand_gap` clear of its face, toward the middle of the corridor --
+    which is where configs/common.yaml's engaged person stands.
+
+    Each spot is (x, y, facing): where to stand, and which way a person
+    using that machine faces, in radians. The facing matters as much as
+    the position -- somebody standing at a bench with their back to it
+    is not working at it.
+    """
+    if "factory" in cfg:
+        from comfort_core.factory_layout import build_layout
+        return [(wx, wy, facing) for station in build_layout(cfg).stations
+                for wx, wy, facing in station.workers]
+    stations = cfg.get("stations", {})
+    if not stations or "size" not in stations:
+        return []
+    _sx, sy, _sz = (float(v) for v in stations["size"])
+    out: List[Tuple[float, float, float]] = []
+    for key in placed_entries(stations):
+        x, y = (float(v) for v in stations[key]["position"])
+        side = math.copysign(1.0, y)
+        out.append((x, y - side * (sy / 2.0 + stand_gap),
+                    math.pi / 2.0 if side > 0 else -math.pi / 2.0))
+    return out
+
+
+def inside_drivable(rects, points, margin: float = 0.0) -> bool:
+    """True if every point is inside at least one rectangle.
+
+    Adjacent rectangles count as one area, which is what lets the robot
+    sit half in a refuge and half in the aisle.
+    """
+    if rects is None:
+        return True
+    return all(any(x0 - margin <= px <= x1 + margin
+                   and y0 - margin <= py <= y1 + margin
+                   for x0, x1, y0, y1 in rects)
+               for px, py in points)
 
 
 def placed_entries(section: Dict[str, Any]) -> List[str]:

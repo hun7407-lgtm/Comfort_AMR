@@ -28,7 +28,6 @@ from isaacsim.core.utils.prims import delete_prim, is_prim_path_valid
 from pxr import Gf, Sdf, UsdGeom, UsdShade
 
 from comfort_core.comfort_space import robot_grow, shapes as build_shapes
-from comfort_core.layout import corridor_bounds
 
 VIZ_ROOT = "/Environment/ComfortSpace"
 LOOKS = f"{VIZ_ROOT}/Looks"

@@ -129,3 +129,19 @@ def load_config(
         )
 
     return deep_merge(config, overlay)
+
+
+def nav2_map(config: Dict[str, Any]) -> str:
+    """Which map this config navigates on.
+
+    Nav2's static layer, the Comfort Space mask and anything else that
+    has to line up with the floor all have to agree on one file. A
+    config may name its own -- the 3D variants navigate on the map SLAM
+    built rather than the one generated from the layout -- and otherwise
+    it is whatever scripts/generate_map.py writes for that scene.
+    """
+    named = config.get("nav2", {}).get("map")
+    if named:
+        return str(named)
+    return ("configs/nav2/factory_map.yaml" if "factory" in config
+            else "configs/nav2/corridor_map.yaml")

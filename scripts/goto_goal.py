@@ -37,7 +37,7 @@ from rclpy.node import Node
 
 from comfort_core import load_config, odom_to_world, wrap_to_pi
 from comfort_core.layout import (
-    corridor_bounds,
+    scene_bounds,
     free_intervals_at,
     robot_clearance_radius,
 )
@@ -95,7 +95,7 @@ class GoToGoal(Node):
         self.planning_failure_duration = float(
             nav.get("planning_failure_duration", 5.0))
         self.clearance = robot_clearance_radius(cfg)
-        self.bounds = corridor_bounds(cfg)
+        self.bounds = scene_bounds(cfg)
 
         # Per-human obstacle radius. None means "use the humans' physical
         # radius". STEP 8 supplies Comfort Space radii here instead, which

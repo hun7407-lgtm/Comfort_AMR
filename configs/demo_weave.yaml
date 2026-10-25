@@ -21,7 +21,12 @@ base: configs/common.yaml
 
 humans:
   radius: 1.0
+  # Both stand clear of the machines, so both are `stationary`: a
+  # person in a machine's working position is `station_engaged` by
+  # definition now (docs/RESEARCH_DESIGN.md section 2), and the shared
+  # config calls this one engaged.
   a:
+    state: stationary
     position: [-3.0, -0.5]
   b:
     position: [3.0, 0.5]

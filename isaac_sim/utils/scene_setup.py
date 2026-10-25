@@ -173,7 +173,25 @@ def stabilise_articulation(cfg: Dict[str, Any]) -> list[str]:
     max_lin = float(art_cfg.get("max_linear_velocity", 10.0))
     damping = float(art_cfg.get("caster_joint_damping", 0.0))
 
+    # Mass, which the source USD does not author at all. Without it
+    # PhysX invents one from each collision shape at the density of
+    # water, so a caster weighs a few grams and has almost no inertia:
+    # at 0.40 m/s that was survivable, at 0.80 m/s the articulation
+    # diverged inside ten seconds and reported the robot 30 m outside
+    # the building.
+    #
+    # The numbers are the real machine's: 31 kg in total, nearly all of
+    # it the chassis. This is also what makes braking mean anything --
+    # the ISO stopping distance is computed from a deceleration the
+    # robot has to be able to produce.
+    masses = art_cfg.get("mass", {})
+    total = float(masses.get("total", 0.0))
+    wheel_mass = float(masses.get("wheel", 1.0))
+    caster_mass = float(masses.get("caster", 0.3))
+
     bodies = 0
+    wheels = casters = 0
+    chassis = []
     for prim in Usd.PrimRange(root):
         if not prim.HasAPI(UsdPhysics.RigidBodyAPI):
             continue
@@ -181,6 +199,24 @@ def stabilise_articulation(cfg: Dict[str, Any]) -> list[str]:
         rb.CreateMaxAngularVelocityAttr().Set(max_ang)
         rb.CreateMaxLinearVelocityAttr().Set(max_lin)
         bodies += 1
+        if total <= 0.0:
+            continue
+        name = prim.GetName().lower()
+        mass_api = UsdPhysics.MassAPI.Apply(prim)
+        if "caster" in name:
+            mass_api.CreateMassAttr().Set(caster_mass)
+            casters += 1
+        elif "wheel" in name:
+            mass_api.CreateMassAttr().Set(wheel_mass)
+            wheels += 1
+        else:
+            chassis.append(mass_api)
+    if total > 0.0 and chassis:
+        # Whatever is left over, spread across the bodies that are not
+        # wheels. Almost all of it is the one chassis link.
+        rest = max(total - wheels * wheel_mass - casters * caster_mass, 1.0)
+        for mass_api in chassis:
+            mass_api.CreateMassAttr().Set(rest / len(chassis))
 
     art = PhysxSchema.PhysxArticulationAPI.Apply(root)
     art.CreateSolverPositionIterationCountAttr().Set(
@@ -204,9 +240,14 @@ def stabilise_articulation(cfg: Dict[str, Any]) -> list[str]:
             drive.CreateTargetVelocityAttr().Set(0.0)
             joints += 1
 
+    note = ""
+    if total > 0.0:
+        note = (f", mass {total:.0f} kg over {len(chassis)} body/bodies "
+                f"+ {wheels} wheel(s) + {casters} caster(s)")
     return [f"clamped {bodies} link(s) to {max_ang:.0f} rad/s and "
             f"{max_lin:.0f} m/s, damped {joints} caster joint(s), "
-            f"solver iterations {art_cfg.get('solver_position_iterations', 32)}"]
+            f"solver iterations "
+            f"{art_cfg.get('solver_position_iterations', 32)}{note}"]
 
 
 def patch_odometry_graph(cfg: Dict[str, Any]) -> list[str]:
@@ -368,15 +409,32 @@ def build_scene(cfg: Dict[str, Any], usd_path: str, verbose: bool = True):
     viz_problem = comfort_viz.check_below_scan(cfg)
     if viz_problem:
         problems = list(problems) + [viz_problem]
-    if problems:
+    if problems and "factory" not in cfg:
         # A human inside a wall or a goal outside the corridor produces a
         # trial that fails for the wrong reason, which is worse than not
         # running at all.
         raise ValueError(
             "layout problems in the config:\n  - " + "\n  - ".join(problems))
 
-    counts = corridor.build_corridor(cfg)
-    if any(counts.values()):
+    if "factory" in cfg:
+        # The bay replaces the corridor, but the people still come from
+        # the `humans` section: the collider, the Comfort Space, the /tf
+        # frame and the state all hang off those entries, and nothing
+        # downstream should have to care which scene it is in.
+        layout = factory.build_bay(cfg, say=say, workers=False)
+        for problem in validate_factory(cfg, layout):
+            problems = list(problems) + [problem]
+        if problems:
+            raise ValueError(
+                "layout problems in the config:\n  - " + "\n  - ".join(problems))
+        humans = corridor.build_humans(cfg)
+        say(f"{len(humans)} humans placed in the bay")
+        for line in clearance_summary(cfg, layout).splitlines():
+            say(line)
+        counts = {"walls": 0, "stations": 0, "humans": len(humans)}
+    else:
+        counts = corridor.build_corridor(cfg)
+    if any(counts.values()) and "factory" not in cfg:
         say(f"corridor built: {counts['walls']} walls, "
             f"{counts['stations']} stations, {counts['humans']} humans")
         report = passage_report(cfg)

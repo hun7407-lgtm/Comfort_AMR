@@ -20,7 +20,12 @@ base: configs/common.yaml
 humans:
   # Face to face at the same x, so there is no weaving around them.
   radius: 1.15
+  # Both stand clear of the machines, so both are `stationary`: a
+  # person in a machine's working position is `station_engaged` by
+  # definition now (docs/RESEARCH_DESIGN.md section 2), and the shared
+  # config calls this one engaged.
   a:
+    state: stationary
     position: [0.0, 0.8]
   b:
     position: [0.0, -0.8]

@@ -1,0 +1,456 @@
+# ---------------------------------------------------------------
+# A factory bay, instead of the plain corridor.
+#
+#   ./scripts/build_factory_scene.sh          build and save the USD
+#   ./scripts/run_sim.sh --config configs/factory.yaml
+#
+# The shape is an engineering approximation of one bay of a real plant,
+# deliberately altered: the same kind of layout (two rows of work zones
+# either side of an aisle, an assembly line down the middle) with
+# different dimensions, a different order of zones and generic
+# equipment. The site drawings and photographs are not in this
+# repository and nothing here reproduces a specific machine.
+#
+# Everything the corridor scene shares (AMR, ROS topics, Nav2 limits,
+# Comfort Space policy, trial rules) is inherited from common.yaml.
+# ---------------------------------------------------------------
+base: configs/common.yaml
+
+factory:
+  # Column grid. The real bay runs to sixteen columns; two are enough to
+  # look at while the modules are being built, and raising this is the
+  # only change needed to extend it.
+  column_pitch: 6.0
+  bays: 2
+  column_size: 0.4
+  column_height: 4.0
+  # How far the column centres sit in from the side walls.
+  column_inset: 0.3
+
+  # Cross section, wall to wall. The depths must add up to `width`.
+  #
+  # Aisles are 1.5 m, which is what the plant actually has: two AMRs
+  # abreast, or one AMR and a person who moves aside. A person who does
+  # not move aside cannot be passed at all in that width, which is what
+  # the refuges below are for.
+  width: 12.0
+  # Listed from -y to +y, which is south to north on the map.
+  rows:
+    - {name: zone_south,  kind: zone,  depth: 3.0}
+    - {name: aisle_south, kind: aisle, depth: 1.5}
+    - {name: line,        kind: zone,  depth: 3.0}
+    - {name: aisle_north, kind: aisle, depth: 1.5}
+    - {name: zone_north,  kind: zone,  depth: 3.0}
+
+  # Gaps left in the work zones beside each aisle, where the AMR can pull
+  # right out of the way. Deep enough for the footprint plus a margin.
+  # Every six metres, and close to the ends. Spacing is not decoration:
+  # a robot meeting someone in a 1.5 m aisle has to be off the aisle
+  # before they arrive, and at 0.35 m/s with a walker at 1 m/s that is
+  # about a metre and a half of warning. Refuges twelve metres apart
+  # were measured to be unreachable in time, and the robot deadlocked
+  # in the aisle.
+  refuges:
+    enabled: true
+    spacing: 5.0
+    width: 1.5
+    depth: 0.9
+    # Clear of the cross aisles at the ends.
+    end_margin: 2.5
+
+  # The two long aisles meet at both ends, so the floor is a loop
+  # rather than two dead-end lanes. The crossing spans the aisles and
+  # the line between them; the work zones keep their frontage.
+  cross_aisles:
+    enabled: true
+    width: 1.5
+    at: [-5.25, 5.25]
+
+  # Shell.
+  wall_height: 3.0
+  wall_thickness: 0.2
+  floor_thickness: 0.05
+
+  # What the floor looks like. Epoxy green with yellow lane edges is how
+  # the real bay is painted, and it makes the aisle boundary obvious in
+  # the recordings. Paint is drawn 5 mm proud of the floor, well under
+  # the 0.11 m the LiDAR slice starts at, so it cannot become an
+  # obstacle. See ros.scan in common.yaml.
+  # Overhead: deck, beams, ducting and rows of real pendant fittings.
+  ceiling:
+    enabled: true
+    height: 5.0
+    fitting_spacing: 2.6
+    fitting_drop: 0.45
+    duct_radius: 0.22
+    # The lights that actually light the bay, one long source per row
+    # of fittings.
+    lights:
+      intensity: 5200.0
+      width: 1.1
+
+  # What is parked in the zones. Checked against the aisles at build
+  # time, like any other prop.
+  clutter:
+    enabled: true
+    #        x      y     yaw
+    trolleys:
+      - [-4.30,  4.40,   0.0, panel_cart]
+      - [ 3.90,  4.40,  90.0]
+      - [-2.60, -4.40,   0.0]
+      - [ 4.70, -4.30,  90.0]
+      - [ 0.60,  0.95,   0.0]
+    #        x      y     yaw  levels
+    stacks:
+      - [-5.20,  3.60,  0.0, 3]
+      - [ 4.30,  3.70, 15.0, 2]
+      - [-5.30, -3.70,  0.0, 2]
+      - [-0.90, -0.95,  0.0, 3]
+
+  # Glazing, cable tray, services and boards on the walls.
+  wall_fittings:
+    enabled: true
+
+  paint:
+    enabled: true
+    # Lane marking, as it is on the real floor: a 10 cm line with a
+    # thinner one just outside it.
+    outer_line_width: 0.05
+    double_line_gap: 0.10
+    # Dashed outlines around the machines, so the floor still says
+    # where everything belongs.
+    station_outlines: true
+    # Work zones in a grey green, walkways in a strong one. Coating the
+    # whole bay in the same colour made the aisles disappear.
+    floor_color: [0.17, 0.29, 0.24]
+    # Deeper than they look on a colour picker: under the warehouse HDRI
+    # the pale values washed out to mint and cream.
+    aisle_color: [0.04, 0.42, 0.25]
+    line_color: [0.78, 0.62, 0.06]
+    line_width: 0.10
+    line_height: 0.005
+    refuge_color: [0.70, 0.55, 0.06]
+  # Where the AMR runs: down the middle of one aisle, end to end.
+  # The y comes from the aisle, so widening the aisle moves the run.
+  route:
+    aisle: aisle_north
+    end_margin: 1.2
+    offset: 0.0
+
+  # Where the scene is written, and what it is called inside the stage.
+  usd_path: assets/scene/factory_bay.usd
+  root_prim: /World/Factory
+
+# ---------------------------------------------------------------
+# What fills the work zones.
+#
+# Two rows per zone. The aisle row is machines people stand at, placed
+# so the worker's back is `worker_offset` from the aisle edge -- close
+# enough that their Comfort Space reaches into a 1.5 m aisle, which is
+# the situation the whole study is about. The wall row is storage
+# behind them, out of the way.
+#
+# x is given here; y is derived from the aisle, so widening an aisle
+# moves every machine and every worker with it. A machine that would
+# land on a refuge or stick into an aisle is an error at build time,
+# not something to discover during a run.
+#
+# Generic equipment at generic sizes: a bench, a belt, a fenced cell,
+# racking. Not a reproduction of any machine on the site.
+# ---------------------------------------------------------------
+equipment:
+  enabled: true
+  # Who stands at the machines in the saved scene file. The experiment
+  # uses the `humans` section instead.
+  worker_characters:
+    - male_adult_construction_01_new
+    - male_adult_construction_05_new
+    - male_adult_construction_03
+  # Worker's back to the aisle edge, and their chest to the machine.
+  worker_offset: 0.45
+  stand_gap: 0.55
+
+  # Footprints. Most machines are built from aluminium profile here
+  # (assets.modules below says `build:`), so the footprint is simply the
+  # size they are made at; the few that are referenced models carry the
+  # model's measured size instead. The build checks the two agree.
+  modules:
+    bench:    {length: 2.20, depth: 0.75, height: 0.90}
+    cell:     {length: 2.00, depth: 1.30, height: 2.10}
+    shelf:    {length: 2.40, depth: 0.55, height: 2.00}
+    trolley:  {length: 1.10, depth: 0.65, height: 1.00}
+    line:     {length: 2.50, depth: 1.00, height: 0.95}
+    control_cabinet:  {length: 0.54, depth: 0.41, height: 1.71}
+    pallet_stack:     {length: 1.21, depth: 1.00, height: 1.21}
+
+  # The crossings take x [-6,-4.5] and [4.5,6]; the refuges take
+  # [-3.5,-2.0] and [1.5,3.0]. That leaves frontage at [-4.5,-3.5],
+  # [-2.0,1.5] and [3.0,4.5], which is what the x values below sit in.
+  stations:
+    # North zone, along the north aisle.
+    - {name: bench_n1,   module: bench,   band: zone_north, x: -0.25}
+    - {name: cart_n1,    module: trolley, band: zone_north, x:  3.75, worker: false}
+    - {name: cart_n2,    module: trolley, band: zone_north, x: -4.00, worker: false}
+    # North zone, against the wall.
+    - {name: shelf_n1,   module: shelf,   band: zone_north, x: -3.00, align: wall}
+    - {name: shelf_n2,   module: shelf,   band: zone_north, x:  2.50, align: wall}
+    - {name: panel_n1,   module: control_cabinet, band: zone_north, x: 1.00, align: wall}
+
+    # One assembly line down the middle, worked from both aisles.
+    - name: line_main
+      module: line
+      band: line
+      x: 0.0
+      y: 0.0
+      side: north
+      segments: 3
+      workers:
+        - {along: -1.4, side: north}
+        - {along:  0.4, side: south}
+        - {along:  3.6, side: north}
+
+    # South zone, along the south aisle.
+    - {name: cell_s1,    module: cell,    band: zone_south, x: -0.25}
+    - {name: cart_s1,    module: trolley, band: zone_south, x:  3.75, worker: false}
+    - {name: cart_s2,    module: trolley, band: zone_south, x: -4.00, worker: false}
+    # South zone, against the wall.
+    - {name: shelf_s1,   module: shelf,   band: zone_south, x: -3.00, align: wall}
+    - {name: pallet_s1,  module: pallet_stack, band: zone_south, x: 2.50, align: wall}
+
+  # Room between a machine at the back of the aisle row and the storage
+  # behind it. The racks are 0.86 m deep, which is most of what is left.
+  wall_gap: 0.10
+
+# ---------------------------------------------------------------
+# Comfort Space in a 1.5 m aisle.
+#
+# The corridor is 3.9 m wide and the radii in common.yaml were sized
+# for it. In a 1.5 m aisle with a worker 0.45 m back from each edge,
+# `./scripts/build_factory_scene.sh` measures what is left:
+#
+#   r 0.60   1.35 m free          the robot passes down the middle
+#   r 0.90   0.72 - 1.02 m free   it has to hug the far side
+#   r 1.20   0.09 - 0.29 m free   no comfortable gap at all
+#
+# (Re-measured 2026-10-10. The figures were lower before because the
+# check counted one person per machine, so four of the line's five
+# posts were invisible to it. See comfort_core.aisle_clearance.)
+#
+# The radii are NOT reduced here. "No comfortable gap" is not the same
+# as blocked: the Comfort Space reaches Nav2 as a high but finite cost
+# (98, see comfort_space.costmap in common.yaml), so the planner will
+# route through one when there is no alternative. Measured in this bay,
+# B2 at 1.20 still gets through -- it takes 55.1 s against B3's 39.5 s
+# and keeps 1.17 m from the walker against B3's 0.62 m. That trade is
+# the result, and lowering B2's radius here would hide it.
+#
+# So nothing in common.yaml is overridden: both scenes run the same
+# radii, and the corridor results stand as measured.
+# ---------------------------------------------------------------
+
+# ---------------------------------------------------------------
+# The run, and the people in it.
+#
+# The corridor is switched off: the bay replaces it. The people are
+# still `humans` entries, because that is where the collider, the
+# Comfort Space, the /tf frame and the state come from -- the block
+# figures in the saved scene file are only for looking at.
+#
+# Four workers stand along the north aisle, three at machines on the
+# north side and one at the line on the south side, so the aisle is
+# pinched from both sides at different points along it. The fifth
+# walks the aisle end to end, which in 1.5 m cannot be passed: the
+# robot has to leave the aisle and wait in a refuge.
+#
+# Positions come from the station list above (worker spots), so a
+# machine that moves takes its person with it -- but they are written
+# out here rather than derived, because the experiment must be able to
+# state exactly where everyone stood.
+# ---------------------------------------------------------------
+corridor:
+  enabled: false
+
+# Recordings from the bay go in their own folder, so the corridor
+# videos stay where they are and the two can be watched side by side.
+recording:
+  version: v5_factory_bay
+  # The camera films from 17 m. The bay has a roof at 5 m, so without
+  # this the video is a white rectangle. Hiding it cannot change what
+  # the robot senses: the LiDAR's highest return is 3.84 m (0.31 m high,
+  # 10 degrees up, 20 m range), well under the fittings at 4.55 m.
+  # Only the recording camera is affected; the trial is unchanged.
+  hide:
+    - /World/Factory/Ceiling
+
+navigation:
+  start: [-4.8, 2.25]
+  goal: [4.8, 2.25]
+
+humans:
+  # The corridor's two, off.
+  a: {enabled: false}
+  b: {enabled: false}
+
+  w1:
+    position: [-0.25, 3.45]   # bench_n1
+    state: station_engaged
+    facing_deg: 90.0
+  w2:
+    position: [-1.4, 1.05]    # line_main, north side
+    state: station_engaged
+    facing_deg: 90.0
+  w3:
+    # In the working position in front of a machine, facing it, which
+    # is what `station_engaged` means now: the state is defined by
+    # where somebody stands, because that is the only part of it a
+    # sensor can see (docs/RESEARCH_DESIGN.md section 2). Calling this
+    # exact spot `stationary` made the two states indistinguishable.
+    #
+    # Moving the person off the spot instead was tried and moved the
+    # experiment with them: the free floor on this line is either a
+    # pull-off refuge or close enough to the aisle that a 0.90 m
+    # Comfort Space crosses it, and B3 went from SUCCESS to a deadlock
+    # at (-0.60, 2.24). The U bay carries the stationary people.
+    position: [3.6, 1.05]     # line_main, north side
+    state: station_engaged
+    facing_deg: -90.0
+  c:
+    enabled: true
+    position: [5.7, 2.25]
+    state: moving
+    # One traverse, not a round trip. In a 3.9 m corridor the robot can
+    # pass a walker coming the other way, so walking back mattered
+    # little; in a 1.5 m aisle a walker who turns round and comes back
+    # means the robot never gets a window at all, and every trial ends
+    # as a deadlock whatever the policy does.
+    route:
+      - [-5.7, 2.25]
+    avoid_robot: false
+
+  character:
+    w1: F_Business_02
+    w2: M_Medical_01
+    w3: M_Medical_01
+    c: M_Medical_01
+
+# ---------------------------------------------------------------
+# Real models instead of boxes.
+#
+# Everything here lives on the Isaac Sim asset server, the same one the
+# animated characters come from, so the scene needs the network the
+# first time it is built (Kit caches it afterwards). With
+# `enabled: false` the bay is built from plain boxes instead, which is
+# what the geometry checks and the offline runs use.
+#
+# `natural` is the model's measured bounding box and `pivot` is where
+# the centre of that box sits relative to the model's origin. Both were
+# measured, not guessed: a conveyor's origin is at one end, a fuse box
+# is off centre, and without cancelling that out a machine lands half a
+# metre from where the layout put it.
+#
+# `yaw_deg` turns the model into the module's frame (front toward +y),
+# and `scale` is uniform. equipment.modules above must match
+# rotate(natural, yaw) * scale, and the build fails if it does not.
+# ---------------------------------------------------------------
+assets:
+  enabled: true
+  warehouse: /Isaac/Environments/Simple_Warehouse/Props
+
+  shell:
+    wall:    {path: /Isaac/Environments/Simple_Warehouse/Props/SM_WallA_6M.usd,
+              length: 6.0, height: 3.10, thickness: 0.20, pivot: [0.10, 0.0]}
+    pillar:  {path: /Isaac/Environments/Simple_Warehouse/Props/SM_PillarA_9M.usd,
+              natural: [0.40, 0.40, 9.00], pivot: [0.10, 0.0], scale_z: 0.50}
+    # A ceiling would be correct and would also hide the bay from every
+    # view from above, including the plan render. Off by default.
+    ceiling: {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CeilingA_6X6.usd,
+              tile: 6.0, height: 4.50, enabled: false}
+    # A real warehouse interior, so surfaces pick up the colour and the
+    # direction of a building rather than a flat grey wash. 900 read as
+    # dusk in the render; a plant floor is lit.
+    # The sky is an image-based light: it is what puts colour and
+    # direction into the reflections on the epoxy and the aluminium.
+    # It is NOT scenery -- `visible` false keeps it out of the camera,
+    # so the view through the glazing is plain rather than a photograph
+    # of somebody else's warehouse.
+    sky:     {path: /NVIDIA/Assets/Skies/Indoor/ZetoCG_com_WarehouseInterior2b.hdr,
+              intensity: 1400.0, visible: false}
+    # No fill lights over the aisles. They sat directly above the
+    # painted walkways and blew them out to mint and cream while the
+    # rest of the floor stayed grey; the warehouse sky alone lights the
+    # bay evenly. Put a `lights` block back here to add them.
+
+  # The pendant hung over every row. A real fitting rather than a
+  # glowing box: the library has one, so there is no reason to draw it.
+  # It hangs 3.17 m below its own origin at scale 1, so the scale sets
+  # how far below the deck it sits.
+  fitting:
+    path: /Isaac/Environments/Simple_Warehouse/Props/SM_LampCeilingA_04.usd
+    natural: [2.00, 0.80, 3.19]
+    pivot: [0.0, 0.25]
+    scale: 0.45
+
+  # Totes and boxes, from the library rather than drawn here. Sizes are
+  # measured; `yaw_deg` turns the asset so its long side runs along the
+  # shelf, and `z_base` is where its origin sits relative to its floor.
+  totes:
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlastic_B_01.usd,
+       size: [0.44, 0.53, 0.28], yaw_deg: 90.0}
+    - {path: /Isaac/Props/KLT_Bin/small_KLT_visual.usd,
+       size: [0.20, 0.30, 0.15], yaw_deg: 90.0, z_base: -0.07}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlastic_D_01.usd,
+       size: [0.45, 0.66, 0.19], yaw_deg: 90.0}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxD_01.usd,
+       size: [0.38, 0.25, 0.15]}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlasticNote_A_01.usd,
+       size: [0.62, 0.50, 0.44], yaw_deg: 90.0}
+
+  modules:
+    bench:   {build: bench,   size: [2.20, 0.75, 0.90]}
+    cell:    {build: cell,    size: [2.00, 1.30, 2.10]}
+    shelf:   {build: shelf,   size: [2.40, 0.55, 2.00]}
+    trolley: {build: trolley, size: [1.10, 0.65, 1.00]}
+    line:    {build: line,    size: [2.50, 1.00, 0.95]}
+    control_cabinet:
+      path: /Isaac/Environments/Simple_Warehouse/Props/SM_FuseBox_01.usd
+      natural: [0.41, 0.54, 1.71]
+      pivot: [0.21, 0.03]
+      yaw_deg: 90.0
+    pallet_stack:
+      path: /Isaac/Environments/Simple_Warehouse/Props/SM_PaletteA_01.usd
+      natural: [1.21, 1.00, 0.21]
+      pivot: [0.0, 0.0]
+      stack:
+        - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01.usd, at: [0.0, -0.24, 0.21]}
+        - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01.usd, at: [0.0, 0.24, 0.21]}
+        - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01.usd, at: [0.0, 0.0, 0.71], yaw_deg: 90.0}
+
+  # A few things that are always on a shop floor. Positions are in the
+  # bay's own coordinates; each one is checked against the aisles.
+  dressing:
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd, at: [-1.70, 3.60], yaw_deg: 0.0}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd, at: [4.20, -3.60], yaw_deg: 0.0}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_FireExtinguisher_02.usd, at: [-5.85, 4.60], yaw_deg: 90.0, z: 0.90}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlastic_A_01.usd, at: [-1.25, 4.30], yaw_deg: 0.0, z: 1.08}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CratePlastic_A_01.usd, at: [-1.90, 4.30], yaw_deg: 0.0, z: 1.08}
+    - {path: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01.usd, at: [-4.30, 5.55], yaw_deg: 0.0, z: 1.30}
+
+# ---------------------------------------------------------------
+# Yielding in a 1.5 m aisle.
+#
+# In the corridor the robot can always reach a stand-aside spot before
+# the walker arrives, so it picks the roomiest one. Here the pull-offs
+# are a metre and a half away and the robot turns, drives and turns
+# again to get into one: measured, every candidate is a second or two
+# late. Picking the roomiest then leaves it crossing the lane as the
+# walker arrives, which is how both B2 and B3 ended up touching them.
+#
+# So when nothing can be reached in time, the soonest wins instead.
+# Off by default; this is a property of a narrow aisle, not of the
+# policy, and the corridor results stay as they were measured.
+# ---------------------------------------------------------------
+comfort_space:
+  yield:
+    evade:
+      comfort:
+        soonest_when_late: true
