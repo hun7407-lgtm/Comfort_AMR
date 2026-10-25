@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
-"""Write a PLY and render the accumulated cloud from a few angles."""
-import numpy as np, cv2, math, sys
+"""Write a PLY and render the accumulated cloud from a few angles.
 
-SP="/tmp/claude-1000/-home-hun-Desktop/7b3174d9-ddc1-4af9-974d-05e20722647d/scratchpad"
-SP="/tmp/claude-1000/-home-hun-Desktop/7b3174d9-ddc1-4af9-974d-05e20722947d/scratchpad"
-OUT="/home/hun/Desktop/Comfort_AMR/results/real/261018"
-A = np.load(f"{SP}/cloud3d.npz")["xyz"]
+    render3d.py <cloud3d.npz> [out_dir]
+
+The npz comes from bag_to_3d.py. Paths are arguments because the first version
+read a session scratchpad directory, which is gone the moment the session ends
+and means nothing in a clone.
+"""
+import os, sys
+import numpy as np, cv2, math
+
+NPZ = sys.argv[1] if len(sys.argv) > 1 else None
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.dirname(os.path.abspath(__file__))
+if not NPZ:
+    print(__doc__)
+    raise SystemExit(2)
+A = np.load(NPZ)["xyz"]
 print("points", len(A))
 
 # colour by height, turbo-ish
@@ -27,7 +37,7 @@ with open(ply, "wb") as f:
     rec['x'],rec['y'],rec['z'] = A[:,0],A[:,1],A[:,2]
     rec['r'],rec['g'],rec['b'] = col[:,2],col[:,1],col[:,0]
     f.write(rec.tobytes())
-import os; print("wrote", ply, "%.1f MB" % (os.path.getsize(ply)/1e6))
+print("wrote", ply, "%.1f MB" % (os.path.getsize(ply)/1e6))
 
 # ---- renderer --------------------------------------------------------------
 W,H = 1600, 760
