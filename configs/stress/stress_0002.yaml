@@ -1,0 +1,56 @@
+# Randomised stress variant, seed 2.
+# Written by scripts/random_scenario.py; edit the seed, not this.
+base: configs/factory_u.yaml
+seed: 2
+navigation:
+  start:
+  - 7.4
+  - 5.485
+  goal:
+  - -1.4
+  - -5.485
+  goal_yaw_deg: 90.0
+amr:
+  spawn:
+    yaw_deg: -90.0
+humans:
+  w11:
+    position:
+    - -3.0
+    - -5.6
+    state: stationary
+    facing_deg: 90.0
+    walk:
+      start_at: 13.0
+      route:
+      - - -3.0
+        - -4.21
+      - - 10.2
+        - -4.21
+      - - 10.2
+        - 4.21
+      - - -6.5
+        - 4.21
+      - - -6.5
+        - 3.01
+  w7:
+    position:
+    - -6.5
+    - 3.01
+    state: station_engaged
+    facing_deg: -90.0
+    walk:
+      start_at: 13.0
+      route:
+      - - -6.5
+        - 4.21
+      - - -10.2
+        - 4.21
+      - - -10.2
+        - -4.21
+      - - -3.0
+        - -4.21
+      - - -3.0
+        - -5.6
+recording:
+  version: stress

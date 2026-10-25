@@ -35,7 +35,20 @@ PATTERNS=(
     # configured, and B3 looked like it deadlocked.
     "scripts/comfort_[g]ate.py"
     "scripts/comfort_[p]ublisher.py"
+    # The person detector, for the same reason and worse. It survived
+    # every teardown and each trial left one behind: five of them were
+    # found running after a batch, 90% of a core each, five hours old.
+    # They do not just waste a machine -- they starve the simulator,
+    # which dropped to an eighth of real time, so the trials recorded
+    # late in that batch were measuring a starved simulation rather
+    # than a policy.
+    "scripts/people_[t]racker.py"
     "scripts/costmap_[r]ecorder.py"
+    # The 3D version: mapping bringup, slam_toolbox and the lap driver.
+    "nav3d/mappin[g].launch.py"
+    "async_sla[m]_toolbox_node"
+    "nav3d/patro[l].py"
+    "map_save[r]_cli"
 )
 
 # Never kill this script or anything it is running inside. pgrep -f
@@ -53,12 +66,33 @@ is_protected() {
     return 1
 }
 
+# Only processes started from this directory, when asked.
+#
+# Several stress workers run at once, each from its own copy of the
+# project. Without this every worker's cleanup step killed the other
+# workers' simulators: two of six trials in the first wave died in the
+# middle of building their scene, and the log said only "Isaac Sim did
+# not come up".
+#
+# Matching on the working directory is what tells them apart, since the
+# command lines are otherwise identical.
+ONLY_UNDER="${STOP_ONLY_UNDER:-}"
+
+is_mine() {
+    [ -z "$ONLY_UNDER" ] && return 0
+    local cwd
+    cwd=$(readlink -f "/proc/$1/cwd" 2>/dev/null) || return 1
+    case "$cwd" in "$ONLY_UNDER"*) return 0 ;; esac
+    return 1
+}
+
 kill_matching() {
     local signal="$1"
     local count=0
     for pattern in "${PATTERNS[@]}"; do
         for pid in $(pgrep -f "$pattern" || true); do
             is_protected "$pid" && continue
+            is_mine "$pid" || continue
             kill "$signal" "$pid" 2>/dev/null && count=$((count + 1))
         done
     done

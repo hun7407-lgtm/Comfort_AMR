@@ -36,14 +36,21 @@ shift
 
 HEADLESS=()
 CONFIG=()
+CONFIG_PATH="configs/common.yaml"
 RECORD=0
 RECORD_COSTMAP=0
+# Where the trial writes its row. Empty means the config's own
+# results/trials/<recording.version>. A batch passes one folder for the
+# whole batch, so every trial in it lands in one file.
+TRIAL_ARGS=()
 while [ $# -gt 0 ]; do
     case "$1" in
         --headless) HEADLESS+=("--headless"); shift ;;
-        --config)   CONFIG+=("--config" "$2"); shift 2 ;;
+        --config)   CONFIG+=("--config" "$2"); CONFIG_PATH="$2"; shift 2 ;;
         --record)   RECORD=1; shift ;;
         --record-costmap) RECORD_COSTMAP=1; shift ;;
+        --results)  TRIAL_ARGS+=("--results" "$2"); RESULTS_DIR="$2"; shift 2 ;;
+        --no-record) TRIAL_ARGS+=("--no-record"); shift ;;
         *) shift ;;
     esac
 done
@@ -69,7 +76,14 @@ if [ ${#CONFIG[@]} -gt 0 ]; then
     [ "$CONDITION" = "common" ] && CONDITION="standing_only"
 fi
 STAMP="$(date +%Y%m%d_%H%M)"
-VERSION="$(python3 -c "import yaml;print(yaml.safe_load(open('$PROJECT_ROOT/configs/common.yaml'))['recording'].get('version','unversioned'))")"
+# The version comes from the config being run, not always from
+# common.yaml: a different scene is a different set of recordings, and
+# they should not land on top of the corridor's.
+VERSION="$(cd "$PROJECT_ROOT" && python3 -c "
+import sys
+sys.path.insert(0, '.')
+from comfort_core import load_config
+print(load_config(common_path='$CONFIG_PATH')['recording'].get('version', 'unversioned'))")"
 VIDEO_DIR="$PROJECT_ROOT/results/videos/$VERSION/$SCENARIO_DIR/$CONDITION"
 VIDEO_NAME="${STAMP}_camera"
 COSTMAP_NAME="${STAMP}_costmap"
@@ -165,5 +179,20 @@ if [ "$RECORD_COSTMAP" -eq 1 ]; then
 fi
 
 echo "[step] running the trial"
-./scripts/run_nav2_goal.sh "${CONFIG[@]+"${CONFIG[@]}"}" --scenario "$SCENARIO"
-exit $?
+./scripts/run_nav2_goal.sh "${CONFIG[@]+"${CONFIG[@]}"}" --scenario "$SCENARIO" \
+    "${TRIAL_ARGS[@]+"${TRIAL_ARGS[@]}"}"
+TRIAL_CODE=$?
+
+# A trial that did not succeed takes its logs with it.
+#
+# The run directory is a mktemp under /tmp and is gone by the time
+# anybody reads the results, so the one thing that says WHY Nav2 gave
+# up -- the behaviour tree's own log -- used to be unavailable exactly
+# when it was wanted. Stress waves produce a lot of these.
+if [ "$TRIAL_CODE" -ne 0 ] && [ -n "${RESULTS_DIR:-}" ]; then
+    mkdir -p "$RESULTS_DIR/logs"
+    stamp="$(date +%H%M%S)_$SCENARIO"
+    tail -3000 "$NAV_LOG" > "$RESULTS_DIR/logs/${stamp}_nav2.log" 2>/dev/null
+    tail -200 "$SIM_LOG" > "$RESULTS_DIR/logs/${stamp}_sim.log" 2>/dev/null
+fi
+exit $TRIAL_CODE

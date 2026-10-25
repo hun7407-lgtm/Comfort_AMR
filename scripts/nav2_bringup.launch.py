@@ -41,7 +41,9 @@ from launch_ros.actions import Node
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import launch_nodes  # noqa: E402
 from comfort_core import load_config  # noqa: E402
 
 MANAGED_NODES = [
@@ -58,6 +60,7 @@ def generate_launch_description():
     config_path = os.environ.get("COMFORT_AMR_CONFIG", "configs/common.yaml")
     scenario = os.environ.get("COMFORT_AMR_SCENARIO", "") or None
     cfg = load_config(scenario=scenario, common_path=config_path)
+    perception_source = str(cfg.get("perception", {}).get("source", "tf"))
 
     params_file = str(PROJECT_ROOT / "configs" / "nav2" / "nav2_params.yaml")
 
@@ -67,7 +70,6 @@ def generate_launch_description():
     start_yaw = math.radians(float(cfg["amr"]["spawn"]["yaw_deg"]))
 
     frames = cfg["ros"]["frames"]
-    lidar_frame = frames["lidar"]
 
     use_sim_time = LaunchConfiguration("use_sim_time")
 
@@ -78,31 +80,10 @@ def generate_launch_description():
             "use_sim_time", default_value="true",
             description="follow Isaac Sim's /clock rather than wall time"),
 
-        Node(
-            package="pointcloud_to_laserscan",
-            executable="pointcloud_to_laserscan_node",
-            name="pointcloud_to_laserscan",
-            output="screen",
-            remappings=[("cloud_in", cfg["ros"]["topics"]["lidar_cloud"]),
-                        ("scan", cfg["ros"]["topics"]["scan"])],
-            parameters=[{
-                **common,
-                "target_frame": lidar_frame,
-                "transform_tolerance": 0.05,
-                # The LiDAR sits 0.31 m above the floor. Take a slab
-                # around that height so the walls and the humans are
-                # seen but the ground plane is not.
-                "min_height": -0.20,
-                "max_height": 1.20,
-                "angle_min": -math.pi,
-                "angle_max": math.pi,
-                "angle_increment": 0.0087,
-                "scan_time": 0.1,
-                "range_min": 0.20,
-                "range_max": 20.0,
-                "use_inf": True,
-            }],
-        ),
+        # /lidar/cloud -> /scan, from the shared description in
+        # scripts/launch_nodes.py: the mapping run has to flatten the
+        # cloud exactly the way the trials do.
+        launch_nodes.laserscan_node(cfg, common),
 
         Node(
             package="tf2_ros",
@@ -149,18 +130,41 @@ def generate_launch_description():
              name="collision_monitor", output="screen",
              parameters=[params_file, common]),
 
+        # Both of these run on simulated time, like every Nav2 node
+        # above. Without it their timers run on the wall clock: with
+        # recording on, the simulation drops to a third of real time,
+        # the gate's 20 Hz evade loop becomes 6 Hz in simulated time,
+        # and the robot crawls out of the way too late to matter. That
+        # is a recording artefact changing a result, which is worse
+        # than a slow recording.
         ExecuteProcess(
             cmd=[sys.executable,
                  str(PROJECT_ROOT / "scripts" / "comfort_publisher.py"),
-                 "--config", config_path, "--scenario", str(scenario)],
+                 "--config", config_path, "--scenario", str(scenario),
+                 "--ros-args", "-p", "use_sim_time:=true"],
             output="screen",
         ),
+
+        # The person detector, when the control loop is fed by the
+        # sensor rather than by the simulator's own poses. It reads the
+        # 3D cloud, finds people by their vertical profile and
+        # publishes them on /comfort_detections, which is where
+        # comfort_publisher then looks. Started here so the two can
+        # never disagree about whether perception is in the loop.
+        *([ExecuteProcess(
+            cmd=[sys.executable,
+                 str(PROJECT_ROOT / "scripts" / "people_tracker.py"),
+                 "--config", config_path, "--scenario", str(scenario),
+                 "--ros-args", "-p", "use_sim_time:=true"],
+            output="screen",
+        )] if perception_source == "lidar" else []),
 
         ExecuteProcess(
             cmd=[sys.executable,
                  str(PROJECT_ROOT / "scripts" / "comfort_gate.py"),
                  "--config", config_path, "--scenario", str(scenario),
-                 "--out-topic", "/cmd_vel_safe"],
+                 "--out-topic", "/cmd_vel_safe",
+                 "--ros-args", "-p", "use_sim_time:=true"],
             output="screen",
         ),
 

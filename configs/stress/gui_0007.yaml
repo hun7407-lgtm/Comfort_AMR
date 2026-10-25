@@ -1,0 +1,14 @@
+# Seed 7 for watching in the GUI.
+#
+# The only change is the rendezvous. Everybody -- robot and both
+# walkers -- waits for the simulation clock to reach this before
+# setting off, so that the encounter happens whatever Nav2's bringup
+# took. 45 s is right for a headless batch, where nobody is watching.
+# In a window it means 45 simulated seconds of a still picture, which
+# reads as "the robot is not moving".
+#
+# 25 s is still comfortably more than Nav2 needs (about 30 s of wall
+# clock, and the clock runs slower than real time in a window).
+base: configs/stress/stress_0007.yaml
+navigation:
+  trial_start_sim_time: 25.0
