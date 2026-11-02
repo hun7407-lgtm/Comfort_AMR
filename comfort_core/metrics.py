@@ -102,6 +102,33 @@ FIELDS: Tuple[str, ...] = (
     # a corner should not read as a clean run.
     "backoffs",
     "off_lane_recoveries",
+    # -- the safety layer, split by what it actually did -----------
+    # `safety_seconds` above is the sum and keeps its meaning, so every
+    # file written before these existed still reads the same. Only a
+    # STOP refuses the command; a SLOWDOWN scales it and an APPROACH
+    # only warns, so only the first can explain a robot that is not
+    # moving. Counting all three in one number is why the 261023
+    # comparison could not separate a B2 Comfort Space deadlock from a
+    # protective-field stop.
+    "safety_stop_only_seconds",
+    "safety_slowdown_seconds",
+    "safety_approach_seconds",
+    # -- which condition this row belongs to -----------------------
+    # Written by the scenario generator (comfort_core/scenario.py) and
+    # carried through so a results file can be grouped by factor
+    # without going back to the configs. Empty for a hand-written
+    # config, which is every trial run before the generator existed.
+    "comfort_shape",
+    "scenario_id",
+    "seed",
+    "human_count",
+    "amr_count",
+    "state_provider",
+    "north_exchange",
+    "south_exchange",
+    "mission_start_slot",
+    "mission_goal_slot",
+    "mission_distance",
     # The machine's one-minute load when the trial finished.
     #
     # A trial measures a policy only if the simulation ran at a sane
@@ -165,7 +192,14 @@ def row_for(cfg: Dict[str, Any], result: Dict[str, Any],
     people = [k for k, v in humans.items()
               if isinstance(v, dict) and "position" in v
               and v.get("enabled", True)]
-    walkers = [k for k in people if humans[k].get("state") == "moving"]
+    # Anybody who moves at all, which is not the same as anybody
+    # DECLARED moving. `state: moving` is somebody already walking when
+    # the trial starts; `walk:` is somebody who leaves a machine part
+    # way through, and in the U bay that is how every walker is
+    # written. Counting only the first read 0 walkers in every trial of
+    # the 261023 comparison while two people crossed the aisle.
+    walkers = [k for k in people
+               if humans[k].get("state") == "moving" or humans[k].get("walk")]
 
     clearance, clearance_who = _worst(result.get("min_clearance", {}), 0, True)
     intrusion, intrusion_who = _worst(result.get("comfort_worst", {}), 0, False)
@@ -211,6 +245,12 @@ def row_for(cfg: Dict[str, Any], result: Dict[str, Any],
         "off_lane_recoveries": int(result.get("off_lane_recoveries", 0)),
 
         "safety_seconds": _round(result.get("safety_stop_seconds", 0.0), 2),
+        "safety_stop_only_seconds": _round(
+            result.get("safety_stop_only_seconds", 0.0), 2),
+        "safety_slowdown_seconds": _round(
+            result.get("safety_slowdown_seconds", 0.0), 2),
+        "safety_approach_seconds": _round(
+            result.get("safety_approach_seconds", 0.0), 2),
         "safety_polygon": result.get("safety_polygon", ""),
         "contact_seconds": _round(result.get("contact_seconds", 0.0), 2),
         # The one that decides whether a baseline is standard-compliant.
@@ -243,6 +283,44 @@ def row_for(cfg: Dict[str, Any], result: Dict[str, Any],
         "radius_stationary": by_state.get("stationary", ""),
         "radius_engaged": by_state.get("station_engaged", ""),
         "commit": _git_commit(),
+
+        # Round or stretched, which is the only difference between B3-R
+        # and B3 and is otherwise invisible: both report the policy
+        # `state_adaptive`.
+        "comfort_shape": (cs.get("shape", "") if cs.get("policy")
+                          == "state_adaptive" else "circle"),
+        **_scenario_columns(cfg),
+    }
+
+
+def _scenario_columns(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """The generated scenario's own description of itself.
+
+    Empty strings for a hand-written config: the columns exist for
+    every row, and a blank one means "this trial was not generated",
+    which is true of everything run before comfort_core/scenario.py.
+    """
+    meta = cfg.get("scenario_meta") or {}
+    exchanges = {str(e.get("side")): e for e in meta.get("exchanges", [])}
+    mission = meta.get("mission") or {}
+
+    def pair(side: str) -> str:
+        item = exchanges.get(side)
+        if not item:
+            return ""
+        return f"{item.get('belt', '')}->{item.get('edge', '')}"
+
+    return {
+        "scenario_id": meta.get("scenario_id", ""),
+        "seed": meta.get("seed", ""),
+        "human_count": meta.get("human_count", ""),
+        "amr_count": meta.get("amr_count", ""),
+        "state_provider": meta.get("state_provider", ""),
+        "north_exchange": pair("north"),
+        "south_exchange": pair("south"),
+        "mission_start_slot": mission.get("start_slot", ""),
+        "mission_goal_slot": mission.get("goal_slot", ""),
+        "mission_distance": mission.get("distance", ""),
     }
 
 

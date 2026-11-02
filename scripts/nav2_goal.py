@@ -41,7 +41,7 @@ from comfort_core.clearance import clearance, footprint_half_extents
 from comfort_core.comfort_space import make_policy, shapes as build_shapes
 from comfort_core.metrics import record_trial
 from comfort_core.human_state import (GroundTruthStateProvider,
-                                      SensorStateProvider)
+                                      SensorStateProvider, truth_provider)
 from comfort_core.intrusion import footprint_outline, intrusion
 from comfort_core.layout import human_positions, scene_bounds
 
@@ -68,6 +68,19 @@ class TrialResult:
     waited_for_humans: float = 0.0
     safety_stop_seconds: float = 0.0
     safety_polygon: str = ""
+    # The same seconds, split by what the collision monitor actually
+    # did. `safety_stop_seconds` above is their sum and keeps its
+    # meaning, so every results file written so far still reads the
+    # same; these three say which of the three it was.
+    #
+    # Why it matters: the audit of the 261023 comparison could not tell
+    # a B2 deadlock caused by the Comfort Space from one caused by the
+    # protective field, because a SLOWDOWN -- which merely scales the
+    # command -- was counted in the same number as a STOP, which
+    # refuses it. Only a STOP can hold the robot still.
+    safety_stop_only_seconds: float = 0.0
+    safety_slowdown_seconds: float = 0.0
+    safety_approach_seconds: float = 0.0
     # Times the gate had to get the robot unstuck. Faults worked
     # around, not policy: a run that needs them often is saying
     # something about the layout, not about Comfort Space.
@@ -158,6 +171,9 @@ class Nav2Trial(Node):
                                  self._on_collision_state, 10)
         self.safety_action = 0
         self.safety_stop_seconds = 0.0
+        # Seconds per action type, by CollisionMonitorState.action_type.
+        self.safety_by_action: dict = {}
+        self._safety_action_since: int | None = None
         self._safety_since: float | None = None
         # Which zone last acted, and for how long it has been acting
         # without a break. A protective stop that never releases looks
@@ -195,7 +211,16 @@ class Nav2Trial(Node):
         # `states()` came back empty, no reference shapes were built,
         # and twelve LiDAR trials recorded no intrusion and no state
         # accuracy at all while otherwise looking fine.
-        self.declared_states = GroundTruthStateProvider(cfg).states()
+        #
+        # `truth_provider` is GroundTruthStateProvider -- the frozen
+        # labels -- for every config that does not script its people,
+        # so nothing that has already been measured changes. A
+        # scenario that DOES script them gets the oracle instead, and
+        # then this has to be refreshed each tick, because the truth
+        # about somebody who is walking changes while they walk. See
+        # comfort_core.human_state.ScriptedStateProvider.
+        self.truth = truth_provider(cfg)
+        self.declared_states = self.truth.states()
         # The map-based estimator runs in EVERY trial, even when the
         # policy is driven by ground truth. It costs nothing and it is
         # the only way to know what the robot could have worked out for
@@ -218,16 +243,55 @@ class Nav2Trial(Node):
                                        CollisionMonitorState.APPROACH)
         if self.latest is not None:
             now = self.sim_time()
+            # An interval belongs to ONE action type. A monitor that
+            # goes SLOWDOWN -> STOP without releasing closes the
+            # slowdown interval and opens a stop one, instead of
+            # charging the whole episode to whichever came first.
+            changed = (self._safety_action_since is not None
+                       and msg.action_type != self._safety_action_since)
+            if self._safety_since is not None and (not stopping or changed):
+                self._close_safety_interval(now)
             if stopping and self._safety_since is None:
                 self._safety_since = now
+                self._safety_action_since = msg.action_type
                 self.safety_polygon = msg.polygon_name or "zone"
                 self.get_logger().info(
                     f"safety layer acting: {self.safety_polygon} "
                     f"(type {msg.action_type})")
-            elif not stopping and self._safety_since is not None:
-                self.safety_stop_seconds += now - self._safety_since
-                self._safety_since = None
         self.safety_action = msg.action_type
+
+    def _close_safety_interval(self, now: float) -> None:
+        """Book the open interval to the action that was in force."""
+        if self._safety_since is None:
+            return
+        held = now - self._safety_since
+        action = self._safety_action_since
+        self.safety_stop_seconds += held
+        self.safety_by_action[action] = (
+            self.safety_by_action.get(action, 0.0) + held)
+        self._safety_since = None
+        self._safety_action_since = None
+
+    def continuous_stop_seconds(self) -> float:
+        """How long the safety layer has REFUSED the command, unbroken.
+
+        Not the same as continuous_safety_seconds: that counts a
+        SLOWDOWN and an APPROACH too, and neither of those holds the
+        robot still -- a slowdown scales the command, a stop replaces
+        it with zero. Only this number can explain a robot that is not
+        moving, which is what a deadlock has to be attributed to.
+        """
+        if (self._safety_since is None
+                or self._safety_action_since != CollisionMonitorState.STOP):
+            return 0.0
+        return self.sim_time() - self._safety_since
+
+    def safety_seconds_for(self, action: int) -> float:
+        """Seconds of one action type, including an interval still open."""
+        total = self.safety_by_action.get(action, 0.0)
+        if self._safety_since is not None and self._safety_action_since == action:
+            total += self.sim_time() - self._safety_since
+        return total
 
     def continuous_safety_seconds(self) -> float:
         """How long the safety layer has been acting without releasing."""
@@ -628,6 +692,14 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
         # something that is not true any more.
         speeds_now = node.tracker.speeds()
         here = node.human_positions_now()
+        # The truth first, so everything below -- the confusion matrix
+        # and the reference Comfort Space alike -- is scored against
+        # what the people are doing at THIS instant. For an unscripted
+        # config this is a no-op: the frozen labels have no update().
+        if hasattr(node.truth, "update"):
+            refreshed = node.truth.update(here, speeds_now, now)
+            if refreshed:
+                node.declared_states = refreshed
         estimated = node.estimator.update(here, speeds_now, now)
         for key in node.declared_states:
             # Truth is what the person is doing NOW, worked out from
@@ -689,6 +761,12 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
             res.safety_stop_seconds = (node.safety_stop_seconds
                                        + node.continuous_safety_seconds())
             res.safety_polygon = node.safety_polygon
+            res.safety_stop_only_seconds = node.safety_seconds_for(
+                CollisionMonitorState.STOP)
+            res.safety_slowdown_seconds = node.safety_seconds_for(
+                CollisionMonitorState.SLOWDOWN)
+            res.safety_approach_seconds = node.safety_seconds_for(
+                CollisionMonitorState.APPROACH)
             # Every trial is scored against the same reference Comfort
             # Space, so a trial with people in it and no reference
             # measurement at all did not measure what this study
@@ -749,7 +827,10 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
             last_progress_t = now
         elif now - last_progress_t >= node.dl_duration:
             res.deadlock_detected = True
-            held = node.continuous_safety_seconds()
+            # Only a STOP can be the reason a robot is not moving;
+            # see continuous_stop_seconds.
+            held = node.continuous_stop_seconds()
+            acting = node.continuous_safety_seconds()
             # Attribution matters more than the number here, and the
             # two causes are not alternatives: a robot that has
             # stopped to respect somebody's Comfort Space is then
@@ -772,6 +853,11 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
                        f"{held:.0f} s ({node.safety_polygon})")
             elif yielded:
                 why = " while yielding"
+            elif acting >= 1.0:
+                # The layer is doing something, but not refusing the
+                # command: worth recording, and NOT the explanation.
+                why = (f", safety layer slowing it (not stopping it) for "
+                       f"the last {acting:.0f} s ({node.safety_polygon})")
             else:
                 why = ""
             res.deadlock_cause = f"no progress for {node.dl_duration:.0f} s" + why
@@ -844,10 +930,13 @@ def main() -> int:
     print(f"  yielded            : {res.yielded} "
           f"({res.yield_seconds:.1f} simulated s held back)", flush=True)
     print(f"  safety layer       : "
-          f"{res.safety_stop_seconds:.1f} simulated s acting"
+          f"{res.safety_stop_seconds:.1f} simulated s acting "
+          f"(stop {res.safety_stop_only_seconds:.1f}, "
+          f"slow {res.safety_slowdown_seconds:.1f}, "
+          f"approach {res.safety_approach_seconds:.1f})"
           f"{'  [' + res.safety_polygon + ']' if res.safety_polygon else ''}"
-          f"{'  <-- check this, B2 must deadlock on comfort, not safety'
-             if res.safety_stop_seconds > 0 else ''}", flush=True)
+          f"{'  <-- check this, a deadlock must come from comfort, not safety'
+             if res.safety_stop_only_seconds > 0 else ''}", flush=True)
     if res.waited_for_humans:
         print(f"  waited for people  : {res.waited_for_humans:.1f} simulated s "
               f"(not counted as a deadlock)", flush=True)
