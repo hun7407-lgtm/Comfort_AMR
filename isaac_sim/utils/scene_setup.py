@@ -24,7 +24,8 @@ from comfort_core.human_state import make_state_provider
 from comfort_core.factory_layout import clearance_summary, validate_factory
 from comfort_core.layout import passage_report, validate
 from isaac_sim.utils import comfort_viz, human_motion, human_tf
-from isaac_sim.environments import corridor, factory, people
+from isaac_sim.environments import (corridor, factory, markers, people,
+                                    preview)
 
 
 def setup_physics_scene(cfg: Dict[str, Any], prim_path: str = "/physicsScene") -> Usd.Prim:
@@ -485,6 +486,14 @@ def build_scene(cfg: Dict[str, Any], usd_path: str, verbose: bool = True):
 
     for note in people.populate(cfg):
         say(note)
+
+    for note in markers.build(cfg, get_current_stage()):
+        say(f"marker: {note}")
+
+    # The scenario preview, drawn on the floor. Off for every
+    # measurement; see isaac_sim/environments/preview.py.
+    for note in preview.build(cfg, get_current_stage()):
+        say(f"preview: {note}")
 
     amr_prim = spawn_amr(cfg, usd_path)
     start_x, start_y = cfg["navigation"]["start"]

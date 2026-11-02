@@ -853,6 +853,59 @@ perception:
 # ---------------------------------------------------------------
 # How trials are scored.
 # ---------------------------------------------------------------
+# Floor markers showing where a trial starts and ends.
+#
+# For looking at, not for measuring, and OFF for every measurement.
+#
+# They cannot reach the sensor even when on: the LiDAR sits 0.31 m up
+# and its lowest beam rises at 1.9 degrees, so at any distance it is
+# already above a 4 mm decal on the floor. The flag is the second
+# guarantee -- off, the prims are never created, so a trial cannot
+# differ because of them. scripts/view_factory_scene.sh and the
+# screenshot script turn them on; run_scenario.sh does not.
+markers:
+  enabled: false
+  radius: 0.45          # m, the ring
+  thickness: 0.004      # m, flat on the floor
+  z: 0.006
+  # Blue, not green: the bay's floor is green epoxy and a green ring
+  # on it is invisible. Measured by looking at the first render.
+  start_colour: [0.05, 0.35, 0.95]
+  goal_colour:  [0.95, 0.35, 0.10]
+  floor_colour: [0.22, 0.22, 0.24]
+
+# ---------------------------------------------------------------
+# How a paper scenario is drawn.
+#
+# Read by comfort_core/scenario.py, which is the ONLY place in the
+# experiment a random number is drawn. Everything here is a bound on
+# that draw, not a value a trial uses directly: the drawn values are
+# written into the generated config and into
+# results/scenarios/<id>.json, and a run reads them from there.
+#
+# None of it is tuned to an outcome. Where a number is forced by the
+# geometry the reason is given; where it is a starting value and not a
+# decision, it says so.
+# ---------------------------------------------------------------
+preview:
+  enabled: false
+  # Floor plate under each person, coloured by their state.
+  plate_radius: 0.40
+  thickness: 0.004
+  z: 0.006
+  state_colour:
+    station_engaged: [0.10, 0.45, 0.95]
+    stationary:      [0.95, 0.75, 0.10]
+    moving:          [0.90, 0.20, 0.20]
+  # The walk each exchanging person takes, as a stripe on the floor.
+  route_width: 0.10
+  route_colour:
+    belt: [0.95, 0.35, 0.10]
+    edge: [0.20, 0.80, 0.55]
+  # Outline every empty cart slot, so the mission pool is visible.
+  slots: true
+  slot_colour: [0.55, 0.55, 0.58]
+
 evaluation:
   # Comfort Space intrusion is measured against this scenario's policy in
   # EVERY scenario, so B1 (which has none) and B2 (whose space is larger)
