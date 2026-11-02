@@ -64,6 +64,29 @@ class WalkerSync:
 
         self.height = float(humans["height"])
         self.cfg = cfg
+        # Per-person walking speed, if it has been calibrated.
+        #
+        # omni.anim.people's command file has no speed argument. The
+        # only lever is the animation graph variable `Walk`, a 0..1
+        # blend weight that the extension's own base_command.walk()
+        # rewrites to 1.0 on every tick, so the override has to be
+        # applied AFTER the extension has ticked -- which is here, once
+        # per simulation step.
+        #
+        # What the blend weight is in metres per second is not known
+        # from the asset, so it has to be measured once and written to
+        # humans.walk_speed.calibration. Until it is, this refuses to
+        # run: a recorded speed that the character does not walk at is
+        # worse than one fixed speed honestly reported.
+        speed_cfg = humans.get("walk_speed", {}) or {}
+        self.speed_calibration = speed_cfg.get("calibration")
+        self.apply_speed = (bool(speed_cfg.get("enabled", False))
+                            and str(speed_cfg.get("method", "blend")) == "blend"
+                            and self.speed_calibration is not None)
+        self.wanted_speed = {
+            key: float(((humans.get(key) or {}).get("walk") or {})
+                       .get("speed", 0.0))
+            for key, _x, _y in human_positions(cfg)}
         self.policy = make_policy(cfg)
         self.declared = make_state_provider(cfg).states()
         self.buffer_width = float(
@@ -159,6 +182,13 @@ class WalkerSync:
             x, y = float(pos[0]), float(pos[1])
 
             self._track(_key, x, y, dt)
+
+            if self.apply_speed:
+                want = self.wanted_speed.get(_key, 0.0)
+                if want > 0.0:
+                    blend = min(max(want / float(self.speed_calibration),
+                                    0.0), 1.0)
+                    character.set_variable("Walk", blend)
 
             body = self._bodies.get(_key)
             if body is None:

@@ -396,10 +396,38 @@ humans:
     facing_offset_deg: 90.0
     # omni.anim.people command per state. Idle takes a duration in
     # seconds; the trial is over long before these expire.
+    #
+    # NOTE on walking speed. The scenario samples a speed per person
+    # (scenario_pool.walk_speed) and records it, and the state oracle
+    # and every schedule estimate use it. The CHARACTER, though, walks
+    # at whatever the animation graph gives: omni.anim.people's command
+    # file has no speed argument, and the only lever is the graph
+    # variable `Walk`, a 0..1 blend weight that
+    # omni/anim/people/scripts/commands/base_command.py rewrites to 1.0
+    # on every tick. See humans.walk_speed below.
     commands:
       station_engaged: "Idle 100000"
       stationary: "Idle 100000"
       moving: "Idle 100000"
+
+  # Making the characters walk at the sampled speed.
+  #
+  # OFF, and honestly so. The plumbing is in place -- the speed is
+  # sampled, recorded and used by everything that reasons about the
+  # walk -- but the simulated character still walks at the animation
+  # graph's own pace until the blend weight below is calibrated
+  # against a measured metres per second. Turning it on before that
+  # would mean the recorded speed and the walked speed disagree, which
+  # is worse than them being equal and fixed.
+  #
+  # `blend` writes the graph variable `Walk` after each step, which is
+  # the only lever the extension exposes. `calibration` is the walked
+  # speed at a blend weight of 1.0; until it is measured it is null
+  # and the override refuses to run.
+  walk_speed:
+    enabled: false
+    method: blend
+    calibration: null
 
   a:
     # 0.45 m in front of Station A, facing it.
@@ -886,6 +914,96 @@ markers:
 # None of it is tuned to an outcome. Where a number is forced by the
 # geometry the reason is given; where it is a starting value and not a
 # decision, it says so.
+# ---------------------------------------------------------------
+scenario_pool:
+  # Shortest mission worth running, in metres along the lane network.
+  #
+  # NOT a fixed threshold. Print the pool and choose:
+  #
+  #   python3 scripts/make_scenario.py --humans 8 --pool
+  #
+  # At 12.0 m the pool is 58 of 90 pairs, 50 of them crossing between
+  # the two aisles. A 3.6 m mission exists in the bay -- two slots in
+  # the same cart block -- and the robot reaches it in five seconds
+  # without passing anybody, so it tests nothing.
+  min_mission_distance: 12.0
+
+  # How far either end of a mission has to be from anywhere one of the
+  # eight stands at any point in the trial.
+  #
+  # 1.80 m = the largest Comfort Space in the study (1.20) plus the
+  # AMR's inscribed radius (0.24) plus 0.36 m. Forced, not chosen: the
+  # two slots either side of the storage spot are 1.62 m from it, which
+  # is inside a B2 Comfort Space, so a robot sent there could not park
+  # and "could not park" would be recorded as "could not pass".
+  mission_standoff: 1.80
+
+  # How much nearer the slot's mouth than its centre the robot parks.
+  #
+  # 0.165 m, and the arithmetic is in configs/factory_u.yaml under
+  # navigation: the stopped protective field reaches 0.564 m from the
+  # robot's centre and a slot centre is 0.525 m from the cart parked
+  # behind it, so a robot in the middle of a slot has that cart inside
+  # its own field and the collision monitor refuses every command.
+  slot_mouth_offset: 0.165
+
+  # Half the distance between the two lines the exchanging pair walk
+  # along the aisle. 0.45 m puts them 0.90 m apart -- a side-by-side
+  # pass, not a head-on one -- and leaves each 0.30 m inside the
+  # 1.50 m aisle.
+  walk_lane_offset: 0.45
+
+  # How far to one side of the point they are swapping into each of
+  # them crosses the aisle. 0.60 m is as far as it goes: a 0.25 m
+  # radius person then clears the cart blocks either side of the
+  # 1.80 m storage gap by 0.05 m. Measured over 200 generated
+  # scenarios, the pair never come within 0.90 m of each other.
+  walk_end_offset: 0.60
+
+  # Walking speed, sampled per person.
+  #
+  # Range only. The sampled value is recorded in the scenario and read
+  # back by the state oracle; whether the CHARACTER walks at it is a
+  # separate matter -- see humans.walk_speed below.
+  walk_speed:
+    min: 0.8
+    max: 1.2
+
+  # When each exchange begins, in simulated seconds after the trial
+  # starts (navigation.trial_start_sim_time).
+  #
+  # Independent of where the AMR is, deliberately. A trigger on the
+  # robot's distance would make the human schedule a function of the
+  # robot's own behaviour, so a policy that drove differently would
+  # meet a different scenario and the comparison would be gone.
+  swap:
+    nominal_start: 8.0
+    jitter: 3.0
+    # The south exchange is offset from the north one, so the robot
+    # does not always meet both at the same moment.
+    side_offset: 4.0
+    # Pause between one worker leaving their post and the other
+    # setting off. The departure is keyed off the first person's real
+    # progress -- the time to step off the post at their own speed --
+    # not off a fixed clock.
+    handover_delay: 1.5
+
+  # How long after the trial starts each additional AMR sets off.
+  amr_offset:
+    min: 0.0
+    max: 6.0
+
+# ---------------------------------------------------------------
+# Scenario preview: labels and routes drawn on the floor.
+#
+# For looking at, not for measuring, and OFF for every measurement --
+# exactly like `markers` above, and for the same two reasons. The
+# decals are 4 mm thick and the LiDAR's lowest beam is already
+# 0.31 + 0.033 * d above the floor, so they cannot be sampled at any
+# range; and with `enabled` false the prims are never created, so a
+# trial cannot differ because of them.
+#
+#   ./scripts/preview_scenario.sh --config configs/scenarios/<id>.yaml
 # ---------------------------------------------------------------
 preview:
   enabled: false
