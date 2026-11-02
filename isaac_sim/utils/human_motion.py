@@ -26,7 +26,7 @@ from isaacsim.core.utils.stage import get_current_stage
 from pxr import Gf, Usd
 
 from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
-from comfort_core.human_state import make_state_provider
+from comfort_core.human_state import truth_provider
 from comfort_core.layout import human_positions
 from isaac_sim.utils import comfort_viz
 
@@ -88,7 +88,18 @@ class WalkerSync:
                        .get("speed", 0.0))
             for key, _x, _y in human_positions(cfg)}
         self.policy = make_policy(cfg)
-        self.declared = make_state_provider(cfg).states()
+        # A LIVE state provider, not a snapshot.
+        #
+        # This used to be make_state_provider(cfg).states(), read once.
+        # The size a Comfort Space is drawn at comes from the person's
+        # state, and a snapshot never changes, so somebody declared
+        # station_engaged kept a 0.60 m disc the whole way down the
+        # aisle while the gate and the costmap -- which do refresh
+        # through truth_provider -- were avoiding 1.20 m stretched
+        # along her heading. The viewport disagreed with the method.
+        self.truth = truth_provider(cfg)
+        self.declared = self.truth.states()
+        self._clock = 0.0
         self.buffer_width = float(
             cfg["comfort_space"].get("costmap", {}).get("buffer_width", 0.0))
         self.grow = robot_grow(cfg)
@@ -147,16 +158,24 @@ class WalkerSync:
         costmap mask does, or the viewport shows a circle where the
         planner sees a stretched ellipse.
         """
-        axes = self.policy.axes(self.declared, self._speeds)
+        states = self.declared
+        if hasattr(self.truth, "update"):
+            refreshed = self.truth.update(self._prev_pos, self._speeds,
+                                          self._clock, self._headings)
+            if refreshed:
+                states = refreshed
+        axes = self.policy.axes(states, self._speeds)
         positions = {k: v for k, v in self._prev_pos.items()}
         shapes = build_shapes(self.cfg, axes, positions, self._headings,
                               self.grow)
-        comfort_viz.update(get_current_stage(), shapes, self.buffer_width)
+        comfort_viz.update(get_current_stage(), shapes, self.buffer_width,
+                           self.cfg, states)
 
     def update(self, dt: float = 1.0 / 60.0) -> None:
         """Move each collider to its character's current position."""
         if not self.pairs:
             return
+        self._clock += dt
         import omni.anim.graph.core as ag
 
         stage = get_current_stage()

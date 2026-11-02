@@ -32,6 +32,12 @@ from comfort_core.comfort_space import robot_grow, shapes as build_shapes
 VIZ_ROOT = "/Environment/ComfortSpace"
 LOOKS = f"{VIZ_ROOT}/Looks"
 
+# Which state each drawn disc is currently coloured for, by prim path.
+# A walker changes state part way through, and rebinding a material
+# every frame for sixty frames of no change is waste, so this remembers
+# what is already bound. Reset by clear().
+_BOUND: Dict[str, str] = {}
+
 
 def _translucent_material(stage, name: str, color, opacity: float):
     """A UsdPreviewSurface that renders as coloured glass.
@@ -81,8 +87,37 @@ def _disc(stage, path: str, shape, z: float, height: float, material) -> None:
     UsdShade.MaterialBindingAPI(cylinder.GetPrim()).Bind(material)
 
 
+def _state_colours(cfg: Dict[str, Any]):
+    """state -> colour, or None to draw every space the one colour."""
+    viz = cfg["comfort_space"].get("visualization", {})
+    table = viz.get("state_colour") or {}
+    return {str(k): v for k, v in table.items()} or None
+
+
+def _materials_for(stage, cfg: Dict[str, Any], state: str):
+    """The (inner, outer) material a person in `state` is drawn with.
+
+    Size alone already separates the three states, but only once you
+    know the numbers; colour says which is which at a glance, which is
+    what a screenshot has to do. The palette is the one the floor
+    decals use (configs/common.yaml preview.state_colour), so the two
+    never disagree about what blue means.
+    """
+    viz = cfg["comfort_space"].get("visualization", {})
+    opacity = float(viz.get("opacity", 0.35))
+    table = _state_colours(cfg)
+    known = bool(table) and state in table
+    colour = table[state] if known else viz.get("color", [0.15, 0.55, 0.95])
+    tag = state if known else "Default"
+    return (_translucent_material(stage, f"ComfortInner_{tag}", colour,
+                                  opacity),
+            _translucent_material(stage, f"ComfortOuter_{tag}", colour,
+                                  opacity * 0.45))
+
+
 def clear(stage) -> None:
     """Remove every Comfort Space prim, leaving the materials in place."""
+    _BOUND.clear()
     for name in ("Discs",):
         path = f"{VIZ_ROOT}/{name}"
         if is_prim_path_valid(path):
@@ -119,7 +154,8 @@ def check_below_scan(cfg: Dict[str, Any]) -> str:
     return ""
 
 
-def draw(stage, cfg: Dict[str, Any], shapes: List) -> int:
+def draw(stage, cfg: Dict[str, Any], shapes: List,
+         states: Dict[str, str] | None = None) -> int:
     """Draw one Comfort Space per human. Returns how many were drawn.
 
     Safe to call repeatedly: the previous discs are removed first.
@@ -133,27 +169,29 @@ def draw(stage, cfg: Dict[str, Any], shapes: List) -> int:
     UsdGeom.Scope.Define(stage, LOOKS)
     UsdGeom.Scope.Define(stage, f"{VIZ_ROOT}/Discs")
 
-    color = viz.get("color", [0.15, 0.55, 0.95])
-    opacity = float(viz.get("opacity", 0.35))
     height = float(viz.get("height", 0.02))
     z = float(viz.get("z_offset", 0.01)) + height / 2.0
-
-    inner_mat = _translucent_material(stage, "ComfortInner", color, opacity)
-    outer_mat = _translucent_material(stage, "ComfortOuter", color, opacity * 0.45)
 
     buffer_width = float(
         cfg["comfort_space"].get("costmap", {}).get("buffer_width", 0.0))
 
     for shape in shapes:
+        state = str((states or {}).get(shape.key, ""))
+        inner_mat, outer_mat = _materials_for(stage, cfg, state)
         # Outer first and slightly lower, so the inner disc reads on top.
-        _disc(stage, f"{VIZ_ROOT}/Discs/planner_{shape.key}",
+        planner_path = f"{VIZ_ROOT}/Discs/planner_{shape.key}"
+        comfort_path = f"{VIZ_ROOT}/Discs/comfort_{shape.key}"
+        _disc(stage, planner_path,
               shape.grown(buffer_width), z, height * 0.5, outer_mat)
-        _disc(stage, f"{VIZ_ROOT}/Discs/comfort_{shape.key}",
-              shape, z + height, height, inner_mat)
+        _disc(stage, comfort_path, shape, z + height, height, inner_mat)
+        _BOUND[planner_path] = state
+        _BOUND[comfort_path] = state
     return len(shapes)
 
 
-def update(stage, shapes: List, buffer_width: float = 0.0) -> int:
+def update(stage, shapes: List, buffer_width: float = 0.0,
+           cfg: Dict[str, Any] | None = None,
+           states: Dict[str, str] | None = None) -> int:
     """Move, turn and resize the existing discs. Returns how many moved.
 
     The discs are drawn once when the scene is built, which is fine
@@ -164,11 +202,23 @@ def update(stage, shapes: List, buffer_width: float = 0.0) -> int:
     """
     moved = 0
     for shape in shapes:
+        state = str((states or {}).get(shape.key, ""))
         for prefix, drawn in (("comfort", shape),
                               ("planner", shape.grown(buffer_width))):
-            prim = stage.GetPrimAtPath(f"{VIZ_ROOT}/Discs/{prefix}_{shape.key}")
+            path = f"{VIZ_ROOT}/Discs/{prefix}_{shape.key}"
+            prim = stage.GetPrimAtPath(path)
             if not prim.IsValid():
                 continue
+            # Recolour only when the person's state has actually
+            # changed. A walker who sets off goes from the engaged
+            # colour to the moving one here; standing still rebinds
+            # nothing.
+            if cfg is not None and states is not None \
+                    and _BOUND.get(path) != state:
+                inner_mat, outer_mat = _materials_for(stage, cfg, state)
+                UsdShade.MaterialBindingAPI(prim).Bind(
+                    inner_mat if prefix == "comfort" else outer_mat)
+                _BOUND[path] = state
             ops = {op.GetOpName(): op
                    for op in UsdGeom.Xformable(prim).GetOrderedXformOps()}
             translate = ops.get("xformOp:translate")

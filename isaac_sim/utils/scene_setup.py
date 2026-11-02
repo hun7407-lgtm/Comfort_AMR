@@ -22,7 +22,7 @@ from comfort_core import resolve_path
 from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
 from comfort_core.human_state import make_state_provider
 from comfort_core.factory_layout import clearance_summary, validate_factory
-from comfort_core.layout import passage_report, validate
+from comfort_core.layout import human_positions, passage_report, validate
 from isaac_sim.utils import comfort_viz, human_motion, human_tf
 from isaac_sim.environments import (corridor, factory, markers, people,
                                     preview)
@@ -527,7 +527,14 @@ def draw_comfort_spaces(cfg: Dict[str, Any], say=None) -> List:
         if say:
             say(msg)
 
-    if not cfg["corridor"].get("enabled", True):
+    # Gated on there being people, not on the corridor being enabled.
+    #
+    # It used to test corridor.enabled, which is false in the factory
+    # bay, so Comfort Spaces were never drawn there at all -- in the
+    # scene every paper scenario runs in. The colliders they belong to
+    # are built at /Environment/Corridor/human_* either way; only the
+    # drawing was tied to the old environment.
+    if not human_positions(cfg):
         return []
 
     provider = make_state_provider(cfg)
@@ -549,7 +556,7 @@ def draw_comfort_spaces(cfg: Dict[str, Any], say=None) -> List:
          f"x={report.tightest_x:+.2f}, AMR needs {report.required:.2f} m "
          f"-> {'PASSABLE' if report.passable else 'BLOCKED'}")
 
-    drawn = comfort_viz.draw(get_current_stage(), cfg, shapes)
+    drawn = comfort_viz.draw(get_current_stage(), cfg, shapes, states)
     if drawn:
         emit(f"  drew {drawn} Comfort Space")
 

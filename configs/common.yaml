@@ -797,6 +797,18 @@ comfort_space:
     z_offset: 0.01
     opacity: 0.35
     color: [0.15, 0.55, 0.95]
+    # Colour per human state, so a screenshot says which space is
+    # which without the reader having to measure it. Same palette as
+    # the floor decals in `preview.state_colour` below. Remove the
+    # block to draw every space in `color` above.
+    #
+    # Colour is drawing and nothing else: no collider, no cost, no
+    # effect on any trial. Only the SIZE carries meaning, and that
+    # comes from the policy.
+    state_colour:
+      station_engaged: [0.10, 0.45, 0.95]   # at the machine, 0.60 m
+      stationary:      [0.95, 0.75, 0.10]   # standing, 0.90 m
+      moving:          [0.90, 0.20, 0.20]   # walking, 1.20 m, stretched
 
 # ---------------------------------------------------------------
 # Estimating people from the LiDAR instead of from the scene.
