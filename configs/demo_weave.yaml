@@ -13,7 +13,6 @@
 # person-sized and the Comfort Space is what the AMR steers around.
 #
 #   ./scripts/run_sim.sh --config configs/demo_weave.yaml
-#   ./scripts/run_goto_goal.sh --config configs/demo_weave.yaml
 #
 # Everything not listed here is inherited from common.yaml.
 # ---------------------------------------------------------------
@@ -43,7 +42,7 @@ stations:
 # --------------------------------------
 # An earlier version put the humans at x = -2 and +2 with radius 1.2.
 # Geometrically that was passable, and the placeholder controller in
-# scripts/goto_goal.py drove it. Nav2 could not: it left only 1.6 m of x
+# The pre-Nav2 placeholder controller drove it. Nav2 could not: it left only 1.6 m of x
 # in which to move 1.7 m sideways, which a differential base cannot do at
 # 0.4 m/s, and the robot wedged itself between the second human and the
 # wall until the trial timed out.

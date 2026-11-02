@@ -155,14 +155,15 @@ Nav2를 쓰기 전에는 반드시 teleop을 종료하세요.
 터미널 1에서 시뮬레이션, 터미널 2에서 주행을 실행합니다.
 
 ```bash
-./scripts/run_goto_goal.sh                 # config의 goal 사용
-./scripts/run_goto_goal.sh --goal 0 3      # goal 임시 변경
+./scripts/run_scenario.sh b3               # 시뮬 + Nav2 + 한 시행
+./scripts/run_scenario.sh b3 --hold        # 끝나고 창을 열어둠
 ```
 
 start와 goal은 `configs/common.yaml`의 `navigation` 섹션에서 바꿉니다.
 AMR은 항상 `navigation.start`에 spawn되므로 시작 위치가 어긋날 수 없습니다.
 
-결과로 result, travel time, travel distance, detour ratio가 출력됩니다.
+결과로 result, travel time, travel distance, 최근접거리, Comfort Space
+침입, 안전층 동작 시간이 출력되고 한 행이 `results/trials`에 기록됩니다.
 exit code 0이면 SUCCESS입니다.
 
 이 컨트롤러는 planner가 아닙니다.

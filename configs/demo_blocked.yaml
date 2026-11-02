@@ -11,7 +11,6 @@
 # closes the passage.
 #
 #   ./scripts/run_sim.sh --config configs/demo_blocked.yaml
-#   ./scripts/run_goto_goal.sh --config configs/demo_blocked.yaml
 #
 # Everything not listed here is inherited from common.yaml.
 # ---------------------------------------------------------------

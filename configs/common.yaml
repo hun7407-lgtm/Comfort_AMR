@@ -1310,28 +1310,6 @@ navigation:
     # single stray point from halting the robot.
     min_points: 5
 
-  avoidance:
-    # Steer around obstacles instead of driving blindly at the goal.
-    #
-    # This is a placeholder for Nav2, which arrives in PHASE D. It reads
-    # obstacle positions from this config rather than from a sensor, so
-    # it is not a perception system. It exists because B2 and B3 need a
-    # navigator that reacts to Comfort Space radii, and having one now
-    # means the comparison can run before Nav2 is integrated.
-    #
-    # It works by looking ahead along the corridor, measuring the free
-    # gaps at that cross-section, and aiming at the usable gap closest
-    # to the goal line. Set enabled: false for the blind controller.
-    enabled: true
-
-    # How far ahead to look, in metres. Too short and the robot commits
-    # late and clips obstacles; too long and it starts dodging things it
-    # has not reached yet.
-    lookahead: 1.5
-
-    # The placeholder controller reuses navigation.planning_failure_duration
-    # above: if no gap is wide enough for that long, there is no feasible
-    # path. See docs/EXPERIMENT.md section 9.
 
 # ---------------------------------------------------------------
 # STEP 3 verification thresholds.
