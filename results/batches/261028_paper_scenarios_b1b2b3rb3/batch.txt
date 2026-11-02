@@ -1,0 +1,38 @@
+batch     : 261028_003225
+scenarios : b1,b2,b3r,b3
+configs   : configs/scenarios/paper_h4_a1_scr_s0001.yaml,configs/scenarios/paper_h8_a1_scr_s0001.yaml,configs/scenarios/paper_h8_a2_scr_s0001.yaml,configs/scenarios/paper_h8_a3_scr_s0001.yaml
+repeats   : 3
+trials    : 48
+commit    : a12d978
+started   : 2026-10-28T00:32:25+09:00
+finished  : 2026-10-28T02:10:38+09:00
+ran       : 48 of 48
+no result : 0
+minutes   : 98
+
+=== 48 trials recorded ===
+
+  layout        scn    n  arrived  deadlock  timeout  median s   median m   yield s  closest  intrusion  people in  ROBOT HIT  safety s  state
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------
+  paper_h4_a1_scr_s0001 b1     3       3         0        0      33.2       21.7       0.0    0.830       0.00          0          0       0.0  0.956
+  paper_h4_a1_scr_s0001 b2     3       2         1        0      54.0       22.0      21.8   -0.058       1.94          2          0       1.1  0.973
+  paper_h4_a1_scr_s0001 b3r    3       3         0        0      33.2       21.7       0.0    0.814       0.00          0          0       0.0  0.956
+  paper_h4_a1_scr_s0001 b3     3       3         0        0      33.1       21.7       0.0    0.816       0.00          0          0       0.0  0.956
+  paper_h8_a1_scr_s0001 b1     3       3         0        0      25.5       15.7       0.0    0.836       0.00          0          0       0.0  0.976
+  paper_h8_a1_scr_s0001 b2     3       0         3        0         -          -      31.3    1.084       0.00          0          0       0.0  0.981
+  paper_h8_a1_scr_s0001 b3r    3       3         0        0      25.5       15.7       0.0    0.827       0.00          0          0       0.0  0.976
+  paper_h8_a1_scr_s0001 b3     3       3         0        0      25.6       15.7       0.0    0.834       0.00          0          0       0.0  0.975
+  paper_h8_a2_scr_s0001 b1     3       3         0        0      25.3       15.7       0.0    0.839       0.00          0          0       0.0  0.976
+  paper_h8_a2_scr_s0001 b2     3       0         3        0         -          -      31.4    1.086       0.00          0          0       0.0  0.980
+  paper_h8_a2_scr_s0001 b3r    3       3         0        0      25.4       15.6       0.0    0.838       0.00          0          0       0.0  0.975
+  paper_h8_a2_scr_s0001 b3     3       3         0        0      25.4       15.6       0.0    0.826       0.00          0          0       0.0  0.975
+  paper_h8_a3_scr_s0001 b1     3       3         0        0      25.8       15.7       0.0    0.838       0.00          0          0       0.0  0.976
+  paper_h8_a3_scr_s0001 b2     3       0         3        0         -          -      31.4    1.079       0.00          0          0       0.0  0.980
+  paper_h8_a3_scr_s0001 b3r    3       3         0        0      25.3       15.6       0.0    0.831       0.00          0          0       0.0  0.975
+  paper_h8_a3_scr_s0001 b3     3       3         0        0      25.6       15.7       0.0    0.836       0.00          0          0       0.0  0.975
+
+  arrived   reached the goal          deadlock  gave up, a route existed
+  closest   metres, footprint to person; negative is contact
+  intrusion metres into the reference Comfort Space, deepest in the trial
+  ROBOT HIT trials where the robot drove into somebody. B1 must be 0.
+  state     map-based state estimate vs the truth, 1.0 is perfect

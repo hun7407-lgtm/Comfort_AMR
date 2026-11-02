@@ -3,6 +3,9 @@
 # Run the same trial many times, across scenarios and layouts.
 #
 #     ./scripts/run_batch.sh                       b1,b2,b3 x the three bays, 5 each
+#     ./scripts/run_batch.sh --scenarios b1,b2,b3r,b3 \
+#         --configs configs/scenarios/paper_h8_a1_scr_s0001.yaml --repeats 10
+#                                                  the paper grid, one cell
 #     ./scripts/run_batch.sh --repeats 3
 #     ./scripts/run_batch.sh --scenarios b2,b3 --configs configs/factory_u.yaml
 #     ./scripts/run_batch.sh --dry-run             print the plan, run nothing
