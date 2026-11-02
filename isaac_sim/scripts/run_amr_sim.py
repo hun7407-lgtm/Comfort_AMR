@@ -143,6 +143,19 @@ def main() -> int:
     physics_dt = float(sim_cfg["physics_dt"])
     max_steps = int(args.max_seconds / physics_dt) if args.max_seconds > 0 else 0
     steps = 0
+    # How much SIMULATED time one step() actually advances.
+    #
+    # Not physics_dt. SimulationContext steps physics and renders, and
+    # with rendering_dt twice physics_dt one call advances 1/60 s of
+    # simulated time while physics_dt says 1/120. Everything below that
+    # was handed physics_dt therefore ran at half speed: measured, the
+    # fleet's own clock reached 40 s while the trial's /clock was at
+    # 77 s, so a fleet AMR held until the trial began never set off at
+    # all, and when it did move it drove at half its configured speed.
+    #
+    # Read from the context instead of derived, so it stays right
+    # whatever the two timesteps are set to.
+    last_time = simulation_context.current_time
 
     while simulation_app.is_running() and not _stop:
         # render=True is required even when headless. SimulationContext
@@ -151,10 +164,15 @@ def main() -> int:
         # the physics advances but the AMR_Controller graph never fires,
         # so no ROS 2 publisher is ever created and no topic appears.
         simulation_context.step(render=True)
+        now = simulation_context.current_time
+        step_dt = now - last_time
+        if step_dt <= 0.0:
+            step_dt = physics_dt
+        last_time = now
         # Keep the walking humans' colliders under their characters.
-        walkers.update(physics_dt)
-        cart.update(physics_dt)
-        fleet.update(physics_dt)
+        walkers.update(step_dt)
+        cart.update(step_dt)
+        fleet.update(step_dt)
         if recorder is not None:
             recorder.maybe_capture(simulation_context.current_time)
         steps += 1

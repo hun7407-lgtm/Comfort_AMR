@@ -189,8 +189,21 @@ class FleetAMR:
         self.yaw = 0.0
         self.legs: List[Point] = []
         self.holder = ""
-        self.waiting = 0.0
         self.why = ""        # why it is not moving, for the report
+
+        # When this vehicle sets off, on the simulation clock.
+        #
+        # It used to be "immediately", which meant every fleet AMR had
+        # been working for the 45 s of Nav2 bringup before the trial
+        # started and the traffic the measured robot met depended on
+        # how long that bringup happened to take. Holding them until
+        # the rendezvous puts every vehicle on the same clock as the
+        # trial and the walking people, and `start_at` then means what
+        # a scenario says it means: this many seconds after the trial
+        # begins.
+        hold = (float(cfg["navigation"].get("trial_start_sim_time", 0.0))
+                if shared.get("hold_until_trial", False) else 0.0)
+        self.waiting = hold + float(spec.get("start_at", 0.0))
 
         self.policy, self.people = _comfort(cfg)
         self.prim_path = f"{root}/{name}"
