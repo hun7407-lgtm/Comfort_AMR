@@ -194,6 +194,131 @@ class SensorStateProvider(HumanStateProvider):
         return "sensor:station_map"
 
 
+class ScriptedStateProvider(HumanStateProvider):
+    """The TRUE state of a scripted person, transitions included.
+
+    What this is for
+    ----------------
+    `GroundTruthStateProvider` reads the label in the config, and that
+    label never changes. For two people standing at a machine that is
+    the truth for the whole trial. For a scenario built around a worker
+    exchange it is not: the whole sequence is
+
+        station_engaged -> moving -> stationary
+
+    and a provider that returns the label frozen at `station_engaged`
+    hands the policy a 0.60 m Comfort Space for somebody walking down
+    the middle of the aisle. B3 then cannot do the one thing B3 exists
+    to do, and the trial records it as if it had.
+
+    Measured on configs/factory_u.yaml: w7 and w11 both walk, and under
+    `state_source: ground_truth` both keep their t=0 state for all
+    120 s, in the costmap and in the measurement alike.
+
+    So this provider follows the motion instead of the clock:
+
+        moving            true speed over the threshold
+        at the start      the state declared in the config
+        after arriving    `humans.<key>.walk.ends_as`
+
+    Arrival is a position test, not a timer: the person has to be within
+    `arrive_radius` of the last waypoint of their own route. Without it a
+    walker who slows at a corner is read as having arrived halfway
+    there.
+
+    It is an ORACLE, not an estimator. It is given the true poses and
+    the script, so it cannot be wrong, and that is the point: it is what
+    Layer 1 needs, where the question is what the policy does when
+    recognition is perfect. The error is measured separately by
+    `SensorStateProvider`, which runs in every trial regardless.
+    """
+
+    def __init__(self, cfg: Dict[str, Any]):
+        humans = cfg.get("humans", {})
+        self._declared = human_states(cfg)
+        unknown = {k: v for k, v in self._declared.items()
+                   if v not in KNOWN_STATES}
+        if unknown:
+            raise ValueError(
+                f"humans have unrecognised states {unknown}; "
+                f"expected one of {list(KNOWN_STATES)}")
+
+        spec = humans.get("state_estimator", {})
+        # The same two thresholds the estimator uses, so "moving" means
+        # the same thing in both and the confusion matrix compares like
+        # with like.
+        self.enter = float(spec.get("moving_speed", 0.15))
+        self.leave = float(spec.get("settle_speed", 0.10))
+        self.arrive_radius = float(spec.get("arrive_radius", 0.60))
+
+        self._ends: Dict[str, str] = {}
+        self._targets: Dict[str, tuple] = {}
+        for key in self._declared:
+            walk = (humans.get(key) or {}).get("walk") or {}
+            route = walk.get("route") or []
+            if not route:
+                continue
+            ends = str(walk.get("ends_as", "stationary"))
+            if ends not in KNOWN_STATES:
+                raise ValueError(
+                    f"humans.{key}.walk.ends_as is {ends!r}; expected one "
+                    f"of {list(KNOWN_STATES)}")
+            self._ends[key] = ends
+            last = route[-1]
+            self._targets[key] = (float(last[0]), float(last[1]))
+
+        self._state: Dict[str, str] = dict(self._declared)
+
+    def update(self, positions: Dict[str, tuple], speeds: Dict[str, float],
+               now: float,
+               facings: Dict[str, float] | None = None) -> Dict[str, str]:
+        """Take one set of TRUE observations. Returns the state in force."""
+        for key, pose in positions.items():
+            if key not in self._declared:
+                # Somebody the script does not know about. Nothing true
+                # can be said about what they are doing, so say nothing.
+                continue
+            held = self._state.get(key, self._declared[key])
+            speed = float(speeds.get(key, 0.0))
+            if speed >= (self.leave if held == "moving" else self.enter):
+                self._state[key] = "moving"
+                continue
+            if held != "moving":
+                continue
+            target = self._targets.get(key)
+            if target is None:
+                self._state[key] = self._declared[key]
+            elif math.hypot(pose[0] - target[0],
+                            pose[1] - target[1]) <= self.arrive_radius:
+                self._state[key] = self._ends[key]
+            # Otherwise they have stopped short of where they are going
+            # -- held up, or between legs -- and they are still on their
+            # way. Calling that "arrived" would shrink the Comfort Space
+            # of somebody standing in the middle of the aisle.
+        return dict(self._state)
+
+    def states(self) -> Dict[str, str]:
+        return dict(self._state)
+
+    @property
+    def source(self) -> str:
+        return "scripted_truth"
+
+
+def truth_provider(cfg: Dict[str, Any]) -> HumanStateProvider:
+    """What the people are REALLY doing, for the measurement.
+
+    Separate from `make_state_provider`, which answers a different
+    question: what the robot is allowed to know. A trial is always
+    scored against the truth, and for a scripted scenario the truth
+    moves, so this returns the oracle whenever the scenario provides a
+    script and the frozen labels otherwise.
+    """
+    if str(cfg.get("humans", {}).get("state_source")) == "scripted":
+        return ScriptedStateProvider(cfg)
+    return GroundTruthStateProvider(cfg)
+
+
 def _station_radius_margin(cfg: Dict[str, Any], spots, radius: float):
     """How much room is left between the radius and the nearest aisle.
 
@@ -222,6 +347,7 @@ def _station_radius_margin(cfg: Dict[str, Any], spots, radius: float):
 
 PROVIDERS = {
     "ground_truth": GroundTruthStateProvider,
+    "scripted": ScriptedStateProvider,
     "sensor": SensorStateProvider,
 }
 
