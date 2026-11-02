@@ -5,6 +5,7 @@
 #     ./scripts/run_scenario.sh b2
 #     ./scripts/run_scenario.sh b3 --headless
 #     ./scripts/run_scenario.sh b3 --config configs/demo_walker.yaml
+#     ./scripts/run_scenario.sh b3 --hold        keep the window open afterwards
 #     ./scripts/run_scenario.sh b3 --record      also save an mp4 of the trial
 #     ./scripts/run_scenario.sh b3 --record-costmap
 #                                    also save what Nav2 sees, as mp4 and gif
@@ -39,6 +40,9 @@ CONFIG=()
 CONFIG_PATH="configs/common.yaml"
 RECORD=0
 RECORD_COSTMAP=0
+# Keep Isaac Sim up after the trial is decided, so the end state can be
+# looked at. Only useful with a window and a terminal to press Enter in.
+HOLD=0
 # Where the trial writes its row. Empty means the config's own
 # results/trials/<recording.version>. A batch passes one folder for the
 # whole batch, so every trial in it lands in one file.
@@ -48,6 +52,7 @@ while [ $# -gt 0 ]; do
         --headless) HEADLESS+=("--headless"); shift ;;
         --config)   CONFIG+=("--config" "$2"); CONFIG_PATH="$2"; shift 2 ;;
         --record)   RECORD=1; shift ;;
+        --hold)     HOLD=1; shift ;;
         --record-costmap) RECORD_COSTMAP=1; shift ;;
         --results)  TRIAL_ARGS+=("--results" "$2"); RESULTS_DIR="$2"; shift 2 ;;
         --no-record) TRIAL_ARGS+=("--no-record"); shift ;;
@@ -195,5 +200,15 @@ if [ "$TRIAL_CODE" -ne 0 ] && [ -n "${RESULTS_DIR:-}" ]; then
     stamp="$(date +%H%M%S)_$SCENARIO"
     tail -3000 "$NAV_LOG" > "$RESULTS_DIR/logs/${stamp}_nav2.log" 2>/dev/null
     tail -200 "$SIM_LOG" > "$RESULTS_DIR/logs/${stamp}_sim.log" 2>/dev/null
+fi
+if [ "$HOLD" -eq 1 ]; then
+    if [ -t 0 ]; then
+        echo
+        echo "[hold] the trial is over and the robot is where it stopped."
+        echo "[hold] look around, then press Enter to shut everything down."
+        read -r _
+    else
+        echo "[hold] ignored: nothing to read Enter from (not a terminal)"
+    fi
 fi
 exit $TRIAL_CODE
