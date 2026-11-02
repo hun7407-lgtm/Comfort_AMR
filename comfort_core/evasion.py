@@ -929,6 +929,28 @@ class EvasionController:
             ahead, _ = lane_coordinates(person, x, y)
             if ahead <= 0.0:
                 continue
+            # Do not start stepping aside for somebody the release test
+            # is about to declare not worth waiting for.
+            #
+            # The two tests disagreed. Starting is decided over a time
+            # horizon -- does their Comfort Space sweep reach the robot
+            # within `horizon_seconds` -- and releasing is decided on
+            # distance. A walker 11 m away at 1.05 m/s is inside an 8 s
+            # sweep and outside the 5 m release distance at the same
+            # moment, so the robot chose a waiting spot, drove to it,
+            # and read "further than waiting for them is worth" one
+            # tick later.
+            #
+            # Harmless in a straight aisle; not at a junction. Measured,
+            # B3 on paper_h8_a1_scr_s0001: the robot left the lane for a
+            # walker 11.0 m away, parked on the inside corner of the
+            # east crossing, turned to face the goal -- which there
+            # means facing the machine zone -- and handed back to Nav2.
+            # DWB then reported "No valid trajectories out of 419",
+            # spin exited with "Collision Ahead", and the trial
+            # deadlocked 4.01 m short with the gate holding nothing.
+            if math.hypot(person.x - x, person.y - y) > self.cp.release_distance:
+                continue
             shape = raw[person.key]
             if self.comfort_mode:
                 sweep = predicted_sweep(person, shape.along, shape.across,
