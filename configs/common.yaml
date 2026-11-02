@@ -1104,6 +1104,34 @@ recovery:
     # still is the honest outcome.
     max_attempts: 2
 
+  # Getting back onto the painted floor, and when NOT to bother.
+  #
+  # The gate takes the wheels when the robot's whole footprint has
+  # left the navigable floor. Without the two tolerances below that
+  # test is stricter than the map it is testing against, and it fires
+  # on a robot that is merely turning a corner.
+  #
+  # Measured, B3 on the first mission in this bay that crosses between
+  # the two aisles: 22 recoveries and a deadlock 4.20 m short of the
+  # goal, flapping in and out at (+10.16, -4.81) -- the south end of
+  # the east crossing, where it has to turn west -- with the footprint
+  # overhanging the paint by about 0.07 m while the global planner
+  # reported success for the whole trial. Every earlier mission ran
+  # down one aisle and never turned at a crossing, which is why it had
+  # not shown up before.
+  off_lane:
+    # DERIVED, not set: how much further a corner reaches than the
+    # robot's own side, hypot(0.35, 0.24) - 0.24 = 0.18 m.
+    # `factory.map.lane_margin` is the robot's half-width plus a
+    # centimetre, so the map's slack was sized for a robot with its
+    # SIDE over the line; a robot at an angle puts a CORNER over it.
+    # Set a number here to override.
+    # margin: 0.18
+    # How long the footprint has to be outside before the gate acts. A
+    # robot genuinely stranded stays stranded; one clipping the line
+    # mid-turn is back inside within a tenth of a second.
+    hold_seconds: 1.0
+
 navigation:
   start: [-5.0, 0.0]
   goal: [5.0, 0.0]

@@ -165,6 +165,10 @@ class ComfortGate(Node):
         self.drivable = plannable_area(cfg)
         self.half = footprint_half_extents(cfg)
         self.recovering = False
+        off = cfg.get("recovery", {}).get("off_lane", {})
+        self.off_lane_margin = float(off.get("margin", self._corner_overhang()))
+        self.off_lane_hold = float(off.get("hold_seconds", 1.0))
+        self._off_lane_since: float | None = None
         if self.drivable:
             self.create_timer(0.1, self._recover_tick)
 
@@ -341,6 +345,19 @@ class ComfortGate(Node):
             f"drive on; backing off {self.backoff_distance:.2f} m "
             f"({self.backoff_attempts_left} attempt(s) left after this)")
 
+    def _corner_overhang(self) -> float:
+        """How much further a CORNER reaches than the robot's own side.
+
+        The map's slack past the paint (`factory.map.lane_margin`) is
+        the robot's half-width plus a centimetre -- it was sized for a
+        robot sitting on the lane edge with its SIDE over the line. A
+        robot at an angle puts a CORNER over it instead, and a corner
+        is hypot(half_length, half_width) from the centre rather than
+        half_width. The difference is this, and without it the
+        footprint test is stricter than the map it is testing against.
+        """
+        return math.hypot(*self.half) - min(self.half)
+
     def _recover_tick(self) -> None:
         """Drive back onto the painted floor if the robot has left it.
 
@@ -360,16 +377,43 @@ class ComfortGate(Node):
         drives at creep speed toward the nearest point of the nearest
         drivable rectangle, and stops as soon as the whole footprint is
         back inside.
+
+        Two things keep it from firing on a robot that is merely
+        turning a corner, both added after a measured failure: a
+        margin, and a hold.
+
+        Measured, B3 on paper_h8_a1_scr_s0001, the first mission in
+        this bay that crosses between the two aisles: 22 off-lane
+        recoveries and a deadlock 4.20 m short of the goal, the robot
+        flapping in and out at (+10.16, -4.81) -- the south end of the
+        east crossing, where it has to turn west. Its footprint
+        overhung the paint by about 0.07 m while the GLOBAL PLANNER
+        reported success for the whole trial, so the test was taking
+        the wheels off a planner that had no objection. Earlier
+        missions all ran down one aisle and never turned at a
+        crossing, which is why it had not shown up.
         """
         if self.pose is None or self.drivable is None or self.evader.active:
             return
         x, y, yaw = self.pose
         outline = footprint_outline(self.pose, *self.half)
-        if inside_drivable(self.drivable, outline):
+        if inside_drivable(self.drivable, outline, self.off_lane_margin):
             if self.recovering:
                 self.get_logger().info(
                     f"back on the painted floor at ({x:+.2f}, {y:+.2f})")
             self.recovering = False
+            self._off_lane_since = None
+            return
+
+        # Off, but not for long enough to be stuck. A robot genuinely
+        # stranded off the paint stays stranded; one clipping the line
+        # mid-turn is back inside within a tenth of a second, and
+        # taking its wheels away for that is what produced the
+        # oscillation above.
+        if self._off_lane_since is None:
+            self._off_lane_since = self.sim_now
+        if (not self.recovering
+                and self.sim_now - self._off_lane_since < self.off_lane_hold):
             return
 
         target = _nearest_drivable_point(self.drivable, (x, y))
