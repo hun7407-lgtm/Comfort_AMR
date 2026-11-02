@@ -29,7 +29,7 @@ cd "$PROJECT_ROOT"
 
 SCENARIO="${1:-}"
 if [ -z "$SCENARIO" ]; then
-    echo "usage: $0 <b1|b2|b3> [--headless]" >&2
+    echo "usage: $0 <b1|b2|b3r|b3> [--headless]" >&2
     exit 2
 fi
 shift
@@ -66,6 +66,7 @@ RECORD_ARGS=()
 case "$SCENARIO" in
     b1) SCENARIO_DIR="b1_no_comfort_space" ;;
     b2) SCENARIO_DIR="b2_static" ;;
+    b3r) SCENARIO_DIR="b3r_state_adaptive_circular" ;;
     b3) SCENARIO_DIR="b3_state_adaptive" ;;
     *)  SCENARIO_DIR="$(basename "$SCENARIO" .yaml)" ;;
 esac

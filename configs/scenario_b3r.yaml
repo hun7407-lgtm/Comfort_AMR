@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------
+# Scenario B3-R: Human State-Adaptive Comfort Space, round.
+#
+# The ablation that separates the two things B3 does at once.
+#
+#   B2    one radius for everybody, round             1.20 m
+#   B3-R  radius from the state, still round          0.60 / 0.90 / 1.20 m
+#   B3    radius from the state, stretched when moving
+#
+# so
+#
+#   B2 vs B3-R   what adapting the SIZE to the human state is worth
+#   B3-R vs B3   what the moving ellipse is worth
+#
+# Without this condition the two effects arrive together and neither
+# can be attributed. The radii are byte-identical to configs/scenario_b3.yaml
+# -- compare them and the whole difference is the one line `shape` --
+# and they are NOT retuned for this condition:
+#
+#   diff configs/scenario_b3.yaml configs/scenario_b3r.yaml
+#
+#   ./scripts/run_scenario.sh b3r
+#
+# ONLY `scenario` and `comfort_space` may appear here; comfort_core.config
+# raises otherwise. Everything physical comes from configs/common.yaml.
+#
+# > Initial engineering parameter for prototype validation.
+# > Not an experimentally validated human comfort distance.
+# ---------------------------------------------------------------
+
+scenario:
+  name: b3r
+  label: "State-Adaptive Comfort Space, circular (no elongation)"
+
+comfort_space:
+  policy: state_adaptive
+
+  # Round for every state, including `moving`. This is the whole
+  # difference from B3: StateAdaptiveComfortPolicy.shape_for returns a
+  # circle unless comfort_space.shape is "ellipse", so no code branches
+  # on the scenario name and the two conditions cannot drift apart.
+  shape: circle
+
+  # Identical to B3. Written out rather than inherited so that a reader
+  # can see at a glance that the sizes were not touched.
+  state_radius:
+    moving: 1.20
+    stationary: 0.90
+    station_engaged: 0.60
