@@ -1,0 +1,130 @@
+# paper_h8_a1_scr_s0019
+# Written by scripts/make_scenario.py. Edit the seed and the
+# factors, never this file: a hand edit makes it something no
+# seed reproduces.
+#
+#   python3 scripts/make_scenario.py --seed 19 --humans 8 --amrs 1 --provider scripted
+base: configs/factory_u.yaml
+scenario_meta:
+  scenario_id: paper_h8_a1_scr_s0019
+  seed: 19
+  human_count: 8
+  amr_count: 1
+  state_provider: scripted
+  roles:
+    E1: [-3.0, 5.6]
+    E2: [-3.0, -5.6]
+    N1: [-6.5, 3.01]
+    N2: [-0.5, 3.01]
+    N3: [5.5, 3.01]
+    S1: [-6.5, -3.01]
+    S2: [-0.5, -3.01]
+    S3: [5.5, -3.01]
+  exchanges:
+  - {side: north, belt: N2, edge: E1, belt_start_at: 8.6, edge_start_at: 10.95, belt_speed: 0.88,
+    edge_speed: 1.06}
+  - {side: south, belt: S3, edge: E2, belt_start_at: 12.3, edge_start_at: 14.54, belt_speed: 1.02,
+    edge_speed: 1.12}
+  mission: {start_slot: carts_n2_r2c2, goal_slot: carts_s2_r2c3, distance: 30.24,
+    cross_side: true}
+  amr_offsets: {}
+  fleet_jobs: {}
+humans:
+  a: {enabled: false}
+  b: {enabled: false}
+  c: {enabled: false}
+  w1: {enabled: false}
+  w10: {enabled: false}
+  w11: {enabled: false}
+  w12: {enabled: false}
+  w2: {enabled: false}
+  w3: {enabled: false}
+  w4: {enabled: false}
+  w5: {enabled: false}
+  w6: {enabled: false}
+  w7: {enabled: false}
+  w8: {enabled: false}
+  w9: {enabled: false}
+  E1:
+    position: [-3.0, 5.6]
+    state: stationary
+    facing_deg: -90.0
+    walk:
+      start_at: 10.95
+      speed: 1.06
+      ends_as: station_engaged
+      route:
+      - [-2.4, 5.6]
+      - [-2.4, 4.66]
+      - [0.1, 4.66]
+      - [0.1, 3.01]
+      - [-0.5, 3.01]
+  E2:
+    position: [-3.0, -5.6]
+    state: stationary
+    facing_deg: 90.0
+    walk:
+      start_at: 14.54
+      speed: 1.12
+      ends_as: station_engaged
+      route:
+      - [-2.4, -5.6]
+      - [-2.4, -4.66]
+      - [6.1, -4.66]
+      - [6.1, -3.01]
+      - [5.5, -3.01]
+  N1:
+    position: [-6.5, 3.01]
+    state: station_engaged
+    facing_deg: -90.0
+  N2:
+    position: [-0.5, 3.01]
+    state: station_engaged
+    facing_deg: -90.0
+    walk:
+      start_at: 8.6
+      speed: 0.88
+      ends_as: stationary
+      route:
+      - [-0.5, 3.76]
+      - [-3.6, 3.76]
+      - [-3.6, 5.6]
+      - [-3.0, 5.6]
+  N3:
+    position: [5.5, 3.01]
+    state: station_engaged
+    facing_deg: -90.0
+  S1:
+    position: [-6.5, -3.01]
+    state: station_engaged
+    facing_deg: 90.0
+  S2:
+    position: [-0.5, -3.01]
+    state: station_engaged
+    facing_deg: 90.0
+  S3:
+    position: [5.5, -3.01]
+    state: station_engaged
+    facing_deg: 90.0
+    walk:
+      start_at: 12.3
+      speed: 1.02
+      ends_as: stationary
+      route:
+      - [5.5, -3.76]
+      - [-3.6, -3.76]
+      - [-3.6, -5.6]
+      - [-3.0, -5.6]
+  character: {E1: male_adult_construction_01_new, E2: male_adult_construction_05_new,
+    N1: male_adult_construction_03, N2: male_adult_construction_01_new, N3: male_adult_construction_05_new,
+    S1: male_adult_construction_03, S2: male_adult_construction_01_new, S3: male_adult_construction_05_new}
+  state_source: scripted
+perception: {source: tf}
+navigation:
+  start: [0.0, 5.32]
+  goal: [1.4, -5.32]
+  goal_yaw_deg: 90.0
+amr:
+  spawn: {yaw_deg: -90.0}
+recording: {version: paper}
+fleet: {enabled: false}

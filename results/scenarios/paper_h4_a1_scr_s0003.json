@@ -1,0 +1,53 @@
+{
+  "scenario_id": "paper_h4_a1_scr_s0003",
+  "seed": 3,
+  "human_count": 4,
+  "amr_count": 1,
+  "state_provider": "scripted",
+  "roles": {
+    "E1": [
+      -3.0,
+      5.6
+    ],
+    "E2": [
+      -3.0,
+      -5.6
+    ],
+    "N2": [
+      -0.5,
+      3.01
+    ],
+    "S2": [
+      -0.5,
+      -3.01
+    ]
+  },
+  "exchanges": [
+    {
+      "side": "north",
+      "belt": "N2",
+      "edge": "E1",
+      "belt_start_at": 9.3,
+      "edge_start_at": 11.43,
+      "belt_speed": 1.2,
+      "edge_speed": 1.19
+    },
+    {
+      "side": "south",
+      "belt": "S2",
+      "edge": "E2",
+      "belt_start_at": 12.6,
+      "edge_start_at": 14.84,
+      "belt_speed": 1.01,
+      "edge_speed": 0.9
+    }
+  ],
+  "mission": {
+    "start_slot": "carts_n3_r2c3",
+    "goal_slot": "carts_n1_r2c2",
+    "distance": 15.62,
+    "cross_side": false
+  },
+  "amr_offsets": {},
+  "fleet_jobs": {}
+}

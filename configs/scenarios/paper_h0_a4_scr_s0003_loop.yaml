@@ -1,0 +1,67 @@
+# paper_h0_a4_scr_s0003_loop
+# Written by scripts/make_scenario.py. Edit the seed and the
+# factors, never this file: a hand edit makes it something no
+# seed reproduces.
+#
+#   python3 scripts/make_scenario.py --seed 3 --humans 0 --amrs 4 --provider scripted
+base: configs/factory_u.yaml
+scenario_meta:
+  scenario_id: paper_h0_a4_scr_s0003_loop
+  seed: 3
+  human_count: 0
+  amr_count: 4
+  state_provider: scripted
+  roles: {}
+  exchanges: []
+  mission: {start_slot: carts_s2_r2c3, goal_slot: carts_n1_r2c3, distance: 28.44,
+    cross_side: true}
+  amr_offsets: {a1: 1.2, a2: 5.1, a3: 4.9}
+  fleet_jobs:
+    a1: [s2_r2c1, n2_r2c1, n2_r2c2]
+    a2: [n2_r2c1, s1_r2c3, s1_r2c2]
+    a3: [n3_r2c3, s3_r2c2, s3_r2c3]
+humans:
+  a: {enabled: false}
+  b: {enabled: false}
+  c: {enabled: false}
+  w1: {enabled: false}
+  w10: {enabled: false}
+  w11: {enabled: false}
+  w12: {enabled: false}
+  w2: {enabled: false}
+  w3: {enabled: false}
+  w4: {enabled: false}
+  w5: {enabled: false}
+  w6: {enabled: false}
+  w7: {enabled: false}
+  w8: {enabled: false}
+  w9: {enabled: false}
+  character: {}
+  state_source: scripted
+perception: {source: tf}
+navigation:
+  start: [1.4, -5.32]
+  goal: [-4.6, 5.32]
+  goal_yaw_deg: -90.0
+amr:
+  spawn: {yaw_deg: 90.0}
+recording: {version: paper}
+fleet:
+  enabled: true
+  hold_until_trial: true
+  amrs:
+    a1:
+      enabled: true
+      start_at: 1.2
+      start: n2_r2c2
+      jobs: [s2_r2c1, n2_r2c1, n2_r2c2]
+    a2:
+      enabled: true
+      start_at: 5.1
+      start: s1_r2c2
+      jobs: [n2_r2c1, s1_r2c3, s1_r2c2]
+    a3:
+      enabled: true
+      start_at: 4.9
+      start: s3_r2c3
+      jobs: [n3_r2c3, s3_r2c2, s3_r2c3]

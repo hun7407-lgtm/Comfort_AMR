@@ -1,0 +1,88 @@
+{
+  "scenario_id": "paper_h8_a4_scr_s0003",
+  "seed": 3,
+  "human_count": 8,
+  "amr_count": 4,
+  "state_provider": "scripted",
+  "roles": {
+    "E1": [
+      -3.0,
+      5.6
+    ],
+    "E2": [
+      -3.0,
+      -5.6
+    ],
+    "N1": [
+      -6.5,
+      3.01
+    ],
+    "N2": [
+      -0.5,
+      3.01
+    ],
+    "N3": [
+      5.5,
+      3.01
+    ],
+    "S1": [
+      -6.5,
+      -3.01
+    ],
+    "S2": [
+      -0.5,
+      -3.01
+    ],
+    "S3": [
+      5.5,
+      -3.01
+    ]
+  },
+  "exchanges": [
+    {
+      "side": "north",
+      "belt": "N2",
+      "edge": "E1",
+      "belt_start_at": 7.4,
+      "edge_start_at": 9.61,
+      "belt_speed": 1.05,
+      "edge_speed": 0.85
+    },
+    {
+      "side": "south",
+      "belt": "S1",
+      "edge": "E2",
+      "belt_start_at": 10.7,
+      "edge_start_at": 13.09,
+      "belt_speed": 0.84,
+      "edge_speed": 1.01
+    }
+  ],
+  "mission": {
+    "start_slot": "carts_s1_r2c2",
+    "goal_slot": "carts_n3_r2c2",
+    "distance": 31.64,
+    "cross_side": true
+  },
+  "amr_offsets": {
+    "a1": 2.6,
+    "a2": 4.1,
+    "a3": 3.2
+  },
+  "fleet_jobs": {
+    "a1": [
+      "n2_r2c2",
+      "n2_r2c1",
+      "n1_r2c2"
+    ],
+    "a2": [
+      "s3_r2c2",
+      "s2_r2c3"
+    ],
+    "a3": [
+      "n2_r2c3",
+      "s2_r2c1",
+      "s3_r2c3"
+    ]
+  }
+}

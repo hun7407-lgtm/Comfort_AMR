@@ -1,0 +1,37 @@
+{
+  "scenario_id": "paper_h0_a4_scr_s0004_loop",
+  "seed": 4,
+  "human_count": 0,
+  "amr_count": 4,
+  "state_provider": "scripted",
+  "roles": {},
+  "exchanges": [],
+  "mission": {
+    "start_slot": "carts_s3_r2c2",
+    "goal_slot": "carts_n2_r2c1",
+    "distance": 27.04,
+    "cross_side": true
+  },
+  "amr_offsets": {
+    "a1": 4.9,
+    "a2": 1.4,
+    "a3": 2.5
+  },
+  "fleet_jobs": {
+    "a1": [
+      "s1_r2c2",
+      "n1_r2c3",
+      "n1_r2c2"
+    ],
+    "a2": [
+      "n1_r2c2",
+      "s1_r2c3",
+      "s1_r2c2"
+    ],
+    "a3": [
+      "s2_r2c3",
+      "n3_r2c2",
+      "n2_r2c3"
+    ]
+  }
+}
