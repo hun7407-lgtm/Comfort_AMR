@@ -1,0 +1,4 @@
+# campaign: 8 people, loop, keep-right ON (seed 2)
+base: configs/scenarios/paper_h8_a4_scr_s0002_loop.yaml
+fleet: {driver: nav2}
+traffic_rule: {enabled: true}

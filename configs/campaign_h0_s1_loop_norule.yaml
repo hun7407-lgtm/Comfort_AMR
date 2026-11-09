@@ -1,0 +1,4 @@
+# campaign: traffic only, loop, keep-right OFF (seed 1)
+base: configs/scenarios/paper_h0_a4_scr_s0001_loop.yaml
+fleet: {driver: nav2}
+traffic_rule: {enabled: false}
