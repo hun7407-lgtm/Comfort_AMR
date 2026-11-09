@@ -1051,6 +1051,24 @@ perception:
 # guarantee -- off, the prims are never created, so a trial cannot
 # differ because of them. scripts/view_factory_scene.sh and the
 # screenshot script turn them on; run_scenario.sh does not.
+# ---------------------------------------------------------------
+# Keep right. A second costmap filter, per robot, painting the half
+# of each lane on the robot's left (by the direction its own plan
+# runs through that lane) at `value`. Breaks the symmetry when two
+# Nav2 robots meet head-on in a 1.5 m lane; separate from the Comfort
+# Space mask so the two can never be confused in a recording. Off by
+# default: every result before it was measured without it. See
+# scripts/traffic_rule.py and docs/NAV2.md 5c.
+# ---------------------------------------------------------------
+traffic_rule:
+  enabled: false
+  # Cost of the left half. Unset, it is comfort_space.costmap.buffer_value:
+  # the wrong side of the lane costs what the outer buffer of a Comfort
+  # Space costs, below the space itself (98), above inflation.
+  # value: 55
+  mask_topic: traffic_mask
+  info_topic: traffic_filter_info
+
 markers:
   enabled: false
   radius: 0.45          # m, the ring

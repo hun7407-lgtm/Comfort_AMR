@@ -1,0 +1,4 @@
+# The circulating fleet without the keep-right rule: the comparison run.
+base: configs/fleet_loop.yaml
+traffic_rule:
+  enabled: false

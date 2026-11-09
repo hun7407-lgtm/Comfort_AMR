@@ -1,0 +1,29 @@
+# The circulating fleet: every vehicle crosses to the other side once,
+# so both aisles and the west crossing carry traffic in BOTH directions
+# and head-on encounters between robots are structural, not luck.
+#
+# Diagnostic overlay on the all-Nav2 fleet (paper_h8_a4, keep-right
+# on). Places are the generated scenario's own free front-row slots,
+# all at x <= 1.4, so every one is more than 4 m from the mission's
+# ends at x = 6.0 (the generator's 1.80 m standoff holds by inspection;
+# scripts/check_fleet_loop.py recomputes it). start_at values are the
+# scenario's own draws.
+#
+#   a1  north block -> south block (west crossing, southbound) -> back
+#   a2  south block -> north block (west crossing, northbound) -> back
+#   a3  north -> south -> north
+#
+# a1 and a2 set off 0.9 s apart towards the same crossing from
+# opposite sides: that is the head-on this overlay exists to produce.
+base: configs/fleet_nav2.yaml
+fleet:
+  amrs:
+    a1:
+      start: n1_r2c2
+      jobs: [s2_r2c2, n2_r2c1, n1_r2c2]
+    a2:
+      start: s1_r2c2
+      jobs: [n2_r2c2, s2_r2c3, s1_r2c2]
+    a3:
+      start: n2_r2c3
+      jobs: [s2_r2c1, n2_r2c3]

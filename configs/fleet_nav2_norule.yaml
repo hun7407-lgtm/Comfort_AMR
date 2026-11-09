@@ -1,0 +1,5 @@
+# The all-Nav2 fleet WITHOUT the keep-right rule: the comparison run
+# for traffic_rule. Diagnostic overlay, not an experiment condition.
+base: configs/fleet_nav2.yaml
+traffic_rule:
+  enabled: false
