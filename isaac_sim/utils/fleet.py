@@ -9,9 +9,9 @@ the two aisle centrelines and the two crossings, with a short spur out
 to each place -- exactly the way a real fleet controller runs virtual
 paths. Letting them find their own way would have them cutting across
 pull-off refuges and parked carts, and would also make the traffic the
-robot under test meets different in every run.
+AMR1 meets different in every run.
 
-The robot under test is NOT one of these. It keeps Nav2 and the
+AMR1 is NOT one of these. It keeps Nav2 and the
 Comfort Space costmap, because that is the thing being measured. The
 occupancy map is already restricted to the same lanes, so in practice
 both travel the same corridors.
@@ -20,10 +20,10 @@ What they give way to
 ---------------------
 People: the scenario's own Comfort Space policy, with the scenario's
 own radii. A fleet that drove through people would make the bay look
-like nothing a plant would run, and would leave the robot under test
+like nothing a plant would run, and would leave AMR1
 as the only machine in the building that respects anybody.
 
-Each other, and the robot under test: plain collision avoidance. No
+Each other, and AMR1: plain collision avoidance. No
 Comfort Space between machines -- a robot is not owed personal space.
 Whoever is in front wins; the one behind waits.
 
@@ -38,14 +38,19 @@ import math
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
+from isaacsim.core.api.objects import VisualCuboid
 from isaacsim.core.prims import SingleXFormPrim
 from isaacsim.core.utils.prims import create_prim, is_prim_path_valid
 from isaacsim.core.utils.stage import get_current_stage
-from pxr import Usd
+from pxr import Usd, UsdGeom
 
 from comfort_core import resolve_path
 from comfort_core.comfort_space import make_policy
+from comfort_core.frames import fleet_spawn
+from comfort_core.palette import fleet_colour
+from comfort_core.roadmap import Roadmap
 from comfort_core.layout import placed_entries
+from isaac_sim.utils import robot_graph
 
 HUMAN_ROOT = "/Environment/Corridor"
 Point = Tuple[float, float]
@@ -55,93 +60,44 @@ def _quat(yaw: float):
     return np.array([math.cos(yaw / 2.0), 0.0, 0.0, math.sin(yaw / 2.0)])
 
 
-class Roadmap:
-    """The lanes, and how to get from anywhere on them to a place.
+def _stripes(prim_path: str, name: str) -> None:
+    """A coloured stripe down each flank, so a recording says which AMR.
 
-    The network is a rectangle: the two aisle centrelines joined by the
-    two crossings. Anything off it -- a delivery point in a refuge, a
-    cart block -- hangs off a spur at right angles, so a trip is always
-    "back to the lane, round, then in".
+    The three vehicles are the same model; the costmap video labels
+    their job lists in comfort_core/palette.py's colours, and this puts
+    the same colour on the body. On the flanks, below the LiDAR's
+    plane and inside the footprint, so no sensor -- its own or
+    another's -- sees anything the bare body would not. Drawing only.
+
+    Placed from the body mesh's bounds IN base_link's frame, measured
+    here rather than copied from the asset file: the first attempt
+    used the file's world-frame numbers and the stripes floated a hand
+    above the deck.
     """
-
-    def __init__(self, spec: Dict[str, Any]):
-        lanes = spec.get("lanes", {})
-        self.north = float(lanes["north_y"])
-        self.south = float(lanes["south_y"])
-        self.west = float(lanes["west_x"])
-        self.east = float(lanes["east_x"])
-        # The loop, clockwise from the north-west corner. Distance
-        # round it is the only coordinate the router needs.
-        self.corners: List[Point] = [
-            (self.west, self.north), (self.east, self.north),
-            (self.east, self.south), (self.west, self.south)]
-        self.edges = [math.dist(self.corners[i],
-                                self.corners[(i + 1) % 4]) for i in range(4)]
-        self.perimeter = sum(self.edges)
-
-        self.places: Dict[str, Point] = {
-            name: (float(p[0]), float(p[1]))
-            for name, p in spec.get("places", {}).items()}
-
-    def access(self, place: Point) -> Point:
-        """Where the spur to a place leaves the lane."""
-        x, y = place
-        if y > self.north:
-            return (x, self.north)
-        if y < self.south:
-            return (x, self.south)
-        return place
-
-    def _distance_round(self, point: Point) -> float:
-        """How far round the loop a point on it lies."""
-        best, best_s = float("inf"), 0.0
-        s = 0.0
-        for i in range(4):
-            a, b = self.corners[i], self.corners[(i + 1) % 4]
-            seg = self.edges[i]
-            # Project onto this edge.
-            dx, dy = b[0] - a[0], b[1] - a[1]
-            t = ((point[0] - a[0]) * dx + (point[1] - a[1]) * dy) / (seg * seg)
-            t = max(0.0, min(1.0, t))
-            px, py = a[0] + dx * t, a[1] + dy * t
-            d = math.hypot(point[0] - px, point[1] - py)
-            if d < best:
-                best, best_s = d, s + seg * t
-            s += seg
-        return best_s
-
-    def route(self, start: Point, target_name: str) -> List[Point]:
-        """Waypoints from where the AMR is to the named place.
-
-        Off the spur, round the loop the short way, then in. The only
-        thing to work out is which corners lie between the two access
-        points in the chosen direction.
-        """
-        place = self.places[target_name]
-        here = self.access(start)
-        there = self.access(place)
-
-        out: List[Point] = []
-        if here != start:
-            out.append(here)
-
-        s0 = self._distance_round(here)
-        s1 = self._distance_round(there)
-        forward = (s1 - s0) % self.perimeter
-        backward = self.perimeter - forward
-        if forward <= backward:
-            ahead = lambda c: (self._distance_round(c) - s0) % self.perimeter
-            span = forward
-        else:
-            ahead = lambda c: (s0 - self._distance_round(c)) % self.perimeter
-            span = backward
-        between = [c for c in self.corners if 1e-6 < ahead(c) < span - 1e-6]
-        out += sorted(between, key=ahead)
-
-        out.append(there)
-        if there != place:
-            out.append(place)
-        return out
+    stage = get_current_stage()
+    base = stage.GetPrimAtPath(f"{prim_path}/model/AMR/base_link")
+    body = stage.GetPrimAtPath(f"{prim_path}/model/AMR/base_link/base_link_visual")
+    if not base.IsValid() or not body.IsValid():
+        return
+    cache = UsdGeom.BBoxCache(Usd.TimeCode.Default(),
+                              [UsdGeom.Tokens.default_, UsdGeom.Tokens.render])
+    box = cache.ComputeRelativeBound(body, base).ComputeAlignedRange()
+    lo, hi = box.GetMin(), box.GetMax()
+    length = (hi[0] - lo[0]) * 0.6
+    half_w = (hi[1] - lo[1]) / 2.0
+    cy = (hi[1] + lo[1]) / 2.0
+    # The body's bound includes the sensor mast on the deck, so the
+    # stripe is kept to the lower part of it, where the side panel is.
+    cz = lo[2] + (hi[2] - lo[2]) * 0.38
+    height = (hi[2] - lo[2]) * 0.24
+    colour = np.array(fleet_colour(name))
+    for side, sy in (("l", 1.0), ("r", -1.0)):
+        VisualCuboid(
+            prim_path=f"{prim_path}/model/AMR/base_link/stripe_{side}",
+            translation=np.array([(hi[0] + lo[0]) / 2.0, cy + sy * (half_w + 0.004), cz]),
+            scale=np.array([length, 0.006, height]),
+            color=colour,
+        )
 
 
 def _comfort(cfg: Dict[str, Any]):
@@ -195,7 +151,7 @@ class FleetAMR:
         #
         # It used to be "immediately", which meant every fleet AMR had
         # been working for the 45 s of Nav2 bringup before the trial
-        # started and the traffic the measured robot met depended on
+        # started and the traffic AMR1 met depended on
         # how long that bringup happened to take. Holding them until
         # the rendezvous puts every vehicle on the same clock as the
         # trial and the walking people, and `start_at` then means what
@@ -210,6 +166,7 @@ class FleetAMR:
         create_prim(self.prim_path, "Xform", position=[self.x, self.y, 0.0],
                     orientation=_quat(self.yaw))
         _reference_amr(cfg, self.prim_path)
+        _stripes(self.prim_path, name)
         self.body = SingleXFormPrim(self.prim_path)
         self._plan()
 
@@ -231,7 +188,7 @@ class FleetAMR:
         route at all: a3 came out of a slot 0.71 m short of the lane,
         its 0.90 m look-ahead reached across the lane to a worker on
         the far side, and it stopped there -- in the middle of the
-        aisle, for the rest of the trial, with the robot under test
+        aisle, for the rest of the trial, with AMR1
         behind it. What it was about to do was turn and drive away from
         her.
         """
@@ -298,7 +255,7 @@ class FleetAMR:
         # to the centimetre, and it was held. The next thing it wanted
         # to do was turn west, away from w5, which would have cleared
         # the hold at once. Instead it stood in the middle of the north
-        # aisle for the whole trial, and the robot under test ran into
+        # aisle for the whole trial, and AMR1 ran into
         # the back of it and gave up.
         held = ""
         if self._person_in_the_way():
@@ -333,20 +290,41 @@ class FleetAMR:
     def position(self) -> Point:
         return (self.x, self.y)
 
+    @property
+    def status(self) -> str:
+        if not self.why:
+            return "moving"
+        return f"held by {self.why}" + (f" ({self.holder})" if self.holder else "")
 
-def _reference_amr(cfg: Dict[str, Any], prim_path: str) -> None:
-    """The same machine the study is about, minus two things.
 
-    Its ActionGraph subscribes to /cmd_vel, so every fleet AMR would
-    drive itself from the topic meant for the robot under test. And its
-    bodies are dynamic, so teleporting the Xform they hang under fights
-    the solver; made kinematic they simply go where they are put.
+def _reference_amr(cfg: Dict[str, Any], prim_path: str,
+                   namespace: str = "") -> List[str]:
+    """The same machine the study is about, driven one of two ways.
+
+    With no namespace the vehicle is scripted: its ActionGraph is
+    switched off and its bodies are made kinematic. The graph subscribes
+    to /cmd_vel, so left on it would drive itself from the topic meant
+    for AMR1; and dynamic bodies fight the solver when
+    the Xform above them is teleported every tick, while kinematic ones
+    simply go where they are put.
+
+    With a namespace the vehicle runs its own Nav2 stack. Neither
+    workaround applies then -- robot_graph.namespace_graph moves it onto
+    /a1/cmd_vel so there is nothing left to share, and nothing teleports
+    it because it drives on its wheels. The asset is left as it is, and
+    gets the same two repairs AMR1 gets.
     """
     from pxr import PhysxSchema, UsdPhysics
 
     model = f"{prim_path}/model"
     create_prim(model, "Xform",
                 usd_path=str(resolve_path(cfg["amr"]["usd_path"])))
+
+    if namespace:
+        graph_root = f"{model}/AMR_Controller"
+        return (robot_graph.namespace_graph(cfg, graph_root, namespace)
+                + robot_graph.instance_fixes(cfg, graph_root))
+
     stage = get_current_stage()
     for prim in Usd.PrimRange(stage.GetPrimAtPath(model)):
         if prim.GetName() == "AMR_Controller":
@@ -360,6 +338,61 @@ def _reference_amr(cfg: Dict[str, Any], prim_path: str) -> None:
             prim.RemoveAPI(UsdPhysics.ArticulationRootAPI)
             if prim.HasAPI(PhysxSchema.PhysxArticulationAPI):
                 prim.RemoveAPI(PhysxSchema.PhysxArticulationAPI)
+    return []
+
+
+class Nav2FleetAMR:
+    """One AMR with its own Nav2 stack, on its own ROS 2 namespace.
+
+    Nothing here drives it. The vehicle is a physical articulation
+    taking /a1/cmd_vel from its own controller, exactly as the measured
+    robot takes /cmd_vel from its own, and it reports where it ended up
+    so the fleet report reads the same whichever driver is in use.
+
+    Sending the job list to Nav2 as goals is the next piece and does
+    not live in the simulator: it is a ROS 2 node, so that a real
+    vehicle can run the same one.
+    """
+
+    def __init__(self, cfg: Dict[str, Any], name: str, spec: Dict[str, Any],
+                 shared: Dict[str, Any], roadmap: Roadmap, root: str):
+        self.name = name
+        self.roadmap = roadmap
+        self.jobs: List[str] = [str(j) for j in spec.get("jobs", [])]
+        if not self.jobs:
+            raise ValueError(f"fleet.{name} has no jobs")
+        self.job = 0
+        self.legs: List[Point] = []
+        self.holder = ""
+        self.why = ""
+        self.state = "no goal yet"
+        # The same call the Nav2 bringup makes for its map -> a1/odom
+        # transform, so the two cannot disagree about where odom starts.
+        self.x, self.y, self.yaw = fleet_spawn(cfg, name)
+        self.prim_path = f"{root}/{name}"
+        # The spawn pose sits on the Xform above the articulation, so
+        # physics starts the vehicle there instead of at the origin.
+        create_prim(self.prim_path, "Xform", position=[self.x, self.y, 0.0],
+                    orientation=_quat(self.yaw))
+        self.changes = _reference_amr(cfg, self.prim_path, namespace=name)
+        _stripes(self.prim_path, name)
+
+    @property
+    def position(self) -> Point:
+        return (self.x, self.y)
+
+    @property
+    def status(self) -> str:
+        return self.state
+
+    def update(self, dt: float, others: List[Point]) -> None:
+        """Read back where Nav2 has driven it. It is not steered here."""
+        pose = _pose_of(f"{self.prim_path}/model/AMR/base_link")
+        if pose is not None:
+            self.x, self.y = pose
+
+
+DRIVERS = {"scripted": FleetAMR, "nav2": Nav2FleetAMR}
 
 
 class Fleet:
@@ -375,11 +408,28 @@ class Fleet:
         roadmap = Roadmap(spec)
         root = "/World/Fleet"
         create_prim(root, "Xform")
+
+        # "scripted" is what every result so far was measured with, so
+        # it stays the default: an existing config runs bit-identically
+        # without being touched. "nav2" gives each vehicle its own
+        # stack. See docs/NAV2.md section 5c.
+        self.driver = str(spec.get("driver", "scripted"))
+        if self.driver not in DRIVERS:
+            raise ValueError(
+                f"fleet.driver {self.driver!r} is not one of "
+                f"{sorted(DRIVERS)}")
+        make = DRIVERS[self.driver]
+
         for name, item in sorted(spec.get("amrs", {}).items()):
             if not item.get("enabled", True):
                 continue
-            self.members.append(
-                FleetAMR(cfg, name, item, spec, roadmap, root))
+            member = make(cfg, name, item, spec, roadmap, root)
+            for line in getattr(member, "changes", []):
+                print(f"  [fleet] {name}: {line}", flush=True)
+            self.members.append(member)
+        if self.members:
+            print(f"  [fleet] driver={self.driver}, "
+                  f"{len(self.members)} AMR(s)", flush=True)
 
     def update(self, dt: float) -> None:
         if not self.members:
@@ -392,10 +442,8 @@ class Fleet:
                 target = amr.jobs[amr.job]
                 print(f"  [fleet] {amr.name} ({amr.x:+6.2f},{amr.y:+6.2f}) "
                       f"-> {target:9s} {len(amr.legs)} leg(s) left"
-                      f"{'  held by ' + amr.why if amr.why else '  moving'}"
-                      f"{' (' + amr.holder + ')' if amr.holder else ''}",
-                      flush=True)
-        # The robot under test counts as traffic to everyone else.
+                      f"  {amr.status}", flush=True)
+        # AMR1 counts as traffic to everyone else.
         measured = _pose_of(self.chassis) if self.chassis else None
         for amr in self.members:
             others = [m.position for m in self.members if m is not amr]

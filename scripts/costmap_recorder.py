@@ -46,6 +46,7 @@ from tf2_ros import Buffer, TransformListener
 
 from comfort_core import load_config
 from comfort_core.clearance import footprint_half_extents
+from comfort_core.palette import fleet_rgb255, mission_rgb255
 
 WIDTH = 1280
 BG = (30, 30, 30)
@@ -56,6 +57,9 @@ COLOR_FOOTPRINT = (80, 220, 80)
 COLOR_PLAN = (255, 80, 255)
 COLOR_COMFORT = (255, 170, 40)
 COLOR_TEXT = (240, 240, 240)
+COLOR_MISSION = mission_rgb255()  # AMR1's start and goal
+# Fleet AMRs take their colour from comfort_core/palette.py, the same
+# table that paints the stripe on them in the simulator.
 
 LATCHED = QoSProfile(depth=1, reliability=QoSReliabilityPolicy.RELIABLE,
                      durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
@@ -93,6 +97,55 @@ def cost_image(grid: OccupancyGrid) -> np.ndarray:
     return img[::-1]                                # flip so +y is up
 
 
+def _destinations(cfg):
+    """Every point an AMR in this scenario is sent to, named.
+
+    AMR1 has one start and one goal. A fleet AMR has
+    neither: it works a job list and comes back, so the honest label is
+    the leg number and the slot name. Without this the video shows
+    vehicles stopping at places the viewer cannot identify.
+
+    Returns (x, y, text, colour, filled).
+    """
+    raw = []
+    nav = cfg.get("navigation", {})
+    if nav.get("start") and nav.get("goal"):
+        sx, sy = nav["start"][:2]
+        gx, gy = nav["goal"][:2]
+        raw.append((sx, sy, "AMR1 START", COLOR_MISSION, False))
+        raw.append((gx, gy, "AMR1 GOAL", COLOR_MISSION, True))
+
+    fleet = cfg.get("fleet", {})
+    places = fleet.get("places", {})
+    for name, spec in sorted(fleet.get("amrs", {}).items()):
+        if not spec.get("enabled", False):
+            continue
+        home = places.get(str(spec.get("start", "")))
+        if home is not None:
+            raw.append((float(home[0]), float(home[1]),
+                        f"{name.upper()} home", fleet_rgb255(name), False))
+        for order, job in enumerate(spec.get("jobs", []), start=1):
+            point = places.get(str(job))
+            if point is None:
+                continue
+            raw.append((float(point[0]), float(point[1]),
+                        f"{name.upper()}-{order} {job}", fleet_rgb255(name), False))
+
+    # A job list visits the same slot twice and ends where it began, so
+    # several labels land on one point. Printed separately they overlap
+    # into something unreadable; joined, they say what the route does.
+    merged = {}
+    for x, y, text, colour, filled in raw:
+        key = (round(x, 2), round(y, 2))
+        if key in merged:
+            prev = merged[key]
+            merged[key] = (prev[0], prev[1], f"{prev[2]} / {text}",
+                           prev[3], prev[4] or filled)
+        else:
+            merged[key] = (x, y, text, colour, filled)
+    return list(merged.values())
+
+
 class Panel:
     """A grid drawn at some pixel scale, with world->pixel mapping."""
 
@@ -127,6 +180,11 @@ class CostmapRecorder(Node):
         self.next_time = start
         self.count = 0
         self.half_length, self.half_width = footprint_half_extents(cfg)
+        self.marks = _destinations(cfg)
+        fleet = cfg.get("fleet", {})
+        self.fleet_names = [name for name, spec in sorted(
+            fleet.get("amrs", {}).items())
+            if fleet.get("enabled", False) and spec.get("enabled", True)]
 
         self.global_grid = None
         self.local_grid = None
@@ -198,9 +256,48 @@ class CostmapRecorder(Node):
             self.next_time += self.interval
 
     # ------------------------------------------------------------------
+    def _marks(self, panel: Panel) -> None:
+        """Only on the global panel: the local one is 6 m wide and the
+        text would be larger than the view it labels."""
+        img = panel.image
+        font, size = cv2.FONT_HERSHEY_SIMPLEX, 0.42
+        for x, y, text, colour, filled in self.marks:
+            centre = panel.px(x, y)
+            cv2.circle(img, centre, 7, colour, -1 if filled else 2, cv2.LINE_AA)
+            # The docks sit at the very edge of the map, so text placed
+            # to the right of the marker runs off the panel. Flip it to
+            # the left side there rather than lose it.
+            (tw, _), _ = cv2.getTextSize(text, font, size, 1)
+            tx = centre[0] + 10
+            if tx + tw > img.shape[1] - 4:
+                tx = max(4, centre[0] - 10 - tw)
+            ty = max(14, centre[1] - 8)
+            for colr, thk in ((0, 0, 0), 3), (colour, 1):
+                cv2.putText(img, text, (tx, ty), font, size, colr, thk,
+                            cv2.LINE_AA)
+
+    def _footprint(self, panel: Panel, pose, colour, thick: int) -> None:
+        rx, ry, ryaw = pose
+        c, s = math.cos(ryaw), math.sin(ryaw)
+        corners = [(self.half_length, self.half_width), (self.half_length, -self.half_width),
+                   (-self.half_length, -self.half_width), (-self.half_length, self.half_width)]
+        pts = np.array([panel.px(rx + u * c - v * s, ry + u * s + v * c)
+                        for u, v in corners], dtype=np.int32)
+        cv2.polylines(panel.image, [pts], True, colour, thick + 1, cv2.LINE_AA)
+        nose = panel.px(rx + self.half_length * c, ry + self.half_length * s)
+        cv2.line(panel.image, panel.px(rx, ry), nose, colour, thick + 1, cv2.LINE_AA)
+
     def _overlay(self, panel: Panel, robot, scan_pose) -> None:
         img = panel.image
         thick = max(1, int(panel.scale * 0.5))
+
+        # The other AMRs, each in its own colour -- the one on its body
+        # and on its destination labels -- read from the same global
+        # tf tree (a1/base_footprint). Drawn under AMR1's footprint.
+        for name in self.fleet_names:
+            pose = self._lookup("map", f"{name}/base_footprint")
+            if pose is not None:
+                self._footprint(panel, pose, fleet_rgb255(name), thick)
 
         # Comfort Spaces, as the planner sees them.
         for x, y, along, across, heading, _speed in self.shapes:
@@ -228,15 +325,7 @@ class CostmapRecorder(Node):
                 cv2.circle(img, panel.px(float(x), float(y)), radius, COLOR_SCAN, -1)
 
         if robot is not None:
-            rx, ry, ryaw = robot
-            c, s = math.cos(ryaw), math.sin(ryaw)
-            corners = [(self.half_length, self.half_width), (self.half_length, -self.half_width),
-                       (-self.half_length, -self.half_width), (-self.half_length, self.half_width)]
-            pts = np.array([panel.px(rx + u * c - v * s, ry + u * s + v * c)
-                            for u, v in corners], dtype=np.int32)
-            cv2.polylines(img, [pts], True, COLOR_FOOTPRINT, thick + 1, cv2.LINE_AA)
-            nose = panel.px(rx + self.half_length * c, ry + self.half_length * s)
-            cv2.line(img, panel.px(rx, ry), nose, COLOR_FOOTPRINT, thick + 1, cv2.LINE_AA)
+            self._footprint(panel, robot, COLOR_FOOTPRINT, thick)
 
     def render(self, now: float):
         robot = self._lookup("map", self.cfg["ros"]["frames"]["base"])
@@ -248,6 +337,7 @@ class CostmapRecorder(Node):
                     yaw_of(g.info.origin.orientation))
         top = Panel(g, g_origin, WIDTH / g.info.width)
         self._overlay(top, robot, scan_pose)
+        self._marks(top)
 
         bottom_img = None
         if self.local_grid is not None:
@@ -291,6 +381,9 @@ class CostmapRecorder(Node):
             ("AMR footprint", COLOR_FOOTPRINT),
             ("global plan (/plan)", COLOR_PLAN),
             ("Comfort Space, planner size", COLOR_COMFORT),
+            ("AMR1 start (ring) and goal (disc)", COLOR_MISSION),
+            *[(f"{name.upper()} footprint, home and job legs", fleet_rgb255(name))
+              for name in self.fleet_names],
             ("cost: light = low, red = Comfort Space", (90, 110, 230)),
             ("dark = wall / lethal", (20, 20, 20)),
         ]

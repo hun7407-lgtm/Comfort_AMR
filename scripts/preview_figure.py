@@ -17,6 +17,7 @@ in the viewport to a person; this is the plan the viewport is showing.
 from __future__ import annotations
 
 import argparse
+import math
 import sys
 from pathlib import Path
 
@@ -32,6 +33,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 from comfort_core import load_config, resolve_path  # noqa: E402
 from comfort_core.comfort_space import make_policy, robot_grow  # noqa: E402
 from comfort_core.factory_layout import build_layout  # noqa: E402
+from comfort_core.palette import fleet_colour  # noqa: E402
 from comfort_core.layout import human_positions, human_states  # noqa: E402
 from comfort_core.scenario import BASE_CONFIG, DENSITY  # noqa: E402
 
@@ -52,11 +54,11 @@ def parse_args():
                    help="a generated scenario config; overrides --seed")
     p.add_argument("--seed", type=int, default=1)
     p.add_argument("--humans", type=int, default=8, choices=sorted(DENSITY))
-    p.add_argument("--amrs", type=int, default=1, choices=(1, 2, 3))
+    p.add_argument("--amrs", type=int, default=1, choices=(1, 2, 3, 4))
     p.add_argument("--provider", default="scripted",
                    choices=("scripted", "sensor"))
     p.add_argument("--policy", default="b3",
-                   choices=("b1", "b2", "b3r", "b3"),
+                   choices=("b1", "b2", "b3r", "b3", "b3d"),
                    help="whose Comfort Spaces to draw")
     p.add_argument("--out", default=None)
     return p.parse_args()
@@ -99,14 +101,36 @@ def _people(ax, cfg, policy) -> None:
     for key, x, y in human_positions(cfg):
         state = states.get(key, "stationary")
         colour = STATE_COLOUR.get(state, "#666666")
-        radius = policy.radius_for(key, state, 0.0)
-        if radius > 0.0:
-            ax.add_patch(plt.Circle((x, y), radius, facecolor=colour,
-                                    alpha=0.13, edgecolor=colour, lw=0.8,
-                                    ls="--", zorder=3))
-            ax.add_patch(plt.Circle((x, y), radius + grow, facecolor="none",
-                                    edgecolor=colour, lw=0.5, alpha=0.5,
-                                    zorder=3))
+        own = humans.get(key) or {}
+        # The real shape, including an offset one. Drawing the largest
+        # extent as a circle would show a space the planner is not
+        # using, and the asymmetry is the thing a reader is checking.
+        extent = policy.extents_for(key, state, 0.0)
+        along, across, offset = extent.axes
+        face = math.radians(float(own.get("facing_deg") or 0.0))
+        if max(along, across) > 0.0:
+            cx = x + offset * math.cos(face)
+            cy = y + offset * math.sin(face)
+            deg = math.degrees(face)
+            ax.add_patch(mpatches.Ellipse(
+                (cx, cy), 2 * along, 2 * across, angle=deg,
+                facecolor=colour, alpha=0.13, edgecolor=colour, lw=0.8,
+                ls="--", zorder=3))
+            ax.add_patch(mpatches.Ellipse(
+                (cx, cy), 2 * (along + grow), 2 * (across + grow), angle=deg,
+                facecolor="none", edgecolor=colour, lw=0.5, alpha=0.5,
+                zorder=3))
+            # A tick at the front extent, so which end is which is not
+            # left to the eye.
+            fx = x + extent.front * math.cos(face)
+            fy = y + extent.front * math.sin(face)
+            ax.plot([fx], [fy], marker="o", ms=3.2, color=colour, zorder=6)
+        if own.get("facing_deg") is not None:
+            ax.annotate("", xy=(x + 0.75 * math.cos(face),
+                                y + 0.75 * math.sin(face)),
+                        xytext=(x, y), zorder=6,
+                        arrowprops=dict(arrowstyle="-|>", lw=0.9,
+                                        color="#1a1a1a", alpha=0.75))
         ax.add_patch(plt.Circle((x, y), float(humans["radius"]),
                                 facecolor=colour, edgecolor="white", lw=0.8,
                                 zorder=5))
@@ -152,20 +176,43 @@ def _mission(ax, cfg) -> None:
         start = places.get(str(item.get("start", "")))
         if start is None:
             continue
+        # The same colour the vehicle wears in the simulator and its
+        # job list has in the costmap video (comfort_core/palette.py).
+        fill = fleet_colour(name)
+        ink = tuple(c * 0.6 for c in fill)
         ax.add_patch(mpatches.Rectangle(
             (start[0] - 0.35, start[1] - 0.24), 0.70, 0.48,
-            facecolor="#8b5cf6", alpha=0.7, edgecolor="#5b21b6", lw=0.8,
+            facecolor=fill, alpha=0.7, edgecolor=ink, lw=0.8,
             zorder=6))
         ax.annotate(f"{name.upper()} t+{item.get('start_at', 0):.1f}s",
                     (start[0], start[1]), textcoords="offset points",
                     xytext=(0, 11), ha="center", fontsize=7,
-                    fontweight="bold", color="#5b21b6", zorder=7)
-        legs = [places[j] for j in item.get("jobs", []) if j in places]
+                    fontweight="bold", color=ink, zorder=7)
+        # Each leg named and numbered. A fleet AMR has no single goal:
+        # it works a job list and comes back, so "where is it going"
+        # only has an answer per leg. Without these labels a reader
+        # cannot tell a stop on the way from the end of the route.
+        jobs = [j for j in item.get("jobs", []) if j in places]
+        legs = [places[j] for j in jobs]
         if legs:
             xs = [start[0]] + [p[0] for p in legs]
             ys = [start[1]] + [p[1] for p in legs]
-            ax.plot(xs, ys, color="#8b5cf6", lw=1.0, ls="--", alpha=0.7,
+            ax.plot(xs, ys, color=fill, lw=1.0, ls="--", alpha=0.7,
                     zorder=4)
+            # Two AMRs can share a slot in their routes, so stagger the
+            # label by which AMR it belongs to.
+            dy = -13 if name == "a1" else 13
+            for order, (job, (lx, ly)) in enumerate(zip(jobs, legs), start=1):
+                # A route that ends where it began would print its last
+                # label on top of the start marker. Say "back to" there
+                # and put it on the other side.
+                back = math.isclose(lx, start[0]) and math.isclose(ly, start[1])
+                text = (f"{name.upper()}-{order} back to {job}" if back
+                        else f"{name.upper()}-{order} {job}")
+                ax.annotate(text, (lx, ly), textcoords="offset points",
+                            xytext=(0, -dy if back else dy),
+                            ha="center", fontsize=6, color=ink,
+                            zorder=7)
 
 
 def main() -> int:

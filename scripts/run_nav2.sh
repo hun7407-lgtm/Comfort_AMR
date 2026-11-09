@@ -10,6 +10,12 @@
 #
 #     ./scripts/run_nav2.sh
 #     ./scripts/run_nav2.sh --config configs/demo_weave.yaml
+#     ./scripts/run_nav2.sh --config configs/fleet_nav2.yaml --namespace a1
+#
+# --namespace brings the same stack up under /a1 for one fleet AMR
+# instead of AMR1 (scripts/run_fleet_nav2.sh does it
+# for every enabled one). It needs AMR1's stack running
+# too: that one publishes the Comfort Space mask the fleet reads.
 #
 # The map and the Nav2 parameters are regenerated from the config every
 # time, so they can never disagree with the corridor the simulation is
@@ -24,11 +30,13 @@ PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
 CONFIG="configs/common.yaml"
 SCENARIO=""
+NAMESPACE=""
 EXTRA=()
 while [ $# -gt 0 ]; do
     case "$1" in
-        --config)   CONFIG="$2"; shift 2 ;;
-        --scenario) SCENARIO="$2"; shift 2 ;;
+        --config)    CONFIG="$2"; shift 2 ;;
+        --scenario)  SCENARIO="$2"; shift 2 ;;
+        --namespace) NAMESPACE="$2"; shift 2 ;;
         *) EXTRA+=("$1"); shift ;;
     esac
 done
@@ -49,9 +57,11 @@ export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
 export PYTHONUNBUFFERED=1
 export COMFORT_AMR_CONFIG="$CONFIG"
 export COMFORT_AMR_SCENARIO="$SCENARIO"
+export COMFORT_AMR_NAMESPACE="$NAMESPACE"
 
 echo "[info] config        : $CONFIG"
 echo "[info] scenario      : ${SCENARIO:-<none, common.yaml only>}"
+echo "[info] robot         : ${NAMESPACE:-AMR1}"
 echo "[info] ROS_DOMAIN_ID : $ROS_DOMAIN_ID"
 echo
 
@@ -59,7 +69,8 @@ echo "[step] regenerating the map"
 python3 "$PROJECT_ROOT/scripts/generate_map.py" --config "$CONFIG"
 echo
 echo "[step] regenerating the Nav2 parameters"
-python3 "$PROJECT_ROOT/scripts/generate_nav2_params.py" --config "$CONFIG"
+python3 "$PROJECT_ROOT/scripts/generate_nav2_params.py" --config "$CONFIG" \
+    ${NAMESPACE:+--namespace "$NAMESPACE"}
 echo
 
 echo "[step] launching Nav2"

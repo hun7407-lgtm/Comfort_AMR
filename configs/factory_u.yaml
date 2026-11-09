@@ -366,9 +366,9 @@ amr:
 # each place -- the way a real fleet controller runs virtual paths.
 # Letting them find their own way across the floor would have them
 # cutting through pull-off refuges and parked carts, and would make
-# the traffic the measured robot meets different in every run.
+# the traffic AMR1 meets different in every run.
 #
-# The measured robot is NOT one of these. It keeps Nav2 and the
+# AMR1 is NOT one of these. It keeps Nav2 and the
 # Comfort Space costmap, because that is what the study measures. The
 # occupancy map is restricted to the same lanes, so both travel the
 # same corridors anyway.
@@ -377,7 +377,7 @@ amr:
 #   people   the scenario's own Comfort Space, at the scenario's own
 #            radii -- so a fleet AMR gives a person what B2 or B3 says
 #            they are owed, and in B1 gives them nothing, like the
-#            robot under test
+#            AMR1
 #   machines plain clearance, no Comfort Space. A robot is not owed
 #            personal space; whoever is in front goes first
 # ---------------------------------------------------------------
@@ -386,9 +386,9 @@ fleet:
   # works and the roadmap is still below; `enabled: true` brings all
   # three back.
   enabled: false
-  # Same as the robot under test. It was 0.35 against the measured
+  # Same as AMR1. It was 0.35 against the measured
   # robot's 0.40, which made every fleet AMR a rolling roadblock: the
-  # robot under test caught up with one in a 1.5 m aisle, could not
+  # AMR1 caught up with one in a 1.5 m aisle, could not
   # pass, and the trial ended in a deadlock that had nothing to do with
   # anybody's comfort. A fleet of identical machines runs at one speed.
   speed: 0.8
@@ -396,6 +396,22 @@ fleet:
   pause: 2.0
   look_ahead: 0.9
   robot_clearance: 1.2
+
+  # How the other AMRs move.
+  #
+  #   scripted  their pose is written every tick along the lane
+  #             network, and they stop when somebody's Comfort Space
+  #             reaches their nose. Every result measured so far used
+  #             this, so it stays the default and an existing config
+  #             runs unchanged.
+  #   nav2      each one is a physical vehicle on its own ROS 2
+  #             namespace with its own Nav2 stack, like the robot
+  #             under test. See docs/NAV2.md section 5c.
+  #
+  # The settings above (speed, turn_speed_deg, pause, look_ahead,
+  # robot_clearance) belong to the scripted driver and are ignored by
+  # nav2, which gets those limits from the Nav2 parameters instead.
+  driver: scripted
 
   # The lanes. Centre of each aisle, centre of each crossing.
   lanes:
@@ -406,51 +422,52 @@ fleet:
 
   # Where an AMR can be sent. Checked against the navigable floor.
   #
-  # Every place is a cart slot, bar the two docks on the crossings
-  # (parts in at the west end, finished goods out at the east).
+  # Every place is an EMPTY front-row cart slot, named as the layout
+  # names it (block n1..n3 / s1..s3, row 2 is the aisle frontage,
+  # column 1..3 west to east). A fleet AMR works the staging blocks
+  # the way the measured one does: it starts parked in a free slot,
+  # drives to another free slot, and ends parked in one. The docks on
+  # the crossings and the parked carts are gone from this list -- a
+  # goal inside a parked cart is a goal inside an obstacle, and Nav2
+  # cannot be asked to reach it.
   #
-  #   carts_*  the front-row cart in the west block, which is the one
-  #            a robot can actually reach -- nothing is parked in
-  #            front of it
-  #   drop_*   an EMPTY front slot. Delivering means putting a cart in
-  #            a marked slot, so the destination is the empty slot,
-  #            not a spot on the floor beside the lane.
+  # Same pose convention as AMR1's start and goal: not
+  # the slot centre (y +-5.485) but 0.165 m nearer the mouth, y
+  # +-5.32, so a vehicle parked there keeps the loaded cart behind it
+  # out of its own protective field (see `navigation` below).
   #
-  # Front row centres are y +-5.485, so a standing AMR is off the lane.
-  # The slot at x -4.60 is left out on purpose: that is the measured
-  # robot's goal, and a fleet AMR parked in it would deadlock the
-  # trial under test for a reason that has nothing to do with comfort.
+  # Slots a scenario's mission uses are dropped from each job list by
+  # the generator (comfort_core/scenario.py, _jobs_clear_of), so the
+  # AMR1 never finds a fleet AMR parked in its own goal.
   places:
-    dock_west: [-10.50,  0.00]
-    dock_east: [ 10.50,  0.00]
-    carts_n:   [ -7.40,  5.485]
-    carts_s:   [ -7.40, -5.485]
-    drop_n1:   [ -6.00,  5.485]
-    drop_n2:   [ -1.40,  5.485]
-    drop_n3:   [  0.00,  5.485]
-    drop_n4:   [  1.40,  5.485]
-    drop_n5:   [  6.00,  5.485]
-    drop_s1:   [ -6.00, -5.485]
-    drop_s2:   [ -1.40, -5.485]
-    drop_s3:   [  0.00, -5.485]
-    drop_s4:   [  1.40, -5.485]
-    drop_s5:   [  6.00, -5.485]
+    n1_r2c2:   [ -6.00,  5.32]
+    n1_r2c3:   [ -4.60,  5.32]
+    n2_r2c1:   [ -1.40,  5.32]
+    n2_r2c2:   [  0.00,  5.32]
+    n2_r2c3:   [  1.40,  5.32]
+    n3_r2c2:   [  6.00,  5.32]
+    n3_r2c3:   [  7.40,  5.32]
+    s1_r2c2:   [ -6.00, -5.32]
+    s1_r2c3:   [ -4.60, -5.32]
+    s2_r2c1:   [ -1.40, -5.32]
+    s2_r2c2:   [  0.00, -5.32]
+    s2_r2c3:   [  1.40, -5.32]
+    s3_r2c2:   [  6.00, -5.32]
+    s3_r2c3:   [  7.40, -5.32]
 
-  # Each one collects from a cart block, delivers to the line, and
-  # goes back for more. The jobs repeat.
+  # Each one shuttles between free slots on its side and parks back
+  # where it began. a3 crosses sides, which is what puts two fleet
+  # vehicles in one aisle at once.
   amrs:
     a1:
-      start: dock_west
-      jobs: [carts_n, drop_n4, carts_n, drop_n2, dock_west]
+      start: n1_r2c2
+      jobs: [n2_r2c2, n3_r2c2, n2_r2c1, n1_r2c2]
     a2:
-      start: dock_east
-      jobs: [carts_s, drop_s3, carts_s, drop_s5, dock_east]
+      start: s1_r2c2
+      jobs: [s2_r2c2, s3_r2c2, s2_r2c3, s1_r2c2]
     a3:
-      # Not drop_n1: that is 1.25 m from where walker c starts, which
-      # is inside a 1.20 m Comfort Space, so a3 was held before it
-      # moved at all.
-      start: drop_n5
-      jobs: [carts_n, drop_n5, carts_s, drop_s1]
+      start: s3_r2c3
+      jobs: [n2_r2c3, s2_r2c1, s3_r2c3]
 
 recording:
   version: v8_factory_u

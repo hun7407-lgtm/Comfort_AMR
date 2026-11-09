@@ -313,6 +313,14 @@ B2와 B3가 같은 기준으로 판정되게 합니다.
 
 ---
 
+### 세 대일 때의 판정
+
+판정은 **차량마다** 내립니다. AMR1은 `trials.csv`, a1/a2는
+`fleet_trials.csv`에 각자 `result`(SUCCESS / DEADLOCK / ABORTED)를
+적고, trial 하나에 합성 판정을 두지 않습니다. 교착 규칙은 세 대가
+같습니다(`navigation.deadlock`). 성공률은 정책별로 차량을 합쳐 셉니다.
+docs/NAV2.md 5c절 "차량마다 자기 판정".
+
 ## 10. 기대 결과
 
 | | B2 | B3 |
@@ -362,3 +370,11 @@ results/b2/trial_001.csv
 results/b3/trial_001.csv
 results/summary.csv
 ```
+
+### 플릿 차량의 기록
+
+a1, a2(가 Nav2로 달릴 때)는 같은 잣대 -- 같은 사람 프레임, 같은 기준
+Comfort Space, 각자의 안전층 -- 로 `fleet_trials.csv`에 차량당 한 줄로
+기록됩니다 (`comfort_core/metrics.py` `FLEET_FIELDS`, docs/NAV2.md
+5c절 5단계). 세 대는 같은 정책 아래 같은 잣대로 재는 동등한 대상이고,
+파일이 다른 것은 열(mission vs job list)이 달라서입니다.

@@ -30,7 +30,7 @@ cd "$PROJECT_ROOT"
 
 SCENARIO="${1:-}"
 if [ -z "$SCENARIO" ]; then
-    echo "usage: $0 <b1|b2|b3r|b3> [--headless]" >&2
+    echo "usage: $0 <b1|b2|b3r|b3|b3d> [--headless]" >&2
     exit 2
 fi
 shift
@@ -43,6 +43,13 @@ RECORD_COSTMAP=0
 # Keep Isaac Sim up after the trial is decided, so the end state can be
 # looked at. Only useful with a window and a terminal to press Enter in.
 HOLD=0
+# Diagnostic: after AMR1's mission is decided, keep everything running
+# until every fleet vehicle has finished its job list or this many
+# seconds have passed, so robot-robot encounters that happen after
+# the mission can be measured. 0 (the default) ends the trial with
+# the mission, which is what every measurement does; AMR1's row is
+# the same either way.
+FLEET_TAIL=0
 # Where the trial writes its row. Empty means the config's own
 # results/trials/<recording.version>. A batch passes one folder for the
 # whole batch, so every trial in it lands in one file.
@@ -56,6 +63,7 @@ while [ $# -gt 0 ]; do
         --record-costmap) RECORD_COSTMAP=1; shift ;;
         --results)  TRIAL_ARGS+=("--results" "$2"); RESULTS_DIR="$2"; shift 2 ;;
         --no-record) TRIAL_ARGS+=("--no-record"); shift ;;
+        --fleet-tail) FLEET_TAIL="$2"; shift 2 ;;
         *) shift ;;
     esac
 done
@@ -73,6 +81,7 @@ case "$SCENARIO" in
     b2) SCENARIO_DIR="b2_static" ;;
     b3r) SCENARIO_DIR="b3r_state_adaptive_circular" ;;
     b3) SCENARIO_DIR="b3_state_adaptive" ;;
+    b3d) SCENARIO_DIR="b3d_state_directional" ;;
     *)  SCENARIO_DIR="$(basename "$SCENARIO" .yaml)" ;;
 esac
 CONDITION="standing_only"
@@ -103,6 +112,7 @@ if [ "$RECORD" -eq 1 ]; then
 fi
 
 RUN_DIR="$(mktemp -d)"
+FLEET_GOALS_PID=""
 SIM_LOG="$RUN_DIR/sim.log"
 NAV_LOG="$RUN_DIR/nav2.log"
 
@@ -112,6 +122,15 @@ cleanup() {
         # A few more seconds of the robot at rest, so the video does not
         # cut off on the frame the trial was decided.
         sleep 3
+    fi
+    # The fleet dispatcher writes its rows on the way out, so it is
+    # asked politely and given a moment before everything is killed.
+    if [ -n "${FLEET_GOALS_PID:-}" ]; then
+        kill -TERM "$FLEET_GOALS_PID" 2>/dev/null
+        for _ in $(seq 1 20); do
+            kill -0 "$FLEET_GOALS_PID" 2>/dev/null || break
+            sleep 0.5
+        done
     fi
     if [ -n "$COSTMAP_PID" ]; then
         kill -INT "$COSTMAP_PID" 2>/dev/null
@@ -173,6 +192,41 @@ if ! grep -q "Managed nodes are active" "$NAV_LOG" 2>/dev/null; then
 fi
 sleep 5
 
+# The other AMRs, when they are on Nav2 too: one stack each, then the
+# dispatcher that walks them down their job lists. Both are children
+# of this shell and go down with it.
+FLEET_NAV2="$(cd "$PROJECT_ROOT" && python3 -c "
+import sys
+sys.path.insert(0, '.')
+from comfort_core import load_config
+f = load_config(scenario='$SCENARIO', common_path='$CONFIG_PATH').get('fleet', {})
+print('yes' if f.get('enabled') and f.get('driver', 'scripted') == 'nav2' else 'no')")"
+if [ "$FLEET_NAV2" = "yes" ]; then
+    FLEET_LOG_DIR="$RUN_DIR/fleet"
+    mkdir -p "$FLEET_LOG_DIR"
+    echo "[step] starting fleet Nav2  (logs: $FLEET_LOG_DIR)"
+    FLEET_LOG_DIR="$FLEET_LOG_DIR" ./scripts/run_fleet_nav2.sh \
+        "${CONFIG[@]+"${CONFIG[@]}"}" --scenario "$SCENARIO" \
+        > "$RUN_DIR/fleet_nav2.log" 2>&1 &
+    WANT="$(ls "$FLEET_LOG_DIR" 2>/dev/null | wc -l)"
+    for _ in $(seq 1 60); do
+        ACTIVE="$(grep -l "Managed nodes are active" "$FLEET_LOG_DIR"/nav2_*.log 2>/dev/null | wc -l)"
+        WANT="$(ls "$FLEET_LOG_DIR"/nav2_*.log 2>/dev/null | wc -l)"
+        [ "$WANT" -gt 0 ] && [ "$ACTIVE" -eq "$WANT" ] && break
+        sleep 3
+    done
+    if [ "$WANT" -eq 0 ] || [ "$ACTIVE" -ne "$WANT" ]; then
+        echo "[ERROR] fleet Nav2 did not activate ($ACTIVE of $WANT). Last lines:" >&2
+        tail -20 "$FLEET_LOG_DIR"/nav2_*.log >&2
+        exit 1
+    fi
+    echo "[step] dispatching the fleet (log: $RUN_DIR/fleet_goals.log)"
+    ./scripts/run_fleet_goals.sh "${CONFIG[@]+"${CONFIG[@]}"}" --scenario "$SCENARIO" \
+        ${RESULTS_DIR:+--results "$RESULTS_DIR"} \
+        > "$RUN_DIR/fleet_goals.log" 2>&1 &
+    FLEET_GOALS_PID=$!
+fi
+
 if [ "$RECORD_COSTMAP" -eq 1 ]; then
     mkdir -p "$COSTMAP_DIR"
     echo "[step] recording costmap view"
@@ -200,6 +254,43 @@ if [ "$TRIAL_CODE" -ne 0 ] && [ -n "${RESULTS_DIR:-}" ]; then
     stamp="$(date +%H%M%S)_$SCENARIO"
     tail -3000 "$NAV_LOG" > "$RESULTS_DIR/logs/${stamp}_nav2.log" 2>/dev/null
     tail -200 "$SIM_LOG" > "$RESULTS_DIR/logs/${stamp}_sim.log" 2>/dev/null
+fi
+# --fleet-tail: let the fleet finish (or run out of time) before its
+# measurement is closed. Every vehicle prints "finished:" once.
+if [ -n "${FLEET_GOALS_PID:-}" ] && [ "$FLEET_TAIL" -gt 0 ]; then
+    WANT="$(ls "$FLEET_LOG_DIR"/nav2_*.log 2>/dev/null | wc -l)"
+    echo "[step] fleet tail: up to $FLEET_TAIL s for $WANT vehicle(s) to finish"
+    for _ in $(seq 1 "$FLEET_TAIL"); do
+        DONE="$(grep -c 'finished:' "$RUN_DIR/fleet_goals.log" 2>/dev/null || true)"
+        [ "${DONE:-0}" -ge "$WANT" ] && break
+        kill -0 "$FLEET_GOALS_PID" 2>/dev/null || break
+        sleep 1
+    done
+    echo "[step] fleet tail over: $(grep -c 'finished:' "$RUN_DIR/fleet_goals.log" 2>/dev/null || echo 0) of $WANT finished"
+fi
+# The trial is over, so the fleet's measurement is too: stop the
+# dispatcher now and let it write its rows before its log is read.
+# SIGTERM, not SIGINT -- a background child of a non-interactive shell
+# has SIGINT ignored, and a polite kill -INT did nothing at all.
+if [ -n "${FLEET_GOALS_PID:-}" ]; then
+    kill -TERM "$FLEET_GOALS_PID" 2>/dev/null
+    for _ in $(seq 1 30); do
+        kill -0 "$FLEET_GOALS_PID" 2>/dev/null || break
+        sleep 0.5
+    done
+    FLEET_GOALS_PID=""
+fi
+# What the fleet did, whatever the trial did: its dispatcher's lines
+# are the only record of which legs it finished, and the run directory
+# is gone a moment from now.
+if [ -f "$RUN_DIR/fleet_goals.log" ]; then
+    echo "[fleet] dispatcher:"
+    grep '^\[fleet\]' "$RUN_DIR/fleet_goals.log" | sed 's/^/       /'
+    if [ -n "${RESULTS_DIR:-}" ]; then
+        mkdir -p "$RESULTS_DIR/logs"
+        cp "$RUN_DIR/fleet_goals.log" \
+           "$RESULTS_DIR/logs/$(date +%H%M%S)_${SCENARIO}_fleet_goals.log" 2>/dev/null
+    fi
 fi
 if [ "$HOLD" -eq 1 ]; then
     if [ -t 0 ]; then

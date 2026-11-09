@@ -364,22 +364,108 @@ def record_trial(cfg: Dict[str, Any], result: Dict[str, Any],
     return (csv_path, json_path)
 
 
-def _append(path: Path, row: Dict[str, Any]) -> None:
+def _append(path: Path, row: Dict[str, Any],
+            fields: Tuple[str, ...] = FIELDS) -> None:
     """Append one row, refusing to write into a file of another shape."""
     exists = path.is_file()
     if exists:
         with path.open(newline="", encoding="utf-8") as handle:
             header = next(csv.reader(handle), [])
-        if header and tuple(header) != FIELDS:
+        if header and tuple(header) != fields:
             raise ValueError(
                 f"{path} has columns {header[:4]}... and this run writes "
-                f"{list(FIELDS)[:4]}...; move the old file aside rather than "
+                f"{list(fields)[:4]}...; move the old file aside rather than "
                 f"mixing two shapes of row in one file")
     with path.open("a", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=fields)
         if not exists:
             writer.writeheader()
-        writer.writerow({k: row.get(k, "") for k in FIELDS})
+        writer.writerow({k: row.get(k, "") for k in fields})
+
+
+# ---------------------------------------------------------------------------
+# The other AMRs. One row per vehicle per trial, in its own file next
+# to trials.csv: the same yardstick (reference Comfort Space,
+# clearance, contact, safety layer) applied to a1, a2, ... under the
+# same policy. They are measured on the same footing as AMR1; the file
+# is separate only because the columns differ -- AMR1 has a mission
+# with one goal, these have a job list and other robots to meet -- and
+# because trials.csv's columns must not move under results that exist.
+#
+# Joined to trials.csv by (scenario, config, stamp within the minute):
+# both rows are written at the end of the same run.
+# ---------------------------------------------------------------------------
+FLEET_FIELDS: Tuple[str, ...] = (
+    "stamp",
+    "scenario",
+    "policy",
+    "config",
+    "robot",
+    # -- outcome, the vehicle's own ---------------------------------
+    # SUCCESS   every leg it attempted in the trial was reached or was
+    #           still being driven when the trial ended
+    # DEADLOCK  the same rule as AMR1's (navigation.deadlock): a goal
+    #           active, no progress towards it for `duration` seconds
+    # ABORTED   Nav2 gave a leg up twice
+    "result",
+    "deadlock_cause",
+    # -- the job list ----------------------------------------------
+    "legs_total",
+    "legs_done",
+    "legs_skipped",
+    "set_off_at_s",            # trial time the first goal went out
+    "first_leg_s",             # trial time the first leg was reached
+    "travel_distance_m",
+    "observed_s",              # how long this row watched the vehicle
+    # -- people ----------------------------------------------------
+    "min_clearance_m",
+    "min_clearance_with",
+    "contact_s",
+    "contact_robot_s",
+    "contact_person_s",
+    "comfort_reference",
+    "worst_intrusion_m",
+    "worst_intrusion_k",
+    "worst_intrusion_into",
+    "comfort_seconds",         # summed over people, k < 1
+    # -- the safety layer ------------------------------------------
+    "safety_stop_s",
+    "safety_slowdown_s",
+    "safety_approach_s",
+    # -- other robots ----------------------------------------------
+    "min_gap_amr1_m",          # centre-to-centre
+    "min_gap_fleet_m",
+    "min_gap_fleet_with",
+    "git_commit",
+    # Added after the first rows: WHEN the closest approach and the
+    # deepest intrusion happened, trial time, so a row can be lined up
+    # with the costmap video.
+    "min_clearance_t_s",
+    "worst_intrusion_t_s",
+    # Where the robot was, seen from the person, at the deepest
+    # intrusion: front / side / rear by the shape's heading.
+    "worst_intrusion_bearing",
+)
+
+
+def record_fleet_trial(cfg: Dict[str, Any], rows: List[Dict[str, Any]],
+                       config_path: str, scenario: str,
+                       out_dir: Optional[str] = None) -> Path:
+    """Append one row per fleet vehicle. Returns the csv path."""
+    version = str(cfg.get("recording", {}).get("version", "unversioned"))
+    folder = resolve_path(out_dir or f"results/trials/{version}")
+    folder.mkdir(parents=True, exist_ok=True)
+    csv_path = folder / "fleet_trials.csv"
+    stamp = datetime.now().isoformat(timespec="seconds")
+    commit = _git_commit()
+    policy = str(cfg.get("comfort_space", {}).get("policy", ""))
+    for row in rows:
+        full = {"stamp": stamp, "scenario": scenario, "policy": policy,
+                "config": config_path, "git_commit": commit}
+        full.update({k: _round(v) if isinstance(v, float) else v
+                     for k, v in row.items()})
+        _append(csv_path, full, FLEET_FIELDS)
+    return csv_path
 
 
 def read_rows(path: str) -> List[Dict[str, str]]:

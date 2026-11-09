@@ -1,0 +1,20 @@
+# Every AMR on its own Nav2 stack.
+#
+# A verification overlay while docs/NAV2.md section 5c is being built,
+# not an experiment condition. It switches the other two vehicles from
+# the scripted driver to one Nav2 stack each.
+#
+# Stage 2 only puts them on the stage as physical, namespaced robots:
+# they take /a1/cmd_vel and /a2/cmd_vel and publish /a1/odom and
+# /a1/lidar/cloud, and nothing sends them anywhere yet. Launching the
+# two extra Nav2 stacks and turning the job list into goals is stage 3.
+#
+# Checked by scripts/check_fleet_nav2.py.
+base: configs/scenarios/paper_h8_a4_scr_s0001.yaml
+
+fleet:
+  driver: nav2
+
+# Keep right, for the all-Nav2 fleet. See traffic_rule in common.yaml.
+traffic_rule:
+  enabled: true

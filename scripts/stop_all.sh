@@ -28,6 +28,9 @@ PATTERNS=(
     "static_transform_[p]ublisher"
     "scripts/goto_[g]oal.py"
     "scripts/nav2_[g]oal.py"
+    "scripts/fleet_[g]oals.py"
+    "scripts/traffic_[r]ule.py"
+    "nav2_[c]ollision_monitor/collision_monitor"
     "scripts/amr_arrow_[t]eleop.py"
     # These two were missing at first and it cost a day of confusion: a
     # gate left over from a B2 run kept publishing the static radii, so
