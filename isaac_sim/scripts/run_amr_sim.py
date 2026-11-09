@@ -67,6 +67,13 @@ def _handle_sigint(signum, frame):
 
 def main() -> int:
     cfg = load_config(scenario=args.scenario, common_path=args.config)
+    if not args.headless:
+        # A window is for looking. The start and destination markers
+        # are drawing only (isaac_sim/environments/markers.py has the
+        # argument for why the laser cannot see them), and every
+        # measurement runs headless, where the config's own flag --
+        # off -- still decides.
+        cfg.setdefault("markers", {})["enabled"] = True
     sim_cfg = cfg["simulation"]
 
     usd_path = resolve_path(cfg["amr"]["usd_path"])

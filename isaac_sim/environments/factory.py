@@ -742,11 +742,12 @@ def build_cart_zones(cfg: Dict[str, Any], layout: BayLayout, root: str) -> int:
                     orientation=machines_quat(0.0))
         machines.build(cfg, "cart", prim, (length, depth, height))
         loaded = _load_cart(cfg, prim, index, (length, depth, height))
-        _cart_collider(prim, slot.centre, (length, depth, height), loaded)
+        _cart_collider(cfg, prim, slot.centre, (length, depth, height), loaded)
     return len(slots)
 
 
-def _cart_collider(prim: str, centre, size, loaded: int) -> None:
+def _cart_collider(cfg: Dict[str, Any], prim: str, centre, size,
+                   loaded: int) -> None:
     """An invisible box that makes the cart solid.
 
     The library dolly is drawn geometry and nothing else: measured, it
@@ -759,7 +760,12 @@ def _cart_collider(prim: str, centre, size, loaded: int) -> None:
     # Up to the top of the load when there is one. An empty frame is
     # 0.44 m; a cart with a pallet of cases on it is over a metre, and
     # a robot that can pass under the load is not stopped by it.
-    tall = height + (0.59 if loaded else 0.0)
+    # The load's own height plus however far it sits below the frame
+    # top (assets.modules.pallet_load.base_offset), so the box ends
+    # where the cases end.
+    load = cfg.get("assets", {}).get("modules", {}).get("pallet_load", {})
+    lift = float(load.get("base_offset", 0.0))
+    tall = height + (0.59 + lift if loaded else 0.0)
     body = FixedCuboid(
         prim_path=f"{prim}/collider",
         position=np.array([float(centre[0]), float(centre[1]), tall / 2.0]),
@@ -863,11 +869,14 @@ def build_markers(cfg: Dict[str, Any], layout: BayLayout, root: str) -> int:
     read_factory_scene.py can pick the new position up.
     """
     made = 0
+    # Xforms only, no patch. The patch marked the base config's route,
+    # which is not the mission a scenario runs, and a blue square at
+    # the wrong end of the aisle read as a start that nothing started
+    # from. The ends an AMR actually uses are drawn, labelled, by
+    # isaac_sim/environments/markers.py.
     for waypoint in layout.waypoints:
         prim = f"{root}/Waypoints/{waypoint.name}"
         create_prim(prim, "Xform", position=[waypoint.x, waypoint.y, 0.0])
-        _visual(f"{prim}/marker", (waypoint.x, waypoint.y, 0.01),
-                (0.45, 0.45, 0.02), (0.20, 0.45, 0.85))
         made += 1
     for refuge in layout.refuges:
         cx, cy = refuge.centre

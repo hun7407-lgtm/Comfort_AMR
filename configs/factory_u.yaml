@@ -538,6 +538,16 @@ assets:
       path: /Isaac/Props/Conveyors/ConveyorBelt_A05.usd
       natural: [2.00, 1.15, 1.17]
       pivot: [1.00, 0.00]
+      # Work in progress on the rollers, so the line is not an empty
+      # frame. Placed by station name, deterministic; the belt is an
+      # obstacle already, so a box on it marks nothing new. The pieces
+      # are the small entries of assets.totes.
+      wip:
+        every: 1.7          # m between pieces along the belt
+        z: 0.769            # roller top, measured from the asset
+        side_jitter: 0.12   # m, off the belt centreline
+        start: 0.6          # m in from each end
+        max_width: 0.50     # m, across the belt; wider totes are skipped
     u_turn:
       path: /Isaac/Props/Conveyors/ConveyorBelt_A14.usd
       natural: [2.57, 4.93, 1.17]
@@ -566,6 +576,11 @@ assets:
       # of timeline the build plays to settle the characters, and ended
       # up on the floor at a slight angle. Scenery here does not move.
       static: true
+      # The dolly's bound is 0.44 m to the top of its frame, and the
+      # deck the pallet rests on is 0.07 m below that rail; placed at
+      # the frame height the pallet hung in the air with the rail
+      # showing under it. Measured against the asset.
+      base_offset: -0.07
 
   dressing:
     - {path: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd,
@@ -678,15 +693,15 @@ humans:
   e: {enabled: false}
 
   character:
-    w1: F_Business_02
-    w2: M_Medical_01
-    w3: M_Medical_01
-    w4: F_Business_02
-    w5: M_Medical_01
-    w6: M_Medical_01
-    w7: F_Business_02
-    w8: M_Medical_01
-    w9: M_Medical_01
-    w10: F_Business_02
-    w11: M_Medical_01
-    w12: F_Business_02
+    w1: male_adult_construction_01_new
+    w2: male_adult_construction_05_new
+    w3: male_adult_construction_03
+    w4: male_adult_construction_01_new
+    w5: male_adult_construction_05_new
+    w6: male_adult_construction_03
+    w7: male_adult_construction_01_new
+    w8: male_adult_construction_05_new
+    w9: male_adult_construction_03
+    w10: male_adult_construction_01_new
+    w11: male_adult_construction_05_new
+    w12: male_adult_construction_03

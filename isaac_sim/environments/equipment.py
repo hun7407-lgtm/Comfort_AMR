@@ -21,6 +21,7 @@ leg and rail.
 from __future__ import annotations
 
 import math
+import random
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Tuple
 
@@ -313,7 +314,7 @@ def build_station(cfg: Dict[str, Any], station: Station, root: str) -> int:
         drawn = machines.build(cfg, str(spec["build"]), prim,
                                (station.length, station.depth, station.height))
     elif props.enabled(cfg) and spec is not None:
-        drawn = _build_from_asset(prim, spec, station)
+        drawn = _build_from_asset(cfg, prim, spec, station)
     else:
         drawn = _build_from_boxes(cfg, prim, station)
 
@@ -332,7 +333,8 @@ def build_station(cfg: Dict[str, Any], station: Station, root: str) -> int:
     return drawn
 
 
-def _build_from_asset(prim: str, spec: Dict[str, Any], station: Station) -> int:
+def _build_from_asset(cfg: Dict[str, Any], prim: str, spec: Dict[str, Any],
+                      station: Station) -> int:
     """The real model, plus whatever is stacked on it.
 
     A station longer than its model is that model repeated end to end:
@@ -346,6 +348,7 @@ def _build_from_asset(prim: str, spec: Dict[str, Any], station: Station) -> int:
         props.reference(f"{prim}/model_{i:02d}" if n > 1 else f"{prim}/model",
                         spec, (along, 0.0, 0.0))
     drawn = n
+    drawn += _work_in_progress(cfg, prim, spec, station)
     for i, item in enumerate(spec.get("stack", []), start=1):
         at = item["at"]
         props.reference(f"{prim}/stack_{i:02d}",
@@ -354,6 +357,42 @@ def _build_from_asset(prim: str, spec: Dict[str, Any], station: Station) -> int:
                         (float(at[0]), float(at[1]), float(at[2])),
                         yaw_deg=float(item.get("yaw_deg", 0.0)))
         drawn += 1
+    return drawn
+
+
+def _work_in_progress(cfg: Dict[str, Any], prim: str, spec: Dict[str, Any],
+                      station: Station) -> int:
+    """Pieces on the rollers of a line, where the station asks for them.
+
+    `wip` in the module spec (configs/factory_u.yaml) says how often and
+    at what height. Which piece lands where is drawn from a generator
+    seeded with the station's name, so the same bay is built every time
+    and a trial is never "the one where the box was elsewhere". Drawing
+    only: the belt is already an obstacle to the laser, and nothing here
+    reaches past its edge.
+    """
+    wip = spec.get("wip") or {}
+    # The tote catalogue is sized by `size`, not `natural`, which is
+    # what machines._placed reads.
+    catalogue = [t for t in cfg.get("assets", {}).get("totes", [])
+                 if machines._placed(t)[1] <= float(wip.get("max_width", 0.5))]
+    if not wip or not catalogue:
+        return 0
+    every = max(float(wip.get("every", 1.7)), 0.3)
+    start = float(wip.get("start", 0.6))
+    z = float(wip.get("z", 0.0))
+    jitter = float(wip.get("side_jitter", 0.0))
+    rng = random.Random(station.name)
+    drawn = 0
+    along = -station.length / 2.0 + start
+    while along <= station.length / 2.0 - start:
+        item = rng.choice(catalogue)
+        side = rng.uniform(-jitter, jitter)
+        props.reference(f"{prim}/wip_{drawn:02d}", item,
+                        (along, side, z - float(item.get("z_base", 0.0))),
+                        yaw_deg=rng.choice((0.0, 90.0)))
+        drawn += 1
+        along += every * rng.uniform(0.8, 1.2)
     return drawn
 
 

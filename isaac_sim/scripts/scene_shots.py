@@ -31,6 +31,9 @@ def parse_args():
     parser.add_argument("--out", default="results/notion/261027")
     parser.add_argument("--width", type=int, default=1920)
     parser.add_argument("--height", type=int, default=1080)
+    parser.add_argument("--no-markers", action="store_true",
+                        help="leave the start/goal plates out (a clean "
+                             "plan for scenario_figure.py to draw on)")
     parser.add_argument("--settle", type=int, default=240,
                         help="physics steps before the first shot")
     return parser.parse_args()
@@ -90,7 +93,58 @@ def views(cfg):
          (0.0, -7.2, 3.0), (0.0, -1.5, 1.0), 22.0, False),
         ("10_cart_blocks",
          (-5.0, 1.0, 5.5), (-5.2, 6.0, 0.4), 24.0, True),
+        # The fleet's west dock, and one worker's Comfort Space close
+        # enough to judge the drawing.
+        ("11_fleet_dock_west",
+         (-8.6, -2.2, 1.9), (-10.5, 0.0, 0.3), 30.0, False),
+        ("12_comfort_space_closeup",
+         (-6.0, 7.6, 3.6), (-2.6, 3.2, 0.2), 26.0, False),
     ]
+
+
+# Orthographic plan: 30 m across the 1920 px frame, centred on the
+# bay's origin, +x right and +y up. 64 px per metre. The 16 m bay fits
+# the 1080 px height with a margin.
+ORTHO_WIDTH_M = 30.0
+ORTHO_CENTRE = (0.0, 0.0)
+ORTHO_HEIGHT_Z = 30.0
+
+
+def _plan_ortho(stage, world, rep, np, Image, out, label, roof, args):
+    """Render the floor from straight above with an orthographic camera."""
+    from pxr import Gf, UsdGeom
+    if roof and roof.IsValid():
+        UsdGeom.Imageable(roof).MakeInvisible()
+    cam_path = "/World/PlanCamera"
+    cam = UsdGeom.Camera.Define(stage, cam_path)
+    cam.CreateProjectionAttr(UsdGeom.Tokens.orthographic)
+    # Apertures are in tenths of a stage unit; the stage is in metres.
+    aspect = args.height / args.width
+    cam.CreateHorizontalApertureAttr(ORTHO_WIDTH_M * 10.0)
+    cam.CreateVerticalApertureAttr(ORTHO_WIDTH_M * aspect * 10.0)
+    cam.CreateClippingRangeAttr(Gf.Vec2f(0.1, 200.0))
+    # An unrotated camera looks down its own -z, which is world -z,
+    # with image-up along world +y: exactly the map orientation.
+    xf = UsdGeom.Xformable(cam.GetPrim())
+    xf.ClearXformOpOrder()
+    xf.AddTranslateOp().Set(Gf.Vec3d(ORTHO_CENTRE[0], ORTHO_CENTRE[1], ORTHO_HEIGHT_Z))
+    product = rep.create.render_product(cam_path, (args.width, args.height))
+    annot = rep.AnnotatorRegistry.get_annotator("rgb")
+    annot.attach(product)
+    frame = None
+    for _ in range(12):
+        world.step(render=True)
+        data = annot.get_data()
+        if data is not None and np.asarray(data).size:
+            frame = np.asarray(data)[..., :3]
+    annot.detach(product)
+    product.destroy()
+    if frame is None:
+        print("  [WARN] plan_ortho: no frame came back", flush=True)
+        return None
+    path = out / f"scene_{label}_00_plan_ortho.png"
+    Image.fromarray(np.array(frame, copy=True)).save(path)
+    return path
 
 
 def main() -> int:
@@ -110,7 +164,7 @@ def main() -> int:
     cfg = load_config(scenario=args.scenario,
                       common_path=str(PROJECT_ROOT / args.config))
     # A picture, not a measurement: see configs/common.yaml markers.
-    cfg.setdefault("markers", {})["enabled"] = True
+    cfg.setdefault("markers", {})["enabled"] = not args.no_markers
 
     # The scene build publishes the humans' TF frames through the ROS 2
     # bridge, so the extension has to be on even though a screenshot
@@ -141,6 +195,12 @@ def main() -> int:
                   rendering_dt=float(cfg["simulation"]["rendering_dt"]))
     scene_setup.build_scene(cfg, str(resolve_path(cfg["amr"]["usd_path"])),
                             verbose=True)
+    # The other AMRs too, as a trial has them: the picture should show
+    # the traffic AMR1 shares the floor with.
+    from isaac_sim.utils import fleet as fleet_mod
+    fleet = fleet_mod.Fleet(cfg)
+    if len(fleet):
+        print(f"  {len(fleet)} fleet AMR(s) at their docks", flush=True)
     world.reset()
 
     # Play, or everybody stands in the character rig's bind pose with
@@ -171,6 +231,14 @@ def main() -> int:
     from isaacsim.core.utils.stage import get_current_stage
     stage = get_current_stage()
     roof = stage.GetPrimAtPath(CEILING)
+
+    # The plan, orthographic: a true map of the floor, so a drawing can
+    # be laid over it with x_px = (x - X0) * PX_PER_M and nothing more.
+    # scripts/scenario_figure.py does exactly that; keep ORTHO_* and
+    # the image size in step with it.
+    ortho_path = _plan_ortho(stage, world, rep, np, Image, out, label, roof, args)
+    if ortho_path:
+        print(f"  wrote {ortho_path.relative_to(PROJECT_ROOT)}", flush=True)
 
     for name, pos, look, focal, hide_roof in views(cfg):
         if roof and roof.IsValid():

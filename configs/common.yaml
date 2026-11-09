@@ -405,9 +405,15 @@ humans:
     # variable `Walk`, a 0..1 blend weight that
     # omni/anim/people/scripts/commands/base_command.py rewrites to 1.0
     # on every tick. See humans.walk_speed below.
+    # omni.anim.people has Idle, LookAround, Sit and the walking
+    # commands, and nothing that looks like working at a machine, so
+    # the engaged worker idles. Someone merely standing looks about,
+    # which is also what separates the two at a glance in a recording.
+    # Drawing only: the collider, the state and the Comfort Space do
+    # not read the animation.
     commands:
       station_engaged: "Idle 100000"
-      stationary: "Idle 100000"
+      stationary: "LookAround 100000"
       moving: "Idle 100000"
 
   # Making the characters walk at the sampled speed.
