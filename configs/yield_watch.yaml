@@ -1,0 +1,46 @@
+# Watching the yield logic work, with three AMRs and people in the way.
+#
+# NOT a paper scenario and not a measurement condition. It exists because
+# the paper's drawn missions never bring the ego AMR near a walking
+# person: in the 48-trial batch B3 recorded yield 0.0 s in all 12 trials,
+# so there was nothing to watch. The exchange workers walk the WEST half
+# of the bay and every drawn mission ran in the EAST half.
+#
+# Only navigation.start/goal change. The people, the exchange, the walk
+# routes and the fleet are exactly the generated 8-person, 3-AMR
+# scenario, so nothing about the scene is tuned to produce an encounter
+# -- the mission is simply pointed at where the people already are.
+#
+# Why this pair, from scripts/make_scenario.py --pool:
+#
+#   carts_n3_r2c2 (+6.00, +5.32)  ->  carts_n1_r2c2 (-6.00, +5.32)
+#   14.22 m, north aisle, east to west
+#
+# The exchange runs at 52.5-62.4 s absolute (trial_start_sim_time 45 s
+# plus walk.start_at), and the AMR leaves at 45 s at 0.80 m/s, so the
+# overlap lands on:
+#
+#   N1   crosses the north aisle at x = -2.40 around t = 56.6-58.5 s
+#        and the AMR reaches x = -2.40 around t = 58 s        head-on
+#   E1   walks WEST along y = +4.66 -- inside the lane, whose centre is
+#        y = +4.215 -- from x = -3.60 to -7.10, t = 55.8-59.3 s
+#   a1   runs dock_west -> carts_n, through (-8.33, +4.19), so the ego
+#        also meets another AMR at the west end
+#
+# Run it with:
+#   ./scripts/run_scenario.sh b3 --config configs/yield_watch.yaml --hold
+base: configs/scenarios/paper_h8_a3_scr_s0001.yaml
+
+navigation:
+  start: [6.0, 5.32]
+  goal: [-6.0, 5.32]
+  # A north cart slot is entered facing south, out through its mouth.
+  goal_yaw_deg: -90.0
+
+# Floor labels on: this is for looking at. Comfort Space discs are drawn
+# live and coloured by state, the route stripes say where each walker is
+# going, and the start/goal rings say which slot is which.
+markers:
+  enabled: true
+preview:
+  enabled: true
