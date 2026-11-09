@@ -1,0 +1,6 @@
+campaign  : 2 trial(s) from results/cross_check2/manifest.txt, starting at 1, limit 1500s each
+started   : 2026-11-05T21:43:50+09:00   commit 60cf683
+21:47:11  001_campaign_h8_a3_cross_s2_b1  exit 0  196s  AMR1 SUCCESS  fleet rows 2  [1/2]
+21:51:04  002_campaign_h8_a3_cross_s2_b3  attempt 1 did not start ([ERROR] fleet Nav2 did not activate (1 of 2). Last lines:); retrying
+21:55:06  002_campaign_h8_a3_cross_s2_b3  exit 0  237s  AMR1 SUCCESS  fleet rows 2  [2/2]
+finished  : 2026-11-05T21:55:11+09:00

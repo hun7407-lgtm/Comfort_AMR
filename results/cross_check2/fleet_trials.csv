@@ -1,0 +1,5 @@
+stamp,scenario,policy,config,robot,result,deadlock_cause,legs_total,legs_done,legs_skipped,set_off_at_s,first_leg_s,travel_distance_m,observed_s,min_clearance_m,min_clearance_with,contact_s,contact_robot_s,contact_person_s,comfort_reference,worst_intrusion_m,worst_intrusion_k,worst_intrusion_into,comfort_seconds,safety_stop_s,safety_slowdown_s,safety_approach_s,min_gap_amr1_m,min_gap_fleet_m,min_gap_fleet_with,git_commit,min_clearance_t_s,worst_intrusion_t_s,worst_intrusion_bearing
+2026-11-05T21:44:52,b1,none,configs/campaign_h8_a3_cross_s2.yaml,a1,SUCCESS,,1,0,0,,,0.0,0.0,,,0.0,0.0,0.0,b3,0.0,,,0.0,0.0,0.0,0.0,,,,60cf683+,,,
+2026-11-05T21:44:52,b1,none,configs/campaign_h8_a3_cross_s2.yaml,a2,SUCCESS,,1,0,0,,,0.0,0.0,,,0.0,0.0,0.0,b3,0.0,,,0.0,0.0,0.0,0.0,,,,60cf683+,,,
+2026-11-05T21:52:01,b3,state_adaptive,configs/campaign_h8_a3_cross_s2.yaml,a1,SUCCESS,,1,0,0,,,0.0,0.0,,,0.0,0.0,0.0,b3,0.0,,,0.0,0.0,0.0,0.0,,,,60cf683+,,,
+2026-11-05T21:52:01,b3,state_adaptive,configs/campaign_h8_a3_cross_s2.yaml,a2,SUCCESS,,1,0,0,,,0.0,0.0,,,0.0,0.0,0.0,b3,0.0,,,0.0,0.0,0.0,0.0,,,,60cf683+,,,

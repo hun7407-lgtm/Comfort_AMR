@@ -1,0 +1,38 @@
+campaign  : 32 trial(s) from results/cross_h8/manifest.txt, starting at 1, limit 1500s each
+started   : 2026-11-05T22:20:03+09:00   commit 60cf683
+22:23:15  001_campaign_h8_a3_cross_s1_b1  exit 0  188s  AMR1 SUCCESS  fleet rows 1  [1/32]
+22:26:45  002_campaign_h8_a3_cross_s1_b2  exit 0  205s  AMR1 SUCCESS  fleet rows 1  [2/32]
+22:30:18  003_campaign_h8_a3_cross_s1_b3  exit 0  209s  AMR1 SUCCESS  fleet rows 1  [3/32]
+22:33:44  004_campaign_h8_a3_cross_s1_b3d  exit 0  202s  AMR1 SUCCESS  fleet rows 1  [4/32]
+22:38:47  005_campaign_h8_a3_cross_s2_b1  exit 1  298s  AMR1 DEADLOCK  fleet rows 1  [5/32]
+22:42:43  006_campaign_h8_a3_cross_s2_b2  exit 0  232s  AMR1 SUCCESS  fleet rows 1  [6/32]
+22:48:50  007_campaign_h8_a3_cross_s2_b3  attempt 1 did not start ([ERROR] Isaac Sim did not come up. Last lines:); retrying
+22:52:46  007_campaign_h8_a3_cross_s2_b3  exit 0  231s  AMR1 SUCCESS  fleet rows 1  [7/32]
+22:56:34  008_campaign_h8_a3_cross_s2_b3d  exit 0  224s  AMR1 SUCCESS  fleet rows 1  [8/32]
+22:59:48  009_campaign_h8_a3_cross_s3_b1  exit 0  190s  AMR1 SUCCESS  fleet rows 1  [9/32]
+23:03:58  010_campaign_h8_a3_cross_s3_b2  exit 0  245s  AMR1 SUCCESS  fleet rows 1  [10/32]
+23:07:56  011_campaign_h8_a3_cross_s3_b3  exit 0  233s  AMR1 SUCCESS  fleet rows 1  [11/32]
+23:11:55  012_campaign_h8_a3_cross_s3_b3d  attempt 1 did not start ([ERROR] fleet Nav2 did not activate (1 of 2). Last lines:); retrying
+23:15:44  012_campaign_h8_a3_cross_s3_b3d  exit 0  224s  AMR1 SUCCESS  fleet rows 1  [12/32]
+23:21:33  013_campaign_h8_a3_cross_s4_b1  exit 0  344s  AMR1 SUCCESS  fleet rows 1  [13/32]
+23:27:35  014_campaign_h8_a3_cross_s4_b2  exit 0  357s  AMR1 SUCCESS  fleet rows 1  [14/32]
+23:31:05  015_campaign_h8_a3_cross_s4_b3  exit 0  206s  AMR1 SUCCESS  fleet rows 1  [15/32]
+23:34:44  016_campaign_h8_a3_cross_s4_b3d  exit 0  214s  AMR1 SUCCESS  fleet rows 1  [16/32]
+23:40:33  017_campaign_h8_a3_cross_s5_b1  exit 0  345s  AMR1 SUCCESS  fleet rows 1  [17/32]
+23:46:29  018_campaign_h8_a3_cross_s5_b2  exit 1  351s  AMR1 DEADLOCK  fleet rows 1  [18/32]
+23:50:26  019_campaign_h8_a3_cross_s5_b3  exit 0  232s  AMR1 SUCCESS  fleet rows 1  [19/32]
+23:54:23  020_campaign_h8_a3_cross_s5_b3d  attempt 1 did not start ([ERROR] fleet Nav2 did not activate (1 of 2). Last lines:); retrying
+23:58:22  020_campaign_h8_a3_cross_s5_b3d  exit 0  235s  AMR1 SUCCESS  fleet rows 1  [20/32]
+00:01:42  021_campaign_h8_a3_cross_s6_b1  exit 0  196s  AMR1 SUCCESS  fleet rows 1  [21/32]
+00:05:36  022_campaign_h8_a3_cross_s6_b2  exit 0  229s  AMR1 SUCCESS  fleet rows 1  [22/32]
+00:11:59  023_campaign_h8_a3_cross_s6_b3  exit 0  378s  AMR1 SUCCESS  fleet rows 1  [23/32]
+00:15:52  024_campaign_h8_a3_cross_s6_b3d  exit 0  228s  AMR1 SUCCESS  fleet rows 1  [24/32]
+00:19:05  025_campaign_h8_a3_cross_s7_b1  exit 0  189s  AMR1 SUCCESS  fleet rows 1  [25/32]
+00:22:35  026_campaign_h8_a3_cross_s7_b2  exit 0  206s  AMR1 SUCCESS  fleet rows 1  [26/32]
+00:28:34  027_campaign_h8_a3_cross_s7_b3  exit 0  355s  AMR1 SUCCESS  fleet rows 1  [27/32]
+00:32:00  028_campaign_h8_a3_cross_s7_b3d  exit 0  202s  AMR1 SUCCESS  fleet rows 1  [28/32]
+00:35:15  029_campaign_h8_a3_cross_s8_b1  exit 0  191s  AMR1 SUCCESS  fleet rows 1  [29/32]
+00:38:46  030_campaign_h8_a3_cross_s8_b2  exit 0  206s  AMR1 SUCCESS  fleet rows 1  [30/32]
+00:42:13  031_campaign_h8_a3_cross_s8_b3  exit 0  203s  AMR1 SUCCESS  fleet rows 1  [31/32]
+00:45:50  032_campaign_h8_a3_cross_s8_b3d  exit 0  213s  AMR1 SUCCESS  fleet rows 1  [32/32]
+finished  : 2026-11-06T00:45:54+09:00

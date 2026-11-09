@@ -1,0 +1,4 @@
+campaign  : 1 trial(s) from results/cross_check/manifest.txt, starting at 1, limit 1500s each
+started   : 2026-11-05T21:33:31+09:00   commit 60cf683
+21:40:12  001_campaign_h8_a3_cross_s2_b3  exit 1  396s  AMR1 DEADLOCK  fleet rows 1  [1/1]
+finished  : 2026-11-05T21:40:16+09:00

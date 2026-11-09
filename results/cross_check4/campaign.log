@@ -1,0 +1,5 @@
+campaign  : 2 trial(s) from results/cross_check4/manifest.txt, starting at 1, limit 1500s each
+started   : 2026-11-05T22:11:22+09:00   commit 60cf683
+22:15:13  001_campaign_h8_a3_cross_s2_b3  exit 0  226s  AMR1 SUCCESS  fleet rows 1  [1/2]
+22:19:06  002_campaign_h8_a3_cross_s2_b2  exit 0  228s  AMR1 SUCCESS  fleet rows 1  [2/2]
+finished  : 2026-11-05T22:19:11+09:00
