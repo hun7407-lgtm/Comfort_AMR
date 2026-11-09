@@ -1,0 +1,5 @@
+b3d configs/scenarios/paper_h8_a1_scr_s0001.yaml
+b3d configs/scenarios/paper_h8_a1_scr_s0002.yaml
+b3d configs/scenarios/paper_h8_a1_scr_s0003.yaml
+b3d configs/scenarios/paper_h8_a1_scr_s0004.yaml
+b3d configs/scenarios/paper_h8_a1_scr_s0005.yaml

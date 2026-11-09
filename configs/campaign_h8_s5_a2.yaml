@@ -1,0 +1,4 @@
+# pilot_8h_v2: 2 AMRs on Nav2 (AMR1 + fleet), roundtrip, keep-right OFF (seed 5)
+base: configs/scenarios/paper_h8_a2_scr_s0005.yaml
+fleet: {driver: nav2}
+traffic_rule: {enabled: false}

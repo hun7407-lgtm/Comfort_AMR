@@ -1,0 +1,8 @@
+campaign  : 5 trial(s) from results/optionA_check/manifest.txt, starting at 1, limit 1500s each
+started   : 2026-11-05T12:48:12+09:00   commit 60cf683
+12:50:24  001_paper_h8_a1_scr_s0001_b3d  exit 0  128s  AMR1 SUCCESS  fleet rows 0  [1/5]
+12:52:34  002_paper_h8_a1_scr_s0002_b3d  exit 0  125s  AMR1 SUCCESS  fleet rows 0  [2/5]
+12:54:58  003_paper_h8_a1_scr_s0003_b3d  exit 0  140s  AMR1 SUCCESS  fleet rows 0  [3/5]
+12:57:17  004_paper_h8_a1_scr_s0004_b3d  exit 0  135s  AMR1 SUCCESS  fleet rows 0  [4/5]
+12:59:31  005_paper_h8_a1_scr_s0005_b3d  exit 0  129s  AMR1 SUCCESS  fleet rows 0  [5/5]
+finished  : 2026-11-05T12:59:35+09:00
