@@ -84,7 +84,7 @@ git commit            # 남은 hunk는 다음 커밋으로
 | rosbag (`*.db3`, `rosbag2_*/`), 점군 (`*.ply`), 패키지 (`*.deb`) | 크고, 저장소가 할 일이 아님. 그것을 만든 코드와 해석한 글이 커밋돼 있으면 됩니다 |
 | 시행별 콘솔 로그 (`results/**/logs/`) | 기계별 스크롤백. 시행의 결과는 CSV 행과 JSON입니다 |
 | 생성물 (`configs/nav2/*_map.*`, `nav2_params.yaml`) | 매 실행마다 설정에서 다시 만들어집니다. 커밋하면 낡은 사본이 설정과 어긋납니다 |
-| 영상, GIF, 스크린샷 | `results/notion/`의 작은 스틸만 예외 |
+| 영상, GIF, 스크린샷 | `results/notion/`의 작은 스틸, 그리고 보고서가 인용하는 그래프(`results/**/figures/*.png`, 바로 아래 것만)만 예외. 그래프는 REPORT.md를 GitHub에서 읽을 수 있게 같이 둡니다. `figures/plan/`의 원본 렌더와 그 밖의 스크린샷은 넣지 않습니다 |
 | 기계별 경로 (`scripts/local_env.sh`) | |
 | 자산 사본 (`... copy.usd`) | |
 
