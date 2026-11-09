@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tables and figures for a campaign folder.
 
-    python3 scripts/report_campaign.py --dir results/campaign_261105
+    python3 scripts/report_campaign.py --dir results/batches/261105_fleet_patterns_keepright
 
 Reads trials.csv (AMR1, one row per trial), fleet_trials.csv (one row
 per fleet vehicle per trial) and the trial JSON details, classifies

@@ -1,0 +1,1 @@
+b3 configs/campaigns/cross/campaign_h8_a3_cross_s2.yaml --fleet-tail 150

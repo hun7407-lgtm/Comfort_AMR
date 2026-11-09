@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Tables and figures for a policy x AMR-count ladder (pilot_8h_v2 and alike).
+"""Tables and figures for a policy x AMR-count ladder (261105_MAIN_pilot_policy_x_amrs_seeds1-8 and alike).
 
-    python3 scripts/report_pilot.py --dir results/pilot_8h_v2
+    python3 scripts/report_pilot.py --dir results/batches/261105_MAIN_pilot_policy_x_amrs_seeds1-8
 
 Reads <dir>/trials.csv (AMR1), <dir>/fleet_trials.csv (the other AMRs)
 and <dir>/logs/*.log (per-person closest approach, which the csv does

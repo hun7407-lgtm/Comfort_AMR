@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Interaction figures for the cross_h8 campaign (three AMRs that meet).
+"""Interaction figures for the 261105_cross_seeds1-8 campaign (three AMRs that meet).
 
 Reads the trial logs (AMR1 progress lines every 2 s, fleet position lines
 every 2 s with the gap to AMR1) and the two csv files, and writes
@@ -13,7 +13,7 @@ every 2 s with the gap to AMR1) and the two csv files, and writes
   P11_by_condition.png  outcome by which north belt worker walks out (N1/N2/N3)
   cross_tables.md       the numbers behind all three
 
-Usage: python3 scripts/cross_figures.py --dir results/cross_h8
+Usage: python3 scripts/cross_figures.py --dir results/batches/261105_cross_seeds1-8
 """
 from __future__ import annotations
 

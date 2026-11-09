@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Merge several campaign result folders into one, for a combined report.
 
-    python3 scripts/merge_campaigns.py --out results/cross_h8_all \
-        results/cross_h8 results/cross_h8_x100
+    python3 scripts/merge_campaigns.py --out results/batches/261107_MAIN_cross_seeds1-33_merged \
+        results/batches/261105_cross_seeds1-8 results/batches/261106_cross_seeds9-33
 
 Concatenates trials.csv and fleet_trials.csv (one header), copies the
 manifests and campaign logs under their folder's name, and symlinks every

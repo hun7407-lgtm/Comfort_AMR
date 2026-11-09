@@ -844,7 +844,7 @@ comfort_space:
     # state_adaptive station_engaged radius, 0.60, so B3 and B3-D leave
     # the same room behind a belt worker and differ only in the sides
     # and the front. Changed 2026-11-05 from F 0.70 S 0.80 R 0.95, which
-    # had the standing rule applied to a worker; the campaign_261105
+    # had the standing rule applied to a worker; the 261105_fleet_patterns_keepright
     # B3-D rows were measured under the old values.
     station_engaged:
       front_m: 0.80

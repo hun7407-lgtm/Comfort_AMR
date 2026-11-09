@@ -590,7 +590,7 @@ class Nav2Trial(Node):
 # itself reports SUCCEEDED and the trial still counts as reached. Nav2's
 # goal checker already uses that tolerance; this script measures the
 # distance again from /tf a moment later, and the two readings differ by
-# millimetres (the robot is creeping to a stop). Three campaign_261105
+# millimetres (the robot is creeping to a stop). Three 261105_fleet_patterns_keepright
 # trials ended 0.250-0.264 m from the goal with Nav2 SUCCEEDED and no
 # deadlock, and were labelled DEADLOCK for it. A disagreement larger than
 # this is a defect in one of the two measurements and is reported as
@@ -888,7 +888,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
         # aligning the final heading), not stuck: Nav2 then reports
         # SUCCEEDED or not, and that result is what decides the trial.
         # Without this hold the twelve-second rule raced Nav2's own
-        # "Reached the goal!" and lost by 20 ms (cross_h8 check, seed 2,
+        # "Reached the goal!" and lost by 20 ms (261105_cross_seeds1-8 check, seed 2,
         # 2026-11-05: 0.23 m from the goal, declared a deadlock).
         if distance <= node.tolerance + GOAL_POSE_SLACK_M:
             last_progress_t = now

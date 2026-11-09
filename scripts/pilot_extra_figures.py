@@ -9,7 +9,7 @@ P8  AMR1 traces for one seed under every policy, read from the 2 s
     over the aisles and crossings with the walkers' scripted routes.
 
 Usage:
-  python3 scripts/pilot_extra_figures.py --dir results/pilot_8h_v2 --trace-seed 7
+  python3 scripts/pilot_extra_figures.py --dir results/batches/261105_MAIN_pilot_policy_x_amrs_seeds1-8 --trace-seed 7
 """
 from __future__ import annotations
 

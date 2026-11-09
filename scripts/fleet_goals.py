@@ -180,7 +180,7 @@ class Yardstick:
         # A position line every 2 s once the vehicle is working, the same
         # cadence as AMR1's progress lines, so a trial can be drawn
         # afterwards from the log alone (scripts/pilot_extra_figures.py).
-        # Added 2026-11-05 for the cross_h8 campaign; logging only.
+        # Added 2026-11-05 for the 261105_cross_seeds1-8 campaign; logging only.
         if self.travel_m > 0.05 and \
                 now - getattr(self, "_trace_t", -math.inf) >= 2.0:
             self._trace_t = now

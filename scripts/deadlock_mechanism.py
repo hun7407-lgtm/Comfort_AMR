@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Sort every AMR1 trial that did not reach its goal by HOW it stopped.
 
-    python3 scripts/deadlock_mechanism.py --dir results/cross_h8_all
+    python3 scripts/deadlock_mechanism.py --dir results/batches/261107_MAIN_cross_seeds1-33_merged
 
 Reads <dir>/trials.csv and the trial logs' 2 s trace lines. One row per
 failed trial with:
