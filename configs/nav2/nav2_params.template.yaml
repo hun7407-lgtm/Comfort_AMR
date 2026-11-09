@@ -34,7 +34,7 @@ bt_navigator:
   ros__parameters:
     global_frame: map
     robot_base_frame: ${BASE_FRAME}
-    odom_topic: /odom
+    odom_topic: ${ODOM_TOPIC}
     bt_loop_duration: 10
     default_server_timeout: 20
     wait_for_service_timeout: 1000
@@ -94,12 +94,12 @@ controller_server:
       decel_lim_x: -1.0
       decel_lim_y: 0.0
       decel_lim_theta: -2.0
-      vx_samples: 20
+      vx_samples: ${VX_SAMPLES}
       vy_samples: 5
-      vtheta_samples: 20
-      sim_time: 1.7
-      linear_granularity: 0.05
-      angular_granularity: 0.025
+      vtheta_samples: ${VTHETA_SAMPLES}
+      sim_time: ${SIM_TIME}
+      linear_granularity: ${LINEAR_GRANULARITY}
+      angular_granularity: ${ANGULAR_GRANULARITY}
       transform_tolerance: 0.2
       xy_goal_tolerance: ${XY_TOLERANCE}
       trans_stopped_velocity: 0.25
@@ -108,13 +108,18 @@ controller_server:
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign",
                 "PathAlign", "PathDist", "GoalDist"]
       BaseObstacle.scale: ${BASE_OBSTACLE_SCALE}
-      PathAlign.scale: 32.0
+      # Sum the cost along the trajectory instead of reading the final
+      # pose only. DWB's default of false cannot see a Comfort Space
+      # that the trajectory crosses and leaves. See
+      # comfort_core/nav2_tuning.py:base_obstacle_sum_scores.
+      BaseObstacle.sum_scores: ${BASE_OBSTACLE_SUM_SCORES}
+      PathAlign.scale: ${PATH_ALIGN_SCALE}
       PathAlign.forward_point_distance: 0.1
-      GoalAlign.scale: 24.0
+      GoalAlign.scale: ${GOAL_ALIGN_SCALE}
       GoalAlign.forward_point_distance: 0.1
-      PathDist.scale: 32.0
-      GoalDist.scale: 24.0
-      RotateToGoal.scale: 32.0
+      PathDist.scale: ${PATH_DIST_SCALE}
+      GoalDist.scale: ${GOAL_DIST_SCALE}
+      RotateToGoal.scale: ${ROTATE_TO_GOAL_SCALE}
       RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -1.0
 
@@ -149,7 +154,7 @@ behavior_server:
       plugin: "nav2_behaviors::DriveOnHeading"
     wait:
       plugin: "nav2_behaviors::Wait"
-    local_frame: odom
+    local_frame: ${ODOM_FRAME}
     global_frame: map
     robot_base_frame: ${BASE_FRAME}
     transform_tolerance: 0.1
@@ -163,7 +168,7 @@ local_costmap:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: odom
+      global_frame: ${ODOM_FRAME}
       robot_base_frame: ${BASE_FRAME}
       rolling_window: true
       width: 6
@@ -193,17 +198,17 @@ local_costmap:
       # Filters run after the plugins, so the Comfort Space cost is not
       # inflated a second time and the painted radius is the radius the
       # planner sees.
-      filters: ["comfort_filter"]
+      filters: ${COSTMAP_FILTERS}
       comfort_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True
         filter_info_topic: "/costmap_filter_info"
-      obstacle_layer:
+${TRAFFIC_FILTER_BLOCK}      obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: ${SCAN_TOPIC}
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -216,9 +221,9 @@ local_costmap:
           # corridor with no scan return within 0.45 m of it, and the AMR
           # braked from 0.40 to 0.20 m/s on its way past.
           inf_is_valid: True
-          raytrace_max_range: 8.0
+          raytrace_max_range: ${RAYTRACE_MAX_RANGE}
           raytrace_min_range: 0.0
-          obstacle_max_range: 6.0
+          obstacle_max_range: ${OBSTACLE_MAX_RANGE}
           obstacle_min_range: 0.0
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -242,12 +247,12 @@ global_costmap:
       track_unknown_space: false
       footprint: "${FOOTPRINT}"
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
-      filters: ["comfort_filter"]
+      filters: ${COSTMAP_FILTERS}
       comfort_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True
         filter_info_topic: "/costmap_filter_info"
-      static_layer:
+${TRAFFIC_FILTER_BLOCK}      static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
       obstacle_layer:
@@ -255,7 +260,7 @@ global_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: ${SCAN_TOPIC}
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -268,9 +273,9 @@ global_costmap:
           # corridor with no scan return within 0.45 m of it, and the AMR
           # braked from 0.40 to 0.20 m/s on its way past.
           inf_is_valid: True
-          raytrace_max_range: 8.0
+          raytrace_max_range: ${RAYTRACE_MAX_RANGE}
           raytrace_min_range: 0.0
-          obstacle_max_range: 6.0
+          obstacle_max_range: ${OBSTACLE_MAX_RANGE}
           obstacle_min_range: 0.0
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -281,7 +286,7 @@ global_costmap:
 collision_monitor:
   ros__parameters:
     base_frame_id: ${BASE_FRAME}
-    odom_frame_id: odom
+    odom_frame_id: ${ODOM_FRAME}
     # Sits after the Comfort Space gate, so it is the last thing between
     # navigation and the wheels. See navigation.collision_monitor in
     # configs/common.yaml for why the order is that way round.
@@ -318,7 +323,7 @@ collision_monitor:
     # 0.40 m/s: reaction 0.10 m + braking 0.08 m + margin 0.25 m =
     # 0.43 m, which is 1.07 s of travel. It was 0.90 s (0.36 m) and B1
     # made contact with people in all three bays.
-    polygons: ["ProtectiveStop", "FootprintApproach"]
+    polygons: ["ProtectiveStop", "Slowdown", "FootprintApproach"]
     ProtectiveStop:
       type: "velocity_polygon"
       action_type: "stop"
@@ -360,10 +365,22 @@ collision_monitor:
         linear_max: 4.0
         theta_min: -3.0
         theta_max: 3.0
+    # The warning field. Derived in scripts/generate_nav2_params.py
+    # from the same stopping-distance sum, plus the walking approach
+    # speed; see navigation.collision_monitor.slowdown in
+    # configs/common.yaml. A stop inside ProtectiveStop still wins.
+    Slowdown:
+      type: "polygon"
+      action_type: "slowdown"
+      slowdown_ratio: ${CM_SLOWDOWN_RATIO}
+      points: "${CM_FIELD_SLOWDOWN}"
+      min_points: ${CM_MIN_POINTS}
+      visualize: False
+      enabled: ${CM_SLOWDOWN_ENABLED}
     FootprintApproach:
       type: "polygon"
       action_type: "approach"
-      footprint_topic: "/local_costmap/published_footprint"
+      footprint_topic: "${FOOTPRINT_TOPIC}"
       time_before_collision: ${CM_TIME_BEFORE_COLLISION}
       simulation_time_step: ${CM_SIM_STEP}
       min_points: ${CM_MIN_POINTS}
@@ -372,7 +389,7 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: /scan
+      topic: ${SCAN_TOPIC}
       min_height: ${SCAN_MIN_HEIGHT}
       max_height: ${SCAN_MAX_HEIGHT}
       enabled: True

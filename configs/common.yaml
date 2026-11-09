@@ -1349,6 +1349,97 @@ navigation:
   # what the hub motors do.
   max_angular_speed: 2.0
 
+  # How far the obstacle layer marks and raytrace-clears.
+  #
+  # This bounds the Comfort Space as well, and not obviously. A
+  # CostmapFilter does not widen the costmap's update bounds itself, so a
+  # mask painted further out than the obstacle layer reaches never
+  # arrives at all. Measured on the real AMR: a mask correctly published
+  # at x=5.28 left the costmap reading 0 there, while the same mask at
+  # x=2.24 came through at 96.
+  #
+  # These are the simulated LiDAR's figures. The real machine reaches
+  # 12 m and sets its own.
+  observation:
+    obstacle_max_range: 6.0
+    raytrace_max_range: 8.0
+
+  # DWB settings that the simulated and the real AMR have to share.
+  #
+  # Both robots run stock DWB, but they cannot share a parameter file --
+  # different ROS distros, different plugin name syntax, and Humble has
+  # no `navigators:` block at all. comfort_core/nav2_tuning.py holds the
+  # arithmetic instead, and both parameter generators call it, so the two
+  # machines get different numbers out of the same formula. They are
+  # different sizes and drive at different speeds; identical numbers
+  # would be the bug, not the goal.
+  dwb:
+    # The trajectory generator. The scale derivation below reads these,
+    # so they live here rather than as literals in the template.
+    sim_time: 1.7
+    linear_granularity: 0.05
+    angular_granularity: 0.025
+    vx_samples: 20
+    vtheta_samples: 20
+
+    # Critic weights. Nav2's defaults, kept explicit because the
+    # BaseObstacle derivation is stated in terms of them.
+    path_dist_scale: 32.0
+    path_align_scale: 32.0
+    goal_dist_scale: 24.0
+    goal_align_scale: 24.0
+    rotate_to_goal_scale: 32.0
+
+    # Inflation decay. Higher means cost falls off faster with distance,
+    # which leaves a clearer low-cost channel down the middle of a
+    # narrow gap. At DWB's default 3.0 the cost from two facing
+    # obstacles overlapped across the whole opening and there was no
+    # good trajectory to pick.
+    cost_scaling_factor: 5.0
+
+    # Inflation reach. Derived from the clearance radius unless pinned.
+    # Pin it where the CORRIDOR, not the robot, sets the limit: the real
+    # AMR's 2.2 m corridor takes 0.35 m rather than the derived 0.385,
+    # which leaves a 6.5 cm decay band outside its 0.285 m inscribed
+    # radius and no more. Below the inscribed radius the cost is lethal
+    # whatever this says, so the module floors it there.
+    inflation_radius: null
+
+    # The critic that reads the Comfort Space, and the only one that
+    # does: BaseObstacle is what turns the painted mask into a reason to
+    # steer. Everything else in the list is about the path and the goal.
+    base_obstacle:
+      # DWB's default is false, and dwb_critics/base_obstacle.hpp says
+      # what false means -- the critic returns "either the final pose's
+      # cost, or the sum of all poses, depending on the sum_scores
+      # parameter". The final pose only.
+      #
+      # So a trajectory that drives straight through a Comfort Space and
+      # ends outside it scored ZERO. The simulated horizon reaches
+      # 1.7 s x 0.8 m/s = 1.36 m, further than a Comfort Space is wide,
+      # which made crossing one free. That is why the costmap
+      # contribution was not visible in the local controller's choices
+      # and why a separate gate had to hold the wheels instead.
+      #
+      # Summing makes the cost rise with how deep the trajectory goes
+      # and how long it stays -- the graded response the Comfort Space
+      # is for.
+      sum_scores: true
+
+      # How much more a full traversal of someone's Comfort Space costs
+      # than driving around it. The scale is solved from this; see
+      # comfort_core/nav2_tuning.py:base_obstacle_scale for the
+      # derivation and the header lines it was checked against.
+      #
+      # 1.5 rather than a large number on purpose. Avoidance has to win
+      # when there is room, and when there is none the robot must still
+      # prefer a shallow clip to standing in the aisle forever -- the
+      # collision monitor, not this critic, is what keeps it off people.
+      avoid_margin: 1.5
+
+      # Set a number here to pin the scale and skip the derivation.
+      scale: null
+
   # Proportional gains for the STEP 5 go-to-goal controller. This
   # controller is a placeholder: PHASE D replaces it with Nav2.
   k_linear: 0.8
@@ -1461,6 +1552,32 @@ navigation:
     # Laser returns needed inside the zone before it acts, which keeps a
     # single stray point from halting the robot.
     min_points: 5
+    # The warning field in front of the protective one: anything inside
+    # it slows the robot to slowdown_ratio of what Nav2 asked for,
+    # instead of stopping it. Real AMRs carry one for the same reason
+    # the standard allows it -- a vehicle that only has a stop field
+    # either stops late or stops for everything.
+    #
+    # DERIVED, like the stop fields. The ratio is the existing mid
+    # speed band (0.60 of cruise), so slowing drops the vehicle into
+    # the protective field already sized for that band. The reach is
+    # what the vehicle covers while it gets there, plus what a person
+    # walking towards it covers in the same time:
+    #
+    #     reaction * v  +  (v^2 - v_mid^2) / (2 * decel)   vehicle
+    #   + approach_speed * (reaction + (v - v_mid) / decel) person
+    #   + protective field at v_mid
+    #
+    # The person's share uses ISO 13855's walking approach speed; it
+    # is the one constant here that is not the vehicle's own, and it
+    # is the standard's number, not a guess.
+    #
+    # On and the same for every policy, so it changes none of the
+    # comparisons -- but it does change the robot's behaviour against
+    # every earlier recording, which were made without it.
+    slowdown:
+      enabled: true
+      approach_speed: 1.6      # m/s, ISO 13855 walking approach speed K
 
 
 # ---------------------------------------------------------------

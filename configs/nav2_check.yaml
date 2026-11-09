@@ -1,0 +1,50 @@
+# Does the Comfort Space costmap steer Nav2 on its own?
+#
+# A verification overlay, not an experiment condition. It answers one
+# question that the audit could not answer by reading configs: with the
+# yield gate out of the loop, does the painted Comfort Space change the
+# trajectory DWB picks?
+#
+# Why it has to be asked. BaseObstacle is the only critic that reads the
+# costmap, and dwb_critics/base_obstacle.hpp says that with sum_scores
+# off it returns "either the final pose's cost, or the sum of all poses"
+# -- the final pose only. The simulated horizon reaches 1.7 s x 0.8 m/s
+# = 1.36 m, further than a Comfort Space is wide, so a trajectory that
+# crossed one and ended clear of it scored nothing. The costmap was
+# published, filtered and visible, and the local controller still had no
+# reason to steer. configs/common.yaml now turns summing on and derives
+# the scale against it; this overlay is how that gets looked at.
+#
+# The gate is off so that what is seen is the costmap and nothing else.
+# It is NOT a claim that the gate should be removed -- that is what the
+# comparison is for, and the gate's code and config are untouched.
+#
+# Measured on the same mission before this existed, for reference:
+#   B3 with the gate    1.33 m travelled, DEADLOCK, 31.2 s yielding
+#   B1 with no comfort  13.75 m of 14.22 m, nearest person -0.047 m
+base: configs/scenarios/paper_h8_a3_scr_s0001.yaml
+
+comfort_space:
+  yield:
+    # The whole point of this overlay.
+    enabled: false
+
+  visualization:
+    enabled: true
+
+  costmap:
+    enabled: true
+
+navigation:
+  # Along the lane the belt workers stand beside, which is where the
+  # Comfort Space actually reaches into the robot's channel. The batch's
+  # own missions passed no closer than 0.808 m and so never tested this.
+  start: [6.0, 5.32]
+  goal: [-6.0, 5.32]
+  goal_yaw_deg: -90.0
+
+preview:
+  enabled: true
+
+markers:
+  enabled: true

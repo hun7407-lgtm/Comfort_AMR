@@ -9,6 +9,15 @@ genuinely Nav2's business; everything shared comes from here.
 
     ./scripts/generate_nav2_params.py
     ./scripts/generate_nav2_params.py --config configs/demo_weave.yaml
+    ./scripts/generate_nav2_params.py --config configs/fleet_nav2.yaml --namespace a1
+
+With --namespace the same template is rendered for one fleet AMR: its
+frames carry the prefix (a1/odom, a1/base_footprint), its topics the
+namespace (/a1/scan, /a1/odom), and the whole file is nested under the
+namespace key, which is how a node at /a1/controller_server finds its
+parameters. Every number is the same formula as AMR1 --
+they are the same vehicle. The Comfort Space filter topic is left
+global on purpose: one mask, published once, read by every robot.
 """
 
 from __future__ import annotations
@@ -22,6 +31,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from comfort_core import load_config, nav2_map, resolve_path
+from comfort_core import nav2_tuning
+from comfort_core.frames import namespaced_topic, prefixed
 
 
 def default_template(cfg) -> str:
@@ -36,31 +47,38 @@ def main() -> int:
     parser.add_argument("--template", default=None,
                         help="parameter template; defaults to the one this "
                              "config asks for (2D unless it says otherwise)")
-    parser.add_argument("--out", default="configs/nav2/nav2_params.yaml")
+    parser.add_argument("--out", default=None,
+                        help="defaults to configs/nav2/nav2_params.yaml, or "
+                             "nav2_params_<namespace>.yaml with --namespace")
+    parser.add_argument("--namespace", default="",
+                        help="render for one fleet AMR (e.g. a1) instead of "
+                             "AMR1")
     parser.add_argument("--map", default=None,
                         help="map yaml; defaults to the one for this scene")
     args = parser.parse_args()
 
     cfg = load_config(common_path=args.config)
     nav = cfg["navigation"]
-    amr = cfg["amr"]
+    ns = args.namespace.strip("/")
+    if ns and ns not in cfg.get("fleet", {}).get("amrs", {}):
+        print(f"[ERROR] {args.config} has no fleet AMR called {ns!r}",
+              file=sys.stderr)
+        return 1
+    frames = cfg["ros"]["frames"]
+    topics = cfg["ros"]["topics"]
+    traffic = cfg.get("traffic_rule", {}) or {}
+    traffic_on = bool(traffic.get("enabled", False))
 
-    half_len = float(amr["footprint_length"]) / 2.0
-    half_wid = float(amr["footprint_width"]) / 2.0
-    footprint = (f"[[{half_len:.3f}, {half_wid:.3f}], [{half_len:.3f}, {-half_wid:.3f}], "
-                 f"[{-half_len:.3f}, {-half_wid:.3f}], [{-half_len:.3f}, {half_wid:.3f}]]")
+    half_len, half_wid = nav2_tuning.half_extents(cfg)
+    footprint = nav2_tuning.footprint_polygon(cfg)
 
-    # Inflation has to reach past the robot's inscribed radius or the
-    # planner will happily clip a corner, but a large radius makes it
-    # shy away from gaps it could actually use.
-    #
-    # Set to exactly the clearance comfort_core.layout.robot_clearance_radius
-    # uses, so "the geometry says this gap is passable" and "Nav2 will
-    # drive through this gap" mean the same thing. An earlier version
-    # added the margin twice; Nav2 then refused gaps the passage check
-    # had declared open, and the robot stalled beside an obstacle it had
-    # room to pass.
-    inflation = half_wid + float(nav.get("passage_margin", 0.10))
+    # Inflation, the DWB horizon, the critic weights and the observation
+    # ranges all come from comfort_core/nav2_tuning.py, which the real
+    # AMR's generator calls as well. Two robots, one formula.
+    inflation = nav2_tuning.inflation_radius(cfg)
+    horizon = nav2_tuning.dwb_horizon(cfg)
+    scales = nav2_tuning.critic_scales(cfg)
+    obstacle_range, raytrace_range = nav2_tuning.observation_ranges(cfg)
 
     map_path = resolve_path(args.map or nav2_map(cfg))
     if not map_path.is_file():
@@ -104,8 +122,9 @@ def main() -> int:
     # What a standing vehicle keeps clear: the scanner's own error, and
     # nothing else. See CM_FIELD_STOPPED below.
     restart = float(cm.get("restart_margin", tolerance))
+    band_mid = 0.60
     v_slow = v_cruise * 0.25
-    v_mid = v_cruise * 0.60
+    v_mid = v_cruise * band_mid
 
     def reach(v: float) -> float:
         """How far ahead of the footprint the field has to extend."""
@@ -126,6 +145,19 @@ def main() -> int:
         front, back = (half_len, -far) if backward else (far, -half_len)
         return (f"[[{front:.3f}, {sy:.3f}], [{front:.3f}, {-sy:.3f}], "
                 f"[{back:.3f}, {-sy:.3f}], [{back:.3f}, {sy:.3f}]]")
+    # The warning field. Slowing to the mid band's top speed puts the
+    # vehicle inside the protective field sized for that band, so the
+    # field has to reach as far as it travels while slowing, as far as
+    # a walking person closes in the meantime, and the mid-band stop
+    # field beyond that. configs/common.yaml has the derivation.
+    slow_cfg = cm.get("slowdown", {}) or {}
+    slowdown_on = bool(slow_cfg.get("enabled", False))
+    approach = float(slow_cfg.get("approach_speed", 1.6))
+    t_slow = reaction + (v_cruise - v_mid) / decel
+    slowdown_reach = (reaction * v_cruise
+                      + (v_cruise ** 2 - v_mid ** 2) / (2.0 * decel)
+                      + approach * t_slow
+                      + reach(v_mid))
     voxel = cfg.get("nav2", {}).get("voxel", {})
     max_wait = float(cfg.get("comfort_space", {}).get("yield", {})
                      .get("evade", {}).get("max_wait_seconds", 20.0))
@@ -170,6 +202,12 @@ def main() -> int:
                              f"[{half_len + restart:.3f}, {-sy:.3f}], "
                              f"[{-half_len:.3f}, {-sy:.3f}], "
                              f"[{-half_len:.3f}, {sy:.3f}]]"),
+        "CM_SLOWDOWN_ENABLED": "True" if slowdown_on else "False",
+        "CM_SLOWDOWN_RATIO": f"{band_mid:.2f}",
+        "CM_FIELD_SLOWDOWN": (f"[[{slowdown_reach:.3f}, {sy:.3f}], "
+                              f"[{slowdown_reach:.3f}, {-sy:.3f}], "
+                              f"[{-half_len:.3f}, {-sy:.3f}], "
+                              f"[{-half_len:.3f}, {sy:.3f}]]"),
         "CM_TIME_BEFORE_COLLISION": f"{approach_time:.2f}",
         "CM_SIM_STEP": f"{float(cm.get('simulation_time_step', 0.1)):.2f}",
         "CM_MIN_POINTS": str(int(cm.get("min_points", 5))),
@@ -177,7 +215,29 @@ def main() -> int:
         "SCAN_MAX_HEIGHT": f"{float(cfg['ros']['scan']['max_height']):.2f}",
         "GLOBAL_UPDATE_HZ": "3.0",
         "MAP_YAML": str(map_path),
-        "BASE_FRAME": cfg["ros"]["frames"]["base"],
+        "BASE_FRAME": prefixed(ns, frames["base"]),
+        "ODOM_FRAME": prefixed(ns, frames["odom"]),
+        "ODOM_TOPIC": namespaced_topic(ns, topics["odom"]),
+        "SCAN_TOPIC": namespaced_topic(ns, topics["scan"]),
+        "FOOTPRINT_TOPIC": namespaced_topic(
+            ns, "/local_costmap/published_footprint"),
+        # Keep right: a second filter per robot, reading that robot's
+        # own mask. Listed only when the rule is on.
+        "COSTMAP_FILTERS": ('["comfort_filter", "traffic_filter"]'
+                            if traffic_on else '["comfort_filter"]'),
+        # The filter's own block is rendered only when the rule is on,
+        # so an off rule leaves the file byte-identical to before it
+        # existed.
+        "TRAFFIC_FILTER_BLOCK": (
+            "      # Keep right (traffic_rule in configs/common.yaml): a second\n"
+            "      # filter reading this robot's own mask.\n"
+            "      traffic_filter:\n"
+            "        plugin: \"nav2_costmap_2d::KeepoutFilter\"\n"
+            "        enabled: True\n"
+            "        filter_info_topic: \""
+            + namespaced_topic(ns, "/" + str(traffic.get("info_topic", "traffic_filter_info")))
+            + "\"\n"
+        ) if traffic_on else "",
         "FOOTPRINT": footprint,
         "MAX_VEL_X": f"{float(nav['max_linear_speed']):.3f}",
         "MAX_VEL_THETA": f"{float(nav['max_angular_speed']):.3f}",
@@ -210,16 +270,29 @@ def main() -> int:
         "YAW_TOLERANCE": ("3.15" if nav.get("goal_yaw_deg") is None
                           else f"{float(nav.get('goal_yaw_tolerance', 0.35)):.2f}"),
         "INFLATION_RADIUS": f"{inflation:.3f}",
-        # Higher means cost falls off faster with distance, which leaves a
-        # clearer low-cost channel down the middle of a narrow gap. At the
-        # default 3.0 the cost from two facing obstacles overlapped across
-        # the whole opening and DWB had no good trajectory to pick.
-        "COST_SCALING": "5.0",
-        # DWB's obstacle critic. The Nav2 default of 0.02 barely
-        # influences the choice, so the robot drifts to whichever side the
-        # path happens to hug and then cannot recover. Weighting it enough
-        # to matter keeps the robot near the middle of a gap.
-        "BASE_OBSTACLE_SCALE": "0.2",
+        "COST_SCALING": f"{nav2_tuning.cost_scaling_factor(cfg):.1f}",
+        "OBSTACLE_MAX_RANGE": f"{obstacle_range:.1f}",
+        "RAYTRACE_MAX_RANGE": f"{raytrace_range:.1f}",
+        "SIM_TIME": f"{horizon['sim_time']:.2f}",
+        "LINEAR_GRANULARITY": f"{horizon['linear_granularity']:.3f}",
+        "ANGULAR_GRANULARITY": f"{horizon['angular_granularity']:.3f}",
+        "VX_SAMPLES": str(horizon["vx_samples"]),
+        "VTHETA_SAMPLES": str(horizon["vtheta_samples"]),
+        # DWB's obstacle critic, the only one that reads the Comfort
+        # Space. Derived, not set: it has to be solved against the
+        # trajectory horizon, which is speed-dependent, so the simulated
+        # and the real AMR need different numbers to behave the same way.
+        # comfort_core/nav2_tuning.py:base_obstacle_scale has the
+        # derivation and the dwb_critics header lines it was checked
+        # against.
+        "BASE_OBSTACLE_SCALE": f"{scales['BaseObstacle.scale']:.6f}",
+        "BASE_OBSTACLE_SUM_SCORES": (
+            "True" if nav2_tuning.base_obstacle_sum_scores(cfg) else "False"),
+        "PATH_DIST_SCALE": f"{scales['PathDist.scale']:.1f}",
+        "PATH_ALIGN_SCALE": f"{scales['PathAlign.scale']:.1f}",
+        "GOAL_DIST_SCALE": f"{scales['GoalDist.scale']:.1f}",
+        "GOAL_ALIGN_SCALE": f"{scales['GoalAlign.scale']:.1f}",
+        "ROTATE_TO_GOAL_SCALE": f"{scales['RotateToGoal.scale']:.1f}",
     }
 
     template_path = resolve_path(args.template or default_template(cfg))
@@ -230,18 +303,32 @@ def main() -> int:
         print(f"[ERROR] template uses ${exc.args[0]} but nothing supplies it", file=sys.stderr)
         return 1
 
-    out_path = resolve_path(args.out)
+    if ns:
+        # One level deeper, under the namespace: the same thing
+        # nav2_bringup's RewrittenYaml(root_key=...) does at launch time,
+        # done here so the file on disk is the file Nav2 reads.
+        rendered = f"{ns}:\n" + "".join(
+            ("  " + line) if line.strip() else line
+            for line in rendered.splitlines(keepends=True))
+
+    out = args.out or (f"configs/nav2/nav2_params_{ns}.yaml" if ns
+                       else "configs/nav2/nav2_params.yaml")
+    out_path = resolve_path(out)
     out_path.write_text(
         "# GENERATED FILE. Do not edit.\n"
         f"# Written by scripts/generate_nav2_params.py from {args.config}\n"
         f"# and {template_path.name}. Edit those instead.\n"
+        + (f"# Fleet AMR {ns}: prefixed frames, namespaced topics.\n" if ns else "")
         + rendered,
         encoding="utf-8",
     )
 
     print(f"wrote {out_path}")
+    print(nav2_tuning.summary(
+        cfg, f"fleet AMR {ns}, from {args.config}" if ns
+        else f"simulated AMR, from {args.config}"))
     for k, v in values.items():
-        print(f"      {k:18s} = {v}")
+        print(f"      {k:24s} = {v}")
     return 0
 
 

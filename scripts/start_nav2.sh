@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# NOT how either robot starts Nav2. Imported reference, kept for
+# provenance; it loads configs/nav2/amr_nav2_params.yaml, which has no
+# Comfort Space filter.
+#
+#   simulated AMR   ./scripts/run_nav2.sh  (regenerates the params)
+#   real AMR        ~/start_nav2.sh on the robot
+#
+# See docs/NAV2.md section 5b.
 
 # ---------------------------------------------------------------
 # Adapted from: https://github.com/dongtak2/AMR-Digital-Twin

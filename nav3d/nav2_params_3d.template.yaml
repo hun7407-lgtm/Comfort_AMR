@@ -112,12 +112,12 @@ controller_server:
       decel_lim_x: -1.0
       decel_lim_y: 0.0
       decel_lim_theta: -2.0
-      vx_samples: 20
+      vx_samples: ${VX_SAMPLES}
       vy_samples: 5
-      vtheta_samples: 20
-      sim_time: 1.7
-      linear_granularity: 0.05
-      angular_granularity: 0.025
+      vtheta_samples: ${VTHETA_SAMPLES}
+      sim_time: ${SIM_TIME}
+      linear_granularity: ${LINEAR_GRANULARITY}
+      angular_granularity: ${ANGULAR_GRANULARITY}
       transform_tolerance: 0.2
       xy_goal_tolerance: ${XY_TOLERANCE}
       trans_stopped_velocity: 0.25
@@ -126,13 +126,16 @@ controller_server:
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign",
                 "PathAlign", "PathDist", "GoalDist"]
       BaseObstacle.scale: ${BASE_OBSTACLE_SCALE}
-      PathAlign.scale: 32.0
+      # Sum the cost along the trajectory instead of reading the final
+      # pose only. See comfort_core/nav2_tuning.py.
+      BaseObstacle.sum_scores: ${BASE_OBSTACLE_SUM_SCORES}
+      PathAlign.scale: ${PATH_ALIGN_SCALE}
       PathAlign.forward_point_distance: 0.1
-      GoalAlign.scale: 24.0
+      GoalAlign.scale: ${GOAL_ALIGN_SCALE}
       GoalAlign.forward_point_distance: 0.1
-      PathDist.scale: 32.0
-      GoalDist.scale: 24.0
-      RotateToGoal.scale: 32.0
+      PathDist.scale: ${PATH_DIST_SCALE}
+      GoalDist.scale: ${GOAL_DIST_SCALE}
+      RotateToGoal.scale: ${ROTATE_TO_GOAL_SCALE}
       RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -1.0
 
@@ -243,9 +246,9 @@ local_costmap:
           # markings to the top of a person.
           min_obstacle_height: ${VOXEL_MIN_HEIGHT}
           max_obstacle_height: ${VOXEL_MAX_HEIGHT}
-          obstacle_max_range: 6.0
+          obstacle_max_range: ${OBSTACLE_MAX_RANGE}
           obstacle_min_range: 0.0
-          raytrace_max_range: 8.0
+          raytrace_max_range: ${RAYTRACE_MAX_RANGE}
           raytrace_min_range: 0.0
           # No expected_update_rate, deliberately. The RTX LiDAR's
           # publishing is not evenly spaced -- gaps of 0.5 to 1.0 s
@@ -311,9 +314,9 @@ global_costmap:
           # markings to the top of a person.
           min_obstacle_height: ${VOXEL_MIN_HEIGHT}
           max_obstacle_height: ${VOXEL_MAX_HEIGHT}
-          obstacle_max_range: 6.0
+          obstacle_max_range: ${OBSTACLE_MAX_RANGE}
           obstacle_min_range: 0.0
-          raytrace_max_range: 8.0
+          raytrace_max_range: ${RAYTRACE_MAX_RANGE}
           raytrace_min_range: 0.0
           # No expected_update_rate, deliberately. The RTX LiDAR's
           # publishing is not evenly spaced -- gaps of 0.5 to 1.0 s

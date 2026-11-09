@@ -25,7 +25,7 @@ here, at the boundary.
 from __future__ import annotations
 
 import math
-from typing import Sequence, Tuple
+from typing import Any, Dict, Sequence, Tuple
 
 Pose2D = Tuple[float, float, float]  # x, y, yaw
 
@@ -74,3 +74,60 @@ def odom_to_world(cfg, odom_pose: Pose2D) -> Pose2D:
 def world_to_odom(cfg, world_pose: Pose2D) -> Pose2D:
     """Convert a world-frame pose into the odom frame."""
     return compose(invert(odom_origin_in_world(cfg)), world_pose)
+
+
+# ---------------------------------------------------------------------------
+# One tf tree, several robots.
+#
+# The fleet AMRs share the global /tf with AMR1 and keep
+# apart by frame prefix: a1/base_link next to base_link. Topics are split
+# by ROS namespace instead: /a1/odom next to /odom. AMR1
+# has no namespace, so every name below comes back unchanged for it, and
+# its stack is the one every earlier result was measured on.
+# ---------------------------------------------------------------------------
+
+def prefixed(namespace: str, name: str) -> str:
+    """`a1/odom` for a fleet AMR, `odom` for AMR1."""
+    ns = str(namespace or "").strip("/")
+    return f"{ns}/{name}" if ns else name
+
+
+def namespaced_topic(namespace: str, topic: str) -> str:
+    """`/a1/scan` for a fleet AMR, the topic as configured otherwise.
+
+    Absolute on purpose. A relative name in a Nav2 parameter file is
+    resolved against whichever node reads it, and the costmaps are
+    nodes one namespace deeper than the server that owns them, so
+    `scan` there means `/a1/local_costmap/scan`.
+    """
+    ns = str(namespace or "").strip("/")
+    return f"/{ns}/{topic.lstrip('/')}" if ns else topic
+
+
+def fleet_spawn(cfg: Dict[str, Any], name: str) -> Pose2D:
+    """Where fleet AMR `name` spawns, and so where its odom frame sits.
+
+    The position is its `start` place. The heading faces the nearer
+    lane when the start is a cart slot -- the convention the measured
+    robot spawns with, so the vehicle drives out of the slot forwards
+    and its protective field points at open floor -- and otherwise
+    points at the first job. isaac_sim/utils/fleet.py spawns it with
+    the same call, so the static map -> a1/odom transform cannot
+    disagree with the pose physics starts from.
+    """
+    fleet = cfg["fleet"]
+    spec = fleet["amrs"][name]
+    places = fleet["places"]
+    x, y = (float(v) for v in places[str(spec["start"])])
+    lanes = fleet.get("lanes", {})
+    north = float(lanes.get("north_y", 0.0))
+    south = float(lanes.get("south_y", 0.0))
+    if lanes and abs(y - north) > 0.3 and abs(y - south) > 0.3:
+        return (x, y, -math.pi / 2.0 if y > (north + south) / 2.0 else math.pi / 2.0)
+    jobs = [str(j) for j in spec.get("jobs", [])]
+    yaw = 0.0
+    if jobs:
+        tx, ty = (float(v) for v in places[jobs[0]])
+        if (tx, ty) != (x, y):
+            yaw = math.atan2(ty - y, tx - x)
+    return (x, y, yaw)

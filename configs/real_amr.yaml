@@ -1,0 +1,77 @@
+# The real AMR as a platform: what differs from the simulated one and
+# nothing else.
+#
+# This file exists so the robot's parameter generator stops carrying its
+# own copy of these numbers. Before it, the measured footprint lived in
+# results/real/amr_deploy/bin/make_comfort_cfg.py, the speed ceiling in
+# make_nav2_params.py, and the Comfort Space radii in a file generated on
+# the robot -- three places, none of which the simulator ever read.
+#
+# Overlay, not a replacement: everything not listed here comes from
+# configs/common.yaml, so a change to the shared Nav2 tuning reaches both
+# machines. comfort_core/nav2_tuning.py then derives each robot's
+# parameters from its own geometry and speed, which is why the two end up
+# with DIFFERENT numbers from the SAME formula.
+#
+# Scene-specific settings do NOT belong here. The corridor's Comfort
+# Space radii and the person's position are written per capture by
+# results/real/amr_deploy/bin/make_comfort_cfg.py, which uses this file
+# as its base.
+base: configs/common.yaml
+
+amr:
+  # Measured on the real machine. The simulated AMR is 0.70 x 0.48, so
+  # its inscribed radius is 0.240 m against this one's 0.285 m -- the
+  # real robot needs 0.045 m more clearance on each side, which in a
+  # 1.5 m aisle is 0.09 m of channel it does not have.
+  footprint_length: 0.864
+  footprint_width: 0.570
+
+navigation:
+  # 0.20 m/s, against the simulator's 0.80.
+  #
+  # Not a safety derate picked by eye: this LiDAR is blind below 0.31 m
+  # and unreliable within about 1 m, and the platform publishes no
+  # ultrasonic topic, so there is no second sensor to cover the gap.
+  # Everything the robot avoids, it avoids from a reading taken at least
+  # 1 m out.
+  #
+  # This is also why the two machines cannot share a BaseObstacle scale.
+  # DWB's horizon is a DURATION, so at 0.20 m/s it reaches 0.34 m where
+  # the simulator reaches 1.36 m, and a summed critic accumulates a
+  # quarter of the cost over the same ground.
+  max_linear_speed: 0.20
+  max_angular_speed: 0.40
+
+  # Further than the simulator's 6.0 / 8.0, because this LiDAR reaches
+  # 12 m and the Comfort Space mask is bounded by these.
+  #
+  # A CostmapFilter does not widen the costmap's update bounds itself.
+  # With Humble's shipped defaults of 2.5 / 3.0 the costmap was only
+  # refreshed within about 3 m and a Comfort Space painted further out
+  # never arrived. Measured: a mask correctly published at x=5.28 left
+  # the costmap reading 0 there, while the same mask at x=2.24 came
+  # through at 96.
+  observation:
+    obstacle_max_range: 10.0
+    raytrace_max_range: 12.0
+
+  dwb:
+    # Pinned, against the 0.385 m the clearance radius would give.
+    #
+    # The limit here is the corridor, not the robot: this machine runs a
+    # 2.2 m corridor, and 0.385 m of inflation from each wall leaves less
+    # centre channel than the 0.35 m measured on it. 0.35 is 6.5 cm of
+    # decay band outside the 0.285 m inscribed radius and no more; below
+    # the inscribed radius the cost is lethal whatever this says.
+    inflation_radius: 0.35
+
+# TODO: the real robot has no collision monitor.
+#
+# scripts/start_nav2.sh on the robot launches Humble's own
+# navigation_launch.py, which brings up no collision_monitor node, so the
+# protective field configs/common.yaml derives is simulated only. Whether
+# Humble's nav2_collision_monitor supports `velocity_polygon` has NOT been
+# checked -- the type is newer than the rest of the stack. Verify on the
+# robot before claiming the safety layer transfers. Do not assume it from
+# this file.

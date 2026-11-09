@@ -1,3 +1,15 @@
+# NOT THE FILE EITHER ROBOT RUNS. Imported reference, kept for provenance.
+#
+#   simulated AMR   configs/nav2/nav2_params.yaml, written each launch by
+#                   scripts/generate_nav2_params.py and loaded by
+#                   scripts/nav2_bringup.launch.py
+#   real AMR        $HOME/nav2_real.yaml, written on the robot by
+#                   results/real/amr_deploy/bin/make_nav2_params.py and
+#                   loaded by its own start_nav2.sh
+#
+# This file has no Comfort Space KeepoutFilter and its own critic weights,
+# so reading it to find out what the experiment does gives the wrong
+# answer twice over. See docs/NAV2.md section 5b.
 # ---------------------------------------------------------------
 # Adapted from: https://github.com/dongtak2/AMR-Digital-Twin
 #   original file : nav2/amr_nav2_params.yaml
