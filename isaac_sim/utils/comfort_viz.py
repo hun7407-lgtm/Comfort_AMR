@@ -9,20 +9,28 @@ apart is a requirement of the experiment, not a style preference: if the
 picture could alter the outcome, the picture would be part of the
 method.
 
-Each human gets a thin translucent disc on the floor:
+Each human gets two translucent discs on the floor:
 
   * the inner, stronger disc is the Comfort Space radius, the distance
     the AMR's body is meant to stay outside of;
-  * the outer, fainter disc is that radius plus the AMR's inscribed
-    radius, which is the circle a planner working on the robot's centre
-    point actually has to avoid. Seeing both makes it obvious why Nav2
-    sometimes refuses a gap that looks wide enough.
+  * the outer, fainter disc is that radius plus the costmap's buffer
+    width, the ring the planner is charged for at the lower value.
+    Seeing both makes it obvious why Nav2 sometimes refuses a gap that
+    looks wide enough.
+
+Each disc is a flat fan of SEGMENTS triangles at unit radius. The
+earlier discs were UsdGeom.Cylinder prims, which the viewport draws as
+coarse prisms: the rim showed as a run of straight edges, two of them
+touching looked like a joint, and two stacked at one height flickered.
+A textured quad with a soft radial alpha was tried first and RTX drew
+it as an opaque square -- the UsdUVTexture-to-opacity link is not
+honoured on this path -- so the rounding is done with geometry.
 """
 
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from isaacsim.core.utils.prims import delete_prim, is_prim_path_valid
 from pxr import Gf, Sdf, UsdGeom, UsdShade
@@ -37,6 +45,16 @@ LOOKS = f"{VIZ_ROOT}/Looks"
 # every frame for sixty frames of no change is waste, so this remembers
 # what is already bound. Reset by clear().
 _BOUND: Dict[str, str] = {}
+
+
+# Triangles around the rim. 96 puts the longest edge of a 1.2 m disc
+# at 8 cm, which is below what the viewport resolves from any of the
+# scene cameras.
+SEGMENTS = 96
+# Vertical spacing between one person's discs and the next person's.
+# Two translucent faces at exactly one height flicker between frames;
+# a millimetre apart they do not, and a millimetre is invisible.
+Z_STEP = 0.0012
 
 
 def _translucent_material(stage, name: str, color, opacity: float):
@@ -63,28 +81,48 @@ def _translucent_material(stage, name: str, color, opacity: float):
     return material
 
 
+def _fan():
+    """Points and face indices of a unit disc, computed once."""
+    points = [Gf.Vec3f(0.0, 0.0, 0.0)]
+    for i in range(SEGMENTS):
+        a = 2.0 * math.pi * i / SEGMENTS
+        points.append(Gf.Vec3f(math.cos(a), math.sin(a), 0.0))
+    indices = []
+    for i in range(SEGMENTS):
+        indices.extend([0, 1 + i, 1 + (i + 1) % SEGMENTS])
+    return points, indices
+
+
+_FAN_POINTS, _FAN_INDICES = _fan()
+
+
 def _disc(stage, path: str, shape, z: float, height: float, material) -> None:
     """A unit-radius disc scaled into the Comfort Space's ellipse.
 
     Built at radius 1 and shaped entirely by its transform, so the same
     prim can be moved, turned and resized every frame as a walking
     person speeds up and slows down. Rebuilding the geometry instead
-    would churn prims sixty times a second.
+    would churn prims sixty times a second. `height` is kept for the
+    callers; the disc is flat.
     """
-    cylinder = UsdGeom.Cylinder.Define(stage, path)
-    cylinder.CreateAxisAttr("Z")
-    cylinder.CreateRadiusAttr(1.0)
-    cylinder.CreateHeightAttr(float(height))
+    del height
+    mesh = UsdGeom.Mesh.Define(stage, path)
+    mesh.CreatePointsAttr(_FAN_POINTS)
+    mesh.CreateFaceVertexCountsAttr([3] * SEGMENTS)
+    mesh.CreateFaceVertexIndicesAttr(_FAN_INDICES)
+    mesh.CreateDoubleSidedAttr(True)
+    mesh.CreateSubdivisionSchemeAttr(UsdGeom.Tokens.none)
     # Without an explicit extent the viewport culls the disc at odd angles.
-    cylinder.CreateExtentAttr([
-        Gf.Vec3f(-1.0, -1.0, -height / 2.0),
-        Gf.Vec3f(1.0, 1.0, height / 2.0),
-    ])
-    xf = UsdGeom.Xformable(cylinder.GetPrim())
-    xf.AddTranslateOp().Set(Gf.Vec3d(float(shape.x), float(shape.y), float(z)))
+    mesh.CreateExtentAttr([Gf.Vec3f(-1, -1, 0), Gf.Vec3f(1, 1, 0)])
+    xf = UsdGeom.Xformable(mesh.GetPrim())
+    # The ellipse's own centre, not the person's position: an offset
+    # shape reaches further one way than the other, and drawing it on
+    # the person would show a symmetric space the planner is not using.
+    cx, cy = shape.centre
+    xf.AddTranslateOp().Set(Gf.Vec3d(float(cx), float(cy), float(z)))
     xf.AddRotateZOp().Set(float(math.degrees(shape.heading)))
     xf.AddScaleOp().Set(Gf.Vec3f(float(shape.along), float(shape.across), 1.0))
-    UsdShade.MaterialBindingAPI(cylinder.GetPrim()).Bind(material)
+    UsdShade.MaterialBindingAPI(mesh.GetPrim()).Bind(material)
 
 
 def _state_colours(cfg: Dict[str, Any]):
@@ -115,10 +153,39 @@ def _materials_for(stage, cfg: Dict[str, Any], state: str):
                                   opacity * 0.45))
 
 
+def _front_point(shape) -> Tuple[float, float]:
+    """Where the space reaches furthest ahead of the person."""
+    front = shape.extents[0]
+    return (shape.x + front * math.cos(shape.heading),
+            shape.y + front * math.sin(shape.heading))
+
+
+def _marker(stage, path: str, at: Tuple[float, float], radius: float,
+            z: float, height: float, material) -> None:
+    """A small disc, used to mark which end of a space is the front.
+
+    A space that is not the same in front of a person as behind them
+    reads as an ordinary ellipse in the viewport, and which way it is
+    pointing is exactly what a reader needs to check. One dot at the
+    front extent settles it: the long end is wherever the dot is not.
+    """
+    cylinder = UsdGeom.Cylinder.Define(stage, path)
+    cylinder.CreateAxisAttr("Z")
+    cylinder.CreateRadiusAttr(float(radius))
+    cylinder.CreateHeightAttr(float(height))
+    cylinder.CreateExtentAttr([
+        Gf.Vec3f(-radius, -radius, -height / 2.0),
+        Gf.Vec3f(radius, radius, height / 2.0),
+    ])
+    xf = UsdGeom.Xformable(cylinder.GetPrim())
+    xf.AddTranslateOp().Set(Gf.Vec3d(float(at[0]), float(at[1]), float(z)))
+    UsdShade.MaterialBindingAPI(cylinder.GetPrim()).Bind(material)
+
+
 def clear(stage) -> None:
     """Remove every Comfort Space prim, leaving the materials in place."""
     _BOUND.clear()
-    for name in ("Discs",):
+    for name in ("Discs", "Fronts"):
         path = f"{VIZ_ROOT}/{name}"
         if is_prim_path_valid(path):
             delete_prim(path)
@@ -168,6 +235,8 @@ def draw(stage, cfg: Dict[str, Any], shapes: List,
     UsdGeom.Scope.Define(stage, VIZ_ROOT)
     UsdGeom.Scope.Define(stage, LOOKS)
     UsdGeom.Scope.Define(stage, f"{VIZ_ROOT}/Discs")
+    UsdGeom.Scope.Define(stage, f"{VIZ_ROOT}/Fronts")
+    marker_radius = float(viz.get("front_marker_radius", 0.07))
 
     height = float(viz.get("height", 0.02))
     z = float(viz.get("z_offset", 0.01)) + height / 2.0
@@ -175,17 +244,25 @@ def draw(stage, cfg: Dict[str, Any], shapes: List,
     buffer_width = float(
         cfg["comfort_space"].get("costmap", {}).get("buffer_width", 0.0))
 
-    for shape in shapes:
+    for index, shape in enumerate(shapes):
         state = str((states or {}).get(shape.key, ""))
         inner_mat, outer_mat = _materials_for(stage, cfg, state)
-        # Outer first and slightly lower, so the inner disc reads on top.
+        # Outer first and slightly lower, so the inner disc reads on
+        # top; each person a step above the last, so neighbours never
+        # share a height.
+        base = z + index * Z_STEP
         planner_path = f"{VIZ_ROOT}/Discs/planner_{shape.key}"
         comfort_path = f"{VIZ_ROOT}/Discs/comfort_{shape.key}"
         _disc(stage, planner_path,
-              shape.grown(buffer_width), z, height * 0.5, outer_mat)
-        _disc(stage, comfort_path, shape, z + height, height, inner_mat)
+              shape.grown(buffer_width), base, height * 0.5, outer_mat)
+        _disc(stage, comfort_path, shape, base + Z_STEP / 2.0, height, inner_mat)
         _BOUND[planner_path] = state
         _BOUND[comfort_path] = state
+        if marker_radius > 0.0:
+            front_path = f"{VIZ_ROOT}/Fronts/front_{shape.key}"
+            _marker(stage, front_path, _front_point(shape), marker_radius,
+                    base + Z_STEP, height, inner_mat)
+            _BOUND[front_path] = state
     return len(shapes)
 
 
@@ -224,7 +301,8 @@ def update(stage, shapes: List, buffer_width: float = 0.0,
             translate = ops.get("xformOp:translate")
             if translate is not None:
                 current = translate.Get()
-                translate.Set(Gf.Vec3d(float(drawn.x), float(drawn.y),
+                dcx, dcy = drawn.centre
+                translate.Set(Gf.Vec3d(float(dcx), float(dcy),
                                        float(current[2])))
             rotate = ops.get("xformOp:rotateZ")
             if rotate is not None:
@@ -233,6 +311,27 @@ def update(stage, shapes: List, buffer_width: float = 0.0,
             if scale is not None:
                 scale.Set(Gf.Vec3f(float(drawn.along), float(drawn.across), 1.0))
             moved += 1
+
+        # The front marker follows the shape the policy actually asked
+        # for, so the viewport cannot claim a direction the planner is
+        # not using. For a walker that is their velocity direction; for
+        # somebody standing it is their body orientation.
+        path = f"{VIZ_ROOT}/Fronts/front_{shape.key}"
+        prim = stage.GetPrimAtPath(path)
+        if prim.IsValid():
+            ops = {op.GetOpName(): op
+                   for op in UsdGeom.Xformable(prim).GetOrderedXformOps()}
+            translate = ops.get("xformOp:translate")
+            if translate is not None:
+                fx, fy = _front_point(shape)
+                current = translate.Get()
+                translate.Set(Gf.Vec3d(float(fx), float(fy),
+                                       float(current[2])))
+            if cfg is not None and states is not None \
+                    and _BOUND.get(path) != state:
+                inner_mat, _outer = _materials_for(stage, cfg, state)
+                UsdShade.MaterialBindingAPI(prim).Bind(inner_mat)
+                _BOUND[path] = state
     return moved
 
 
@@ -241,9 +340,15 @@ def summary(shapes: List, states: Dict[str, str],
     """One line per human, for the simulation's startup log."""
     lines = []
     for shape in shapes:
-        extent = (f"R={shape.across:.2f} m" if shape.is_circle
-                  else f"{shape.along:.2f} x {shape.across:.2f} m at "
-                       f"{math.degrees(shape.heading):+.0f} deg")
+        if shape.is_circle and not shape.center_offset_along:
+            extent = f"R={shape.across:.2f} m"
+        elif shape.center_offset_along:
+            front, side, rear = shape.extents
+            extent = (f"F={front:.2f} S={side:.2f} R={rear:.2f} m at "
+                      f"{math.degrees(shape.heading):+.0f} deg")
+        else:
+            extent = (f"{shape.along:.2f} x {shape.across:.2f} m at "
+                      f"{math.degrees(shape.heading):+.0f} deg")
         speed = (speeds or {}).get(shape.key)
         moving = f", {speed:.2f} m/s" if speed else ""
         lines.append(f"human {shape.key} at ({shape.x:+.2f}, {shape.y:+.2f}) "

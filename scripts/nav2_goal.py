@@ -38,11 +38,12 @@ from tf2_ros import Buffer, TransformListener
 
 from comfort_core import load_config, nav2_map, odom_to_world
 from comfort_core.clearance import clearance, footprint_half_extents
-from comfort_core.comfort_space import make_policy, shapes as build_shapes
+from comfort_core.comfort_space import (HeadingResolver, make_policy,
+                                        shapes as build_shapes)
 from comfort_core.metrics import record_trial
 from comfort_core.human_state import (GroundTruthStateProvider,
                                       SensorStateProvider, truth_provider)
-from comfort_core.intrusion import footprint_outline, intrusion
+from comfort_core.intrusion import bearing_sector, footprint_outline, intrusion
 from comfort_core.layout import human_positions, scene_bounds
 
 
@@ -201,6 +202,7 @@ class Nav2Trial(Node):
         self.ref_name = ref
         self.ref_cfg = load_config(scenario=ref, common_path=self._common_path)
         self.ref_policy = make_policy(self.ref_cfg)
+        self.ref_headings = HeadingResolver(self.ref_cfg, self.ref_policy)
         # The TRUE states, always, whatever the control loop is using.
         #
         # This is the measurement side: the reference Comfort Space that
@@ -732,15 +734,21 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
         # Social distance: the reference Comfort Space, sized from each
         # person's state and current speed exactly as the policy does.
         res.comfort_reference = node.ref_name
-        axes = node.ref_policy.axes(node.declared_states, node.tracker.speeds())
+        speeds_now = node.tracker.speeds()
+        axes = node.ref_policy.axes(node.declared_states, speeds_now)
+        ref_headings = node.ref_headings.resolve(node.declared_states,
+                                                 node.tracker.headings(),
+                                                 speeds_now)
         ref_shapes = build_shapes(node.ref_cfg, axes, node.human_positions_now(),
-                                  node.tracker.headings(), 0.0)
+                                  ref_headings, 0.0)
         outline = footprint_outline((x, y, yaw), *node.half_extents)
         for shape in ref_shapes:
             k, depth = intrusion(shape, outline)
             worst = res.comfort_worst.get(shape.key)
             if worst is None or depth > worst[0] or (depth == 0.0 and k < worst[1]):
-                res.comfort_worst[shape.key] = (depth, k, now - t_start)
+                # (depth, k, when, where seen from the person)
+                res.comfort_worst[shape.key] = (depth, k, now - t_start,
+                                                bearing_sector(shape, x, y))
             if k < 1.0:
                 res.comfort_seconds[shape.key] = (
                     res.comfort_seconds.get(shape.key, 0.0) + tick_delta)
@@ -966,10 +974,12 @@ def main() -> int:
                   f"{n / total * 100:5.1f}%{mark}", flush=True)
     print(f"  comfort reference  : {res.comfort_reference} "
           f"(same yardstick in every scenario)", flush=True)
-    for key, (depth, k, at) in sorted(res.comfort_worst.items()):
+    for key, worst in sorted(res.comfort_worst.items()):
+        depth, k, at = worst[0], worst[1], worst[2]
+        where = f" from the {worst[3]}" if len(worst) > 3 and depth > 0 else ""
         inside = res.comfort_seconds.get(key, 0.0)
         print(f"  intrusion into {key:<3s} : {depth:.2f} m deep at t={at:.1f} s, "
-              f"{inside:.1f} s inside (k_min {k:.2f})", flush=True)
+              f"{inside:.1f} s inside (k_min {k:.2f}){where}", flush=True)
 
     if not args.no_record:
         # Written whatever the outcome, including a discarded run: a

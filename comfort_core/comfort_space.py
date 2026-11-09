@@ -17,11 +17,44 @@ are out of scope; see docs/EXPERIMENT.md section 8.
 
 from __future__ import annotations
 
+import math
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 from comfort_core.layout import human_positions
 from comfort_core.shapes import ComfortShape
+
+
+class Extent(NamedTuple):
+    """How far a Comfort Space reaches from the person, by direction.
+
+    Measured in the person's own frame: `front` along their heading,
+    `rear` against it, `side` to either side. A round space has all
+    three equal.
+    """
+    front: float
+    side: float
+    rear: float
+
+    @property
+    def axes(self) -> Tuple[float, float, float]:
+        """(along, across, offset) for a ComfortShape."""
+        return ((self.front + self.rear) / 2.0, self.side,
+                (self.front - self.rear) / 2.0)
+
+    @property
+    def largest(self) -> float:
+        return max(self.front, self.side, self.rear)
+
+
+# What a policy says a person's Comfort Space points at.
+#
+#   body      the direction the person is facing, from their config pose
+#   velocity  the direction they are actually travelling
+#   none      direction does not enter this policy's geometry
+HEADING_BODY = "body"
+HEADING_VELOCITY = "velocity"
+HEADING_NONE = "none"
 
 
 class ComfortSpacePolicy(ABC):
@@ -40,6 +73,28 @@ class ComfortSpacePolicy(ABC):
         """
         radius = self.radius_for(key, state, speed)
         return radius, radius
+
+    def extents_for(self, key: str, state: str,
+                    speed: float = 0.0) -> Extent:
+        """How far the space reaches in front, to the side and behind.
+
+        Derived from `shape_for` by default, which makes every space
+        symmetric front to back -- true of a circle and of the centred
+        ellipse. A policy that puts more room behind a person than in
+        front of them overrides this instead of `shape_for`.
+        """
+        along, across = self.shape_for(key, state, speed)
+        return Extent(along, across, along)
+
+    def heading_source_for(self, state: str) -> str:
+        """Which direction this policy points a person's space along.
+
+        `none` by default: the existing policies are round, or stretch
+        along a travel direction the caller already supplies, so they
+        never need a standing person's body orientation. Returning
+        `none` keeps their behaviour exactly as it was.
+        """
+        return HEADING_NONE
 
     @property
     @abstractmethod
@@ -63,8 +118,25 @@ class ComfortSpacePolicy(ABC):
                 for key, state in states.items()}
 
     def axes(self, states: Dict[str, str],
-             speeds: Dict[str, float] | None = None) -> Dict[str, Tuple[float, float]]:
-        return {key: self.shape_for(key, state, (speeds or {}).get(key, 0.0))
+             speeds: Dict[str, float] | None = None
+             ) -> Dict[str, Tuple[float, float, float]]:
+        """(along, across, offset) per person.
+
+        Third element is new. It is 0.0 for every policy that does not
+        offset the ellipse, and `shapes()` accepts a two-element tuple
+        as well, so an older caller building its own axes dict by hand
+        still works.
+        """
+        out = {}
+        for key, state in states.items():
+            speed = (speeds or {}).get(key, 0.0)
+            out[key] = self.extents_for(key, state, speed).axes
+        return out
+
+    def extents(self, states: Dict[str, str],
+                speeds: Dict[str, float] | None = None) -> Dict[str, Extent]:
+        """Per-person extents, for logging and for the preview."""
+        return {key: self.extents_for(key, state, (speeds or {}).get(key, 0.0))
                 for key, state in states.items()}
 
 
@@ -169,10 +241,230 @@ class NoComfortPolicy(ComfortSpacePolicy):
         return "none"
 
 
+
+def _scaling(cfg: Dict[str, Any]) -> Tuple[bool, float, float]:
+    """(enabled, scale, floor) for the optional narrow-aisle squeeze.
+
+    One global scale for every state, pulling each extent toward a floor
+    rather than multiplying it, so a space can never shrink below the
+    minimum the config already insists on:
+
+        used = floor + scale * (wanted - floor)
+
+    Off by default. It exists because the literature-anchored parameters
+    are not measured in a 1.5 m aisle and may have to be brought in to
+    fit one, and that is a decision to take deliberately, once, with the
+    scaled and unscaled numbers both on the record. It is applied to
+    every state alike so the relation between states is untouched, and
+    it is NEVER applied to a safety distance -- the protective field is
+    sized by scripts/generate_nav2_params.py from the robot's speed and
+    knows nothing about this.
+    """
+    cs = cfg["comfort_space"]
+    spec = cs.get("aisle_scaling", {}) or {}
+    return (bool(spec.get("enabled", False)),
+            float(spec.get("scale", 1.0)),
+            float(spec.get("floor_m", cs.get("min_radius", 0.0))))
+
+
+class StateDirectionalComfortPolicy(ComfortSpacePolicy):
+    """State, facing direction and walking speed together. Scenario B3.
+
+    Two asymmetries, in opposite directions, because the reasons for
+    them are different.
+
+    A person who is standing and free to look around has more room
+    behind them than in front: being passed from behind is reported as
+    less comfortable than being passed in front (Neggers et al. 2022).
+    So rear > side > front, pointed by their body orientation.
+
+    A person engaged at a machine is the other way round: the space
+    behind someone is compressed when they cannot see it (Hayduk 1981),
+    and a worker facing a conveyor is attending to the work, not to the
+    aisle at their back. So front >= side >= rear, with the rear equal
+    to the state_adaptive radius for the same state.
+
+    A person who is walking has more room in front: that is where they
+    are about to be, and the faster they walk the further ahead that
+    reaches. So front > side ~ rear, pointed by their actual velocity.
+
+    > Literature-anchored engineering parameters. The qualitative
+    > relations are from the passing-distance literature; the numbers
+    > and the speed mapping are engineering choices, configurable, and
+    > not measured comfort distances.
+    """
+
+    def __init__(self, cfg: Dict[str, Any]):
+        cs = cfg["comfort_space"]
+        spec = cs.get("directional")
+        if not spec:
+            raise ValueError(
+                "comfort_space.policy is 'state_directional' but there is no "
+                "comfort_space.directional block; see configs/common.yaml")
+        self._static: Dict[str, Extent] = {}
+        self._source: Dict[str, str] = {}
+        self._speed_map: Dict[str, Dict[str, Dict[str, float]]] = {}
+        self._min_heading_speed: Dict[str, float] = {}
+
+        for state, entry in spec.items():
+            entry = entry or {}
+            self._source[str(state)] = str(entry.get("heading_source",
+                                                     HEADING_BODY))
+            mapping = entry.get("speed_mapping")
+            if mapping:
+                self._speed_map[str(state)] = {
+                    str(k): {str(kk): float(vv) for kk, vv in (v or {}).items()}
+                    for k, v in mapping.items()}
+                self._min_heading_speed[str(state)] = float(
+                    entry.get("heading_min_speed_mps", 0.0))
+            else:
+                self._static[str(state)] = Extent(
+                    float(entry["front_m"]),
+                    float(entry["side_m"]),
+                    float(entry["rear_m"]))
+        self._min = float(cs["min_radius"])
+        self._scaled, self._scale, self._floor = _scaling(cfg)
+
+    # -- the speed mapping -------------------------------------------
+    @staticmethod
+    def _ramp(spec: Dict[str, float], speed: float) -> float:
+        """intercept + gain * speed, clipped to [min, max]."""
+        value = spec["intercept_m"] + spec["gain_s"] * speed
+        return min(max(value, spec["min_m"]), spec["max_m"])
+
+    def _squeeze(self, value: float) -> float:
+        if self._scaled:
+            value = self._floor + self._scale * (value - self._floor)
+        return max(value, self._min)
+
+    def extents_for(self, key: str, state: str,
+                    speed: float = 0.0) -> Extent:
+        if state in self._speed_map:
+            m = self._speed_map[state]
+            raw = Extent(self._ramp(m["front"], speed),
+                         self._ramp(m["side"], speed),
+                         self._ramp(m["rear"], speed))
+        elif state in self._static:
+            raw = self._static[state]
+        else:
+            raise ValueError(
+                f"no comfort_space.directional entry for state {state!r}; "
+                f"have {sorted(set(self._static) | set(self._speed_map))}")
+        return Extent(self._squeeze(raw.front), self._squeeze(raw.side),
+                      self._squeeze(raw.rear))
+
+    def heading_source_for(self, state: str) -> str:
+        return self._source.get(state, HEADING_BODY)
+
+    def heading_min_speed(self, state: str) -> float:
+        """Below this the travel direction is too noisy to trust."""
+        return self._min_heading_speed.get(state, 0.0)
+
+    def radius_for(self, key: str, state: str, speed: float = 0.0) -> float:
+        """The largest extent, for callers that want one number.
+
+        isaac_sim/utils/fleet.py and the clearance table in
+        scripts/make_scenario.py ask a policy for a radius. Giving them
+        the largest of the three keeps them conservative: they will
+        leave at least as much room as the real shape needs, never less.
+        The reported figure is therefore an upper bound for this policy,
+        not the exact passage.
+        """
+        return self.extents_for(key, state, speed).largest
+
+    def shape_for(self, key: str, state: str,
+                  speed: float = 0.0) -> Tuple[float, float]:
+        along, across, _offset = self.extents_for(key, state, speed).axes
+        return along, across
+
+    @property
+    def name(self) -> str:
+        return "state_directional"
+
+    def describe(self) -> List[str]:
+        """One line per state, for the startup log."""
+        lines = []
+        for state in sorted(set(self._static) | set(self._speed_map)):
+            src = self.heading_source_for(state)
+            if state in self._speed_map:
+                e = self.extents_for("_", state, 1.0)
+                lines.append(f"{state}: heading from {src}, at 1.0 m/s "
+                             f"F={e.front:.2f} S={e.side:.2f} R={e.rear:.2f}")
+            else:
+                e = self.extents_for("_", state)
+                lines.append(f"{state}: heading from {src}, "
+                             f"F={e.front:.2f} S={e.side:.2f} R={e.rear:.2f}")
+        if self._scaled:
+            lines.append(f"aisle scaling ON: scale={self._scale:.2f} "
+                         f"floor={self._floor:.2f} m (extents above are scaled)")
+        return lines
+
+
+class HeadingResolver:
+    """Which way each person's Comfort Space points, tick by tick.
+
+    Separate from the policy because it needs memory. A walker's
+    velocity direction is meaningless as they come to a stop -- the
+    estimate flips about while the speed falls through a few centimetres
+    per second -- so the last direction they were definitely travelling
+    in is held until they are moving again. Without that the Comfort
+    Space spins on the spot every time somebody arrives at a machine.
+
+    A standing person points along their body orientation, read from
+    their configured pose. If nothing in the scene says which way a
+    person faces -- which is the normal case for somebody found by the
+    LiDAR, since it reports a position and not an orientation -- the
+    resolver says so by returning None rather than inventing a
+    direction, and `shapes()` falls back to a round space.
+    """
+
+    def __init__(self, cfg: Dict[str, Any], policy: ComfortSpacePolicy):
+        self.cfg = cfg
+        self.policy = policy
+        humans = cfg.get("humans", {}) or {}
+        self.body: Dict[str, float] = {}
+        for key, _x, _y in human_positions(cfg):
+            spec = humans.get(key)
+            if isinstance(spec, dict) and spec.get("facing_deg") is not None:
+                self.body[key] = math.radians(float(spec["facing_deg"]))
+        self._held: Dict[str, float] = {}
+
+    def resolve(self, states: Dict[str, str],
+                motion_headings: Dict[str, float] | None = None,
+                speeds: Dict[str, float] | None = None
+                ) -> Dict[str, Optional[float]]:
+        motion = motion_headings or {}
+        speed = speeds or {}
+        out: Dict[str, Optional[float]] = {}
+        for key, state in states.items():
+            source = self.policy.heading_source_for(state)
+            if source == HEADING_VELOCITY:
+                floor = getattr(self.policy, "heading_min_speed",
+                                lambda _s: 0.0)(state)
+                if key in motion and float(speed.get(key, 0.0)) >= floor:
+                    self._held[key] = float(motion[key])
+                    out[key] = self._held[key]
+                elif key in self._held:
+                    out[key] = self._held[key]
+                else:
+                    out[key] = self.body.get(key)
+            elif source == HEADING_BODY:
+                # A body orientation only. Dropping any travel direction
+                # here is the point: somebody who has just stopped must
+                # not keep a space pointed the way they were walking.
+                out[key] = self.body.get(key)
+            else:
+                # Policies that do not use direction behave exactly as
+                # before: whatever the caller supplied, else +x.
+                out[key] = float(motion.get(key, 0.0))
+        return out
+
+
 POLICIES = {
     "none": NoComfortPolicy,
     "static": StaticComfortPolicy,
     "state_adaptive": StateAdaptiveComfortPolicy,
+    "state_directional": StateDirectionalComfortPolicy,
 }
 
 
@@ -197,15 +489,24 @@ def robot_grow(cfg: Dict[str, Any]) -> float:
     return float(cfg["amr"]["footprint_width"]) / 2.0
 
 
-def shapes(cfg: Dict[str, Any], axes: Dict[str, Tuple[float, float]],
+def shapes(cfg: Dict[str, Any], axes: Dict[str, Tuple[float, ...]],
            positions: Dict[str, tuple] | None = None,
-           headings: Dict[str, float] | None = None,
+           headings: Dict[str, Optional[float]] | None = None,
            grow: float = 0.0) -> List[ComfortShape]:
     """Build one Comfort Space per human from the policy's semi-axes.
 
     `positions` and `headings` override the configured pose, which is
     what a walking person needs: the caller passes where they are and
     which way they are going, and everything downstream is unchanged.
+
+    `axes` holds (along, across) or (along, across, offset). A
+    two-element entry means a centred shape, so a caller that builds
+    the dict by hand keeps working.
+
+    A heading of None means nothing in the scene says which way this
+    person faces. Rather than pick a direction, the space is made round
+    at its largest extent -- the conservative reading, and the one that
+    cannot claim an orientation the sensor never measured.
 
     `grow` adds the AMR's inscribed radius, turning the space a person
     experiences into the one a planner working on the robot's centre
@@ -234,13 +535,23 @@ def shapes(cfg: Dict[str, Any], axes: Dict[str, Tuple[float, float]],
             # keep clear of. Better to leave them out than to invent a
             # position for them.
             continue
-        along, across = axes[key]
+        entry = tuple(axes[key])
+        along, across = float(entry[0]), float(entry[1])
+        offset = float(entry[2]) if len(entry) > 2 else 0.0
         if along <= 0.0 and across <= 0.0:
             # No Comfort Space for this person (policy "none"). Skipped
             # here rather than grown into a robot-sized circle, which
             # would quietly give B1 a Comfort Space after all.
             continue
-        heading = float((headings or {}).get(key, 0.0))
+        raw = (headings or {}).get(key, 0.0)
+        if raw is None:
+            # Unknown orientation: round, at the largest extent the
+            # policy asked for anywhere.
+            radius = max(along + abs(offset), across)
+            out.append(ComfortShape(key, float(x), float(y),
+                                    radius + grow, radius + grow, 0.0, 0.0))
+            continue
         out.append(ComfortShape(key, float(x), float(y),
-                                along + grow, across + grow, heading))
+                                along + grow, across + grow,
+                                float(raw), offset))
     return out

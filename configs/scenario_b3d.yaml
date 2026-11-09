@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------
+# Scenario B3-D: State + Direction + Speed Adaptive Comfort Space.
+#
+# The proposed condition. Where B3 adapts the SIZE of a round space to
+# the human state and stretches it along the heading when somebody
+# walks, this also adapts its SHAPE to which way the person is facing,
+# and it does so in opposite directions for standing and for walking:
+#
+#   standing   rear > side > front     turned by the body orientation
+#   engaged    front >= side >= rear   (back unseen, compressed)
+#   walking    front > side ~ rear     turned by the velocity
+#
+# so the ladder is
+#
+#   B2     one radius for everybody, round
+#   B3-R   radius from the state, still round
+#   B3     radius from the state, stretched along the heading when moving
+#   B3-D   extent from the state AND the facing direction AND the speed
+#
+# and B3 vs B3-D is what the direction is worth.
+#
+#   ./scripts/run_scenario.sh b3d
+#
+# This is a SEPARATE scenario rather than a change to configs/scenario_b3.yaml
+# on purpose: B3 is the condition the recorded batches were measured
+# under, and silently redefining it would make those results mean
+# something they did not mean when they were taken.
+#
+# Every number lives in comfort_space.directional in configs/common.yaml,
+# where the literature's qualitative relations and this file's
+# engineering choices are separated in the comments. Nothing is
+# overridden here, so the two cannot drift apart.
+#
+# ONLY `scenario` and `comfort_space` may appear here; comfort_core.config
+# raises otherwise. Everything physical comes from configs/common.yaml.
+#
+# > Literature-anchored engineering parameters.
+# > Not experimentally validated human comfort distances, and not
+# > safety distances -- the protective field is sized separately from
+# > the robot's own stopping distance and is never reduced with these.
+# ---------------------------------------------------------------
+
+scenario:
+  name: b3d
+  label: "State + Direction + Speed Adaptive Comfort Space"
+
+comfort_space:
+  policy: state_directional

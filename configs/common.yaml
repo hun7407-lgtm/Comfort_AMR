@@ -786,6 +786,151 @@ comfort_space:
         # machine zone with nav2 ABORTED.
         lane_inset: 0.15
 
+  # ---------------------------------------------------------------
+  # State + facing direction + walking speed, for the `state_directional`
+  # policy. Ignored by every other policy.
+  #
+  # Two asymmetries, pointing opposite ways, because the reasons differ.
+  #
+  # A person who is STANDING, free to look around, gets more room behind
+  # them than in front: being passed from behind is reported as less
+  # comfortable than being passed in front (Neggers et al. 2022). So
+  # rear > side > front, turned by their body orientation
+  # (`humans.<key>.facing_deg`).
+  #
+  # A person ENGAGED at a machine is the other way round. The space
+  # behind a person is COMPRESSED when that area is not visually
+  # accessible to them (Hayduk 1981; Hecht et al. 2019 also found people
+  # standing closer to a target's back than to its front). A worker
+  # facing a conveyor is attending to the work, not to the aisle at
+  # their back, so front >= side >= rear for them. This is the same
+  # premise the state_adaptive policy already uses for its small
+  # station_engaged radius; before 2026-11-05 this block followed the
+  # standing rule instead (F 0.70 S 0.80 R 0.95) and the two policies
+  # contradicted each other. The literature is split on the rear
+  # (Neggers: less comfortable behind; Hayduk: compressed behind when
+  # unseen); the choice made here is to apply Neggers to people who can
+  # see the aisle and Hayduk to people who cannot.
+  #
+  # A person who is WALKING gets more room in front, because that is
+  # where they are about to be, and more of it the faster they walk. So
+  # front > side ~ rear, turned by their actual velocity.
+  #
+  # > Literature-anchored engineering parameters.
+  # >
+  # > What the literature supports is the DIRECTION of these relations
+  # > -- rear discomfort when standing, forward anticipation when
+  # > walking, less comfort at higher speed for the same distance. The
+  # > metres below, and the straight line that maps speed to distance,
+  # > are engineering choices made here. They are not experimentally
+  # > validated comfort distances and they are not ISO distances.
+  # >
+  # > They are also not safety distances. The protective field is sized
+  # > from the robot's own stopping distance in
+  # > navigation.collision_monitor and is never reduced along with
+  # > these. See docs/EXPERIMENT.md.
+  directional:
+
+    # At a machine, absorbed in the work. The aisle is at their back in
+    # this bay -- the belt workers' facing_deg points away from it --
+    # so the rear figure is the one that reaches into the lane. The rear
+    # is the compressed side (unseen, Hayduk 1981) and equals the
+    # state_adaptive station_engaged radius, 0.60, so B3 and B3-D leave
+    # the same room behind a belt worker and differ only in the sides
+    # and the front. Changed 2026-11-05 from F 0.70 S 0.80 R 0.95, which
+    # had the standing rule applied to a worker; the campaign_261105
+    # B3-D rows were measured under the old values.
+    station_engaged:
+      front_m: 0.80
+      side_m: 0.70
+      rear_m: 0.60
+      heading_source: body
+
+    # Standing, not working. Attending to more of the room than someone
+    # at a machine, so a little wider all round.
+    stationary:
+      front_m: 0.80
+      side_m: 0.90
+      rear_m: 1.05
+      heading_source: body
+
+    # Walking. The direction comes from the velocity, not the body.
+    moving:
+      heading_source: velocity
+
+      # Each extent is intercept + gain * speed, clipped. The gains say
+      # the forward reach grows three times as fast with speed as the
+      # sides do, which is the anticipation; the clips keep the shape
+      # sane at a standstill and at a run.
+      #
+      #   v = 0.6   F 1.08   S 0.86   R 0.86
+      #   v = 0.8   F 1.14   S 0.88   R 0.88
+      #   v = 1.0   F 1.20   S 0.90   R 0.90
+      #   v = 1.2   F 1.26   S 0.92   R 0.92
+      #   v = 1.5   F 1.35   S 0.95   R 0.95   (front at its cap)
+      speed_mapping:
+        front:
+          intercept_m: 0.90
+          gain_s: 0.30
+          min_m: 0.95
+          max_m: 1.35
+        side:
+          intercept_m: 0.80
+          gain_s: 0.10
+          min_m: 0.80
+          max_m: 1.00
+        rear:
+          intercept_m: 0.80
+          gain_s: 0.10
+          min_m: 0.80
+          max_m: 1.00
+
+      # Below this the direction of travel is too noisy to believe, so
+      # the last direction the person was definitely walking in is held
+      # instead. Without it the space spins on the spot as somebody
+      # arrives at a machine and their speed estimate falls through
+      # zero. See HeadingResolver in comfort_core/comfort_space.py.
+      heading_min_speed_mps: 0.10
+
+  # ---------------------------------------------------------------
+  # Bringing the Comfort Space in to fit a narrow aisle.
+  #
+  # OFF, and it stays off until the decision is taken deliberately. The
+  # parameters above are not measured in a 1.5 m aisle and may have to
+  # be scaled to fit one; this is where that would happen, so that the
+  # scaled and the unscaled numbers are both on the record and the
+  # trial can say which it ran.
+  #
+  #     used = floor_m + scale * (wanted - floor_m)
+  #
+  # One scale for every state, so the relation between states is never
+  # altered, and a floor so nothing can be squeezed below the minimum.
+  # NEVER applied to a safety distance.
+  aisle_scaling:
+    enabled: false
+    scale: 1.0
+    # Defaults to comfort_space.min_radius when left out.
+    # floor_m: 0.30
+
+  # ---------------------------------------------------------------
+  # Reacting to the closing speed rather than to the distance.
+  #
+  # OFF, and not implemented. The pedestrian literature says people
+  # react to a projected time-to-collision and not only to the gap that
+  # exists now, which would belong here: a multiplier on the comfort
+  # cost, or a stronger preference to yield, as the projected time falls.
+  #
+  # It is kept out of the geometry on purpose. Letting the shape grow
+  # and shrink with the closing speed would mean the Comfort Space no
+  # longer has one size for a given state, direction and speed, and the
+  # contribution this experiment measures would stop being separable
+  # from it. It must also never stand in for the safety layer, which is
+  # reactive by design and sized by the standard.
+  #
+  # docs/EXPERIMENT.md records this as an extension point.
+  stimulus_adaptation:
+    enabled: false
+
   visualization:
     # Drawing is separate from cost. Turning this off must not change
     # any trial result; isaac_sim/utils/comfort_viz.py only creates
@@ -797,6 +942,9 @@ comfort_space:
     z_offset: 0.01
     opacity: 0.35
     color: [0.15, 0.55, 0.95]
+    # A dot at the front extent of each space, so a reader can tell
+    # which way an asymmetric one is pointing. 0 draws none.
+    front_marker_radius: 0.07
     # Colour per human state, so a screenshot says which space is
     # which without the reader having to measure it. Same palette as
     # the floor decals in `preview.state_colour` below. Remove the
@@ -1028,6 +1176,10 @@ preview:
     stationary:      [0.95, 0.75, 0.10]
     moving:          [0.90, 0.20, 0.20]
   # The walk each exchanging person takes, as a stripe on the floor.
+  # The body-facing arrow drawn from each person. 0 draws none.
+  facing_arrow_m: 0.9
+  facing_colour: [0.95, 0.95, 0.95]
+
   route_width: 0.10
   route_colour:
     belt: [0.95, 0.35, 0.10]

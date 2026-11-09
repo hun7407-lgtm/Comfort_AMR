@@ -146,6 +146,20 @@ def build(cfg: Dict[str, Any], stage) -> List[str]:
 
     states = human_states(cfg)
     humans = cfg.get("humans", {})
+
+    # The Comfort Space extents each person is about to be given, so the
+    # log beside the picture says what the picture is showing. Reading
+    # them from the policy rather than from the config means the two can
+    # never disagree.
+    facing_len = float(spec.get("facing_arrow_m", 0.9))
+    facing_rgb = spec.get("facing_colour", (0.95, 0.95, 0.95))
+    policy = None
+    try:
+        from comfort_core.comfort_space import make_policy
+        policy = make_policy(cfg)
+    except Exception as exc:                                  # noqa: BLE001
+        drawn.append(f"no Comfort Space extents in this log ({exc})")
+
     for key, x, y in human_positions(cfg):
         state = states.get(key, "stationary")
         colour = by_state.get(state, (0.6, 0.6, 0.6))
@@ -160,8 +174,48 @@ def build(cfg: Dict[str, Any], stage) -> List[str]:
             _pips(stage, f"{base}/id", (x, y), count, plate * 0.13,
                   thickness, colour, z + thickness * 2)
 
-        walk = (humans.get(key) or {}).get("walk") or {}
+        own = humans.get(key) or {}
+
+        # Which way the person's body is facing. Drawn for everybody,
+        # because for anyone standing this is the direction their
+        # Comfort Space is turned by -- and in this bay the belt
+        # workers face AWAY from the aisle, which is the whole reason a
+        # rear-biased space reaches into it.
+        if own.get("facing_deg") is not None and facing_len > 0.0:
+            face = math.radians(float(own["facing_deg"]))
+            tip = (x + facing_len * math.cos(face),
+                   y + facing_len * math.sin(face))
+            _bar(stage, f"{base}/facing", (x, y), tip,
+                 route_width * 0.45, thickness, facing_rgb, z + thickness * 3)
+            _arrowhead(stage, f"{base}/facing_head", tip, face,
+                       route_width * 0.9, thickness, facing_rgb,
+                       z + thickness * 4)
+
+        walk = own.get("walk") or {}
         route = walk.get("route") or []
+
+        # One line per person: state, facing, and the extents the policy
+        # gives them. For somebody who walks, also the extents at the
+        # speed this scenario drew for them, since that is the shape
+        # that will appear once they set off.
+        if policy is not None:
+            try:
+                rest = policy.extents_for(key, state, 0.0)
+                line = (f"{key}: state={state}"
+                        + (f" facing={float(own['facing_deg']):+.0f}deg"
+                           if own.get("facing_deg") is not None else "")
+                        + f" F={rest.front:.2f} S={rest.side:.2f} "
+                        f"R={rest.rear:.2f}")
+                speed = float(walk.get("speed", 0.0) or 0.0)
+                if speed > 0.0:
+                    go = policy.extents_for(key, "moving", speed)
+                    line += (f" | walking at v={speed:.2f}: "
+                             f"F={go.front:.2f} S={go.side:.2f} "
+                             f"R={go.rear:.2f}")
+                drawn.append(line)
+            except Exception as exc:                          # noqa: BLE001
+                drawn.append(f"{key}: no extents ({exc})")
+
         if not route:
             continue
         # Which half of the exchange this is: somebody leaving a
@@ -176,7 +230,7 @@ def build(cfg: Dict[str, Any], stage) -> List[str]:
         _arrowhead(stage, f"{base}/head", end,
                    math.atan2(end[1] - last[1], end[0] - last[0]),
                    route_width * 1.8, thickness, rgb, z + thickness * 2)
-        drawn.append(f"{key}: {state}, walks {len(route)} legs to "
+        drawn.append(f"{key}: walks {len(route)} legs to "
                      f"({end[0]:+.2f}, {end[1]:+.2f})")
 
     return drawn

@@ -45,7 +45,7 @@ from comfort_core.metrics import read_rows  # noqa: E402
 # alphabetically by accident. B3-R sits between B2 and B3 because that
 # is what it is for: B2 -> B3-R is what adapting the size buys, B3-R ->
 # B3 is what the moving ellipse buys.
-ORDER = {"b1": 0, "b2": 1, "b3r": 2, "b3": 3}
+ORDER = {"b1": 0, "b2": 1, "b3r": 2, "b3": 3, "b3d": 4}
 
 
 def _float(value: str) -> Optional[float]:

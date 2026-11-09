@@ -48,9 +48,17 @@ def footprint_outline(pose: Tuple[float, float, float], half_length: float,
 
 
 def ellipse_scale(shape: ComfortShape, px: float, py: float) -> float:
-    """k for one point: 1 on the boundary, below 1 inside."""
+    """k for one point: 1 on the boundary, below 1 inside.
+
+    Measured from the ELLIPSE's centre, which is not the person's
+    position once the shape is offset along their heading. Using the
+    person's position here would read an asymmetric space as if it were
+    centred on them, reporting an intrusion behind a standing worker as
+    shallower than it is and one in front as deeper.
+    """
     c, s = math.cos(shape.heading), math.sin(shape.heading)
-    dx, dy = px - shape.x, py - shape.y
+    cx, cy = shape.centre
+    dx, dy = px - cx, py - cy
     u = dx * c + dy * s
     v = -dx * s + dy * c
     return math.hypot(u / max(shape.along, 1e-9), v / max(shape.across, 1e-9))
@@ -67,8 +75,24 @@ def intrusion(shape: ComfortShape, outline: Iterable[Point]) -> Tuple[float, flo
         if k < best_k:
             best_k = k
             if k < 1.0:
-                d = math.hypot(px - shape.x, py - shape.y)
+                cx, cy = shape.centre
+                d = math.hypot(px - cx, py - cy)
                 depth = min(shape.along, shape.across) if k < 1e-6 else d * (1.0 / k - 1.0)
             else:
                 depth = 0.0
     return best_k, depth
+
+
+def bearing_sector(shape, x: float, y: float) -> str:
+    """Where the robot is, seen from the person: front, side or rear.
+
+    By the shape's heading -- the direction the policy sized it by,
+    the person's body or their velocity -- so "front" means the side
+    the Comfort Space is largest on. What the directional policy
+    claims is that intrusions can be allowed behind a person that are
+    not allowed in front; this is the column that can show it.
+    """
+    import math as _m
+    a = _m.atan2(y - shape.y, x - shape.x) - shape.heading
+    a = abs(_m.atan2(_m.sin(a), _m.cos(a)))
+    return "front" if a < _m.pi / 4 else ("rear" if a > 3 * _m.pi / 4 else "side")

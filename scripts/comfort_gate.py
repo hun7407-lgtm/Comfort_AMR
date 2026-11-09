@@ -50,7 +50,8 @@ from rclpy.node import Node
 from std_msgs.msg import Bool, Float32MultiArray, String
 
 from comfort_core import load_config, odom_to_world
-from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
+from comfort_core.comfort_space import (HeadingResolver, make_policy, robot_grow,
+                                        shapes as build_shapes)
 from comfort_core.evasion import EvasionController, Person
 from comfort_core.clearance import footprint_half_extents
 from comfort_core.intrusion import footprint_outline
@@ -137,7 +138,9 @@ class ComfortGate(Node):
         # this node's callback delayed the velocity command enough to
         # break navigation.
         states = self.provider.states()
+        self.headings = HeadingResolver(cfg, self.policy)
         self.shapes = build_shapes(cfg, self.policy.axes(states),
+                                   headings=self.headings.resolve(states),
                                    grow=robot_grow(cfg))
         self.create_subscription(Float32MultiArray, "/comfort_shapes",
                                  self._on_shapes, 10)
@@ -192,18 +195,30 @@ class ComfortGate(Node):
 
         self.get_logger().info(
             f"policy={self.policy.name} enabled={self.enabled} "
-            f"shapes={[(s.key, round(s.along, 2), round(s.across, 2)) for s in self.shapes]} "
+            f"shapes={[(s.key, *(round(e, 2) for e in s.extents)) for s in self.shapes]} "
             f"({in_topic} -> {out_topic})")
 
     def _on_shapes(self, msg: Float32MultiArray) -> None:
-        # x, y, along, across, heading, speed per person.
+        """x, y, along, across, heading, speed[, center_offset_along].
+
+        The stride is taken from layout.dim, not assumed. With a
+        multiple of six people a flat array divides evenly by six and by
+        seven alike, so guessing would silently read one person's
+        `across` as the next one's `x` whenever the publisher and this
+        node disagreed. No dim means a publisher from before the offset
+        existed, which is six and centred.
+        """
         data = list(msg.data)
         n = 6
-        if len(data) % n:
+        if msg.layout.dim:
+            n = int(msg.layout.dim[0].size) or 6
+        if n < 6 or len(data) % n:
             return
+        has_offset = n >= 7
         self.shapes = [
             ComfortShape(str(i // n), data[i], data[i + 1],
-                         data[i + 2], data[i + 3], data[i + 4])
+                         data[i + 2], data[i + 3], data[i + 4],
+                         data[i + 6] if has_offset else 0.0)
             for i in range(0, len(data), n)
         ]
         self.people = [
@@ -449,8 +464,12 @@ class ComfortGate(Node):
         # The controller wants each person's own Comfort Space, not the
         # copy enlarged by the robot's half width for the planner.
         grow = self.grow
+        # Shrinking both semi-axes by the same amount leaves the offset
+        # alone, exactly as grown() adds it: front, side and rear each
+        # lose `grow` and the asymmetry survives the round trip.
         raw = {sh.key: ComfortShape(sh.key, sh.x, sh.y, max(sh.along - grow, 0.0),
-                                    max(sh.across - grow, 0.0), sh.heading)
+                                    max(sh.across - grow, 0.0), sh.heading,
+                                    sh.center_offset_along)
                for sh in self.shapes}
         was_active = self.evader.active
         out = self.evader.step(self.sim_now, self.pose, self.people, raw)
@@ -496,7 +515,8 @@ class ComfortGate(Node):
                 self.get_logger().info(
                     f"yielding to human {shape.key} at "
                     f"({shape.x:+.2f}, {shape.y:+.2f}) "
-                    f"[{shape.along:.2f} x {shape.across:.2f} m]: "
+                    f"[F{shape.extents[0]:.2f} S{shape.extents[1]:.2f} "
+                    f"R{shape.extents[2]:.2f} m]: "
                     f"robot at ({x:+.2f}, {y:+.2f}) heading for "
                     f"({nx:+.2f}, {ny:+.2f}) would enter it by {overlap:.2f} m")
                 reason = String()

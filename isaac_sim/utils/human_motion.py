@@ -25,7 +25,8 @@ from isaacsim.core.utils.stage import get_current_stage
 
 from pxr import Gf, Usd
 
-from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
+from comfort_core.comfort_space import (HeadingResolver, make_policy, robot_grow,
+                                        shapes as build_shapes)
 from comfort_core.human_state import truth_provider
 from comfort_core.layout import human_positions
 from isaac_sim.utils import comfort_viz
@@ -88,6 +89,7 @@ class WalkerSync:
                        .get("speed", 0.0))
             for key, _x, _y in human_positions(cfg)}
         self.policy = make_policy(cfg)
+        self.heading_source = HeadingResolver(cfg, self.policy)
         # A LIVE state provider, not a snapshot.
         #
         # This used to be make_state_provider(cfg).states(), read once.
@@ -166,7 +168,9 @@ class WalkerSync:
                 states = refreshed
         axes = self.policy.axes(states, self._speeds)
         positions = {k: v for k, v in self._prev_pos.items()}
-        shapes = build_shapes(self.cfg, axes, positions, self._headings,
+        headings = self.heading_source.resolve(states, self._headings,
+                                               self._speeds)
+        shapes = build_shapes(self.cfg, axes, positions, headings,
                               self.grow)
         comfort_viz.update(get_current_stage(), shapes, self.buffer_width,
                            self.cfg, states)

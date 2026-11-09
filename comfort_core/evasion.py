@@ -299,8 +299,16 @@ class ComfortParams:
 
 
 def predicted_sweep(person: Person, along: float, across: float,
-                    horizon: float, step: float) -> List[Tuple[float, ComfortShape]]:
-    """(time, Comfort Space) at regular times along a straight walk."""
+                    horizon: float, step: float,
+                    offset: float = 0.0) -> List[Tuple[float, ComfortShape]]:
+    """(time, Comfort Space) at regular times along a straight walk.
+
+    `offset` carries the shape's own asymmetry forward with it. A
+    walker's space reaches further ahead of them than behind, and
+    dropping that here would predict a centred space sweeping down the
+    aisle -- too small in front, where the robot actually has to get out
+    of the way, and too big behind.
+    """
     c, s = math.cos(person.heading), math.sin(person.heading)
     out = []
     n = max(int(horizon / step), 0)
@@ -308,7 +316,7 @@ def predicted_sweep(person: Person, along: float, across: float,
         t = i * step
         out.append((t, ComfortShape(person.key, person.x + c * person.speed * t,
                                     person.y + s * person.speed * t,
-                                    along, across, person.heading)))
+                                    along, across, person.heading, offset)))
     return out
 
 
@@ -384,7 +392,8 @@ def choose_comfort_spot(cfg: Dict[str, Any], person: Person, along: float, acros
                         others: List[ComfortShape],
                         p: EvasionParams, cp: ComfortParams,
                         side: Optional[int] = None,
-                        anchor_x: Optional[float] = None) -> Optional[Spot]:
+                        anchor_x: Optional[float] = None,
+                        offset: float = 0.0) -> Optional[Spot]:
     """Best reachable place to wait while this walker goes past.
 
     Candidates lie on a grid across the corridor at the robot's position
@@ -433,7 +442,8 @@ def choose_comfort_spot(cfg: Dict[str, Any], person: Person, along: float, acros
                       - p.lateral_margin) / max(person.speed, 1e-3)
     span = ahead_robot + max(cp.back_offsets) + along + 1.0
     horizon = min(max(span / max(person.speed, 1e-3), 0.0), 30.0)
-    sweep = predicted_sweep(person, along, across, horizon, cp.sweep_step)
+    sweep = predicted_sweep(person, along, across, horizon, cp.sweep_step,
+                            offset)
 
     # Face along the corridor, toward the goal, so Nav2 can drive straight
     # off when it gets the robot back. Facing the other way meant a half
@@ -954,12 +964,14 @@ class EvasionController:
             shape = raw[person.key]
             if self.comfort_mode:
                 sweep = predicted_sweep(person, shape.along, shape.across,
-                                        self.cp.horizon_seconds, self.cp.sweep_step)
+                                        self.cp.horizon_seconds, self.cp.sweep_step,
+                                        shape.center_offset_along)
                 hit = first_intrusion(sweep, outline)
                 if hit is not None:
                     others = self._others_raw(person, people, raw)
                     spot = choose_comfort_spot(self.cfg, person, shape.along, shape.across,
-                                               pose, others, self.p, self.cp)
+                                               pose, others, self.p, self.cp,
+                                               offset=shape.center_offset_along)
                     if spot is not None:
                         self.walker, self.mode, self.spot = person.key, "comfort", spot
                         self.side = spot.side
@@ -994,7 +1006,8 @@ class EvasionController:
             spot = choose_comfort_spot(self.cfg, person, shape.along, shape.across, pose,
                                        self._others_raw(person, people, raw),
                                        self.p, self.cp, side=self.side,
-                                       anchor_x=self.anchor_x)
+                                       anchor_x=self.anchor_x,
+                                       offset=shape.center_offset_along)
         if spot is not None:
             self.target, self.spot, self._last_eval = (spot.x, spot.y, spot.yaw), spot, now
             self.log(f"walker {person.key} line re-estimated; moving to "
@@ -1026,7 +1039,8 @@ class EvasionController:
         half_length, half_width = self.half
         outline = footprint_outline(self.target, half_length, half_width)
         sweep = predicted_sweep(person, shape.along, shape.across,
-                                self.cp.horizon_seconds, self.cp.sweep_step)
+                                self.cp.horizon_seconds, self.cp.sweep_step,
+                                shape.center_offset_along)
         current_k = min([intrusion(s_, outline)[0] for _t, s_ in sweep]
                         + [intrusion(o, outline)[0] for o in others])
         if current_k >= self.cp.rechoose_k:
@@ -1034,7 +1048,8 @@ class EvasionController:
 
         spot = choose_comfort_spot(self.cfg, person, shape.along, shape.across,
                                    pose, others, self.p, self.cp, side=self.side,
-                                   anchor_x=self.anchor_x)
+                                   anchor_x=self.anchor_x,
+                                   offset=shape.center_offset_along)
         if spot is None or spot.k <= current_k + self.cp.switch_margin:
             return
         self._release_hold("the walker's space now reaches the waiting point")

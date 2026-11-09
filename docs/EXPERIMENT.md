@@ -151,21 +151,132 @@ navigation 코드는 바뀌지 않습니다.
 
 ## 8. Comfort Space 모델
 
-원형 하나만 사용합니다.
+네 가지가 하나의 표현을 공유합니다. 전부 `comfort_core/shapes.py`의
+`ComfortShape` 하나로 표현되고, 정책이 치수만 다르게 요구합니다.
+
+| 조건 | 정책 이름 | 모양 |
+|---|---|---|
+| B1 | `none` | 없음 |
+| B2 | `static` | 모든 사람 같은 원 |
+| B3-R | `state_adaptive` + `shape: circle` | 상태별 반경, 원 |
+| B3 | `state_adaptive` + `shape: ellipse` | 상태별 반경, moving만 진행방향 타원 |
+| B3-D | `state_directional` | 상태 + **방향** + 속도, offset 타원 |
+
+### 문헌이 뒷받침하는 것 (정성적 관계)
 
 ```
-C_i = { p | ||p - p_human_i|| <= R_i }
+서 있는 사람(주변을 볼 수 있음)   Rear > Side > Front
+작업 중인 사람(등 뒤를 못 봄)     Front ≥ Side ≥ Rear   (뒤쪽 압축)
+걷는 사람                          Front > Side ≈ Rear
+속도가 빠를수록                    같은 거리에서 쾌적도 하락 / 예견적 공간 확대
 ```
 
-Gaussian이나 egg-shape 모델은 이번 단계에서 구현하지 않습니다.
+근거:
 
-> **주의**
-> 현재 config의 radius 값은 실험으로 검증된 인간 쾌적 거리가 아닙니다.
-> Initial engineering parameter for prototype validation.
-> Not an experimentally validated human comfort distance.
+- **Neggers et al.**, *Determining Shape and Size of Personal Space of a
+  Human when Passed by a Robot* — 사람의 **orientation**에 따라 personal
+  space의 모양과 크기가 달라지고, **후방 통과가 더 불편**하게 평가됨.
+- *The effect of robot speed on comfortable passing distances* — **로봇
+  속도**가 쾌적한 통과 거리와 지각된 쾌적도에 영향.
+- **Hayduk, 1981** — 시각적으로 접근할 수 없는 **등 뒤의 personal space는
+  압축**됨. **Hecht et al., 2019** (*The shape of personal space*, Acta
+  Psychologica)도 대상의 뒤쪽에 앞쪽보다 가까이 섬. 작업 중인 사람의
+  뒤쪽을 작게 두는 근거이며, `state_adaptive`가 `station_engaged`에 작은
+  반경을 주는 전제와 같다. 후방에 대해 문헌이 갈리므로(Neggers: 뒤가 더
+  불편 / Hayduk: 안 보이는 뒤는 압축) 이 저장소는 **레인을 볼 수 있는
+  사람에게 Neggers를, 볼 수 없는 사람에게 Hayduk을** 적용한다.
+  2026-11-05 이전에는 작업 중인 사람에게도 서 있는 사람의 규칙(F 0.70
+  S 0.80 R 0.95)을 적용했고 `results/campaign_261105`의 B3-D 행은 그
+  값으로 측정되었다.
+- **Karamouzas et al., 2014**, *Universal Power Law Governing Pedestrian
+  Interactions* — 보행자 상호작용이 현재 거리가 아니라 **예상 충돌
+  시점(TTC)** 에 반응한다는 근거.
+
+이 논문들은 **관계의 방향**을 보여줍니다. 아래 미터 값과 속도 매핑 식은
+이 저장소의 **공학적 선택**이며, 해당 논문이 제시한 수치가 아닙니다.
+
+### Engineering Parameters
+
+> **literature-anchored engineering parameters**
+>
+> 실험으로 검증된 쾌적 거리가 **아니고**, ISO 거리도 **아닙니다**.
+> 전부 `comfort_space.directional`에서 변경 가능하며 하드코딩이 없습니다.
+
+```
+station_engaged   F 0.80   S 0.70   R 0.60     heading: body   (R = B3의 engaged 반경)
+stationary        F 0.80   S 0.90   R 1.05     heading: body
+moving @ 1 m/s    F 1.20   S 0.90   R 0.90     heading: velocity
+```
+
+moving은 속도 v에서:
+
+```
+Front(v) = clip(0.90 + 0.30 v, 0.95, 1.35)
+Side(v)  = clip(0.80 + 0.10 v, 0.80, 1.00)
+Rear(v)  = clip(0.80 + 0.10 v, 0.80, 1.00)
+```
+
+### offset 타원
+
+`front != rear`는 사람을 중심에 둔 타원으로 표현할 수 없습니다. 그래서
+타원을 heading 방향으로 밀어냅니다:
+
+```
+along  = (front + rear) / 2
+across = side
+offset = (front - rear) / 2
+```
+
+정지 상태(F 0.80 / R 1.05)면 `offset = -0.125`, 즉 타원 중심이 사람보다
+**0.125 m 뒤**에 놓입니다. `grown(g)`는 두 반축에 같은 g를 더하고 offset은
+건드리지 않으므로 front·side·rear가 **각각 g만큼** 자라고 비대칭이
+그대로 보존됩니다.
+
+`across`는 **타원 중심**에서의 최대 반폭입니다. 사람 위치에서의 반폭은
+`across · sqrt(1 - (offset/along)²)` 로 조금 작습니다 — 위 값에서 0.892 m,
+8 mm 차이. 보정하지 않고 기록해둡니다. 플래너와 costmap이 쓰는 값은
+최대 반폭이기 때문입니다.
+
+### Heading 출처
+
+```
+station_engaged / stationary   body heading (humans.<key>.facing_deg)
+moving                         velocity heading (atan2(vy, vx))
+```
+
+속도가 `heading_min_speed_mps`(0.10) 아래로 떨어지면 **마지막으로 믿을 수
+있었던 진행 방향을 유지**합니다. body heading으로 되돌리는 방식은 정지
+순간에 방향이 튀므로 쓰지 않습니다. 상태가 `moving`에서 벗어나면 진행
+방향을 즉시 버리고 body heading으로 갑니다 — 걷던 방향으로 rear-biased
+타원이 남는 일이 없습니다. (`comfort_core/comfort_space.py`의
+`HeadingResolver`)
+
+방향을 아는 수단이 **없는** 사람 — 위치만 주는 라이다 검출이 그렇습니다 —
+에게는 방향을 만들어내지 않고, 최대 extent의 **원**을 줍니다.
+
+### 안 섞는 것
+
+**Comfort Space와 물리 안전거리는 완전히 분리됩니다.** 보호필드는
+`navigation.collision_monitor`에서 로봇 자신의 제동거리로 산출되고, Comfort
+Space를 줄여도 **절대 함께 줄어들지 않습니다**.
+
+`comfort_space.aisle_scaling`(기본 off)은 좁은 통로에 맞춰 Comfort Space를
+한 번에 좁히는 수단이고, 모든 상태에 같은 scale을 적용해 상태 간 관계를
+바꾸지 않으며, 안전거리에는 적용되지 않습니다.
+
+### 확장 지점 (미구현)
+
+`comfort_space.stimulus_adaptation`(기본 off)은 TTC 기반 적응을 위한
+자리입니다. 기하에 섞지 않습니다 — 접근 속도에 따라 모양이 커졌다 작아지면
+Comfort Space가 "상태·방향·속도에 대해 하나의 크기"를 갖지 않게 되고,
+이 실험이 측정하려는 기여가 분리되지 않습니다. 안전층을 대체해서도 안 됩니다.
+
+### 그리기와 cost의 분리
 
 시각화와 navigation cost 처리는 코드상 분리합니다.
 Comfort Space를 viewport에 그리는 코드가 navigation 결과에 영향을 주면 안 됩니다.
+`isaac_sim/utils/comfort_viz.py`는 collider도 rigid body도 만들지 않고,
+`check_below_scan()`이 그려진 원반이 레이저 슬라이스 아래에 있음을 검사합니다.
 
 ---
 

@@ -39,12 +39,14 @@ import rclpy
 import yaml
 from nav2_msgs.msg import CostmapFilterInfo
 from nav_msgs.msg import OccupancyGrid
-from std_msgs.msg import Bool, Float32MultiArray
+from std_msgs.msg import Bool, Float32MultiArray, MultiArrayDimension
 from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
 
 from comfort_core import load_config, nav2_map, resolve_path
-from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
+from comfort_core.mapgrid import read_map_geometry  # noqa: F401  (also used by traffic_rule)
+from comfort_core.comfort_space import (HeadingResolver, make_policy, robot_grow,
+                                        shapes as build_shapes)
 from comfort_core.evasion import Person, predicted_sweep, snap_to_corridor
 from comfort_core.human_state import make_state_provider
 from detection_tracker import DetectionTracker
@@ -62,41 +64,6 @@ LATCHED = QoSProfile(
     durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
     history=QoSHistoryPolicy.KEEP_LAST,
 )
-
-
-def read_map_geometry(map_yaml: Path):
-    """Take the mask's extent and resolution from the generated map.
-
-    Sharing the map's grid means a mask cell and a costmap cell line up
-    exactly, so the painted radius is the radius Nav2 applies.
-    """
-    meta = yaml.safe_load(map_yaml.read_text())
-    image = (map_yaml.parent / meta["image"]).resolve()
-
-    # Minimal PGM header parse: magic, width, height, maxval, skipping
-    # comments. Avoids pulling in an image library.
-    data = image.read_bytes()
-    fields, i = [], 0
-    while len(fields) < 4:
-        if data[i:i + 1] == b"#":
-            while data[i:i + 1] != b"\n":
-                i += 1
-            i += 1
-            continue
-        j = i
-        while data[j:j + 1] not in (b" ", b"\n", b"\t"):
-            j += 1
-        token = data[i:j]
-        if token:
-            fields.append(token)
-        i = j + 1
-
-    return {
-        "width": int(fields[1]),
-        "height": int(fields[2]),
-        "resolution": float(meta["resolution"]),
-        "origin": [float(v) for v in meta["origin"]],
-    }
 
 
 class ComfortPublisher(Node):
@@ -117,6 +84,10 @@ class ComfortPublisher(Node):
 
         self.provider = make_state_provider(cfg)
         self.policy = make_policy(cfg)
+        # Which way each person's space points. Stateful: it holds a
+        # walker's last believable travel direction so the shape does
+        # not spin as they come to a stop.
+        self.headings = HeadingResolver(cfg, self.policy)
         # Where the humans actually are, which is not the same as where
         # the config put them once one of them starts walking.
         # Where the people in the control loop come from.
@@ -286,20 +257,25 @@ class ComfortPublisher(Node):
             person = snap_to_corridor(Person(shape.key, shape.x, shape.y,
                                              shape.heading, speed), self.snap_deg)
             sweep = predicted_sweep(person, shape.along, shape.across,
-                                    self.predict_horizon, self.predict_step)
+                                    self.predict_horizon, self.predict_step,
+                                    shape.center_offset_along)
             for t, future in sweep[1:]:
                 frac = t / max(self.predict_horizon, 1e-6)
                 value = int(round(self.predict_near
                                   - (self.predict_near - self.predict_far) * frac))
+                # bounding_radius measures from the PERSON, so the
+                # window is valid for an offset shape too; the inside
+                # test below has to use the ellipse's own centre.
                 reach = future.bounding_radius
+                fx, fy = future.centre
                 c0 = max(int((future.x - reach - ox) / res), 0)
                 c1 = min(int((future.x + reach - ox) / res) + 1, w)
                 r0 = max(int((future.y - reach - oy) / res), 0)
                 r1 = min(int((future.y + reach - oy) / res) + 1, h)
                 if c0 >= c1 or r0 >= r1:
                     continue
-                xs = ox + (np.arange(c0, c1) + 0.5) * res - future.x
-                ys = oy + (np.arange(r0, r1) + 0.5) * res - future.y
+                xs = ox + (np.arange(c0, c1) + 0.5) * res - fx
+                ys = oy + (np.arange(r0, r1) + 0.5) * res - fy
                 X, Y = np.meshgrid(xs, ys)
                 c, s = np.cos(future.heading), np.sin(future.heading)
                 u = X * c + Y * s
@@ -339,8 +315,10 @@ class ComfortPublisher(Node):
         # they paused; what changes is their speed, and the policy is
         # what decides how much that shrinks their Comfort Space.
         axes = self.policy.axes(declared, speeds)
+        headings = self.headings.resolve(declared, self.tracker.headings(),
+                                         speeds)
         return build_shapes(self.cfg, axes, self.tracker.positions(),
-                            self.tracker.headings(), robot_grow(self.cfg))
+                            headings, robot_grow(self.cfg))
 
     def warn_if_mute(self, shapes) -> None:
         """Shout if the policy has people and yet no Comfort Spaces.
@@ -368,16 +346,36 @@ class ComfortPublisher(Node):
                 f"{sorted(self.tracker.positions())[:4]}, states "
                 f"{sorted(self.provider.states())[:4]}")
 
+    # Numbers per person on /comfort_shapes, in order:
+    #
+    #   x, y, along, across, heading, speed, center_offset_along
+    #
+    # The gate needs the speed to tell a walker it must step aside for
+    # from a person standing still, whom it simply waits for, and the
+    # offset because a Comfort Space is not necessarily centred on the
+    # person it belongs to.
+    #
+    # The count is declared in layout.dim rather than assumed, because
+    # a flat array divides evenly by six AND by seven whenever there are
+    # a multiple of six people -- a publisher and a gate that disagreed
+    # about the stride would not fail, they would quietly read one
+    # person's `across` as the next one's `x`. A gate that finds no dim
+    # falls back to six and reads an older publisher correctly.
+    SHAPE_STRIDE = 7
+
     def publish_shapes(self, shapes) -> None:
-        # Six numbers per person: x, y, along, across, heading, speed.
-        # The gate needs the speed to tell a walker it must step aside for
-        # from a person standing still, whom it simply waits for.
         speeds = self.tracker.speeds()
         msg = Float32MultiArray()
         flat = []
         for shape in shapes:
             flat.extend([shape.x, shape.y, shape.along, shape.across,
-                         shape.heading, speeds.get(shape.key, 0.0)])
+                         shape.heading, speeds.get(shape.key, 0.0),
+                         shape.center_offset_along])
+        dim = MultiArrayDimension()
+        dim.label = "per_person"
+        dim.size = self.SHAPE_STRIDE
+        dim.stride = self.SHAPE_STRIDE
+        msg.layout.dim = [dim]
         msg.data = flat
         self.circle_pub.publish(msg)
 

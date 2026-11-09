@@ -19,7 +19,8 @@ from isaacsim.core.utils.stage import add_reference_to_stage, get_current_stage
 from pxr import Gf, PhysxSchema, Sdf, Usd, UsdGeom, UsdLux, UsdPhysics
 
 from comfort_core import resolve_path
-from comfort_core.comfort_space import make_policy, robot_grow, shapes as build_shapes
+from comfort_core.comfort_space import (HeadingResolver, make_policy, robot_grow,
+                                        shapes as build_shapes)
 from comfort_core.human_state import make_state_provider
 from comfort_core.factory_layout import clearance_summary, validate_factory
 from comfort_core.layout import human_positions, passage_report, validate
@@ -543,7 +544,9 @@ def draw_comfort_spaces(cfg: Dict[str, Any], say=None) -> List:
     # Nothing is moving yet at build time, so every Comfort Space starts
     # at its at-rest size. A walker's grows once they set off, and
     # isaac_sim/utils/human_motion.py keeps the drawing in step.
-    shapes = build_shapes(cfg, policy.axes(states), grow=robot_grow(cfg))
+    shapes = build_shapes(cfg, policy.axes(states),
+                          headings=HeadingResolver(cfg, policy).resolve(states),
+                          grow=robot_grow(cfg))
 
     emit(f"comfort space: policy={policy.name}, shape="
          f"{cfg['comfort_space'].get('shape', 'circle')}, "
