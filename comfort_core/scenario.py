@@ -85,9 +85,25 @@ ROLES = BELT_ROLES + EDGE_ROLES
 # four extra people standing at their posts -- and not the number of
 # encounters. Both conditions have two exchanges and four walkers.
 DENSITY = {
+    0: (),                       # nobody: the traffic-only level
     4: ("N2", "S2", "E1", "E2"),
     8: ROLES,
 }
+
+# How the other AMRs work the blocks.
+#   roundtrip  each stays on its own side (a3 crosses), the base config's
+#              job lists -- robots rarely meet
+#   loop       every one crosses to the other side once and comes back,
+#              so both aisles carry traffic both ways and robots meet
+#   ring       loop, but every vehicle goes round the same way
+#              (counter-clockwise: north aisle east, south aisle west),
+#              held to it by a via point on the crossing. Head-on
+#              encounters are designed out; what is left is following
+#              and overtaking
+FLEET_PATTERNS = ("roundtrip", "loop", "ring")
+# Via points the ring pattern steers through. On the crossings' own
+# centrelines, so a vehicle passing one is on the lane network.
+RING_VIA = {"via_east": "east", "via_west": "west"}
 
 Point = Tuple[float, float]
 
@@ -101,18 +117,21 @@ class ExperimentFactors:
 
     seed: int
     human_count: int = 8          # 4 or 8
-    amr_count: int = 1            # 1, 2 or 3
+    amr_count: int = 1            # 1 to 4: AMR1 plus up to three fleet AMRs
     policy: str = "b3"            # b1, b2, b3r, b3
     provider: str = "scripted"    # scripted (Layer 1) or sensor (Layer 2)
+    fleet_pattern: str = "roundtrip"
 
     def validate(self) -> None:
+        if self.fleet_pattern not in FLEET_PATTERNS:
+            raise ValueError(f"fleet_pattern {self.fleet_pattern!r} is not one of {FLEET_PATTERNS}")
         if self.human_count not in DENSITY:
             raise ValueError(
                 f"human_count {self.human_count} is not one of "
                 f"{sorted(DENSITY)}")
-        if not 1 <= self.amr_count <= 3:
-            raise ValueError(f"amr_count {self.amr_count} is not 1, 2 or 3")
-        if self.policy not in ("b1", "b2", "b3r", "b3"):
+        if not 1 <= self.amr_count <= 4:
+            raise ValueError(f"amr_count {self.amr_count} is not 1 to 4")
+        if self.policy not in ("b1", "b2", "b3r", "b3", "b3d"):
             raise ValueError(f"policy {self.policy!r} is not b1/b2/b3r/b3")
         if self.provider not in ("scripted", "sensor", "ground_truth"):
             raise ValueError(
@@ -130,7 +149,8 @@ class ExperimentFactors:
         different configs (`humans.state_source`, `perception.source`).
         """
         return (f"h{self.human_count}_a{self.amr_count}_"
-                f"{self.provider[:3]}_s{self.seed:04d}")
+                f"{self.provider[:3]}_s{self.seed:04d}"
+                + ("" if self.fleet_pattern == "roundtrip" else f"_{self.fleet_pattern}"))
 
     @property
     def draw_key(self) -> str:
@@ -271,11 +291,14 @@ class ResolvedScenario:
                 }
             humans[role] = entry
 
-        # A character per person, alternating, so the bay does not look
-        # like one person cloned eight times.
+        # A character per person, cycling through the base config's
+        # worker pool (equipment.worker_characters), so the bay does not
+        # look like one person cloned eight times and the people look
+        # like they work here. Which model stands where is drawing: the
+        # collider the laser, the Comfort Space and the yield rule see
+        # is the same cylinder whichever character is on it.
         characters = dict(zip(sorted(self.people),
-                              itertools.cycle(("F_Business_02",
-                                               "M_Medical_01"))))
+                              itertools.cycle(_worker_pool(base))))
 
         cfg: Dict[str, Any] = {
             "base": base,
@@ -357,6 +380,13 @@ class ResolvedScenario:
 # ---------------------------------------------------------------
 # the bay, read rather than written down
 # ---------------------------------------------------------------
+def _worker_pool(base: str):
+    """The character models the base config dresses its workers in."""
+    cfg = load_config(common_path=base)
+    pool = cfg.get("equipment", {}).get("worker_characters") or []
+    return tuple(str(name) for name in pool) or ("F_Business_02", "M_Medical_01")
+
+
 def _base_human_keys(base: str) -> List[str]:
     """Every human the base config places, so they can be switched off."""
     cfg = load_config(common_path=base)
@@ -588,8 +618,8 @@ def mission_pool(cfg: Dict[str, Any], people: Dict[str, Person],
     for slot in layout.cart_slots_free:
         x, y = slot.centre
         pose = (x, y - math.copysign(mouth_offset, y))
-        if min(math.hypot(pose[0] - px, pose[1] - py)
-               for px, py in occupied) < standoff:
+        if occupied and min(math.hypot(pose[0] - px, pose[1] - py)
+                            for px, py in occupied) < standoff:
             continue
         slots[slot.name] = pose
 
@@ -688,7 +718,9 @@ class ScenarioGenerator:
         exchanges = [
             self._exchange("north", north_role, "E1", north_at, speeds),
             self._exchange("south", south_role, "E2", south_at, speeds),
-        ]
+        ] if people else []
+        if not people:
+            notes.append("nobody in the bay: no exchanges, traffic only")
 
         # D. the mission.
         pool = mission_pool(self.cfg, people, self.min_distance,
@@ -714,20 +746,33 @@ class ScenarioGenerator:
             # Its own stream: see ExperimentFactors.fleet_key.
             frng = random.Random(factors.fleet_key)
             for name in self.fleet_ids[:extra]:
-                jobs = self._jobs_clear_of(name, mission)
+                if factors.fleet_pattern == "loop":
+                    jobs = self._loop_jobs(name, mission)
+                elif factors.fleet_pattern == "ring":
+                    jobs = self._ring_jobs(name, mission)
+                else:
+                    jobs = self._jobs_clear_of(name, mission)
                 if not jobs:
                     raise ValueError(
                         f"every place fleet.{name} works is within "
                         f"{self.standoff} m of this mission")
+                start = self._start_clear_of(name, mission)
+                # A start moved onto its first job would ask the vehicle
+                # to drive to where it already is.
+                if jobs and jobs[0] == start:
+                    jobs = jobs[1:]
+                if not jobs:
+                    raise ValueError(
+                        f"fleet.{name} has only its start left on this mission")
                 plan[name] = {"start_at": round(frng.uniform(olo, ohi), 1),
-                              "start": self._start_clear_of(name, mission),
+                              "start": start,
                               "jobs": jobs}
             notes.append(f"{extra} fleet AMR(s) routed clear of the mission")
 
         return ResolvedScenario(factors, people, exchanges, mission,
                                 plan, notes)
 
-    # -- keeping the traffic off the measured robot's own slots ------
+    # -- keeping the traffic off AMR1's own slots ------
     def _places(self) -> Dict[str, Point]:
         spec = self.cfg.get("fleet", {}).get("places", {})
         return {str(k): (float(v[0]), float(v[1])) for k, v in spec.items()}
@@ -735,7 +780,7 @@ class ScenarioGenerator:
     def _clear(self, place: Point, mission: Mission) -> bool:
         """True if a fleet AMR may use this place on this mission.
 
-        A fleet AMR parked in the slot the measured robot is driving to
+        A fleet AMR parked in the slot AMR1 is driving to
         deadlocks the trial for a reason that has nothing to do with
         anybody's comfort. configs/factory_u.yaml already leaves one
         slot out by hand for exactly this; now that the mission moves
@@ -758,13 +803,61 @@ class ScenarioGenerator:
             kept.append(job)
         return kept
 
+    def _loop_jobs(self, name: str, mission: Mission) -> List[str]:
+        """Cross to the other side, come back to another slot, go home.
+
+        Built from the places the base config lists (all free front-row
+        slots), clear of the mission like everything else: the nearest
+        clear place on the far side by x, then the nearest clear place
+        on the home side that is not the start, then the start. Every
+        vehicle therefore uses both aisles and one crossing in both
+        directions, which is what makes robots meet.
+        """
+        places = self._places()
+        start = self._start_clear_of(name, mission)
+        sx, sy = places[start]
+        clear = {k: p for k, p in places.items() if self._clear(p, mission)}
+        far = sorted((k for k, p in clear.items() if (p[1] > 0) != (sy > 0)),
+                     key=lambda k: (abs(clear[k][0] - sx), k))
+        home = sorted((k for k, p in clear.items()
+                       if (p[1] > 0) == (sy > 0) and k != start),
+                      key=lambda k: (abs(clear[k][0] - sx), k))
+        if not far or not home:
+            raise ValueError(f"fleet.{name}: no clear place for a loop on this mission")
+        return [far[0], home[0], start]
+
+    def _ring_jobs(self, name: str, mission: Mission) -> List[str]:
+        """The loop, but counter-clockwise for everybody.
+
+        North aisle eastbound, east crossing southbound, south aisle
+        westbound, west crossing northbound. A vehicle starting on the
+        north side therefore goes east first; one on the south side
+        goes west first. The crossing it has to take is put in as a
+        via point ("via:east" / "via:west"), which the dispatcher sends
+        as part of the leg (NavigateThroughPoses), so the planner
+        cannot pick the nearer crossing and meet the ring head-on.
+        """
+        places = self._places()
+        start = self._start_clear_of(name, mission)
+        sx, sy = places[start]
+        clear = {k: p for k, p in places.items() if self._clear(p, mission)}
+        far = sorted((k for k, p in clear.items() if (p[1] > 0) != (sy > 0)),
+                     key=lambda k: (abs(clear[k][0] - sx), k))
+        home = sorted((k for k, p in clear.items()
+                       if (p[1] > 0) == (sy > 0) and k != start),
+                      key=lambda k: (abs(clear[k][0] - sx), k))
+        if not far or not home:
+            raise ValueError(f"fleet.{name}: no clear place for a ring on this mission")
+        first, second = ("via:east", "via:west") if sy > 0 else ("via:west", "via:east")
+        return [first, far[0], second, home[0], start]
+
     def _start_clear_of(self, name: str, mission: Mission) -> str:
         spec = self.cfg["fleet"]["amrs"][name]
         places = self._places()
         start = str(spec.get("start", ""))
         if start in places and self._clear(places[start], mission):
             return start
-        # Its usual start is the measured robot's slot this time, so
+        # Its usual start is AMR1's slot this time, so
         # start it at the first job it is still allowed to visit.
         for job in self._jobs_clear_of(name, mission):
             return job

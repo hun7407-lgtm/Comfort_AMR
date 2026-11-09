@@ -203,17 +203,22 @@ python3 scripts/make_scenario.py --humans 8 --pool
 
 ## 7. AMR 대수
 
-**`amr_count`는 기존 `fleet`로 구현합니다.** 측정 대상 로봇은 언제나
+**`amr_count`는 기존 `fleet`로 구현합니다.** AMR1은 언제나
 한 대뿐이고, 추가 대수는 lane network 위를 도는 fleet AMR입니다.
 
-| | 측정 로봇 | fleet AMR |
+| | AMR1 | fleet AMR (a1, a2, a3) |
 |---|---|---|
-| 주행 | Nav2 + Comfort Space costmap + comfort gate | roadmap, 운동학적 |
-| 사람에게 양보 | 시나리오 정책대로 | 시나리오 정책대로 (같은 반경) |
-| 서로에게 | 충돌 회피 | 충돌 회피 |
-| 측정 | trial 1행 | 측정하지 않음 |
+| 주행 | Nav2 + Comfort Space costmap + comfort gate | `fleet.driver: nav2`면 같은 Nav2 스택(gate 없음), `scripted`면 roadmap·운동학적 |
+| 사람에게 | 같은 정책 | 같은 정책 (같은 mask) |
+| 서로에게 | LiDAR 장애물로 회피 | 같음 (+ 우측통행 규칙, 진행 중) |
+| 측정 | `trials.csv` 1행 | `fleet_trials.csv` 차량당 1행, 같은 잣대 |
+| 판정 | `result` | 차량마다 `result` |
 
-측정 로봇을 두 대로 만드는 것은 **최소 수정이 아닙니다**:
+`amr_count`는 1~4: AMR1 하나에 플릿 0~3대. 4는 a3까지 켜서 양쪽
+레인을 가로지르는 차량을 넣습니다 -- 로봇끼리 실제로 마주치는
+시나리오는 이것입니다. docs/NAV2.md 5c절.
+
+AMR1을 두 대로 만드는 것은 **최소 수정이 아닙니다**:
 
 1. AMR USD는 자기 default prim 경로 `/World`에 reference되어 있고, 그
    ActionGraph의 relationship target이 `/World/AMR`,
@@ -226,7 +231,7 @@ python3 scripts/make_scenario.py --humans 8 --pool
 
 fleet 쪽 변경은 `start_at` 한 줄뿐입니다. 종전에는 모든 fleet AMR이
 t=0에 출발해서 Nav2 bringup 45초 동안 이미 돌아다니고 있었습니다 —
-측정 로봇이 만나는 교통량이 bringup에 걸린 실제 시간에 좌우됐다는
+AMR1이 만나는 교통량이 bringup에 걸린 실제 시간에 좌우됐다는
 뜻입니다. 이제 `hold_until_trial`로 trial 시작 시각에 맞춰 세워 두고,
 `start_at`은 시나리오가 말하는 그대로 "trial 시작 후 n초"를 뜻합니다.
 
@@ -294,7 +299,27 @@ animation graph 변수 `Walk`(0~1 blend weight)인데 확장 자신의
 
 ---
 
-## 10. 사용법
+## 10. 그림에만 있는 것
+
+아래는 전부 **그리기**입니다. 콜라이더, costmap, 상태 판정, 어느 지표도
+읽지 않습니다. 영상과 스크린샷이 읽히게 하려고 넣은 것이고, 하나라도
+결과를 바꿀 수 있다면 그림이 방법의 일부가 되는 셈이라 그 선을
+지킵니다.
+
+| 무엇 | 어디 | 비고 |
+|---|---|---|
+| Comfort Space 디스크 | `isaac_sim/utils/comfort_viz.py` | 96각 팬 메시. 전에는 `UsdGeom.Cylinder`였고 뷰포트가 각진 프리즘으로 그려 테두리가 꺾여 보이고 두 장이 같은 높이에서 깜빡였다. 사람마다 1.2 mm씩 높이를 띄운다. 텍스처 알파로 가장자리를 흐리는 쪽을 먼저 시도했는데 RTX가 UsdUVTexture→opacity 연결을 무시하고 불투명 사각형을 그렸다 |
+| 작업자 캐릭터 | `equipment.worker_characters`, `comfort_core/scenario.py:_worker_pool` | 작업복·안전조끼 모델 3종을 순환. 생성기가 business/medical 2종을 하드코딩하던 것을 base config의 풀로 바꿨고, `configs/scenarios/*.yaml`의 `character:` 줄만 다시 생성했다(그 외 줄은 바이트 동일). 콜라이더는 캐릭터와 무관한 같은 원통 |
+| 서 있는 사람의 동작 | `humans.character.commands` | `stationary`는 `LookAround`, `station_engaged`는 `Idle`. 확장에 "작업 중" 애니메이션이 없어 둘을 이렇게 가른다 |
+| 벨트 위 작업물 | `assets.modules.line.wip`, `equipment._work_in_progress` | 롤러 위 토트·박스. 스테이션 이름으로 시드한 난수라 매번 같은 자리. 벨트는 이미 장애물이라 LiDAR에 새로 잡히는 것이 없다 |
+| 시나리오 그림 | `scripts/scenario_figure.py` | `scene_shots.py`의 정사영 평면도(`00_plan_ortho`, 30 m/1920 px) 위에 AMR별 경로·화살표·출발/목적지 라벨과 사람·상태·보행 경로를 그린다. 경로는 roadmap(레인 따라)이지 Nav2 plan이 아니다 -- 설계된 시나리오를 보여주는 그림 |
+| 플릿 AMR 식별 띠 | `comfort_core/palette.py`, `fleet._stripes` | a1 주황, a2 보라, a3 초록. 차체 옆면, LiDAR 평면 아래, footprint 안. costmap 영상의 목적지 라벨과 `preview_figure.py`가 같은 표를 읽는다 |
+
+캐릭터 모델이 바뀌면 LiDAR가 보는 몸통 폭이 센티미터 단위로 달라질
+수는 있다. 이전의 두 모델 사이에도 같은 차이가 있었고, 사람 위치와
+상태는 콜라이더와 config에서 오므로 Comfort Space 자체는 같다.
+
+## 11. 사용법
 
 ```bash
 # 보기만 하기 (아무것도 쓰지 않음)

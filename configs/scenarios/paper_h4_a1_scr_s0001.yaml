@@ -95,7 +95,8 @@ humans:
       - [-3.6, -3.76]
       - [-3.6, -5.6]
       - [-3.0, -5.6]
-  character: {E1: F_Business_02, E2: M_Medical_01, N2: F_Business_02, S2: M_Medical_01}
+  character: {E1: male_adult_construction_01_new, E2: male_adult_construction_05_new,
+    N2: male_adult_construction_03, S2: male_adult_construction_01_new}
   state_source: scripted
 perception: {source: tf}
 navigation:

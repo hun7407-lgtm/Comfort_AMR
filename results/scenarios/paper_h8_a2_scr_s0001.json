@@ -69,11 +69,9 @@
   },
   "fleet_jobs": {
     "a1": [
-      "carts_n",
-      "drop_n4",
-      "carts_n",
-      "drop_n2",
-      "dock_west"
+      "n2_r2c2",
+      "n2_r2c1",
+      "n1_r2c2"
     ]
   }
 }

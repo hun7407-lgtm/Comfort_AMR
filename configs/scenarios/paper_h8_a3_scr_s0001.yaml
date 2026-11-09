@@ -29,8 +29,8 @@ scenario_meta:
     cross_side: true}
   amr_offsets: {a1: 4.3, a2: 5.2}
   fleet_jobs:
-    a1: [carts_n, drop_n4, carts_n, drop_n2, dock_west]
-    a2: [carts_s, drop_s3, carts_s, dock_east]
+    a1: [n2_r2c2, n2_r2c1, n1_r2c2]
+    a2: [s2_r2c2, s2_r2c3, s1_r2c2]
 humans:
   a: {enabled: false}
   b: {enabled: false}
@@ -117,8 +117,9 @@ humans:
     position: [5.5, -3.01]
     state: station_engaged
     facing_deg: 90.0
-  character: {E1: F_Business_02, E2: M_Medical_01, N1: F_Business_02, N2: M_Medical_01,
-    N3: F_Business_02, S1: M_Medical_01, S2: F_Business_02, S3: M_Medical_01}
+  character: {E1: male_adult_construction_01_new, E2: male_adult_construction_05_new,
+    N1: male_adult_construction_03, N2: male_adult_construction_01_new, N3: male_adult_construction_05_new,
+    S1: male_adult_construction_03, S2: male_adult_construction_01_new, S3: male_adult_construction_05_new}
   state_source: scripted
 perception: {source: tf}
 navigation:
@@ -135,11 +136,11 @@ fleet:
     a1:
       enabled: true
       start_at: 4.3
-      start: dock_west
-      jobs: [carts_n, drop_n4, carts_n, drop_n2, dock_west]
+      start: n1_r2c2
+      jobs: [n2_r2c2, n2_r2c1, n1_r2c2]
     a2:
       enabled: true
       start_at: 5.2
-      start: dock_east
-      jobs: [carts_s, drop_s3, carts_s, dock_east]
+      start: s1_r2c2
+      jobs: [s2_r2c2, s2_r2c3, s1_r2c2]
     a3: {enabled: false}

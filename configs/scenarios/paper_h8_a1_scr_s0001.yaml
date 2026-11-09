@@ -115,8 +115,9 @@ humans:
     position: [5.5, -3.01]
     state: station_engaged
     facing_deg: 90.0
-  character: {E1: F_Business_02, E2: M_Medical_01, N1: F_Business_02, N2: M_Medical_01,
-    N3: F_Business_02, S1: M_Medical_01, S2: F_Business_02, S3: M_Medical_01}
+  character: {E1: male_adult_construction_01_new, E2: male_adult_construction_05_new,
+    N1: male_adult_construction_03, N2: male_adult_construction_01_new, N3: male_adult_construction_05_new,
+    S1: male_adult_construction_03, S2: male_adult_construction_01_new, S3: male_adult_construction_05_new}
   state_source: scripted
 perception: {source: tf}
 navigation:

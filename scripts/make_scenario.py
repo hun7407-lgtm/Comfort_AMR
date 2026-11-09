@@ -48,7 +48,7 @@ from comfort_core.scenario import (BASE_CONFIG, DENSITY,  # noqa: E402
                                    same_draw_as, validate_scenario,
                                    walk_timeline)
 
-POLICIES = ("b1", "b2", "b3r", "b3")
+POLICIES = ("b1", "b2", "b3r", "b3", "b3d")
 
 
 def parse_args():
@@ -57,7 +57,11 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--seed", type=int, default=1)
     p.add_argument("--humans", type=int, default=8, choices=sorted(DENSITY))
-    p.add_argument("--amrs", type=int, default=1, choices=(1, 2, 3))
+    p.add_argument("--amrs", type=int, default=1, choices=(1, 2, 3, 4))
+    p.add_argument("--fleet-pattern", default="roundtrip",
+                   choices=("roundtrip", "loop", "ring"),
+                   help="loop: every fleet AMR crosses to the other side "
+                        "and back, so robots meet")
     p.add_argument("--provider", default="scripted",
                    choices=("scripted", "sensor"),
                    help="scripted = Layer 1 (policy evaluation), "
@@ -249,6 +253,14 @@ def _print_clearances(resolved, cfg) -> None:
           f"WALKING is wider again: `moving` is "
           f"{policies['b3'].radius_for('x', 'moving', 1.0):.2f} m and in B3 "
           f"stretched\n    along the heading.")
+    if "b3d" in policies:
+        print("    B3D is a LOWER BOUND on the gap, not the gap. The column asks "
+              "each policy\n    for one radius and a directional space answers "
+              "with its largest extent.\n    Where the aisle is at the person's "
+              "back -- the belt workers, whose\n    facing_deg points away from "
+              "it -- that largest extent is the one facing\n    the lane and the "
+              "figure is exact. Where the aisle is in front of them\n    "
+              "-- E1, E2 -- the real gap is wider than shown.")
 
 
 def _widest_gap(lo: float, hi: float, blocked) -> float:
@@ -283,7 +295,8 @@ def main() -> int:
 
     factors = ExperimentFactors(seed=args.seed, human_count=args.humans,
                                 amr_count=args.amrs, policy=args.policy,
-                                provider=args.provider)
+                                provider=args.provider,
+                                fleet_pattern=args.fleet_pattern)
     resolved = generate(factors, args.base)
     document = resolved.to_config(args.base)
 
@@ -368,7 +381,8 @@ def _check(args, resolved, problems) -> int:
         for provider in ("scripted", "sensor"):
             other = generate(ExperimentFactors(
                 seed=args.seed, human_count=args.humans, amr_count=args.amrs,
-                policy=policy, provider=provider), args.base)
+                policy=policy, provider=provider,
+                fleet_pattern=args.fleet_pattern), args.base)
             across.extend(same_draw_as(resolved, other))
     if across:
         ok = False
