@@ -30,6 +30,7 @@ from geometry_msgs.msg import PoseStamped
 from nav2_msgs.action import ComputePathToPose, NavigateToPose
 from nav2_msgs.msg import CollisionMonitorState
 from nav_msgs.msg import Odometry
+from nav_msgs.msg import Path as PathMsg
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -170,6 +171,9 @@ class Nav2Trial(Node):
         self.create_subscription(CollisionMonitorState,
                                  "/collision_monitor_state",
                                  self._on_collision_state, 10)
+        # Nav2's current global plan, for the progress rule below.
+        self.plan_xy: list = []
+        self.create_subscription(PathMsg, "/plan", self._on_plan, 10)
         self.safety_action = 0
         self.safety_stop_seconds = 0.0
         # Seconds per action type, by CollisionMonitorState.action_type.
@@ -238,6 +242,31 @@ class Nav2Trial(Node):
 
     def _on_odom(self, msg: Odometry) -> None:
         self.latest = msg
+
+    def _on_plan(self, msg: PathMsg) -> None:
+        self.plan_xy = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
+
+    def path_remaining(self, x: float, y: float):
+        """Metres of the current plan still ahead, or None without one.
+
+        Progress towards the goal is judged on this, not on the
+        straight-line distance. A mission that leaves by the far
+        crossing drives twenty metres AWAY from its goal as the crow
+        flies while making perfect progress along its route; judged
+        on the straight line it would be declared deadlocked at full
+        speed. Measured on a fleet vehicle (docs/NAV2.md 5c) and
+        latent here: every mission so far happened to leave by the
+        near crossing. The plan is in the map frame, like the goal.
+        """
+        plan = self.plan_xy
+        if len(plan) < 2:
+            return None
+        nearest = min(range(len(plan)),
+                      key=lambda i: (plan[i][0] - x) ** 2 + (plan[i][1] - y) ** 2)
+        total = math.hypot(plan[nearest][0] - x, plan[nearest][1] - y)
+        for i in range(nearest, len(plan) - 1):
+            total += math.hypot(plan[i + 1][0] - plan[i][0], plan[i + 1][1] - plan[i][1])
+        return total
 
     def _on_collision_state(self, msg: CollisionMonitorState) -> None:
         stopping = msg.action_type in (CollisionMonitorState.STOP,
@@ -557,6 +586,17 @@ class Nav2Trial(Node):
         return handle if handle is not None and handle.accepted else None
 
 
+# How far outside navigation.goal_tolerance the base may be when Nav2
+# itself reports SUCCEEDED and the trial still counts as reached. Nav2's
+# goal checker already uses that tolerance; this script measures the
+# distance again from /tf a moment later, and the two readings differ by
+# millimetres (the robot is creeping to a stop). Three campaign_261105
+# trials ended 0.250-0.264 m from the goal with Nav2 SUCCEEDED and no
+# deadlock, and were labelled DEADLOCK for it. A disagreement larger than
+# this is a defect in one of the two measurements and is reported as
+# INVALID, never as a deadlock.
+GOAL_POSE_SLACK_M = 0.05
+
 STATUS_NAMES = {
     GoalStatus.STATUS_SUCCEEDED: "SUCCEEDED",
     GoalStatus.STATUS_ABORTED: "ABORTED",
@@ -607,7 +647,10 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
 
     # Deadlock is judged on progress toward the goal, not on how much
     # the robot wriggles. See the deadlock notes in configs/common.yaml.
-    best_distance = math.hypot(node.goal[0] - x, node.goal[1] - y)
+    # Starts unbounded so the first measurement -- along the plan once
+    # there is one -- sets it; a straight-line seed would be compared
+    # against route lengths that are legitimately longer.
+    best_distance = math.inf
     last_progress_t = t_start
     contact_logged = False
     contact_blame = None
@@ -801,9 +844,16 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
         if result_future.done():
             status = result_future.result().status
             res.nav2_status = STATUS_NAMES.get(status, str(status))
-            if status == GoalStatus.STATUS_SUCCEEDED and distance <= node.tolerance:
-                res.goal_reached = True
-                return finish("SUCCESS")
+            if status == GoalStatus.STATUS_SUCCEEDED:
+                if distance <= node.tolerance + GOAL_POSE_SLACK_M:
+                    res.goal_reached = True
+                    return finish("SUCCESS")
+                res.invalid_reason = (
+                    f"nav2 reported SUCCEEDED but the base is {distance:.3f} m "
+                    f"from the goal, more than {GOAL_POSE_SLACK_M} m outside "
+                    f"the {node.tolerance} m tolerance; the two pose readings "
+                    "disagree and that is a measurement defect, not a deadlock")
+                return finish("INVALID")
             return finish("DEADLOCK")
 
         if now - t_start >= node.max_trial_time:
@@ -829,9 +879,21 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
             return finish("DEADLOCK")
 
         # Deadlock by lack of progress: a route exists and the robot is
-        # busy, but it is not getting any closer to the goal.
-        if distance < best_distance - node.dl_d:
-            best_distance = distance
+        # busy, but it is not getting any closer to the goal -- along
+        # its route (see path_remaining), falling back to the straight
+        # line until a plan has been published.
+        along = node.path_remaining(x, y)
+        progress = along if along is not None else distance
+        # A base already inside the goal tolerance is finishing (DWB
+        # aligning the final heading), not stuck: Nav2 then reports
+        # SUCCEEDED or not, and that result is what decides the trial.
+        # Without this hold the twelve-second rule raced Nav2's own
+        # "Reached the goal!" and lost by 20 ms (cross_h8 check, seed 2,
+        # 2026-11-05: 0.23 m from the goal, declared a deadlock).
+        if distance <= node.tolerance + GOAL_POSE_SLACK_M:
+            last_progress_t = now
+        if progress < best_distance - node.dl_d:
+            best_distance = progress
             last_progress_t = now
         elif now - last_progress_t >= node.dl_duration:
             res.deadlock_detected = True

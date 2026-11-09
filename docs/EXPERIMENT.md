@@ -288,8 +288,8 @@ Comfort Space를 viewport에 그리는 코드가 navigation 결과에 영향을 
 | 결과 | 조건 |
 |---|---|
 | `PLANNING_FAILURE` | planner가 feasible path를 한 번도 생성하지 못함 |
-| `SUCCESS` | AMR이 goal tolerance 이내 도달 |
-| `DEADLOCK` | path는 존재하나 `deadlock_duration` 동안 선속도 < `v_threshold` 이고 변위 < `d_threshold` |
+| `SUCCESS` | Nav2가 SUCCEEDED를 보고하고 base가 goal tolerance + 0.05 m 이내 (Nav2의 goal checker가 같은 tolerance를 이미 적용했고, 이 스크립트는 /tf에서 잠시 뒤 다시 재므로 mm 단위 차이가 난다. 그 이상 어긋나면 `INVALID`이지 교착이 아니다. `GOAL_POSE_SLACK_M`) |
+| `DEADLOCK` | path는 존재하나 `deadlock_duration` 동안 선속도 < `v_threshold` 이고 변위 < `d_threshold`. base가 이미 goal tolerance (+0.05 m) 안에 있는 동안은 무진전 타이머를 멈춘다 — 마지막 heading 정렬 중인 로봇은 교착이 아니고, Nav2의 결과가 판정한다 (2026-11-05, cross_h8 검증 trial에서 Nav2의 "Reached the goal"과 12 s 규칙이 20 ms 차로 경합해 0.23 m 지점의 도착이 DEADLOCK으로 기록된 뒤 추가) |
 | `TIMEOUT` | 경과 시간이 `max_trial_time` 초과 |
 
 현재 구현 상태입니다.
