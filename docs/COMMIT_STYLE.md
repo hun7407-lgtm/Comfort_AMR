@@ -118,15 +118,34 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
 ## 7. 커밋 전 점검
 
 ```bash
-python3 scripts/check_nodes.py        # 노드가 import 되는가
-python3 scripts/check_evasion.py      # 양보 로직이 예외 없이 도는가
-python3 scripts/check_perception.py   # 검출 → 상태 → Comfort Space가 이어지는가
-git status --short                    # 의도한 파일만 들어가는가
-git diff --cached --stat              # 커밋마다
+python3 scripts/check_nodes.py          # 노드가 import 되는가
+python3 scripts/check_evasion.py        # 양보 로직이 예외 없이 도는가
+python3 scripts/check_perception.py     # 검출 → 상태 → Comfort Space가 이어지는가
+python3 scripts/check_comfort_shapes.py # Comfort Space 기하와 정책
+python3 scripts/check_nav2_tuning.py    # 두 로봇이 공유하는 Nav2 산출식
+  - `~/isaacsim/python.sh isaac_sim/scripts/check_robot_graph.py` (멀티 로봇 네임스페이스를 건드렸다면)
+  - `python3 scripts/check_fleet_nav2.py` (시뮬레이션을 띄운 채로, fleet driver가 nav2일 때)
+  - `python3 scripts/check_fleet_stacks.py` (시뮬레이션 + AMR1 Nav2 + `run_fleet_nav2.sh`를 띄운 채로, 스택 쪽을 건드렸다면)
+  - `python3 scripts/traffic_rule.py --config configs/fleet_nav2.yaml --scenario b3d --dry-run` (우측통행 mask를 건드렸다면; 겹침 0)
+  - `python3 scripts/check_fleet_loop.py --config configs/fleet_loop.yaml --scenario b3d` (플릿 job list 오버레이를 손으로 고쳤다면; all clear)
+  - `./scripts/run_scenario.sh b3d --config configs/fleet_nav2.yaml --headless` 한 번 (디스패처·플릿 경로를 건드렸다면; 끝에 찍히는 `[fleet] dispatcher:` 줄에서 두 대가 첫 job에 도달했는지)
+git status --short                      # 의도한 파일만 들어가는가
+git diff --cached --stat                # 커밋마다
 ```
 
-세 검사는 각각 "조용히 아무것도 하지 않은" 사고에서 나왔습니다. 전부 1초면
+이 검사들은 각각 "조용히 아무것도 하지 않은" 사고에서 나왔습니다. 전부 1초면
 끝나고, 배치 한 번은 한 시간입니다.
+
+실행 중에만 알 수 있는 것은 따로 있습니다.
+
+```bash
+python3 scripts/check_dwb_scores.py --seconds 60
+```
+
+Comfort Space costmap이 DWB가 고르는 궤적을 실제로 바꾸는지 셉니다.
+설정만 읽어서는 알 수 없고, 로봇을 봐도 알 수 없습니다 — 사람을 피하는
+궤적은 costmap이 조종했을 때와 전역 경로가 원래 그쪽이었을 때가 똑같이
+보입니다. Nav2가 떠 있을 때 돌립니다.
 
 ---
 
