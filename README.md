@@ -462,6 +462,9 @@ Comfort_AMR/
 │   ├── factory_3d.yaml      같은 베이, 3D costmap + SLAM 지도
 │   ├── factory_long_3d.yaml 같은 긴 복도, 3D costmap + SLAM 지도
 │   ├── demo_walker.yaml     걷는 사람을 넣는 변형
+│   ├── scenarios/           seed에서 생성한 논문 시나리오
+│   ├── campaigns/           실험 묶음용 오버레이 (fleet_patterns / pilot_amr_count / cross)
+│   ├── README.md            ← 파일별 설명과 이름 읽는 법
 │   └── nav2/                Nav2 파라미터 (reference 저장소에서 가져옴)
 ├── isaac_sim/
 │   ├── environments/
@@ -492,9 +495,10 @@ Comfort_AMR/
 │   ├── place_map.py         저장된 지도를 월드 좌표로
 │   └── maps/                SLAM이 만든 지도
 ├── ros2_ws/src/comfort_amr/ ROS 2 패키지 (nodes, launch)
-├── results/{b2,b3}/         실험 결과 CSV
+├── results/README.md        ← 결과 폴더 안내
+├── results/batches/         실험 묶음 전부: 날짜_상태_내용 (README.md에 표)
 ├── results/videos/          녹화 (버전/시나리오/조건별, git에는 제외)
-├── scripts/                 실행 스크립트
+├── scripts/                 실행 스크립트 (README.md에 역할별 목록)
 └── docs/                    SETUP / EXPERIMENT / AMR reference / GIT workflow
 ```
 
