@@ -106,3 +106,16 @@ configs/stress/
 
 # Archify output (generated diagrams); regenerate, do not commit.
 .archify/
+
+# One Nav2 parameter file per fleet AMR (nav2_params_a1.yaml, ...),
+# rendered by scripts/generate_nav2_params.py --namespace on every
+# launch, for the same reason nav2_params.yaml above is not committed.
+configs/nav2/nav2_params_a*.yaml
+
+# Console output next to the results: the campaign runner's stdout
+# (chain.log, a copy of campaign.log), Kit render logs and the
+# scrollback of diagnostic runs. Machine-specific and large -- one tf
+# probe is 2.6 MB. campaign.log itself is kept: it is the record of
+# which trials were retried or lost, a few kB per campaign.
+results/**/*.log
+!results/**/campaign.log
