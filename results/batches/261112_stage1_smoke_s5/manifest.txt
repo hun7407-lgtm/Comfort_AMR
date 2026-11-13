@@ -1,0 +1,9 @@
+# Stage 1 Comfort Space size sweep: 2 policies x 3 sizes x 1 seeds = 6 trials
+# sizes 0.80 1.20 1.60 m; kinds static b3o; seeds 5-5
+# cross scenario; same campaign config for every condition of a seed
+configs/stage1/static_r0.80.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150
+configs/stage1/b3o_r0.80.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150
+configs/stage1/static_r1.20.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150
+configs/stage1/b3o_r1.20.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150
+configs/stage1/static_r1.60.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150
+configs/stage1/b3o_r1.60.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150

@@ -1,0 +1,76 @@
+{
+  "Static": {
+    "size_induced": {
+      "R_deadlock_onset_m": 1.2,
+      "R_nav_max_m": 0.8,
+      "onset_count_rule": 1,
+      "note": "onset between 0.80 and 1.20 m; refine with sizes in (0.80, 1.20) at 0.05-0.10 m steps",
+      "excluded_seeds": [],
+      "size_induced_by_size": {
+        "0.80": 0,
+        "1.20": 1,
+        "1.60": 1
+      },
+      "seeds_by_size": {
+        "0.80": 1,
+        "1.20": 1,
+        "1.60": 1
+      },
+      "non_monotonic_seeds": {}
+    },
+    "any_gate_hold": {
+      "R_deadlock_onset_m": 1.2,
+      "R_nav_max_m": 0.8,
+      "onset_count_rule": 1,
+      "note": "onset between 0.80 and 1.20 m; refine with sizes in (0.80, 1.20) at 0.05-0.10 m steps",
+      "non_monotonic_sizes": [],
+      "comfort_deadlocks_by_size": {
+        "0.80": 0,
+        "1.20": 1,
+        "1.60": 1
+      },
+      "trials_by_size": {
+        "0.80": 1,
+        "1.20": 1,
+        "1.60": 1
+      }
+    }
+  },
+  "B3-O": {
+    "size_induced": {
+      "R_deadlock_onset_m": null,
+      "R_nav_max_m": 1.6,
+      "onset_count_rule": 1,
+      "note": "no comfort-induced deadlock at any swept size; R_nav_max is at least 1.60 m (the largest size swept), the onset lies above it",
+      "excluded_seeds": [],
+      "size_induced_by_size": {
+        "0.80": 0,
+        "1.20": 0,
+        "1.60": 0
+      },
+      "seeds_by_size": {
+        "0.80": 1,
+        "1.20": 1,
+        "1.60": 1
+      },
+      "non_monotonic_seeds": {}
+    },
+    "any_gate_hold": {
+      "R_deadlock_onset_m": null,
+      "R_nav_max_m": 1.6,
+      "onset_count_rule": 1,
+      "note": "no comfort-induced deadlock at any swept size; R_nav_max is at least 1.60 m (the largest size swept), the onset lies above it",
+      "non_monotonic_sizes": [],
+      "comfort_deadlocks_by_size": {
+        "0.80": 0,
+        "1.20": 0,
+        "1.60": 0
+      },
+      "trials_by_size": {
+        "0.80": 1,
+        "1.20": 1,
+        "1.60": 1
+      }
+    }
+  }
+}

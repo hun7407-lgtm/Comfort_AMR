@@ -652,7 +652,13 @@ def main() -> int:
         try:
             rows = [node.yardsticks[n].row(v, node.trial_t0)
                     for n, v in node.vehicles.items()]
-            path = record_fleet_trial(cfg, rows, args.config, str(args.scenario or ""),
+            # The scenario's NAME, not the argument: the argument may be
+            # a path (configs/stage1/b3o_r1.00.yaml) and the row should
+            # say b3o_r1.00. Identical for the short names, whose files
+            # are named after themselves.
+            scenario_name = str(cfg.get("scenario", {}).get("name")
+                                or args.scenario or "")
+            path = record_fleet_trial(cfg, rows, args.config, scenario_name,
                                       out_dir=args.results)
             print(f"[fleet] recorded {path}", flush=True)
         except Exception:

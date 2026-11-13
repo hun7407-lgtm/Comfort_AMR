@@ -46,6 +46,14 @@ paper_h8_a3_scr_s0012.yaml
 | `campaigns/pilot_amr_count/` | `campaign_h8_s5_a2.yaml` = 사람 8, seed 5, AMR 2대<br>`…_a3` = 3대 | AMR 대수 사다리 (1대는 `scenarios/paper_h8_a1_*`) | `261105_MAIN_pilot_policy_x_amrs_seeds1-8` |
 | `campaigns/cross/` | `campaign_h8_a3_cross_s12.yaml` = 사람 8, AMR 3대, 교차 임무, seed 12 | AMR 3대와 사람이 모두 교차하는 고정 임무 | `261105_cross_seeds1-8`, `261106_cross_seeds9-33` |
 
+## 3단계 실험 조건 (`docs/STAGES.md`)
+
+| 폴더 | 파일 | 무엇 |
+|---|---|---|
+| `stage1/` | `static_r0.80.yaml` … `b3o_r1.60.yaml` (생성물, `scripts/make_size_conditions.py`) | Comfort Space 크기 조건. `scenario`+`comfort_space`만 있는 overlay; cross campaign config 위에 얹어 돌림 |
+| `stage2/` | `stage2_real.yaml` (연구 설정; `r_nav_max_m`, `comfort_acceptance_score`는 null), `scene_template.yaml` (실기 복도 템플릿, 전부 TODO), `conditions/` (생성물), `scenes/` (실제 복도 파일 자리) | 실기 human comfort study |
+| `stage3/` | `static_baseline.yaml`, `b3o_initial.yaml`, `b3o_optimized.yaml` (생성물; optimized는 R_opt 전까지 template) | Initial vs Optimized 검증 |
+
 ## 검증·시연용 오버레이 (측정 조건 아님)
 
 | 파일 | 내용 |

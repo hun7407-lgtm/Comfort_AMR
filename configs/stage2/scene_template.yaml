@@ -1,0 +1,57 @@
+# ---------------------------------------------------------------
+# Stage 2 SCENE template: one real corridor, one participant post.
+#
+# Copy to configs/stage2/scenes/<corridor_name>.yaml and fill every
+# TODO. Nothing here is decided yet: the SLAM map and the scenario are
+# chosen later, and scripts/stage2_trial.py refuses to run while any of
+# these is null (comfort_core.stage2.missing_placeholders).
+#
+# Frame: the map frame of the SLAM map named below. slam_toolbox puts
+# its origin at the robot's pose when mapping started (+x ahead, +y to
+# the robot's left); check with `ros2 run tf2_ros tf2_echo map base_link`
+# once the map is loaded.
+# ---------------------------------------------------------------
+base: configs/stage2/stage2_real.yaml
+
+nav2:
+  # The map SLAM built of the corridor WITH NOBODY IN IT. The Comfort
+  # Space mask shares this grid cell for cell.
+  #   ./results/real/amr_deploy/bin/save_map.sh  ->  ~/maps/<name>.yaml
+  map: null                          # TODO e.g. /home/clabil/maps/stage2_corridor.yaml
+
+navigation:
+  # AMR start and goal in the map frame, so that the straight route
+  # passes the participant's post. The passing side follows from the
+  # geometry; record it in `stage2_scene.passing_side` below.
+  start: null                        # TODO [x, y]
+  start_yaw_deg: null                # TODO
+  goal: null                         # TODO [x, y]
+  goal_yaw_deg: null                 # TODO
+
+humans:
+  state_source: ground_truth
+  # One participant. The key is the pseudonymous role in the scene, not
+  # a person: the participant_id is given per trial on the command line.
+  P:
+    enabled: true
+    position: null                   # TODO [x, y] of the standing mark on the floor
+    # The CONDITION the participant is asked to hold during the passing:
+    #   stationary        standing, free to look around (rear > side > front)
+    #   station_engaged   working at a bench/mock-up, back to the aisle
+    #   moving            walking a marked line (needs a tracker; see
+    #                     scripts/stage2_trial.py --human-tf)
+    state: null                      # TODO
+    # Which way the participant faces, degrees in the map frame. B3-O is
+    # directional, so this is not optional.
+    facing_deg: null                 # TODO
+
+stage2_scene:
+  name: null                         # TODO short name, e.g. lab_corridor_2m
+  corridor_width_m: null             # TODO measured
+  # left / right of the participant as THEY see it, from the route.
+  passing_side: null                 # TODO
+  # Distance from the participant's mark to the corridor wall behind
+  # them, m. With the width, this says how much of the corridor each
+  # size leaves (the real-world P7).
+  participant_offset_from_wall_m: null   # TODO
+  notes: ""

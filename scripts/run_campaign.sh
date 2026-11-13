@@ -9,6 +9,11 @@
 #
 #     <scenario> <config> [extra run_scenario.sh args...]
 #     b3d configs/scenarios/paper_h8_a4_scr_s0002.yaml --fleet-tail 150
+#     configs/stage1/b3o_r1.00.yaml configs/campaigns/cross/campaign_h8_a3_cross_s1.yaml --fleet-tail 150
+#
+# The scenario is a short name or a path to a scenario YAML (only the
+# `scenario` and `comfort_space` sections), exactly as run_scenario.sh
+# accepts it.
 #
 # Lines starting with # are skipped. Every trial runs headless with
 # --results <out>, so all rows land in <out>/trials.csv and
@@ -53,7 +58,10 @@ for line in "${LINES[@]}"; do
     n=$((n + 1))
     [ "$n" -le "$SKIP" ] && continue
     read -r scenario config extra <<< "$line"
-    name="$(printf '%03d' "$n")_$(basename "$config" .yaml)_${scenario}"
+    # A scenario may be a short name (b2) or a path to a scenario YAML
+    # (configs/stage1/b3o_r1.00.yaml); the log is named after its stem
+    # either way.
+    name="$(printf '%03d' "$n")_$(basename "$config" .yaml)_$(basename "$scenario" .yaml)"
     for attempt in 1 2; do
         stop_everything
         t0=$(date +%s)

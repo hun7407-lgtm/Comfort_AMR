@@ -109,6 +109,14 @@ class TrialResult:
     comfort_worst: dict = field(default_factory=dict)
     comfort_seconds: dict = field(default_factory=dict)
     comfort_reference: str = ""
+    # HOW the trial stopped, decided here and now rather than recovered
+    # from the log afterwards. See comfort_core/metrics.py FIELDS.
+    deadlock_mechanism: str = ""
+    # Where the robot went: [t, x, y, yaw, v] every `trajectory_period`
+    # seconds. The first global plan Nav2 published, and its length.
+    trajectory: list = field(default_factory=list)
+    planned_path: list = field(default_factory=list)
+    planned_path_length: float = float("nan")
 
 
 class Nav2Trial(Node):
@@ -173,6 +181,7 @@ class Nav2Trial(Node):
                                  self._on_collision_state, 10)
         # Nav2's current global plan, for the progress rule below.
         self.plan_xy: list = []
+        self.first_plan_xy = None
         self.create_subscription(PathMsg, "/plan", self._on_plan, 10)
         self.safety_action = 0
         self.safety_stop_seconds = 0.0
@@ -242,9 +251,16 @@ class Nav2Trial(Node):
 
     def _on_odom(self, msg: Odometry) -> None:
         self.latest = msg
+        self.last_odom_wall = time.time()
 
     def _on_plan(self, msg: PathMsg) -> None:
         self.plan_xy = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
+        # The FIRST plan is the route Nav2 chose with the Comfort Spaces
+        # as they stood at the start; later replans react to walkers.
+        # Kept for the row, so the detour a size costs can be read off
+        # against the distance actually driven.
+        if self.first_plan_xy is None and len(self.plan_xy) >= 2:
+            self.first_plan_xy = list(self.plan_xy)
 
     def path_remaining(self, x: float, y: float):
         """Metres of the current plan still ahead, or None without one.
@@ -395,6 +411,18 @@ class Nav2Trial(Node):
         rather than classified. Seen once: 2960 m of travel in 33
         simulated seconds after PhysX lost the articulation.
         """
+        # A simulation that has diverged can also simply stop talking:
+        # PhysX loses the articulation, the TF tree fills with NaN and
+        # /odom never arrives again. The loop then spins on a stale
+        # message whose stamp never advances, so neither the time limit
+        # nor the no-progress rule can fire, and the trial sits until
+        # the campaign watchdog kills it 25 minutes later with no row
+        # (seed 23 of 261106_cross_seeds9-33; the 261112 smoke test).
+        # Wall-clock silence is the one clock that still runs.
+        stale = time.time() - getattr(self, "last_odom_wall", time.time())
+        if stale > ODOM_SILENCE_S:
+            return (f"no odometry for {stale:.0f} s of wall time; the "
+                    "simulation stopped or diverged")
         x, y, yaw = self.pose()
         if not all(math.isfinite(v) for v in (x, y, yaw)):
             return "odometry returned a non-finite pose"
@@ -597,6 +625,14 @@ class Nav2Trial(Node):
 # INVALID, never as a deadlock.
 GOAL_POSE_SLACK_M = 0.05
 
+# How often the driven route is sampled into the trial's JSON, s.
+TRAJECTORY_PERIOD_S = 0.1
+# Wall-clock seconds without an /odom message before the trial is
+# declared INVALID (simulation stopped or diverged). Isaac Sim at a
+# tenth of real time still publishes several times a second; nothing
+# healthy is silent this long.
+ODOM_SILENCE_S = 20.0
+
 STATUS_NAMES = {
     GoalStatus.STATUS_SUCCEEDED: "SUCCEEDED",
     GoalStatus.STATUS_ABORTED: "ABORTED",
@@ -611,6 +647,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
     node.wait_for_rendezvous(verbose)
     if not node.gate_seen:
         res.result = "INVALID"
+        res.deadlock_mechanism = "invalid"
         res.invalid_reason = ("the comfort gate published nothing; it is not "
                               "running, so no command can reach the robot")
         return res
@@ -623,6 +660,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
     if not found:
         x, y, yaw = node.pose()
         res.result = "PLANNING_FAILURE"
+        res.deadlock_mechanism = "planning_failure"
         res.start_pose = res.final_pose = (x, y, yaw)
         res.final_distance_to_goal = math.hypot(node.goal[0] - x, node.goal[1] - y)
         return res
@@ -631,6 +669,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
     if handle is None:
         # Nav2 never accepted the goal, so no path was ever attempted.
         res.result = "PLANNING_FAILURE"
+        res.deadlock_mechanism = "planning_failure"
         res.nav2_status = "navigate_to_pose rejected the goal"
         x, y, yaw = node.pose()
         res.start_pose = res.final_pose = (x, y, yaw)
@@ -655,6 +694,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
     contact_logged = False
     contact_blame = None
     last_tick = t_start
+    last_sample_t = -math.inf
 
     while rclpy.ok():
         rclpy.spin_once(node, timeout_sec=0.05)
@@ -662,6 +702,7 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
         problem = node.pose_is_sane()
         if problem:
             res.result = "INVALID"
+            res.deadlock_mechanism = "invalid"
             res.invalid_reason = problem
             handle.cancel_goal_async()
             return res
@@ -674,6 +715,17 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
         tick_delta, last_tick = now - last_tick, now
 
         distance = math.hypot(node.goal[0] - x, node.goal[1] - y)
+
+        # The route actually driven, at TRAJECTORY_PERIOD_S, for the
+        # Stage 3 overlay of one policy's path on another's. Coarser
+        # than the control tick on purpose: 120 s at 10 Hz is 1200
+        # samples per trial, which is enough to draw and small enough
+        # to keep in every JSON.
+        if now - last_sample_t >= TRAJECTORY_PERIOD_S:
+            res.trajectory.append((round(now - t_start, 2), round(x, 3),
+                                   round(y, 3), round(yaw, 3),
+                                   round(node.speed(), 3)))
+            last_sample_t = now
 
         # Record how close the robot actually came to each person. The
         # Comfort Space is what it should keep; this is what it kept, and
@@ -798,6 +850,36 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
         if node.evading:
             res.evade_seconds += tick_delta
 
+        def mechanism(label: str) -> str:
+            """How the robot stopped, from what it was doing right now.
+
+            The size of a Comfort Space can only stop a robot one way:
+            the yield gate refusing every move that would intrude. That
+            is `comfort_gate_hold`, and it is the only mechanism a size
+            sweep may count against the size. The others are faults of
+            the evasion, of Nav2 or of the scene, and they are recorded
+            apart so they cannot be mistaken for it. Decided here, at
+            the moment the rule fires, because the log trace this used
+            to be recovered from only samples every 2 s.
+            """
+            if label == "SUCCESS":
+                return ""
+            if label == "INVALID":
+                return "invalid"
+            if label == "TIMEOUT":
+                return "timeout"
+            if label == "PLANNING_FAILURE":
+                return "planning_failure"
+            if res.deadlock_cause.startswith("yielding to a Comfort Space"):
+                return "comfort_gate_hold"
+            if node.yielding and node.continuous_yield_seconds() > 0.0:
+                return "comfort_gate_hold"
+            if res.nav2_status.startswith("ABORTED"):
+                return "nav2_abort"
+            if res.evade_seconds > 0.0:
+                return "post_evade_stall"
+            return "stall"
+
         def finish(label: str) -> TrialResult:
             res.result = label
             res.travel_time = now - t_start
@@ -805,6 +887,13 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
             res.final_pose = (x, y, yaw)
             res.yield_seconds = node.total_yield_seconds()
             res.yielded = res.yield_seconds > 0.0
+            res.deadlock_mechanism = mechanism(label)
+            if node.first_plan_xy:
+                res.planned_path = [(round(px, 3), round(py, 3))
+                                    for px, py in node.first_plan_xy]
+                res.planned_path_length = sum(
+                    math.hypot(b[0] - a[0], b[1] - a[1])
+                    for a, b in zip(node.first_plan_xy, node.first_plan_xy[1:]))
             # Including the interval still open. The counter only closes
             # on release, so a trial that ends while the robot is still
             # halted used to report 0 s of safety action -- the one case
@@ -994,8 +1083,12 @@ def main() -> int:
     print(f"  deadlock detected  : {res.deadlock_detected}"
           f"{'  (' + res.deadlock_cause + ')' if res.deadlock_cause else ''}",
           flush=True)
+    if res.deadlock_mechanism:
+        print(f"  stop mechanism     : {res.deadlock_mechanism}", flush=True)
     print(f"  travel time        : {res.travel_time:.1f} simulated s", flush=True)
-    print(f"  travel distance    : {res.travel_distance:.2f} m", flush=True)
+    print(f"  travel distance    : {res.travel_distance:.2f} m"
+          + (f"  (first plan {res.planned_path_length:.2f} m)"
+             if math.isfinite(res.planned_path_length) else ""), flush=True)
     print(f"  distance to goal   : {res.final_distance_to_goal:.3f} m", flush=True)
     print(f"  yielded            : {res.yielded} "
           f"({res.yield_seconds:.1f} simulated s held back)", flush=True)

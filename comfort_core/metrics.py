@@ -40,6 +40,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from comfort_core.config import resolve_path
+from comfort_core.comfort_space import GEOMETRY_FIELDS, geometry_record
 
 # The row. Order is the file's column order and must not be reordered
 # once results exist; new columns go on the end.
@@ -139,6 +140,30 @@ FIELDS: Tuple[str, ...] = (
     # the load means a starved trial can be spotted afterwards instead
     # of being averaged in.
     "host_load",
+    # -- added for the Stage 1 size sweep (2026-11-12) ----------------
+    # HOW the robot stopped, decided by scripts/nav2_goal.py at the
+    # moment the trial was decided, from what the gate and Nav2 were
+    # doing right then:
+    #   comfort_gate_hold   the yield gate was holding the robot out of
+    #                       a Comfort Space -- the only mechanism the
+    #                       Comfort Space SIZE is responsible for
+    #   post_evade_stall    it had stepped aside for a walker, the
+    #                       evade was over, and it never moved again
+    #   nav2_abort          Nav2 gave the goal up
+    #   stall               no progress, none of the above
+    #   timeout / invalid / "" (reached the goal)
+    # Before this column the mechanism was recovered afterwards from
+    # the 2 s trace lines in the log (scripts/deadlock_mechanism.py).
+    "deadlock_mechanism",
+    # Length of the first global plan Nav2 published, so the distance
+    # actually driven can be compared with the route it was given.
+    "planned_path_length",
+    # The Comfort Space extents the trial ran with, in metres, after
+    # scaling and the min_radius floor. See GEOMETRY_FIELDS in
+    # comfort_core/comfort_space.py. `static_radius` and `radius_*`
+    # above record what the config ASKED for; these record what was
+    # APPLIED, which differ once aisle_scaling is on.
+    *GEOMETRY_FIELDS,
 )
 
 
@@ -290,7 +315,25 @@ def row_for(cfg: Dict[str, Any], result: Dict[str, Any],
         "comfort_shape": (cs.get("shape", "") if cs.get("policy")
                           == "state_adaptive" else "circle"),
         **_scenario_columns(cfg),
+        "deadlock_mechanism": result.get("deadlock_mechanism", ""),
+        "planned_path_length": (
+            _round(result["planned_path_length"], 2)
+            if math.isfinite(float(result.get("planned_path_length") or "nan"))
+            else ""),
+        **_geometry_columns(cfg),
     }
+
+
+def _geometry_columns(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """The applied extents, or blanks if the policy cannot be built.
+
+    A row is never lost to this: a config the policy constructor
+    rejects still gets its outcome recorded, with the geometry empty.
+    """
+    try:
+        return geometry_record(cfg)
+    except Exception:  # noqa: BLE001 - recording must not fail the trial
+        return {k: "" for k in GEOMETRY_FIELDS}
 
 
 def _scenario_columns(cfg: Dict[str, Any]) -> Dict[str, Any]:
@@ -360,6 +403,12 @@ def record_trial(cfg: Dict[str, Any], result: Dict[str, Any],
         "comfort_seconds": _jsonable(result.get("comfort_seconds", {})),
         "state_confusion": _jsonable(result.get("state_confusion", {})),
         "final_pose": _jsonable(result.get("final_pose", ())),
+        # Where the robot actually went, [t, x, y, yaw, v] per sample,
+        # and the first global plan Nav2 gave it, [x, y] per pose. For
+        # the Stage 3 Initial-vs-Optimized route overlay; empty for
+        # every trial written before they were recorded.
+        "trajectory": _jsonable(result.get("trajectory", [])),
+        "planned_path": _jsonable(result.get("planned_path", [])),
     }, indent=2), encoding="utf-8")
     return (csv_path, json_path)
 

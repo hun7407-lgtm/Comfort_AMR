@@ -35,11 +35,27 @@
 | `summarise_trials.py`, `triage_trials.py` | CSV 요약, 이상한 trial 골라내기 |
 | `scenario_figure.py`, `preview_figure.py` | 시나리오 배치 그림 |
 
+## 3단계 실험 (2026-11-12부터, `docs/STAGES.md`)
+
+| 스크립트 | 역할 |
+|---|---|
+| `make_size_conditions.py` | Comfort Space 크기 조건 overlay 생성 (`configs/stage1/static_r*.yaml`, `b3o_r*.yaml`), `--table`로 적용 F/S/R |
+| `stage1_sweep.sh` | Stage 1 크기 sweep: 조건 생성 → 검증 → 매니페스트 → `run_campaign.sh` → 리포트. `--dry-run`, `--smoke`, `--sizes`, `--skip` |
+| `stage1_manifest.py` | seed-major trial 목록 |
+| `stage1_report.py --dir` | R_deadlock_onset / R_nav_max, 표, P1–P9 |
+| `check_stage1.py [--dir]` | config / scaling / same-seed / 안전층 불변 / CSV 검증 |
+| `stage2_make_conditions.py` | 실기용 크기 사다리 (R_nav_max − kΔ) + 참가자 순서 |
+| `stage2_trial.sh` / `stage2_trial.py` | 실기 AMR 통과 1회 기록 (placeholder가 남아 있으면 거부) |
+| `stage2_questionnaire.py` | 7점 설문 입력 → `questionnaire.csv` |
+| `stage2_analysis.py` | comfort–size 곡선, R_comfort_min (cutoff 설정 시에만) |
+| `stage3_make_configs.py` | `static_baseline`, `b3o_initial`, `b3o_optimized` (R_opt 없으면 template) |
+| `stage3_run.sh` / `stage3_report.py` | Initial vs Optimized (+Static) 33 seeds, paired Δ, 궤적 overlay |
+
 ## 점검 (커밋 전, `docs/COMMIT_STYLE.md` 7절)
 
 | 시뮬 없이 | 띄운 채로 |
 |---|---|
-| `check_nodes.py`, `check_evasion.py`, `check_perception.py`, `check_comfort_shapes.py`, `check_nav2_tuning.py`, `check_fleet_loop.py`, `check_environment.sh` | `check_fleet_nav2.py`, `check_fleet_stacks.py`, `check_dwb_scores.py`, `check_ros_topics.sh` |
+| `check_nodes.py`, `check_evasion.py`, `check_perception.py`, `check_comfort_shapes.py`, `check_stage1.py`, `check_nav2_tuning.py`, `check_fleet_loop.py`, `check_environment.sh` | `check_fleet_nav2.py`, `check_fleet_stacks.py`, `check_dwb_scores.py`, `check_ros_topics.sh` |
 
 ## ROS 2 노드와 생성기 (직접 부르지 않음)
 

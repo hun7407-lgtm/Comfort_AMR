@@ -55,6 +55,8 @@ CSV의 `config` 열은 **실행 당시 경로**입니다. 261105–261106 행의
 | `261105_cross_seeds1-8` | 261105 22:20 | 교차 시나리오(AMR 3대가 서로·사람과 교차), 정책 4개 × seed 1–8 | 32 | 유효. `REPORT.md`. 아래 merged에 포함됩니다 |
 | `261106_cross_seeds9-33` | 261106 18:23 | 같은 교차 시나리오, 정책 4개 × seed 9–33 | 100 (유효 99) | 유효. 원본 행. seed 23 B3는 물리 발산으로 유실 |
 | `261107_MAIN_cross_seeds1-33_merged` | 261107 | 위 두 폴더를 합친 33 seed × 정책 4개 | 132 (유효 131) | **유효. 인용할 것.** `REPORT.md`, 조건별 표(`cross_tables.md`), 실패 메커니즘(`deadlock_mechanism.md`), 그림 P1–P12. `SOURCES.md`에 출처 |
+| `261112_stage1_smoke_s5` | 261112 00:27 | **Stage 1** (`docs/STAGES.md`) smoke: seed 5 × 크기 {0.8, 1.2, 1.6} m × {Static, B3-O} | 6 | check용. 1건(b3o 1.60)은 물리 발산으로 1차 유실 후 재실행. `REPORT.md`, `thresholds.json`, P1–P9 |
+| `261112_stage1_size_sweep` | 261112 01:30 | **Stage 1 MAIN**: 크기 {0.8, 1.0, 1.2, 1.4, 1.6} m × {Static, B3-O} × seed 1–33 | 330 (예정) | `stage1_sweep.sh`로 실행 중/완료 여부는 `campaign.log` 참조. `REPORT.md`의 R_deadlock_onset / R_nav_max |
 
 ## 이름 규칙
 

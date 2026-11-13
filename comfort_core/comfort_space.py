@@ -242,6 +242,24 @@ class NoComfortPolicy(ComfortSpacePolicy):
 
 
 
+def _unscaled_reference_size(cs: Dict[str, Any]) -> float:
+    """The B3-O moving-front extent at the reference speed, unscaled.
+
+    The one number the whole directional geometry is sized relative to:
+    1.20 m with the shipped mapping (0.90 + 0.30 * 1.0 m/s). Read from
+    the config rather than written down, so a change to the mapping
+    cannot leave a stale 1.20 here.
+    """
+    moving = (cs.get("directional", {}) or {}).get("moving", {}) or {}
+    mapping = moving.get("speed_mapping", {}) or {}
+    front = mapping.get("front")
+    if not front:
+        return float(cs.get("static_radius", 1.2))
+    speed = float((cs.get("dynamic", {}) or {}).get("reference_speed", 1.0))
+    value = float(front["intercept_m"]) + float(front["gain_s"]) * speed
+    return min(max(value, float(front["min_m"])), float(front["max_m"]))
+
+
 def _scaling(cfg: Dict[str, Any]) -> Tuple[bool, float, float]:
     """(enabled, scale, floor) for the optional narrow-aisle squeeze.
 
@@ -259,11 +277,48 @@ def _scaling(cfg: Dict[str, Any]) -> Tuple[bool, float, float]:
     it is NEVER applied to a safety distance -- the protective field is
     sized by scripts/generate_nav2_params.py from the robot's speed and
     knows nothing about this.
+
+    The scale can be given two ways:
+
+        scale: 0.8333            directly, as before
+        target_size_m: 1.0       as the size the moving-front extent at
+                                 the reference speed should come out at;
+                                 scale = target / reference_size_m, and
+                                 reference_size_m defaults to the
+                                 unscaled value of that same extent
+                                 (1.20 m with the shipped mapping)
+
+    The second form is what the Stage 1 size sweep uses: "B3-O at
+    1.0 m" means the whole geometry -- every state, every direction,
+    the speed mapping and its clips -- multiplied by 1.0 / 1.20, so the
+    front/side/rear ratios and the state relations are exactly those
+    of the unscaled policy. With `floor_m: 0.0` the squeeze is a pure
+    multiplication and only `min_radius` remains as a floor.
     """
     cs = cfg["comfort_space"]
     spec = cs.get("aisle_scaling", {}) or {}
-    return (bool(spec.get("enabled", False)),
-            float(spec.get("scale", 1.0)),
+    enabled = bool(spec.get("enabled", False))
+    if spec.get("target_size_m") is not None:
+        # common.yaml ships `scale: 1.0` (off), and an overlay that sets
+        # a target merges on top of it. Two different answers to the
+        # same question are refused; a target beside the neutral 1.0 is
+        # just the target.
+        if spec.get("scale") is not None and abs(float(spec["scale"]) - 1.0) > 1e-12:
+            raise ValueError(
+                "comfort_space.aisle_scaling gives both `scale` "
+                f"({spec['scale']}) and `target_size_m` ({spec['target_size_m']}); "
+                "give one or the other")
+        reference = float(spec.get("reference_size_m")
+                          or _unscaled_reference_size(cs))
+        if reference <= 0.0:
+            raise ValueError("comfort_space.aisle_scaling.reference_size_m "
+                             "must be positive")
+        scale = float(spec["target_size_m"]) / reference
+    else:
+        scale = float(spec.get("scale", 1.0))
+    if enabled and scale <= 0.0:
+        raise ValueError("comfort_space.aisle_scaling scale must be positive")
+    return (enabled, scale,
             float(spec.get("floor_m", cs.get("min_radius", 0.0))))
 
 
@@ -324,6 +379,8 @@ class StateDirectionalComfortPolicy(ComfortSpacePolicy):
                     float(entry["rear_m"]))
         self._min = float(cs["min_radius"])
         self._scaled, self._scale, self._floor = _scaling(cfg)
+        self._reference_speed = float(
+            (cs.get("dynamic", {}) or {}).get("reference_speed", 1.0))
 
     # -- the speed mapping -------------------------------------------
     @staticmethod
@@ -381,6 +438,15 @@ class StateDirectionalComfortPolicy(ComfortSpacePolicy):
     def name(self) -> str:
         return "state_directional"
 
+    @property
+    def scale_factor(self) -> float:
+        """The global multiplier in force, 1.0 when scaling is off."""
+        return self._scale if self._scaled else 1.0
+
+    @property
+    def reference_speed(self) -> float:
+        return self._reference_speed
+
     def describe(self) -> List[str]:
         """One line per state, for the startup log."""
         lines = []
@@ -395,8 +461,9 @@ class StateDirectionalComfortPolicy(ComfortSpacePolicy):
                 lines.append(f"{state}: heading from {src}, "
                              f"F={e.front:.2f} S={e.side:.2f} R={e.rear:.2f}")
         if self._scaled:
-            lines.append(f"aisle scaling ON: scale={self._scale:.2f} "
-                         f"floor={self._floor:.2f} m (extents above are scaled)")
+            lines.append(f"aisle scaling ON: scale={self._scale:.4f} "
+                         f"floor={self._floor:.2f} m min_radius={self._min:.2f} m "
+                         f"(extents above are scaled)")
         return lines
 
 
@@ -476,6 +543,79 @@ def make_policy(cfg: Dict[str, Any]) -> ComfortSpacePolicy:
     except KeyError:
         raise ValueError(
             f"comfort_space.policy is {name!r}; expected one of {list(POLICIES)}")
+
+
+# The columns `geometry_record` fills, in the order they are written.
+# Metres actually applied, after scaling and the min_radius floor, so a
+# results file says what the robot kept clear and not only which scale
+# was asked for. `comfort_size_m` is the one number a sweep is indexed
+# by: the static radius for `static`, the moving-front extent at the
+# reference speed for `state_directional` (1.20 m unscaled), and the
+# moving radius for `state_adaptive`.
+GEOMETRY_FIELDS: Tuple[str, ...] = (
+    "comfort_size_m",
+    "comfort_scale",
+    "cs_engaged_front_m",
+    "cs_engaged_side_m",
+    "cs_engaged_rear_m",
+    "cs_stationary_front_m",
+    "cs_stationary_side_m",
+    "cs_stationary_rear_m",
+    "cs_moving_front_m",
+    "cs_moving_side_m",
+    "cs_moving_rear_m",
+    "cs_moving_reference_speed",
+)
+
+
+def geometry_record(cfg: Dict[str, Any],
+                    policy: Optional[ComfortSpacePolicy] = None
+                    ) -> Dict[str, Any]:
+    """The Comfort Space extents a trial actually ran with, in metres.
+
+    One flat dict, keys GEOMETRY_FIELDS, for the trial row. A policy
+    with no direction (static, state_adaptive) fills front, side and
+    rear with the same radius; `none` leaves everything empty except a
+    zero size, so B1 rows still say what they were.
+
+    `comfort_scale` is relative to the unscaled directional reference
+    (1.20 m shipped) for every policy, so static 1.20 and B3-O 1.20 both
+    read 1.0 and a size sweep of the two shares one axis.
+    """
+    cs = cfg["comfort_space"]
+    policy = policy or make_policy(cfg)
+    reference = _unscaled_reference_size(cs)
+    empty = {k: "" for k in GEOMETRY_FIELDS}
+    if not policy.gives_space():
+        empty["comfort_size_m"] = 0.0
+        empty["comfort_scale"] = 0.0
+        return empty
+
+    speed = float((cs.get("dynamic", {}) or {}).get("reference_speed", 1.0))
+    ext = {state: policy.extents_for("_", state, speed if state == "moving"
+                                     else 0.0)
+           for state in ("station_engaged", "stationary", "moving")}
+    if isinstance(policy, StateDirectionalComfortPolicy):
+        size = ext["moving"].front
+    elif isinstance(policy, StaticComfortPolicy):
+        size = ext["moving"].front  # the one radius
+    else:
+        size = policy.radius_for("_", "moving", speed)
+    r = lambda v: round(float(v), 4)  # noqa: E731
+    return {
+        "comfort_size_m": r(size),
+        "comfort_scale": r(size / reference) if reference > 0 else "",
+        "cs_engaged_front_m": r(ext["station_engaged"].front),
+        "cs_engaged_side_m": r(ext["station_engaged"].side),
+        "cs_engaged_rear_m": r(ext["station_engaged"].rear),
+        "cs_stationary_front_m": r(ext["stationary"].front),
+        "cs_stationary_side_m": r(ext["stationary"].side),
+        "cs_stationary_rear_m": r(ext["stationary"].rear),
+        "cs_moving_front_m": r(ext["moving"].front),
+        "cs_moving_side_m": r(ext["moving"].side),
+        "cs_moving_rear_m": r(ext["moving"].rear),
+        "cs_moving_reference_speed": r(speed),
+    }
 
 
 def robot_grow(cfg: Dict[str, Any]) -> float:

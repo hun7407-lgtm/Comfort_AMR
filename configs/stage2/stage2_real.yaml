@@ -1,0 +1,93 @@
+# ---------------------------------------------------------------
+# Stage 2: the real-environment human comfort study. Platform + study
+# settings. NOTHING scene-specific is decided here.
+#
+#   ./scripts/stage2_trial.sh --config configs/stage2/stage2_real.yaml \
+#       --scenario configs/stage2/conditions/b3o_r1.00.yaml \
+#       --scene configs/stage2/scenes/<corridor>.yaml --participant P01 --order 1
+#
+# Layering (comfort_core.config, `base:` chain + scenario overlay):
+#
+#   configs/common.yaml           shared Nav2 tuning, Comfort Space geometry
+#   configs/real_amr.yaml         the real robot: footprint, speeds, LiDAR
+#   configs/stage2/stage2_real.yaml   THIS: study parameters, result paths
+#   configs/stage2/scenes/<x>.yaml    the corridor: SLAM map, start/goal,
+#                                     the participant's post (TODO, see
+#                                     configs/stage2/scene_template.yaml)
+#   configs/stage2/conditions/b3o_r<size>.yaml   the size condition (scenario
+#                                     overlay; scripts/stage2_make_conditions.py)
+#
+# The scene file goes LAST in the base chain so it can fill nav2.map,
+# navigation.start/goal and humans without this file knowing them.
+#
+# The physical safety layer (navigation.collision_monitor, braking
+# distance, protective field) comes from real_amr.yaml / common.yaml and
+# is NOT a Stage 2 variable. The size conditions touch comfort_space only.
+#
+# > No real trial has been run with this file. Values marked TODO are
+# > null on purpose and scripts/stage2_trial.py refuses to start until
+# > they are filled.
+# ---------------------------------------------------------------
+base: configs/real_amr.yaml
+
+stage2:
+  # --- the size ladder --------------------------------------------
+  # Largest Comfort Space the aisle can take, from Stage 1
+  # (results/batches/<stage1>/thresholds.json, B3-O R_nav_max). The
+  # ladder starts here and descends.
+  r_nav_max_m: null            # TODO from Stage 1
+  # Descent step and how many rungs. r_nav_max, r_nav_max - step, ...
+  # Never below size_floor_m.
+  comfort_step_m: 0.1
+  n_conditions: 5
+  size_floor_m: 0.4
+
+  # --- the questionnaire -------------------------------------------
+  # Cutoff on the primary comfort item (1..7) that counts as acceptable,
+  # used to derive R_comfort_min. NULL ON PURPOSE: decided after the
+  # pilot from the distribution and the reference, never before.
+  comfort_acceptance_score: null
+  # Which per-size statistic the cutoff is applied to: median or mean.
+  acceptance_statistic: median
+  # Items and anchors are in comfort_core/stage2.py QUESTIONNAIRE_ITEMS
+  # (Neggers et al. 2022 protocol for the primary item).
+  questionnaire_language: ko
+
+  # --- trial protocol --------------------------------------------
+  # Each participant sees every size; the order is a permutation drawn
+  # from this seed + participant number (scripts/stage2_make_conditions.py
+  # --orders), so the sequence is reproducible and not size-ordered.
+  order_seed: 2026
+  # Seconds the robot waits at the start pose before setting off, so
+  # the participant is settled.
+  settle_seconds: 3.0
+  # Hard limit per passing, s.
+  max_trial_time: 120.0
+  # Where rows go: <results_dir>/<session>/{trials.csv, questionnaire.csv,
+  # trajectories/<trial_id>.csv, <trial_id>.json}
+  results_dir: results/stage2
+
+  # --- what is recorded (for the reader; the code records all of it) --
+  # AMR trajectory, travel time/distance, planned path length, minimum
+  # human distance and when, human state/orientation/speed, applied
+  # Comfort Space extents, intrusion into it, yield seconds, safety
+  # stop/slowdown seconds, Nav2 status, questionnaire result.
+
+comfort_space:
+  # The proposed method. Sizes come from the condition overlays.
+  policy: state_directional
+  # min_radius is the person's own body; the ladder never goes below it.
+
+humans:
+  # The participant is placed by the scene file; the state is read from
+  # the config (ground truth) because in Stage 2 the state is a CONDITION
+  # the experimenter sets, not something to estimate.
+  state_source: ground_truth
+  # The simulated bay's people, inherited through configs/common.yaml,
+  # are switched off here exactly as results/real/amr_deploy/bin/
+  # make_comfort_cfg.py does for the real corridor. The scene file adds
+  # the participant.
+  a: {enabled: false}
+  b: {enabled: false}
+  c: {enabled: false}
+  character: {enabled: false}
