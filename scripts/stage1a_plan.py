@@ -149,8 +149,21 @@ def git_commit() -> str:
 #            band off; gate boundary and safety layer unchanged). Written to
 #            its own conditions/manifests/predictions/model files so it never
 #            mixes with the default. Adopting it is the user's decision.
+#   buf10    CANDIDATE: buffer_width 0.10 } fixed in advance (2026-11-14) as the
+#   buf15    CANDIDATE: buffer_width 0.15 } only two candidates; selection rule
+#            in configs/stage1a/buffer_selection.yaml, applied by
+#            scripts/stage1a_select_buffer.py. No other value is added.
 VARIANTS = {"default": {"suffix": "", "cond_dir": "conditions", "buffer": None},
-            "nobuf": {"suffix": "_nobuf", "cond_dir": "conditions_nobuf", "buffer": 0.0}}
+            "nobuf": {"suffix": "_nobuf", "cond_dir": "conditions_nobuf", "buffer": 0.0},
+            "buf10": {"suffix": "_buf10", "cond_dir": "conditions_buf10", "buffer": 0.10},
+            "buf15": {"suffix": "_buf15", "cond_dir": "conditions_buf15", "buffer": 0.15}}
+# Scan grid of the buffer candidates around R_path^infl (the boundary moves
+# down by about the buffer width) and the low-e replication: the points
+# where buffer 0 grazed the gate (261114_stage1a_nobuf/lowe), 3 runs each.
+CANDIDATE_GRID = (-0.50, -0.40, -0.30, -0.20, -0.10, 0.0)
+LOWE = ([(w, 0.35, "c3", "static", 0.30) for w in SCAN_WIDTHS]
+        + [(2.0, 0.35, "c3", "static", 0.81), (2.2, 0.35, "c1", "b3o", 0.81)])
+LOWE_REPEATS = 3
 VARIANT = VARIANTS["default"]
 
 
@@ -164,7 +177,8 @@ def write_cond(kind: str, value: float):
     p = write_condition(OUT / VARIANT["cond_dir"], kind, value, stage="Stage 1 controlled")
     if VARIANT["buffer"] is not None:
         text = p.read_text(encoding="utf-8")
-        p.write_text("# VARIANT nobuf (candidate): Comfort costmap buffer band off.\n" + text
+        p.write_text(f"# VARIANT {VARIANT['suffix'][1:]} (candidate): Comfort costmap buffer_width "
+                     f"{VARIANT['buffer']}.\n" + text
                      + f"  costmap:\n    buffer_width: {VARIANT['buffer']}\n", encoding="utf-8")
     return p
 
@@ -214,7 +228,8 @@ def main() -> int:
             if sfx:
                 # The diagnostic already put this variant's boundary near
                 # R_path^infl: a dense grid there instead of the full descent.
-                grid = [round(eb["infl"] + d, 2) for d in (-0.30, -0.20, -0.10, -0.05, 0.0)
+                offs = (-0.30, -0.20, -0.10, -0.05, 0.0) if sfx == "_nobuf" else CANDIDATE_GRID
+                grid = [round(eb["infl"] + d, 2) for d in offs
                         if eb["infl"] + d >= MIN_E - 1e-9]
             while not sfx and e >= MIN_E - 1e-9:
                 grid.append(round(e, 2))
@@ -242,6 +257,15 @@ def main() -> int:
             for w in STEP0_WIDTHS:
                 env_cfg(w, 0.35, "c3", write)
                 manifests["step0"].append(f"b1 configs/stage1a/envs/{env_name(w, 0.35, 'c3')}.yaml")
+        if sfx and sfx != "_nobuf":
+            manifests["lowe"] = []
+            lowe = []
+            for w, yh, ctx, kind, e in LOWE:
+                t = trial(apply_variant(env_cfg(w, yh, ctx, write)), kind, e, "lowe", LOWE_REPEATS, {})
+                conds.add((kind, t["value"]))
+                lowe.append((env_name(w, yh, ctx), t))
+            for r in range(LOWE_REPEATS):
+                manifests["lowe"] += [manifest_lines(env, [t])[0] for env, t in lowe]
         pred_file = OUT / f"predictions{sfx}.json"
         model = None
     else:

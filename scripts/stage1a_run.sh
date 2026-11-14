@@ -15,6 +15,8 @@
 #   predict   R_exec_model for 1A-2 and 1-B, written BEFORE they run
 #             -> configs/stage1a/predictions_exec.json
 #   validate  1A-2 contexts and 1-B hold-outs                    -> <out>/1a2, <out>/1b
+#   lowe      low-e replication (buffer candidates only; manifest written at scan)
+#                                                                -> <out>/lowe
 #   report    scripts/stage1a_report.py over all of them         -> <out>/REPORT.md
 #
 # The model is fitted on 1A-1 only; 1A-2 and 1-B are scored against the
@@ -31,7 +33,7 @@ while [ $# -gt 0 ]; do
         --from)  FROM="$2"; shift 2 ;;
         --limit) LIMIT_S="$2"; shift 2 ;;
         --variant) VARIANT="$2"; shift 2 ;;
-        -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
         *) echo "[ERROR] unknown option $1" >&2; exit 2 ;;
     esac
 done
@@ -42,7 +44,7 @@ SFX=""; [ "$VARIANT" != "default" ] && SFX="_$VARIANT"
 MODEL="configs/stage1a/model_exec$SFX.json"
 say() { echo "$(date +%H:%M:%S)  $*" | tee -a "$LOG"; }
 
-PHASES=(scan refine fit predict validate report)
+PHASES=(scan refine fit predict validate lowe report)
 start=0
 for i in "${!PHASES[@]}"; do [ "${PHASES[$i]}" = "$FROM" ] && start=$i; done
 
@@ -80,9 +82,15 @@ for phase in "${PHASES[@]:$start}"; do
         validate)
             run_manifest "configs/stage1a/manifests/1a2$SFX.txt" "$OUT/1a2"
             run_manifest "configs/stage1a/manifests/1b$SFX.txt" "$OUT/1b" ;;
+        lowe)
+            if [ -n "$SFX" ] && [ -f "configs/stage1a/manifests/lowe$SFX.txt" ]; then
+                run_manifest "configs/stage1a/manifests/lowe$SFX.txt" "$OUT/lowe"
+            else
+                say "no low-e manifest for this variant"
+            fi ;;
         report)
             dirs=()
-            for d in step0 scan refine 1a2 1b; do [ -d "$OUT/$d" ] && dirs+=(--dir "$OUT/$d"); done
+            for d in step0 scan refine 1a2 1b lowe; do [ -d "$OUT/$d" ] && dirs+=(--dir "$OUT/$d"); done
             python3 scripts/stage1a_report.py "${dirs[@]}" --out "$OUT" \
                 --predictions "configs/stage1a/predictions$SFX.json" \
                 $( [ -f "configs/stage1a/predictions_exec$SFX.json" ] && echo --predictions "configs/stage1a/predictions_exec$SFX.json" ) \

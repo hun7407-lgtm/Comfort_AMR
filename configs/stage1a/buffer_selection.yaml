@@ -1,0 +1,44 @@
+# Stage 1 final Comfort costmap buffer: candidates and selection rule.
+# Written 2026-11-14 BEFORE any candidate run. Applied mechanically by
+# scripts/stage1a_select_buffer.py. Do not add candidates or change rules
+# after seeing results; if no candidate passes, the result is a blocker.
+#
+# History: buffer 0.35 (results/batches/261114_stage1a) -- planner pushed to
+# the wall, protective stop, boundary not explained by width; buffer 0
+# (261114_stage1a_nobuf) -- upper boundary predicted 9/9, but reproducible
+# comfort-gate holds at small e (gate-margin grazing).
+#
+# Only comfort_space.costmap.buffer_width changes. Gate margin, footprint,
+# inflation and the physical safety layer are identical for every candidate.
+
+candidates:            # tried in this order; ties -> smaller buffer
+  - {variant: buf10, buffer_width_m: 0.10}
+  - {variant: buf15, buffer_width_m: 0.15}
+
+pipeline: scripts/stage1a_run.sh --variant <variant> --out results/batches/261114_stage1a_<variant> --from scan
+# scan -> refine -> fit (configs/stage1a/model_exec_<variant>.json) ->
+# predict (predictions_exec_<variant>.json, written before validate, never
+# overwritten) -> validate (1A-2 C1/C2/C3, 1-B W2.0/y_h 0.60/C4) -> lowe
+
+criteria:
+  A_environment_boundary: >-
+    1A-1 W 1.5/1.8/2.2/2.6: every width has an observed bracket (R_exec_lo
+    exists) and R_exec_lo is strictly increasing in W (x axis = e).
+  B_upper_boundary: >-
+    All 9 pre-registered cells: every tested e <= R_exec_model passes by
+    majority, and no tested e > R_exec_model + 0.10 passes by majority
+    (the existing scoring rule, upper part).
+  C_low_e: >-
+    No comfort_gate_hold in any run at e <= R_exec_model of its cell, in the
+    9 validation cells and in the low-e replication (e 0.30 at every 1A-1
+    width; W 2.0 Static e 0.81; W 2.2 C1 e 0.81), and the low-e points pass
+    by majority. For 1A-1 the limit is R_exec_lo of that width.
+  D_protective_stop: >-
+    No stall with a protective stop (collision monitor) in any run at
+    e <= R_exec_model of its cell (validation and low-e) or at e <= R_exec_lo
+    in 1A-1. Stops ABOVE the boundary are the expected failure, not counted.
+
+rule: >-
+  A candidate passes only if A, B, C and D all hold. If both pass, the
+  smaller buffer is selected (least distortion of the navigation costmap).
+  If neither passes, stop and report the blocker; no further tuning.

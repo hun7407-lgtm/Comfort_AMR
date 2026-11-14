@@ -51,6 +51,9 @@ from comfort_core.comfort_space import robot_grow  # noqa: E402
 from comfort_core.layout import corridor_bounds  # noqa: E402
 from comfort_core.size_sweep import condition_name, parse_condition, write_condition  # noqa: E402
 
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
+from stage1a_plan import VARIANTS  # noqa: E402
+
 PRED = PROJECT_ROOT / "configs" / "stage1a" / "predictions.json"
 MODEL = PROJECT_ROOT / "configs" / "stage1a" / "model_exec.json"
 REPEATS = 3
@@ -105,12 +108,13 @@ def main() -> int:
     ap.add_argument("--dir", action="append", required=True)
     ap.add_argument("--refine", help="write the refine manifest here")
     ap.add_argument("--fit", action="store_true", help="write configs/stage1a/model_exec.json")
-    ap.add_argument("--variant", choices=("default", "nobuf"), default="default",
-                    help="nobuf: the buffer-off candidate (scripts/stage1a_plan.py VARIANTS)")
+    ap.add_argument("--variant", choices=sorted(VARIANTS), default="default",
+                    help="a Comfort-layer candidate (scripts/stage1a_plan.py VARIANTS)")
     args = ap.parse_args()
     global MODEL
-    sfx = "" if args.variant == "default" else "_" + args.variant
-    cond_dir = "configs/stage1a/conditions" + sfx
+    var = VARIANTS[args.variant]
+    sfx = var["suffix"]
+    cond_dir = "configs/stage1a/" + var["cond_dir"]
     MODEL = MODEL.with_name(f"model_exec{sfx}.json")
     pred = json.loads(PRED.with_name(f"predictions{sfx}.json").read_text())
     cells = [c for c in pred["cells"] if c["part"] == "1a1"]
@@ -122,8 +126,8 @@ def main() -> int:
         cfg = load_config(common_path=f"configs/stage1a/envs/{c['env']}.yaml")
         b = corridor_bounds(cfg)
         far = float(cfg["humans"]["a"]["position"][1]) - b.y_min
-        if args.variant == "nobuf":
-            cfg["comfort_space"]["costmap"]["buffer_width"] = 0.0
+        if var["buffer"] is not None:
+            cfg["comfort_space"]["costmap"]["buffer_width"] = var["buffer"]
         extra = robot_grow(cfg) + fz.comfort_buffer(cfg)
         fit = None if lo is None else round(far - lo - extra, 4)
         bound_only = None
@@ -151,9 +155,10 @@ def main() -> int:
                 need = max(REPEATS - have, 0)
                 if need:
                     p = write_condition(cond_dir, "static", e, stage="Stage 1 controlled")
-                    if args.variant == "nobuf" and "buffer_width" not in p.read_text():
-                        p.write_text("# VARIANT nobuf (candidate): Comfort costmap buffer band off.\n"
-                                     + p.read_text() + "  costmap:\n    buffer_width: 0.0\n")
+                    if var["buffer"] is not None and "buffer_width" not in p.read_text():
+                        p.write_text(f"# VARIANT {args.variant} (candidate): Comfort costmap "
+                                     f"buffer_width {var['buffer']}.\n" + p.read_text()
+                                     + f"  costmap:\n    buffer_width: {var['buffer']}\n")
                     refine += [f"{cond_dir}/{condition_name('static', e)}.yaml "
                                f"configs/stage1a/envs/{c['env']}.yaml"] * need
     if args.refine:
