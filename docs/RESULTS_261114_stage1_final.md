@@ -152,7 +152,7 @@ Stage 3는 이 파일을 읽기만 한다:
 - cross seed 2/3의 B2-vs-B3-O 비교는 **diagnostic pilot**(buffer 0)이다. 결과 파일에서 seed를 먼저 확인했다(`261114_diag_nobuffer_cross`: B2 hold, B3-O SUCCESS). Stage 3 main 결과가 아니다.
 - 실패 갤러리: SUCCESS, COMFORT_GATE_HOLD, PROTECTIVE_STOP, POST_EVADE_STALL, NAV2_FAILURE는 기존 기록에서 가져왔다. ROBOT_ROBOT_DEADLOCK은 **NO EXISTING EXAMPLE**이다. results/ 아래 어떤 기록도 이 판정이 아니다.
 - buffer 0, W 2.0, e 0.81은 첫 캡처 실행에서 gate hold, 재촬영에서 통과였다. buffer 0의 gate 경계 스침이 실행마다 다르기 때문이다. 각 이미지에는 그 실행의 판정을 표기했다.
-- PNG와 동영상은 기존 `.gitignore` 규칙(`results/**/*.png`, `*.mp4`)에 따라 로컬에만 있다. 재생성 방법은 인덱스 상단에 있다.
+- PNG와 동영상은 기존 `.gitignore` 규칙(`results/**/*.png`, `*.mp4`)에 따라 로컬에만 있다. 예외로 인덱스의 **추천 TOP 10** PNG는 커밋했다(약 24 MB). 재생성 방법은 인덱스 상단에 있다.
 
 기존 폴더(`261112_stage1_size_sweep`, `261114_stage1a`, `261114_stage1a_nobuf`, `261114_diag_nobuffer_cross`)는 수정하지 않았다.
 
