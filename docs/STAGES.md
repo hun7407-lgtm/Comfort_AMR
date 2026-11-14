@@ -1,5 +1,139 @@
 # 3단계 실험 구조 — Stage 1 / 2 / 3
 
+> **2026-11-14 개정 (현행).** 아래 "개정 설계" 절이 현재 구조다. 그 뒤의
+> 2026-11-12 내용(크기 sweep → R_nav_max, Stage 2 사다리)은 기록으로 남긴다.
+> `results/batches/261112_stage1_size_sweep`(330 trials)은 **Preliminary
+> study**이며 최종 threshold로 쓰지 않는다.
+
+## 개정 설계 (2026-11-14)
+
+```text
+Preliminary  기존 cross 330 trials (복잡 환경에서 Static 교착 경향 확인, 원인 분리 불가)
+Stage 1      Controlled sim: AMR 1대 + 사람 1명 + 직선 복도. R_nav(E,H) 예측이 실제 통과와 맞는가
+Stage 2      Real human study: context별 passing distance -> perceived comfort 곡선
+Stage 3-A    Controlled validation: B2 Static Calibrated vs B3-O Dynamic Selection
+Stage 3-B    Complex cross, seeds 1-100 paired: 같은 두 정책, failure class별 보고
+```
+
+### 공통 정의
+
+| 용어 | 정의 (코드) |
+|---|---|
+| effective extent e | 사람 중심에서 통로 쪽으로 Comfort Space가 뻗은 길이 (`comfort_core/feasibility.py::effective_extent`). Stage 1 x축이자 Stage 2 passing distance와 같은 양 |
+| target_size_m | B3-O 구현 파라미터. e = ratio(context) × target (`comfort_core/contexts.py`: c1 0.50, c2 0.875, c3 0.667, c4 0.75) |
+| R_path^infl / R_path^lethal | gate의 배제영역(inscribed 0.24 + gate margin 0.05)과 벽 clearance(inflation 0.34 / inscribed 0.24)로 계산한 경로 존재 한계 |
+| R_exec | Isaac Sim + Nav2에서 관측된 통과 경계 (다수결 통과한 최대 e, 다음 실패 e) |
+| R_exec_model = R_nav_safe | 실행 모델: Comfort Space를 inscribed + costmap buffer(0.35)만큼 키우고, 벽/몸은 **보정된 wall clearance**로 둔 경로 존재 한계. 1A-1에서 한 파라미터 보정 → 1A-2/1-B는 사전 등록 후 검증 |
+| R_comfort_min(H), R_pref(H) | Stage 2 곡선에서 (pilot 후 정의) |
+| R* | `comfort_core/selection.py`: R_nav_safe < R_comfort_min이면 PASSAGE_INFEASIBLE(축소 금지, 대기/우회), 아니면 primary min(R_pref, R_nav_safe), fallback R_comfort_min |
+
+### Stage 1 — 왜 실행 모델이 필요한가 (smoke/exploration 관측)
+
+`results/batches/261114_stage1a_smoke`, `261114_stage1a_explore`:
+경로 한계(R_path^infl)에서 Comfort Space를 둔 trial은 **gate hold 없이** 멈췄다.
+로그상 원인은 두 가지가 겹친 것이다.
+
+1. Comfort costmap의 buffer band(`comfort_space.costmap.buffer_width` 0.35, cost 55) 때문에
+   planner가 사람에게서 e + 0.24 + 0.35 이상 떨어진 경로를 고르고, 그만큼 벽 쪽으로 붙는다.
+2. collision monitor 보호필드의 측면 폭(footprint 반폭 + scanner tolerance = 0.34,
+   `generate_nav2_params.py`)이 inflation 반경(0.34)과 같아서, 벽 쪽 inflation 경계를
+   비스듬히 따라가면 필드가 벽에 닿아 **ProtectiveStop** → 후진/재시도 → 12 s 무진전.
+
+안전층은 바꾸지 않는다. 대신 이 효과를 "벽 clearance" 하나로 모델에 넣고 1A-1에서 보정한다.
+
+### Stage 1 실행 순서 (`scripts/stage1a_run.sh --out results/batches/<날짜>_stage1a`)
+
+| phase | 내용 | 파일 |
+|---|---|---|
+| scan | Step 0 (B1, W 1.5/1.8/2.0/2.2/2.6 ×2) + 1A-1 Static 스캔 (R_path^infl에서 0.10 간격으로 0.30까지, + R_path^lethal+0.10, 각 1회) | `configs/stage1a/manifests/{step0,1a1_scan}.txt`, `predictions.json`(경로 한계 사전등록) |
+| refine | 폭마다 관측 경계(마지막 통과, 첫 실패, 그 사이 0.05 간격)를 3회로 | `scripts/stage1a_calibrate.py --refine` |
+| fit | wall clearance = (사람→먼 벽) − R_exec_lo − 0.24 − 0.35, 폭별 계산 후 최대값(보수) | `configs/stage1a/model_exec.json` (한 번만 기록) |
+| predict | 1A-2(W 2.2, C1/C2/C3), 1-B(W 2.0; y_h 0.60; C4 side) 예측을 **실행 전** 기록 | `configs/stage1a/predictions_exec.json` (덮어쓰기 거부) |
+| validate | 1A-2: 모델±(−0.30,−0.10,0×3,+0.10×3,+0.30), 1-B: (−0.10, 0×2, +0.10×2, +0.20) | `manifests/{1a2,1b}.txt` |
+| report | 예측 대비 관측, F0–F3 | `scripts/stage1a_report.py` |
+
+채점: e ≤ R_exec_model은 다수결 통과, e > R_exec_model + 0.10은 다수결 실패여야 "consistent".
+실패 메커니즘(gate hold / stall / protective stop)은 합치지 않고 나란히 기록한다.
+
+### Stage 1 결과 (2026-11-14 실행)
+
+배치: `results/batches/261114_stage1a` (현행 설정, buffer 0.35), `results/batches/261114_stage1a_nobuf`
+(후보 설정: Comfort costmap buffer만 0, gate 경계·안전층 동일), 진단 `261114_stage1a/diag_nobuffer`.
+
+**Step 0 (B1, Comfort 없음)**: 5 폭 × 2 = 10/10 성공, 접촉 0. 단 좁은 복도에서 사람 중심–footprint
+최소 0.26–0.30 m (몸 표면 0.01–0.05 m) — 안전층은 slowdown만 걸었다.
+
+**현행 설정 (buffer on), Static 관측 경계 R_exec (3회 반복)**
+
+| W | 통과 | 실패 | R_path^infl |
+|---|---|---|---|
+| 1.5 | 없음 (0.32도 실패) | ≥0.32 | 0.52 |
+| 1.8 | 0.77 | 0.82 | 0.82 |
+| 2.2 | 0.77 | 0.82 | 1.22 |
+| 2.6 | 1.22 (2/3) | 1.27 | 1.62 |
+
+W 1.8과 2.2가 같은 경계 → 폭으로 설명되지 않는다. 1-파라미터 모델 적합 시 벽 clearance 0.09/0.49/0.44 —
+상수가 아님. 원인(궤적 + 진단): buffer band가 넓은 복도에서 planner를 벽 쪽 inflation 경계로 밀고,
+보호필드(측면 0.34 m)가 벽을 잡아 ProtectiveStop. **이 설정에서는 환경→경계의 단순 모델이 성립하지 않는다.**
+사전등록 예측(1A-2/1-B)은 이 설정으로는 만들지 않았다.
+
+**1A-2 context (현행 설정, model-free scan, W 2.2)**: C1/C2/C3 모두 e ≤ 0.72 통과, e ≥ 0.82 실패 —
+target_size 축에서는 1.44 / 0.82 / 1.08로 다르지만 e 축에서 하나로 겹친다
+(`261114_stage1a/figures/F3_context_mapping.png`).
+
+**후보 설정 (buffer off)**: 1A-1 경계 W 1.5 0.42|0.47, W 1.8 0.72|0.77, W 2.2 1.12|1.17, W 2.6 1.52|1.57
+(각 3회, 경계 안쪽 3/3·바깥 0/3; W 2.6 안쪽 2/3). 벽 clearance **0.490 m, 4개 폭에서 spread 0.000**
+(`configs/stage1a/model_exec_nobuf.json`). 이 모델로 1A-2와 1-B를 **실행 전에** 등록
+(`predictions_exec_nobuf.json`) → 9개 셀 모두 상한 경계가 예측과 일치 (예측 e에서 전부 통과,
++0.10에서 전부 실패): 1A-2 C1/C2/C3, 1-B W 2.0 (Static, C1, C3), y_h 0.60 (Static, C2), C4 side.
+2개 셀은 경계 아래 한 점(e 0.81)이 comfort gate hold로 실패해 INCONSISTENT로 채점됨 — buffer가 없으면
+작은 Comfort Space 경계를 planner가 스치고 gate가 붙잡는 현상(buffer가 원래 이것 때문에 도입됨).
+반복 측정 `261114_stage1a_nobuf/lowe`: e 0.30은 11/12 통과(W 1.8에서 1회 실패), e 0.81은
+W 2.0 Static 0/3, W 2.2 C1 0/3 — **경계 아래에 재현되는 실패 구간**이 있다(경로가 grow 0.24만 피해 gate
+margin 0.05 안쪽을 스침). cross 진단(`261114_diag_nobuffer_cross`, seed 1–5): buffer off에서 Static 1.20은
+seed 2·3이 성공→gate hold로 악화, B3-O 1.20은 5/5 그대로.
+
+정리: buffer 0.35는 넓은 복도에서 벽 쪽 보호필드 정지를, buffer 0은 gate 경계 스침 정지를 만든다.
+둘 다 buffer 폭이 원인이므로 "gate margin + 추종오차보다 크고 벽까지 밀지 않는" 중간 폭이 다음 설계
+결정이다(값 선택은 사용자 결정, 아직 실행 안 함).
+
+**결정 필요 (사용자)**: buffer를 유지하면 경계가 환경 기하로 예측되지 않고, 끄면 예측은 되지만 작은 크기에서
+gate-grazing 정지가 생긴다. Stage 3의 두 정책 모두 같은 설정을 써야 한다.
+
+### Stage 2 (실행 안 함, interface 갱신)
+
+`configs/stage2/stage2_real.yaml`: `contexts`(c1–c4), `distance_levels_m: null`
+(제안 0.50/0.75/1.00/1.25/1.50 — 실기 보호필드·통과속도 확인 전에는 비움).
+`scripts/stage2_make_conditions.py`: context × d → B3-O target(=d/ratio) 조건 파일 +
+`orders.csv`(context block Williams, block 안 거리 Williams).
+기록: `context`, `planned_distance_m`, `measured_distance_m`(사람 중심→footprint = min_clearance + 0.25).
+넓은 통제 공간(또는 niche)에서 측정 권장. 실험 전 체크리스트(기관 절차, 동의, 가명, 철회,
+안전 브리핑, 비상정지, counterbalancing)는 실행 전에 확인.
+
+### Stage 3
+
+- `configs/frozen/comfort_requirements.yaml`: Stage 2 값(전부 null). null이면
+  `b3o_selection` 정책과 `stage3_run.sh --main`이 거부한다. Stage 3 결과를 보고 값을 바꾸지 않는다.
+- `scripts/stage3_make_configs.py --selection-model configs/stage1a/model_exec.json`:
+  `b3o_selection.yaml`(spot × state별 R_nav_safe 표, 공장 맵 위 국소 경로 탐색) +
+  `b2_static_calibrated.yaml`(= max_H R_comfort_min, frozen 전에는 TEMPLATE).
+- `comfort_core/selection_policy.py`: 정책 `b3o_selection` (spot에 선 사람만 선택, 보행자는 기존 moving mapping).
+- 3-B: `scripts/make_cross_campaign.py`가 seed 1–33 cross config를 byte 단위로 재현(규칙: AMR 2 출발
+  1.0+0.3·(s mod 2) s, AMR 3 출발 9.0+0.3·((5s) mod 7) s) → seed 34–100 생성 완료.
+  `./scripts/stage3_run.sh --main --selection-model ...` (seed마다 정책 순서 교대).
+- 실패 분류 `comfort_core/failure_class.py`: INVALID → PASSAGE_INFEASIBLE → STATIC_OVER_RESERVATION(B2)
+  → SELECTION_FAILURE(B3-O; B2에서는 모델 밖 실패) → ROBOT_ROBOT(판정 시 fleet ≤ 1.5 m) →
+  POST_EVADE_STALL → NAV2_FAILURE → UNCLASSIFIED_STALL. 입력은 `nav2_goal.py`가 판정 시점에 기록하는
+  `verdict_*` 컬럼.
+- 보고: `scripts/stage3b_report.py` (exact McNemar, paired Wilcoxon, seed 1–33/34–100 분리, AMR 1/2/3 표기).
+
+표시 이름: AMR 1 / AMR 2 / AMR 3 (`comfort_core/labels.py`). 내부 ID(AMR1/a1/a2)는 ROS namespace·TF·prim·
+CSV 값이라 유지한다.
+
+---
+
+## (기록) 2026-11-12 설계
+
 2026-11-12부터의 메인 실험 구조. 이전의 B1/B2/B3/B3-O 4정책 비교
 (`results/batches/261107_MAIN_cross_seeds1-33_merged` 등)는 그대로
 보존하되 새 실험에서는 쓰지 않는다. 제안 방법은 **B3-O** 하나로

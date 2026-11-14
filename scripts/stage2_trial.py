@@ -76,6 +76,7 @@ from comfort_core.human_state import make_state_provider       # noqa: E402
 from comfort_core.intrusion import footprint_outline, intrusion  # noqa: E402
 from comfort_core.layout import human_positions                # noqa: E402
 from comfort_core.size_sweep import parse_condition            # noqa: E402
+from comfort_core.contexts import CONTEXTS, key_of              # noqa: E402
 from comfort_core.stage2 import (TRAJECTORY_FIELDS, TRIAL_FIELDS, append_row,  # noqa: E402
                                  missing_placeholders, session_dir, stage2_block)
 from human_tracker import HumanTracker                         # noqa: E402
@@ -291,6 +292,10 @@ def main() -> int:
     ap.add_argument("--session", required=True)
     ap.add_argument("--participant", required=True, help="pseudonymous code, e.g. P01")
     ap.add_argument("--order", type=int, required=True, help="1-based position in the sequence")
+    ap.add_argument("--context", required=True,
+                    help="Human Context of this trial, e.g. c2_stationary_rear (orders.csv)")
+    ap.add_argument("--distance", type=float, required=True,
+                    help="planned passing distance d, m (orders.csv passing_distance_m)")
     ap.add_argument("--notes", default="")
     ap.add_argument("--check", action="store_true", help="validate and exit, drive nothing")
     ap.add_argument("--no-questionnaire", action="store_true")
@@ -301,6 +306,14 @@ def main() -> int:
     cond = parse_condition(args.scenario)
     if cond is None or cond[0] != "b3o":
         todo.append(f"--scenario must be a b3o_r<size>.yaml condition, got {args.scenario}")
+    try:
+        ctx = key_of(args.context)
+        if cfg["humans"].get("P", {}).get("state") not in (None, CONTEXTS[ctx]["state"]):
+            todo.append(f"scene humans.P.state is {cfg['humans']['P']['state']!r} but context "
+                        f"{args.context} needs {CONTEXTS[ctx]['state']!r}")
+    except ValueError as exc:
+        todo.append(str(exc))
+        ctx = None
     if todo:
         print("[stage2_trial] refusing to run; fill these first:")
         for t in todo:
@@ -344,7 +357,8 @@ def main() -> int:
     row = {
         "stamp": datetime.now().isoformat(timespec="seconds"), "session": args.session,
         "participant_id": args.participant, "trial_id": trial_id, "trial_order": args.order,
-        "condition": f"{cond[0]}_r{cond[1]:.2f}", "policy": cfg["comfort_space"]["policy"],
+        "condition": f"{cond[0]}_r{cond[1]:.2f}", "context": CONTEXTS[ctx]["name"],
+        "planned_distance_m": round(args.distance, 3), "policy": cfg["comfort_space"]["policy"],
         "comfort_size_m": geom["comfort_size_m"], "comfort_scale": geom["comfort_scale"],
         "config": args.scene, "scenario_file": args.scenario, "map": nav2_map(cfg),
         "commit": git_commit(), "result": out["result"], "nav2_status": out["nav2_status"],
@@ -356,6 +370,8 @@ def main() -> int:
         "human_speed_mps": (round(sum(out["human_speeds"]) / len(out["human_speeds"]), 3)
                             if out["human_speeds"] else ""),
         "min_clearance": round(out["min_clearance"], 3) if math.isfinite(out["min_clearance"]) else "",
+        "measured_distance_m": (round(out["min_clearance"] + float(cfg["humans"]["radius"]), 3)
+                                if math.isfinite(out["min_clearance"]) else ""),
         "min_clearance_t_s": round(out["min_clearance_t_s"], 2) if not math.isnan(out["min_clearance_t_s"]) else "",
         "passing_side": passing_side,
         "cs_front_m": round(ext.front, 3) if ext else "", "cs_side_m": round(ext.side, 3) if ext else "",
@@ -390,7 +406,8 @@ def main() -> int:
         cmd = [sys.executable, str(PROJECT_ROOT / "scripts/stage2_questionnaire.py"),
                "--session-dir", str(folder), "--participant", args.participant,
                "--trial-id", trial_id, "--condition", row["condition"],
-               "--size", str(row["comfort_size_m"]), "--order", str(args.order)]
+               "--size", str(row["comfort_size_m"]), "--order", str(args.order),
+               "--context", row["context"], "--passing-distance", str(args.distance)]
         print("\n  questionnaire: " + " ".join(cmd[1:]))
         return subprocess.call(cmd)
     return 0 if out["result"] == "SUCCESS" else 1

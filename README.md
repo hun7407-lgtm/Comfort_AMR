@@ -4,6 +4,9 @@
 
 Isaac Sim 5.1과 ROS 2 Jazzy 기반의 실험 환경입니다.
 
+> **최신 결과 진입점:** [`docs/RESULTS_261114.md`](docs/RESULTS_261114.md) — Stage 1 controlled 결과,
+> 결정 필요 항목, Stage 2/3 준비 상태. 설계 전체는 [`docs/STAGES.md`](docs/STAGES.md).
+
 ---
 
 ## 1. 연구 목적

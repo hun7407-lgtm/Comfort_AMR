@@ -1,0 +1,13 @@
+campaign  : 10 trial(s) from results/batches/261114_diag_nobuffer_cross/manifest.txt, starting at 1, limit 1500s each
+started   : 2026-11-14T05:57:51+09:00   commit c44bc0c
+06:01:22  001_campaign_h8_a3_cross_s1_diag_nobuffer_static_r1.20_cross  exit 0  206s  AMR1 SUCCESS  fleet rows 1  [1/10]
+06:07:47  002_campaign_h8_a3_cross_s1_diag_nobuffer_b3o_r1.20_cross  exit 0  381s  AMR1 SUCCESS  fleet rows 1  [2/10]
+06:11:22  003_campaign_h8_a3_cross_s2_diag_nobuffer_static_r1.20_cross  exit 1  210s  AMR1 DEADLOCK  fleet rows 1  [3/10]
+06:15:13  004_campaign_h8_a3_cross_s2_diag_nobuffer_b3o_r1.20_cross  exit 0  226s  AMR1 SUCCESS  fleet rows 1  [4/10]
+06:21:06  005_campaign_h8_a3_cross_s3_diag_nobuffer_static_r1.20_cross  exit 1  348s  AMR1 DEADLOCK  fleet rows 1  [5/10]
+06:25:06  006_campaign_h8_a3_cross_s3_diag_nobuffer_b3o_r1.20_cross  exit 0  236s  AMR1 SUCCESS  fleet rows 1  [6/10]
+06:28:39  007_campaign_h8_a3_cross_s4_diag_nobuffer_static_r1.20_cross  exit 0  209s  AMR1 SUCCESS  fleet rows 1  [7/10]
+06:32:09  008_campaign_h8_a3_cross_s4_diag_nobuffer_b3o_r1.20_cross  exit 0  206s  AMR1 SUCCESS  fleet rows 1  [8/10]
+06:38:10  009_campaign_h8_a3_cross_s5_diag_nobuffer_static_r1.20_cross  exit 1  356s  AMR1 DEADLOCK  fleet rows 1  [9/10]
+06:42:14  010_campaign_h8_a3_cross_s5_diag_nobuffer_b3o_r1.20_cross  exit 0  239s  AMR1 SUCCESS  fleet rows 1  [10/10]
+finished  : 2026-11-14T06:42:19+09:00

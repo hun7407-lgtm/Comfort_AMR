@@ -1,0 +1,11 @@
+# DIAGNOSTIC: buffer off on the cross scenario, seeds 1-5 (compare 261112_stage1_size_sweep, same seeds, buffer on)
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s1.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_b3o_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s1.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s2.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_b3o_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s2.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s3.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_b3o_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s3.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s4.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_b3o_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s4.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150
+configs/stage1a/diagnostic/diag_nobuffer_b3o_r1.20_cross.yaml configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml --fleet-tail 150

@@ -1,0 +1,7 @@
+campaign  : 4 trial(s) from results/batches/261114_stage1a_smoke/manifest.txt, starting at 1, limit 600s each
+started   : 2026-11-14T00:43:03+09:00   commit c44bc0c
+00:44:18  001_w1.50_y0.35_c3_b1  exit 0  70s  AMR1 SUCCESS  fleet rows 0  [1/4]
+00:45:29  002_w1.50_y0.35_c3_static_r0.52  exit 1  67s  AMR1 DEADLOCK  fleet rows 0  [2/4]
+00:46:40  003_w1.50_y0.35_c3_static_r0.91  exit 1  66s  AMR1 DEADLOCK  fleet rows 0  [3/4]
+00:47:52  004_w2.20_y0.35_c1_b3o_r2.44  exit 1  67s  AMR1 DEADLOCK  fleet rows 0  [4/4]
+finished  : 2026-11-14T00:47:57+09:00

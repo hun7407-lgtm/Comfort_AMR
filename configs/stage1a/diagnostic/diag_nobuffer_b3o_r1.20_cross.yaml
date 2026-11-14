@@ -1,0 +1,14 @@
+# DIAGNOSTIC ONLY: configs/stage1/b3o_r1.20.yaml with the Comfort costmap buffer band off, on the cross scenario.
+# Compared with the preliminary study (buffer on), same seeds. Not a study condition.
+
+scenario:
+  name: diag_nobuffer_b3o_r1.20
+  label: B3-O Dynamic Comfort Space, size 1.20 m (moving front at the reference speed)
+comfort_space:
+  policy: state_directional
+  aisle_scaling:
+    enabled: true
+    target_size_m: 1.2
+    floor_m: 0.0
+  costmap:
+    buffer_width: 0.0

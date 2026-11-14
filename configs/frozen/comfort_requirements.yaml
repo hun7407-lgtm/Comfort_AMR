@@ -1,0 +1,25 @@
+# Frozen inputs of the R* selection rule (comfort_core/selection.py).
+#
+# Filled ONCE from the Stage 2 human study, committed and tagged before
+# Stage 3, and never changed after looking at Stage 3 results.
+# All values are effective corridor-side extents in metres: person centre
+# to the nearest surface of the AMR.
+#
+# Every value is null until Stage 2 exists. comfort_core.selection.frozen_inputs
+# refuses to return anything while r_comfort_min_m is null, and the Stage 3
+# runner refuses to start. Nothing here is a validated or ISO comfort distance.
+
+stage2_source: null          # results/stage2/<session> the values come from
+acceptance_rule: null        # how R_comfort_min was read off the comfort curve (pre-registered after the pilot)
+r_pref_rule: null            # how R_pref was defined, or null -> fallback rule (R* = R_comfort_min)
+frozen_at_commit: null
+
+contexts:
+  c1_engaged_rear:     {r_comfort_min_m: null, r_pref_m: null}
+  c2_stationary_rear:  {r_comfort_min_m: null, r_pref_m: null}
+  c3_stationary_front: {r_comfort_min_m: null, r_pref_m: null}
+  c4_stationary_side:  {r_comfort_min_m: null, r_pref_m: null}   # only if Stage 2 measures it
+
+# R_nav_safe is NOT frozen here: it is computed per scene from the Stage 1
+# model (comfort_core/feasibility.py, bound "infl"), whose definition is
+# frozen by the commit that ran Stage 1.

@@ -314,7 +314,12 @@ class ComfortPublisher(Node):
         # ones. A person's state does not stop being `moving` because
         # they paused; what changes is their speed, and the policy is
         # what decides how much that shrinks their Comfort Space.
-        axes = self.policy.axes(declared, speeds)
+        if getattr(self.policy, "uses_positions", False):
+            # b3o_selection: the size depends on WHERE the person stands
+            # (the spot's navigation bound), so it needs the positions.
+            axes = self.policy.axes(declared, speeds, positions=self.tracker.positions())
+        else:
+            axes = self.policy.axes(declared, speeds)
         headings = self.headings.resolve(declared, self.tracker.headings(),
                                          speeds)
         return build_shapes(self.cfg, axes, self.tracker.positions(),

@@ -1,0 +1,19 @@
+campaign  : 16 trial(s) from results/batches/261114_stage1a_nobuf/lowe/manifest.txt, starting at 1, limit 600s each
+started   : 2026-11-14T05:38:04+09:00   commit c44bc0c
+05:39:14  001_w1.50_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [1/16]
+05:40:24  002_w1.80_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [2/16]
+05:41:34  003_w2.20_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [3/16]
+05:42:44  004_w2.60_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [4/16]
+05:43:55  005_w1.50_y0.35_c3_static_r0.30  exit 0  67s  AMR1 SUCCESS  fleet rows 0  [5/16]
+05:45:06  006_w1.80_y0.35_c3_static_r0.30  exit 1  67s  AMR1 DEADLOCK  fleet rows 0  [6/16]
+05:46:17  007_w2.20_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [7/16]
+05:47:26  008_w2.60_y0.35_c3_static_r0.30  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [8/16]
+05:48:36  009_w1.50_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [9/16]
+05:49:47  010_w1.80_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [10/16]
+05:50:57  011_w2.20_y0.35_c3_static_r0.30  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [11/16]
+05:52:06  012_w2.60_y0.35_c3_static_r0.30  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [12/16]
+05:53:42  013_w2.00_y0.35_c3_static_r0.81  exit 1  92s  AMR1 DEADLOCK  fleet rows 0  [13/16]
+05:54:54  014_w2.20_y0.35_c1_b3o_r1.62  exit 1  68s  AMR1 DEADLOCK  fleet rows 0  [14/16]
+05:56:32  015_w2.00_y0.35_c3_static_r0.81  exit 1  94s  AMR1 DEADLOCK  fleet rows 0  [15/16]
+05:57:46  016_w2.20_y0.35_c1_b3o_r1.62  exit 1  70s  AMR1 DEADLOCK  fleet rows 0  [16/16]
+finished  : 2026-11-14T05:57:50+09:00

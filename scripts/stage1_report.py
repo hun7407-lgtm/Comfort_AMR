@@ -60,6 +60,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from comfort_core import load_config                       # noqa: E402
 from comfort_core.comfort_space import make_policy, robot_grow  # noqa: E402
+from comfort_core.labels import robot_label  # noqa: E402
 from comfort_core.size_sweep import (DEFAULT_SIZES, KIND_LABEL, KIND_POLICY,  # noqa: E402
                                      parse_condition)
 from report_pilot import f, geometry, mean, truthy  # noqa: E402
@@ -448,7 +449,7 @@ def plot_matrix(sizes, cells, out, folder):
     handles.append(Patch(facecolor="white", edgecolor="#cccccc", label="not run"))
     fig.legend(handles=handles, loc="lower center", ncol=4, fontsize=8, frameon=False,
                bbox_to_anchor=(0.5, -0.01))
-    fig.suptitle(f"{folder}\nP6  AMR1 outcome per size x seed", fontsize=10)
+    fig.suptitle(f"{folder}\nP6  AMR 1 outcome per size x seed", fontsize=10)
     fig.tight_layout(rect=(0, 0.08, 1, 0.92))
     fig.savefig(out, dpi=150)
     plt.close(fig)
@@ -477,12 +478,12 @@ def plot_mechanisms(sizes, M, out, folder):
         ax.grid(axis="y", alpha=0.25)
         for spine in ("top", "right"):
             ax.spines[spine].set_visible(False)
-    axes[0].set_ylabel("AMR1 trials not reaching the goal")
+    axes[0].set_ylabel("AMR 1 trials not reaching the goal")
     h, l = axes[0].get_legend_handles_labels()
     h2, l2 = axes[1].get_legend_handles_labels()
     seen = dict(zip(l + l2, h + h2))
     fig.legend(seen.values(), seen.keys(), loc="lower center", ncol=4, fontsize=8, frameon=False)
-    fig.suptitle(f"{folder}\nP8  how AMR1 stopped, by size (only 'Comfort gate hold' is a size effect)",
+    fig.suptitle(f"{folder}\nP8  how AMR 1 stopped, by size (only 'Comfort gate hold' is a size effect)",
                  fontsize=10)
     fig.tight_layout(rect=(0, 0.1, 1, 0.92))
     fig.savefig(out, dpi=150)
@@ -574,7 +575,7 @@ def plot_fleet(sizes, FM, out, folder):
             ns = [FM[k][s][robot]["n"] for s in xs]
             ax.errorbar(xs, ys, yerr=[se(y, n) for y, n in zip(ys, ns)], color=COLOUR[k],
                         marker=MARKER[k], lw=2, ms=7, capsize=3, label=KIND_LABEL[k])
-        ax.set_title(f"{robot}  (fleet vehicle, no yield gate)", fontsize=10)
+        ax.set_title(f"{robot_label(robot)}  (fleet vehicle, no yield gate)", fontsize=10)
         ax.set_ylim(-0.03, 1.05)
         _axes_sizes(ax, sizes)
         ax.set_xlabel("Comfort Space size (m)")
@@ -637,7 +638,7 @@ def table_mech(sizes, M, k) -> str:
 
 def table_fleet(sizes, FM, k, robot) -> str:
     cols = ["size (m)", "n", "success", "deadlock", "aborted", "legs done", "dist m", "min clr m",
-            "clr min", "contact", "intr m", "gap AMR1 m", "gap fleet m", "stop s"]
+            "clr min", "contact", "intr m", "gap AMR 1 m", "gap fleet m", "stop s"]
     lines = ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
     for s in sizes:
         m = FM[k].get(s, {}).get(robot)
@@ -714,15 +715,15 @@ def main() -> int:
         indent=2), encoding="utf-8")
 
     # figures
-    plot_rate(sizes, M, "success_rate", "AMR1 success rate (valid trials)",
+    plot_rate(sizes, M, "success_rate", "AMR 1 success rate (valid trials)",
               "P1  Comfort Space size vs navigation success", figs / "P1_success_vs_size.png", folder)
     plot_rate(sizes, M, "comfort_deadlock_rate", "comfort-induced deadlock rate (gate hold)",
               "P2  Comfort Space size vs comfort-induced deadlock, with thresholds",
               figs / "P2_comfort_deadlock_vs_size.png", folder, thr=thr)
-    plot_measure(sizes, M, "travel_time_mean", "travel_time_sd", "AMR1 travel time (s)",
+    plot_measure(sizes, M, "travel_time_mean", "travel_time_sd", "AMR 1 travel time (s)",
                  "P3  Comfort Space size vs travel time (successful trials)",
                  figs / "P3_travel_time_vs_size.png", folder)
-    plot_measure(sizes, M, "travel_distance_mean", "travel_distance_sd", "AMR1 travel distance (m)",
+    plot_measure(sizes, M, "travel_distance_mean", "travel_distance_sd", "AMR 1 travel distance (m)",
                  "P4  Comfort Space size vs travel distance (successful trials; dashed: first plan)",
                  figs / "P4_travel_distance_vs_size.png", folder, extra="planned_path_mean")
     plot_measure(sizes, M, "min_clearance_mean", None, "closest footprint-to-person distance (m)",
@@ -735,17 +736,17 @@ def main() -> int:
 
     # tables.md
     t = [f"# {folder}: Stage 1 tables", "",
-         f"{len(rows)} AMR1 rows ({skipped} not size conditions, ignored); sizes "
+         f"{len(rows)} AMR 1 rows ({skipped} not size conditions, ignored); sizes "
          f"{', '.join(f'{s:.2f}' for s in sizes)} m.", "",
          "Travel time/distance: mean ± sd over SUCCESSFUL trials. Clearance, intrusion, "
          "contact, waits: over all valid trials. 'comfort DL' = Comfort gate hold only. "
          "'robot in' = trials where the robot closed the last centimetre of a contact. "
-         "'r-r gap' = AMR1's closest centre-to-centre approach to a1/a2 (min over trials). "
+         "'r-r gap' = AMR 1's closest centre-to-centre approach to AMR 2 / AMR 3 (min over trials). "
          "Intrusion is measured against the fixed reference geometry "
          f"(evaluation.comfort_reference = {rows[0].get('comfort_reference', '?')}), "
          "identical for every size.", ""]
     for k in KINDS:
-        t += [f"## {KIND_LABEL[k]} — AMR1 by size", "", table_sizes(sizes, M, k), "",
+        t += [f"## {KIND_LABEL[k]} — AMR 1 by size", "", table_sizes(sizes, M, k), "",
               f"### {KIND_LABEL[k]} — failure mechanism by size", "", table_mech(sizes, M, k), ""]
         for m in ("comfort_gate_hold", "post_evade_stall", "nav2_abort", "stall", "invalid"):
             items = [f"{s:.2f}: {listing(cells, k, s, m)}" for s in sizes if s in M[k]
@@ -755,14 +756,14 @@ def main() -> int:
         t.append("")
         if has_fleet:
             for robot in sorted({r for s in FM[k] for r in FM[k][s]}):
-                t += [f"### {KIND_LABEL[k]} — {robot} by size", "", table_fleet(sizes, FM, k, robot), ""]
+                t += [f"### {KIND_LABEL[k]} — {robot_label(robot)} by size", "", table_fleet(sizes, FM, k, robot), ""]
     t += ["## Applied Comfort Space extents (m)", "", table_geometry(sizes, args.campaign), ""]
     (d / "tables.md").write_text("\n".join(t), encoding="utf-8")
 
     # REPORT.md
     n_total = sum(M[k][s]["n"] for k in KINDS for s in M[k])
     r = [f"# {folder}: Stage 1 — Comfort Space size vs navigation feasibility", "",
-         f"Cross scenario, {n_total} AMR1 trials over {len(sizes)} sizes x {len(KINDS)} policies; "
+         f"Cross scenario, {n_total} AMR 1 trials over {len(sizes)} sizes x {len(KINDS)} policies; "
          f"seeds per cell: " + ", ".join(
              f"{KIND_LABEL[k]} {min(M[k][s]['n'] for s in M[k])}-{max(M[k][s]['n'] for s in M[k])}"
              for k in KINDS if M[k]) + ".", "",
@@ -829,7 +830,7 @@ def main() -> int:
           "| P5 | figures/P5_min_clearance_vs_size.png | closest approach to a person |",
           "| P6 | figures/P6_size_x_seed_matrix.png | outcome per size x seed, mechanism lettered |",
           "| P7 | figures/P7_threshold_geometry.png | aisle width left outside the Comfort Spaces, per size |",
-          "| P8 | figures/P8_failure_mechanism.png | how AMR1 stopped, per size |"]
+          "| P8 | figures/P8_failure_mechanism.png | how AMR 1 stopped, per size |"]
     if has_fleet:
         r.append("| P9 | figures/P9_fleet_vs_size.png | a1 / a2 success vs size |")
     r += ["", "## Reading notes", "",

@@ -158,6 +158,19 @@ FIELDS: Tuple[str, ...] = (
     # Length of the first global plan Nav2 published, so the distance
     # actually driven can be compared with the route it was given.
     "planned_path_length",
+    # Where the verdict was taken and what was around (scripts/nav2_goal.py
+    # verdict_context): a Comfort Space on the plan within 3 m ahead, the
+    # nearest person (centre to robot centre) and the nearest fleet AMR.
+    "verdict_x",
+    "verdict_y",
+    "verdict_comfort_ahead",
+    "verdict_person",
+    "verdict_person_m",
+    "verdict_person_x",
+    "verdict_person_y",
+    "verdict_person_state",
+    "verdict_nearest_fleet",
+    "verdict_nearest_fleet_m",
     # The Comfort Space extents the trial ran with, in metres, after
     # scaling and the min_radius floor. See GEOMETRY_FIELDS in
     # comfort_core/comfort_space.py. `static_radius` and `radius_*`
@@ -320,6 +333,12 @@ def row_for(cfg: Dict[str, Any], result: Dict[str, Any],
             _round(result["planned_path_length"], 2)
             if math.isfinite(float(result.get("planned_path_length") or "nan"))
             else ""),
+        **{k: (_round(result[k], 3) if isinstance(result.get(k), float)
+               and math.isfinite(result[k]) else
+               ("" if isinstance(result.get(k), float) else result.get(k, "")))
+           for k in ("verdict_x", "verdict_y", "verdict_comfort_ahead", "verdict_person",
+                     "verdict_person_m", "verdict_person_x", "verdict_person_y",
+                     "verdict_person_state", "verdict_nearest_fleet", "verdict_nearest_fleet_m")},
         **_geometry_columns(cfg),
     }
 

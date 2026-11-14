@@ -1,0 +1,11 @@
+# DIAGNOSTIC ONLY: configs/stage1/static_r1.20.yaml with the Comfort costmap buffer band off, on the cross scenario.
+# Compared with the preliminary study (buffer on), same seeds. Not a study condition.
+
+scenario:
+  name: diag_nobuffer_static_r1.20
+  label: Static Comfort Space 1.20 m
+comfort_space:
+  policy: static
+  static_radius: 1.2
+  costmap:
+    buffer_width: 0.0

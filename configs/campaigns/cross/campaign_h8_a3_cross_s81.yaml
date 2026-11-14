@@ -1,0 +1,40 @@
+# cross scenario (designed 2026-11-05): three AMRs that MEET, people from seed 81.
+#   AMR1  n1_r2c3 (-4.6, 5.32) -> north aisle eastbound -> east crossing
+#         -> s3_r2c2 (6.0, -5.32). East route 28.0 m, west route 30.8 m,
+#         so the planner takes the east crossing. Passes N2 and N3 behind
+#         their backs, S3 beside its goal.
+#   a1    leader on the same aisle: n2_r2c2 (0.0, 5.32), sets off at 1.3 s,
+#         eastbound to n3_r2c3 (7.4, 5.32) and parks there. AMR1 follows it
+#         past N2 and N3 and has to wait while it parks. A leader that
+#         stalls beside a worker stalls AMR1 behind it. No crossing turn
+#         for the fleet: two check trials (results/batches/261105_cross_design_check1,
+#         261105_cross_design_check3) had a fleet vehicle swing wide on a right turn out
+#         of a crossing and get held by the safety layer at the cart on the
+#         outer corner (n1_r2c1, s3_r2c1), under every policy alike.
+#   a2    south-aisle shuttle: s2_r2c3 (1.4, -5.32) -> s1_r2c2 (-6.0, -5.32),
+#         sets off at 10.8 s so that it meets the south exchange walkers
+#         (S_i -> E2's slot, E2 -> S_i's post) head-on in the 1.5 m aisle.
+# People, walks and their timing are the seed's own (unchanged, same for
+# every policy). Nav2 fleet, keep-right OFF.
+base: configs/scenarios/paper_h8_a3_scr_s0081.yaml
+navigation:
+  start: [-4.6, 5.32]
+  goal: [6.0, -5.32]
+  goal_yaw_deg: 90.0
+amr:
+  spawn: {yaw_deg: -90.0}
+scenario_meta:
+  scenario_id: campaign_h8_a3_cross_s81
+  mission: {start_slot: carts_n1_r2c3, goal_slot: carts_s3_r2c2, distance: 28.0, cross_side: true, pattern: cross}
+  amr_offsets: {a1: 1.3, a2: 10.8}
+  fleet_jobs:
+    a1: [n3_r2c3]
+    a2: [s1_r2c2]
+fleet:
+  driver: nav2
+  enabled: true
+  hold_until_trial: true
+  amrs:
+    a1: {enabled: true, start_at: 1.3, start: n2_r2c2, jobs: [n3_r2c3]}
+    a2: {enabled: true, start_at: 10.8, start: s2_r2c3, jobs: [s1_r2c2]}
+traffic_rule: {enabled: false}

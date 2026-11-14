@@ -29,6 +29,28 @@ Three scenario overlays in configs/stage3/ (only `scenario` and
                            run that condition until it is filled.
 
 R_opt is a Stage 2 measurement. This script never invents one.
+
+Revised design (2026-11-14, docs/STAGES.md): the main comparison is
+
+    b2_static_calibrated.yaml  one radius for everybody, = max over contexts of
+                               R_comfort_min (configs/frozen/comfort_requirements.yaml);
+                               TEMPLATE (null) until that file is frozen
+    b3o_selection.yaml         policy b3o_selection (comfort_core/selection_policy.py)
+                               with a per-spot table of R_nav_safe from the Stage 1
+                               execution model, written with
+                                   --selection-model configs/stage1a/model_exec.json
+                                   --campaign configs/campaigns/cross/campaign_h8_a3_cross_s1.yaml
+
+The spot table depends only on the bay (positions, facings, aisles), which
+is the same for every seed, so one overlay serves all of them. Per spot:
+the passage direction is toward the nearest lane centreline
+(fleet.lanes), `far` is how far the planner's area (layout.plannable_area,
+static boxes excluded) reaches from the person along it, and
+
+    R_nav_safe = far - wall_clearance - inscribed radius - costmap buffer
+
+the corridor closed form of the Stage 1 model. The context per state comes
+from the facing at that spot (comfort_core.contexts.context_of).
 """
 
 from __future__ import annotations
@@ -42,7 +64,7 @@ import yaml
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from comfort_core.config import load_with_base, resolve_path  # noqa: E402
+from comfort_core.config import load_config, load_with_base, resolve_path  # noqa: E402
 
 HEADER = """\
 # Stage 3 condition: {title}
@@ -76,8 +98,15 @@ def main() -> int:
                     help="Stage 2 R_opt: B3-O geometry scaled so the moving front at 1.0 m/s is this")
     ap.add_argument("--params", default=None,
                     help="YAML with a `directional:` block (Stage 2 calibrated parameter set)")
+    ap.add_argument("--selection-model", default=None,
+                    help="Stage 1 execution model (model_exec.json): write b3o_selection.yaml "
+                         "and b2_static_calibrated.yaml")
+    ap.add_argument("--campaign", default="configs/campaigns/cross/campaign_h8_a3_cross_s1.yaml",
+                    help="campaign config the spot table is computed on")
     args = ap.parse_args()
     out = resolve_path(args.out)
+    if args.selection_model:
+        return write_selection(args, out)
 
     p = write("static_baseline",
               f"Static Comfort Space baseline, {args.static_size:.2f} m",
@@ -134,6 +163,108 @@ def main() -> int:
               {"scenario": {"name": "b3o_optimized", "label": label}, "comfort_space": cs}, out)
     print(f"wrote {p.relative_to(PROJECT_ROOT)}"
           + ("  (TEMPLATE: target_size_m null)" if args.r_opt is None and not args.params else ""))
+    return 0
+
+
+def spot_table(cfg, model: dict, res: float = 0.02) -> list:
+    """R_nav_safe per spot and state, by the Stage 1 execution model on the bay.
+
+    For each spot a person stands or works at (start positions and walk
+    destinations), the scene is reduced to that one person, the robot is
+    sent along the nearest lane from 4 m before the spot to 4 m past it,
+    and the largest B3-O target size with a feasible robot-centre path is
+    searched (comfort_core.feasibility.r_path, bound 'exec'); R_nav_safe is
+    that shape's extent toward the lane.
+    """
+    import copy
+    import math
+    from comfort_core import feasibility as fz
+    from comfort_core.contexts import CONTEXTS, context_of
+    from comfort_core.layout import human_positions
+    lanes = (cfg.get("fleet", {}) or {}).get("lanes", {}) or {}
+    centre_ys = [float(lanes[k]) for k in ("north_y", "south_y") if k in lanes]
+    if not centre_ys:
+        raise ValueError("the spot table needs fleet.lanes (north_y / south_y)")
+    humans = cfg["humans"]
+    spots = {}
+    for key, x, y in human_positions(cfg):
+        h = humans[key]
+        pts = [(x, y)] + [tuple(p) for p in (h.get("walk") or {}).get("route", [])[-1:]]
+        for px, py in pts:
+            name = f"{px:+.2f},{py:+.2f}"
+            if name in spots:
+                continue
+            occupant = next((k for k, hx, hy in human_positions(cfg)
+                             if abs(hx - px) < 1e-6 and abs(hy - py) < 1e-6), key)
+            facing = humans[occupant].get("facing_deg")
+            cy = min(centre_ys, key=lambda c: abs(c - py))
+            toward = math.atan2(1.0 if cy > py else -1.0, 0.0)
+            states = {}
+            for state in ("station_engaged", "stationary"):
+                ctx = context_of(state, None if facing is None else math.radians(float(facing)),
+                                 toward)
+                if ctx is None:
+                    continue
+                c = copy.deepcopy(cfg)
+                c["humans"] = {k: v for k, v in c["humans"].items()
+                               if not (isinstance(v, dict) and "position" in v)}
+                c["humans"]["a"] = {"position": [px, py], "state": state,
+                                    "facing_deg": facing}
+                c["humans"]["state_source"] = "ground_truth"
+                c["navigation"] = dict(c["navigation"], start=[px - 4.0, cy], goal=[px + 4.0, cy])
+                c["_feasibility_window"] = [px - 5.0, px + 5.0]
+                r = fz.r_path(c, "b3o", "a", "exec", res=res, model=model)
+                states[state] = {"context": CONTEXTS[ctx]["name"],
+                                 "r_nav_safe_m": None if r["e"] is None else round(r["e"], 3),
+                                 "note": r["note"]}
+            spots[name] = {"name": name, "x": round(px, 3), "y": round(py, 3),
+                           "lane_y": cy, "states": states}
+    return list(spots.values())
+
+
+def write_selection(args, out: Path) -> int:
+    import json
+    from comfort_core.selection import FROZEN, static_calibrated
+    model = json.loads(Path(args.selection_model).read_text())
+    cfg = load_config(common_path=args.campaign)
+    spots = spot_table(cfg, model)
+    req = yaml.safe_load(FROZEN.read_text()) or {}
+    p = write("b3o_selection", "B3-O Dynamic Selection (Stage 3 proposed method)",
+              "# Per spot and state: R* = min(R_pref, R_nav_safe) within\n"
+              "# [R_comfort_min, R_nav_safe], else PASSAGE_INFEASIBLE at R_comfort_min\n"
+              "# (comfort_core/selection.py). R_nav_safe from the Stage 1 execution model\n"
+              f"# ({args.selection_model}, wall clearance {model['wall_clearance_m']} m);\n"
+              "# comfort requirements from the frozen Stage 2 file. The policy refuses to\n"
+              "# start while that file is null.",
+              {"scenario": {"name": "b3o_selection",
+                            "label": "B3-O Dynamic Comfort Space with environment-aware selection"},
+               "comfort_space": {"policy": "b3o_selection",
+                                 "aisle_scaling": {"enabled": False},
+                                 "selection": {"requirements_file": str(FROZEN.relative_to(PROJECT_ROOT)),
+                                               "model": args.selection_model,
+                                               "spot_radius_m": 0.6,
+                                               "spots": spots}}}, out)
+    print(f"wrote {p}  ({len(spots)} spots)")
+    for s in spots:
+        print(f"  spot {s['name']:14s} lane y {s['lane_y']:+.2f}  "
+              + "  ".join(f"{st}: {v['context']} R_nav_safe {v['r_nav_safe_m']}"
+                          for st, v in s["states"].items()))
+    try:
+        r_b2 = static_calibrated(req.get("contexts") or {})
+        body = {"policy": "static", "static_radius": round(r_b2, 4)}
+        how = (f"# max over contexts of R_comfort_min = {r_b2:.2f} m, from the frozen\n"
+               "# Stage 2 file: the smallest single radius meeting every context.")
+        note = ""
+    except ValueError as exc:
+        body = {"policy": "static", "static_radius": None}
+        how = ("# TEMPLATE. static_radius is null until configs/frozen/comfort_requirements.yaml\n"
+               "# holds R_comfort_min for every context; then it is their maximum.")
+        note = f"  (TEMPLATE: {exc})"
+    p = write("b2_static_calibrated", "B2 Static Calibrated (one radius meeting every context)",
+              how, {"scenario": {"name": "b2_static_calibrated",
+                                 "label": "Static Comfort Space calibrated to the human study"},
+                    "comfort_space": body}, out)
+    print(f"wrote {p}{note}")
     return 0
 
 

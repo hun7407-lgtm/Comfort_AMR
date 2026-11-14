@@ -538,6 +538,11 @@ POLICIES = {
 def make_policy(cfg: Dict[str, Any]) -> ComfortSpacePolicy:
     """Build the policy named by comfort_space.policy."""
     name = str(cfg["comfort_space"]["policy"])
+    if name == "b3o_selection" and name not in POLICIES:
+        # Stage 3's environment-aware selection. Imported here, not at the
+        # top, because it builds on StateDirectionalComfortPolicy.
+        from comfort_core.selection_policy import SelectedDirectionalPolicy
+        POLICIES[name] = SelectedDirectionalPolicy
     try:
         return POLICIES[name](cfg)
     except KeyError:

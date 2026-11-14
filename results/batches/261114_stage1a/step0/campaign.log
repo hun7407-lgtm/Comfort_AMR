@@ -1,0 +1,13 @@
+campaign  : 10 trial(s) from results/batches/261114_stage1a/step0/manifest.txt, starting at 1, limit 600s each
+started   : 2026-11-14T01:15:30+09:00   commit c44bc0c
+01:16:39  001_w1.50_y0.35_c3_b1  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [1/10]
+01:17:52  002_w1.80_y0.35_c3_b1  exit 0  68s  AMR1 SUCCESS  fleet rows 0  [2/10]
+01:19:01  003_w2.00_y0.35_c3_b1  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [3/10]
+01:20:10  004_w2.20_y0.35_c3_b1  exit 0  64s  AMR1 SUCCESS  fleet rows 0  [4/10]
+01:21:19  005_w2.60_y0.35_c3_b1  exit 0  64s  AMR1 SUCCESS  fleet rows 0  [5/10]
+01:22:29  006_w1.50_y0.35_c3_b1  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [6/10]
+01:23:38  007_w1.80_y0.35_c3_b1  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [7/10]
+01:25:11  008_w2.00_y0.35_c3_b1  exit 0  88s  AMR1 SUCCESS  fleet rows 0  [8/10]
+01:26:20  009_w2.20_y0.35_c3_b1  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [9/10]
+01:27:29  010_w2.60_y0.35_c3_b1  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [10/10]
+finished  : 2026-11-14T01:27:34+09:00

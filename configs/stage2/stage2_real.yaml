@@ -35,6 +35,16 @@ stage2:
   # Largest Comfort Space the aisle can take, from Stage 1
   # (results/batches/<stage1>/thresholds.json, B3-O R_nav_max). The
   # ladder starts here and descends.
+  # Human Contexts measured (comfort_core/contexts.py). Pilot: all four;
+  # the main study drops c4 if the pilot shows it does not differ from c2/c3.
+  contexts: [c1_engaged_rear, c2_stationary_rear, c3_stationary_front, c4_stationary_side]
+  # Passing distances d, m, person centre -> nearest AMR surface (the Stage 1
+  # x axis). Proposed 0.50 / 0.75 / 1.00 / 1.25 / 1.50; NOT set until the
+  # lowest is checked against the real AMR's protective field, passing speed
+  # and the safety briefing. Null = stage2_make_conditions refuses.
+  distance_levels_m: null
+  # Superseded (2026-11-14): the ladder descending from Stage 1's R_nav_max.
+  # Kept so old sessions still load; the revised design does not use it.
   r_nav_max_m: null            # TODO from Stage 1
   # Descent step and how many rungs. r_nav_max, r_nav_max - step, ...
   # Never below size_floor_m.

@@ -1,0 +1,2 @@
+configs/stage1a/conditions/static_r0.82.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1/static_r1.60.yaml configs/campaigns/cross/campaign_h8_a3_cross_s1.yaml --fleet-tail 150

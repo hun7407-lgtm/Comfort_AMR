@@ -1,0 +1,12 @@
+# DIAGNOSTIC ONLY (2026-11-14): Static 0.82 m with the Comfort costmap buffer band
+# switched off, to test whether the buffer makes the planner hug the wall.
+# Not a study condition and not a tuning: no result or model uses it.
+# The gate boundary (static_radius) and the physical safety layer are unchanged.
+scenario:
+  name: diag_nobuffer_static_r0.82
+  label: "DIAGNOSTIC Static 0.82 m, costmap buffer off"
+comfort_space:
+  policy: static
+  static_radius: 0.82
+  costmap:
+    buffer_width: 0.0

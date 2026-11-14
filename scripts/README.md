@@ -35,6 +35,20 @@
 | `summarise_trials.py`, `triage_trials.py` | CSV 요약, 이상한 trial 골라내기 |
 | `scenario_figure.py`, `preview_figure.py` | 시나리오 배치 그림 |
 
+## 개정 실험 (2026-11-14, `docs/STAGES.md` "개정 설계")
+
+| 스크립트 | 역할 |
+|---|---|
+| `stage1a_plan.py` | Stage 1 controlled: 복도 환경·조건·**사전등록 예측**·매니페스트. `--phase scan` / `--phase predict --model` |
+| `stage1a_run.sh` | Stage 1 전체 무인 실행: scan → refine → fit → predict → validate → report (`--from`으로 재개) |
+| `stage1a_calibrate.py` | 폭별 관측 경계, refine 매니페스트, 실행 모델 보정(wall clearance) → `configs/stage1a/model_exec.json` |
+| `stage1a_report.py` | 예측(경로 한계 / 실행 모델) 대비 관측 경계, F0–F3 |
+| `make_cross_campaign.py` | cross campaign config를 seed별로 생성; s1–33 byte 재현 확인(`--verify`) |
+| `stage3_make_configs.py --selection-model` | `b3o_selection.yaml`(spot별 R_nav_safe) + `b2_static_calibrated.yaml` |
+| `stage3_run.sh --main` | B2 Static Calibrated vs B3-O Dynamic Selection, seeds 1–100 paired |
+| `stage3b_report.py` | failure class, exact McNemar, paired Wilcoxon, seed 1–33/34–100 분리 |
+| `stage2_make_conditions.py` | (개정) context × passing distance 조건 + Williams 순서 |
+
 ## 3단계 실험 (2026-11-12부터, `docs/STAGES.md`)
 
 | 스크립트 | 역할 |

@@ -10,20 +10,34 @@ Pure Python, no ROS. Shared by
 so that the file written on the robot and the file read on the desk
 cannot disagree about a column.
 
-What Stage 2 measures
----------------------
-Stage 1 gives R_nav_max, the largest Comfort Space the aisle can take
-before the Comfort Space itself deadlocks the robot. Stage 2 starts the
-B3-O geometry AT that size and brings it down one step at a time:
+What Stage 2 measures (revised 2026-11-14)
+------------------------------------------
+The perceived-comfort curve per Human Context, as independent of the
+navigation constraint as possible:
 
-    R_nav_max, R_nav_max - step, R_nav_max - 2 step, ...
+    passing distance d  ->  perceived comfort (7-point)
 
-A participant stands (or works, or walks -- their state is part of the
-condition) while the real AMR passes under each size, and rates how
-comfortable the passing felt. The smallest size that still rates as
-acceptable is R_comfort_min. Primary item after Neggers et al. (2022,
-Int J Soc Robotics, doi 10.1007/s12369-021-00805-6), who had a robot
-pass seated and standing participants and asked for comfort on a
+for each context in `stage2.contexts` (comfort_core/contexts.py:
+c1 engaged-rear, c2 stationary-rear, c3 stationary-front, c4
+stationary-side). d is the EFFECTIVE corridor-side extent, person
+centre to the nearest surface of the AMR -- the same quantity as the
+Stage 1 x axis. Each (context, d) is realised by a B3-O condition whose
+target size gives that extent in that context
+(contexts.target_for_extent), and the distance actually achieved is
+recorded beside it (measured_distance_m).
+
+The levels are `stage2.distance_levels_m` and ship as null: the lower end
+has to be checked against the real AMR's protective field and passing
+speed before any participant is near it. The area should be wide (or the
+participant in a niche) so the largest level is reachable without the
+navigation limit cutting the curve off -- the earlier design that
+descended from R_nav_max is superseded and kept only as `size_ladder`.
+
+Per participant: contexts in blocks, block order counterbalanced
+(Williams design over contexts), distance levels within a block in a
+Williams order (`participant_orders`). Primary item after Neggers et al.
+(2022, Int J Soc Robotics, doi 10.1007/s12369-021-00805-6), who had a
+robot pass seated and standing participants and asked for comfort on a
 7-point scale.
 
 Nothing in this module decides what "acceptable" is: the cutoff is
@@ -80,7 +94,9 @@ QUESTIONNAIRE_FIELDS: Tuple[str, ...] = (
     "participant_id",      # pseudonymous code (P01 ...), never a name
     "trial_id",            # <session>_<participant>_<order:02d>
     "condition",           # b3o_r1.00
-    "comfort_size",        # m, the condition's size
+    "context",             # c1_engaged_rear ... (comfort_core/contexts.py)
+    "passing_distance_m",  # planned effective extent d, m (person centre -> AMR surface)
+    "comfort_size",        # m, the condition's B3-O target size
     "comfort_score",       # 1..7, primary
     "perceived_safety",    # 1..7 or ""
     "distance_acceptability",  # 1..7 or ""
@@ -100,6 +116,8 @@ TRIAL_FIELDS: Tuple[str, ...] = (
     "trial_id",
     "trial_order",
     "condition",
+    "context",
+    "planned_distance_m",  # effective extent the condition was built for
     "policy",
     "comfort_size_m",
     "comfort_scale",
@@ -119,7 +137,8 @@ TRIAL_FIELDS: Tuple[str, ...] = (
     "human_state",         # as configured / observed
     "human_facing_deg",
     "human_speed_mps",     # mean observed, "" if static
-    "min_clearance",       # footprint to person, m
+    "min_clearance",       # footprint to person's body (radius humans.radius), m
+    "measured_distance_m", # person CENTRE to AMR footprint, m = min_clearance + humans.radius
     "min_clearance_t_s",
     "passing_side",        # left / right of the person, from their facing
     # applied Comfort Space, m
@@ -171,6 +190,65 @@ def size_ladder(cfg: Dict[str, Any]) -> List[float]:
     return ladder(float(top), float(step), count, floor)
 
 
+def distance_levels(cfg: Dict[str, Any]) -> List[float]:
+    """stage2.distance_levels_m, ascending. Raises while null."""
+    levels = stage2_block(cfg).get("distance_levels_m")
+    if not levels or any(v is None for v in levels):
+        raise ValueError(
+            "stage2.distance_levels_m is null. Set the passing distances (m, person "
+            "centre to AMR surface) after checking the lowest one against the real "
+            "AMR's protective field and passing speed.")
+    return sorted(float(v) for v in levels)
+
+
+def study_contexts(cfg: Dict[str, Any]) -> List[str]:
+    from comfort_core.contexts import key_of
+    ctx = stage2_block(cfg).get("contexts") or []
+    if not ctx:
+        raise ValueError("stage2.contexts is empty")
+    return [key_of(c) for c in ctx]
+
+
+def williams(n: int) -> List[List[int]]:
+    """Williams design: rows are orders of 0..n-1 balanced for first-order
+    carry-over. n even -> n rows; n odd -> 2n rows (the square and its mirror)."""
+    first = [0]
+    lo, hi = 1, n - 1
+    for i in range(1, n):
+        if i % 2:
+            first.append(lo)
+            lo += 1
+        else:
+            first.append(hi)
+            hi -= 1
+    rows = [[(v + r) % n for v in first] for r in range(n)]
+    if n % 2:
+        rows += [list(reversed(r)) for r in rows]
+    return rows
+
+
+def participant_orders(n_participants: int, contexts: List[str],
+                       levels: List[float]) -> List[Dict[str, Any]]:
+    """Trial sequence per participant: context blocks in a Williams order over
+    contexts, distance levels in a Williams order within each block. The
+    level square advances with the block, so a participant does not see the
+    same level order in every block."""
+    out = []
+    ctx_rows = williams(len(contexts))
+    lvl_rows = williams(len(levels))
+    for p in range(n_participants):
+        crow = ctx_rows[p % len(ctx_rows)]
+        order = 0
+        for b, ci in enumerate(crow):
+            lrow = lvl_rows[(p + b) % len(lvl_rows)]
+            for li in lrow:
+                order += 1
+                out.append({"participant_id": f"P{p + 1:02d}", "block": b + 1,
+                            "context": contexts[ci], "trial_order": order,
+                            "passing_distance_m": levels[li]})
+    return out
+
+
 def missing_placeholders(cfg: Dict[str, Any]) -> List[str]:
     """Every value that must be filled before a real trial may run.
 
@@ -199,7 +277,7 @@ def missing_placeholders(cfg: Dict[str, Any]) -> List[str]:
         if h.get("facing_deg") is None:
             todo.append(f"humans.{key}.facing_deg  (needed: B3-O is directional)")
     try:
-        size_ladder(cfg)
+        distance_levels(cfg)
     except ValueError as exc:
         todo.append(str(exc))
     return todo
@@ -262,9 +340,12 @@ def make_response(participant_id: str, trial_id: str, condition: str,
                   comfort_size: float, trial_order: int, comfort_score: int,
                   perceived_safety: Optional[int] = None,
                   distance_acceptability: Optional[int] = None,
-                  notes: str = "") -> Dict[str, Any]:
+                  notes: str = "", context: str = "",
+                  passing_distance_m: Optional[float] = None) -> Dict[str, Any]:
     row = {
         "participant_id": participant_id, "trial_id": trial_id, "condition": condition,
+        "context": context,
+        "passing_distance_m": "" if passing_distance_m is None else round(float(passing_distance_m), 4),
         "comfort_size": round(float(comfort_size), 4), "comfort_score": int(comfort_score),
         "perceived_safety": "" if perceived_safety is None else int(perceived_safety),
         "distance_acceptability": ("" if distance_acceptability is None
@@ -311,6 +392,19 @@ def by_size(rows: Iterable[Dict[str, str]], key: str = "comfort_score"
             "participants": sorted({p for p, _v in items}),
         }
     return out
+
+
+def by_context_distance(rows: Iterable[Dict[str, str]], key: str = "comfort_score"
+                        ) -> Dict[str, Dict[float, Dict[str, Any]]]:
+    """context -> passing distance -> the same statistics as by_size.
+    The comfort curve per Human Context; raw rows are never altered."""
+    groups: Dict[str, List[Dict[str, str]]] = {}
+    for r in rows:
+        if r.get("passing_distance_m") in ("", None):
+            continue
+        groups.setdefault(r.get("context") or "?", []).append(
+            {**r, "comfort_size": r["passing_distance_m"]})
+    return {c: by_size(rs, key) for c, rs in sorted(groups.items())}
 
 
 def paired_table(rows: Iterable[Dict[str, str]], key: str = "comfort_score"

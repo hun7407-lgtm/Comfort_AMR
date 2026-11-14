@@ -1,0 +1,14 @@
+campaign  : 11 trial(s) from results/batches/261114_stage1a/diag_nobuffer/manifest.txt, starting at 1, limit 600s each
+started   : 2026-11-14T03:06:20+09:00   commit c44bc0c
+03:07:30  001_w2.20_y0.35_c3_diag_nobuffer_static_r0.82  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [1/11]
+03:09:07  002_w2.20_y0.35_c3_diag_nobuffer_static_r0.92  exit 0  92s  AMR1 SUCCESS  fleet rows 0  [2/11]
+03:10:18  003_w2.20_y0.35_c3_diag_nobuffer_static_r1.02  exit 0  67s  AMR1 SUCCESS  fleet rows 0  [3/11]
+03:11:27  004_w2.20_y0.35_c3_diag_nobuffer_static_r1.12  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [4/11]
+03:12:43  005_w2.20_y0.35_c3_diag_nobuffer_static_r1.22  exit 1  71s  AMR1 DEADLOCK  fleet rows 0  [5/11]
+03:13:56  006_w1.80_y0.35_c3_diag_nobuffer_static_r0.82  exit 1  68s  AMR1 DEADLOCK  fleet rows 0  [6/11]
+03:15:10  007_w1.80_y0.35_c3_diag_nobuffer_static_r0.92  exit 1  69s  AMR1 DEADLOCK  fleet rows 0  [7/11]
+03:16:19  008_w2.60_y0.35_c3_diag_nobuffer_static_r1.32  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [8/11]
+03:17:29  009_w2.60_y0.35_c3_diag_nobuffer_static_r1.42  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [9/11]
+03:18:40  010_w2.60_y0.35_c3_diag_nobuffer_static_r1.52  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [10/11]
+03:19:51  011_w2.60_y0.35_c3_diag_nobuffer_static_r1.62  exit 1  67s  AMR1 DEADLOCK  fleet rows 0  [11/11]
+finished  : 2026-11-14T03:19:56+09:00

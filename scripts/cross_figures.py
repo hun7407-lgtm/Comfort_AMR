@@ -211,8 +211,8 @@ def main() -> int:
         ax.set_xticks(list(x))
         ax.set_xticklabels(labels)
         ax.grid(axis="y", alpha=0.25)
-    fig.suptitle(f"{d.name}: the three encounters, by policy (8 people, AMR1 + a1 + a2)")
-    fig.tight_layout()
+    fig.suptitle(f"{d.name}\nthe three encounters, by policy (8 people, AMR1 + a1 + a2)", fontsize=11)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     fig.savefig(figs / "P10_interactions.png", dpi=130)
     plt.close(fig)
 
@@ -263,10 +263,10 @@ def main() -> int:
         ax.grid(axis="y", alpha=0.25)
     axes[0].set_ylim(0, 1.15)
     axes[0].legend(fontsize=8, ncol=2, loc="lower left")
-    fig.suptitle(f"{d.name}: outcome by which north belt worker swaps with E1 "
+    fig.suptitle(f"{d.name}\noutcome by which north belt worker swaps with E1 "
                  "(N1 = behind AMR1's start, N2 = crosses its path, N3 = crosses it and E1 then stands at N3's station ahead of it)",
                  fontsize=10)
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     fig.savefig(figs / "P11_by_condition.png", dpi=130)
     plt.close(fig)
 

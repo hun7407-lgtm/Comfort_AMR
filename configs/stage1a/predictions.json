@@ -1,0 +1,472 @@
+{
+  "written_by": "scripts/stage1a_plan.py",
+  "phase": "scan",
+  "commit": "c44bc0c+",
+  "grid_resolution_m": 0.01,
+  "model": null,
+  "bounds": "R_path^infl / R_path^lethal: robot centre kept (inscribed radius + gate margin) outside the Comfort Space, (humans.radius + clearance) from the body, clearance from walls = inflation radius / inscribed radius. R_exec_model: Comfort Space grown by inscribed radius + costmap buffer, walls and body at the fitted wall_clearance_m.",
+  "cells": [
+    {
+      "part": "1a1",
+      "env": "w1.50_y0.35_c3",
+      "aisle_width_m": 1.5,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "static",
+      "R_path_infl": {
+        "value": 0.524462890625,
+        "e": 0.5245
+      },
+      "R_path_lethal": {
+        "value": 0.61318359375,
+        "e": 0.6132
+      },
+      "closed_form_e": {
+        "infl": 0.52,
+        "lethal": 0.62
+      },
+      "trials": [
+        {
+          "point": "scan0",
+          "e_target": 0.32,
+          "value": 0.32,
+          "e": 0.32,
+          "condition": "static_r0.32",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan1",
+          "e_target": 0.42,
+          "value": 0.42,
+          "e": 0.42,
+          "condition": "static_r0.42",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan2",
+          "e_target": 0.52,
+          "value": 0.52,
+          "e": 0.52,
+          "condition": "static_r0.52",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "above_lethal",
+          "e_target": 0.71,
+          "value": 0.71,
+          "e": 0.71,
+          "condition": "static_r0.71",
+          "repeats": 1,
+          "feasible_infl": false,
+          "feasible_lethal": false
+        }
+      ]
+    },
+    {
+      "part": "1a1",
+      "env": "w1.80_y0.35_c3",
+      "aisle_width_m": 1.8,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "static",
+      "R_path_infl": {
+        "value": 0.8234130859375,
+        "e": 0.8234
+      },
+      "R_path_lethal": {
+        "value": 0.9140624999999999,
+        "e": 0.9141
+      },
+      "closed_form_e": {
+        "infl": 0.82,
+        "lethal": 0.92
+      },
+      "trials": [
+        {
+          "point": "scan0",
+          "e_target": 0.32,
+          "value": 0.32,
+          "e": 0.32,
+          "condition": "static_r0.32",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan1",
+          "e_target": 0.42,
+          "value": 0.42,
+          "e": 0.42,
+          "condition": "static_r0.42",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan2",
+          "e_target": 0.52,
+          "value": 0.52,
+          "e": 0.52,
+          "condition": "static_r0.52",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan3",
+          "e_target": 0.62,
+          "value": 0.62,
+          "e": 0.62,
+          "condition": "static_r0.62",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan4",
+          "e_target": 0.72,
+          "value": 0.72,
+          "e": 0.72,
+          "condition": "static_r0.72",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan5",
+          "e_target": 0.82,
+          "value": 0.82,
+          "e": 0.82,
+          "condition": "static_r0.82",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "above_lethal",
+          "e_target": 1.01,
+          "value": 1.01,
+          "e": 1.01,
+          "condition": "static_r1.01",
+          "repeats": 1,
+          "feasible_infl": false,
+          "feasible_lethal": false
+        }
+      ]
+    },
+    {
+      "part": "1a1",
+      "env": "w2.20_y0.35_c3",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "static",
+      "R_path_infl": {
+        "value": 1.2245849609375,
+        "e": 1.2246
+      },
+      "R_path_lethal": {
+        "value": 1.3133056640624998,
+        "e": 1.3133
+      },
+      "closed_form_e": {
+        "infl": 1.22,
+        "lethal": 1.32
+      },
+      "trials": [
+        {
+          "point": "scan0",
+          "e_target": 0.32,
+          "value": 0.32,
+          "e": 0.32,
+          "condition": "static_r0.32",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan1",
+          "e_target": 0.42,
+          "value": 0.42,
+          "e": 0.42,
+          "condition": "static_r0.42",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan2",
+          "e_target": 0.52,
+          "value": 0.52,
+          "e": 0.52,
+          "condition": "static_r0.52",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan3",
+          "e_target": 0.62,
+          "value": 0.62,
+          "e": 0.62,
+          "condition": "static_r0.62",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan4",
+          "e_target": 0.72,
+          "value": 0.72,
+          "e": 0.72,
+          "condition": "static_r0.72",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan5",
+          "e_target": 0.82,
+          "value": 0.82,
+          "e": 0.82,
+          "condition": "static_r0.82",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan6",
+          "e_target": 0.92,
+          "value": 0.92,
+          "e": 0.92,
+          "condition": "static_r0.92",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan7",
+          "e_target": 1.02,
+          "value": 1.02,
+          "e": 1.02,
+          "condition": "static_r1.02",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan8",
+          "e_target": 1.12,
+          "value": 1.12,
+          "e": 1.12,
+          "condition": "static_r1.12",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan9",
+          "e_target": 1.22,
+          "value": 1.22,
+          "e": 1.22,
+          "condition": "static_r1.22",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "above_lethal",
+          "e_target": 1.41,
+          "value": 1.41,
+          "e": 1.41,
+          "condition": "static_r1.41",
+          "repeats": 1,
+          "feasible_infl": false,
+          "feasible_lethal": false
+        }
+      ]
+    },
+    {
+      "part": "1a1",
+      "env": "w2.60_y0.35_c3",
+      "aisle_width_m": 2.6,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "static",
+      "R_path_infl": {
+        "value": 1.6238281250000002,
+        "e": 1.6238
+      },
+      "R_path_lethal": {
+        "value": 1.7144775390625,
+        "e": 1.7145
+      },
+      "closed_form_e": {
+        "infl": 1.62,
+        "lethal": 1.72
+      },
+      "trials": [
+        {
+          "point": "scan0",
+          "e_target": 0.32,
+          "value": 0.32,
+          "e": 0.32,
+          "condition": "static_r0.32",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan1",
+          "e_target": 0.42,
+          "value": 0.42,
+          "e": 0.42,
+          "condition": "static_r0.42",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan2",
+          "e_target": 0.52,
+          "value": 0.52,
+          "e": 0.52,
+          "condition": "static_r0.52",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan3",
+          "e_target": 0.62,
+          "value": 0.62,
+          "e": 0.62,
+          "condition": "static_r0.62",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan4",
+          "e_target": 0.72,
+          "value": 0.72,
+          "e": 0.72,
+          "condition": "static_r0.72",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan5",
+          "e_target": 0.82,
+          "value": 0.82,
+          "e": 0.82,
+          "condition": "static_r0.82",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan6",
+          "e_target": 0.92,
+          "value": 0.92,
+          "e": 0.92,
+          "condition": "static_r0.92",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan7",
+          "e_target": 1.02,
+          "value": 1.02,
+          "e": 1.02,
+          "condition": "static_r1.02",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan8",
+          "e_target": 1.12,
+          "value": 1.12,
+          "e": 1.12,
+          "condition": "static_r1.12",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan9",
+          "e_target": 1.22,
+          "value": 1.22,
+          "e": 1.22,
+          "condition": "static_r1.22",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan10",
+          "e_target": 1.32,
+          "value": 1.32,
+          "e": 1.32,
+          "condition": "static_r1.32",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan11",
+          "e_target": 1.42,
+          "value": 1.42,
+          "e": 1.42,
+          "condition": "static_r1.42",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan12",
+          "e_target": 1.52,
+          "value": 1.52,
+          "e": 1.52,
+          "condition": "static_r1.52",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "scan13",
+          "e_target": 1.62,
+          "value": 1.62,
+          "e": 1.62,
+          "condition": "static_r1.62",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true
+        },
+        {
+          "point": "above_lethal",
+          "e_target": 1.81,
+          "value": 1.81,
+          "e": 1.81,
+          "condition": "static_r1.81",
+          "repeats": 1,
+          "feasible_infl": false,
+          "feasible_lethal": false
+        }
+      ]
+    }
+  ]
+}

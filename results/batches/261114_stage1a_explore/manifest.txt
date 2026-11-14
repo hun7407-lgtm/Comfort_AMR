@@ -1,0 +1,11 @@
+configs/stage1a/conditions/static_r1.12.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/static_r1.02.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.92.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.82.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.72.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.62.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.42.yaml configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.32.yaml configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions/b3o_r2.04.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r1.64.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r1.24.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml

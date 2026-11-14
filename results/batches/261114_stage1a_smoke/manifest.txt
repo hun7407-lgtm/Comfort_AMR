@@ -1,0 +1,4 @@
+b1 configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.52.yaml configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions/static_r0.91.yaml configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions/b3o_r2.44.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml

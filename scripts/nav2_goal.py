@@ -34,7 +34,7 @@ from nav_msgs.msg import Path as PathMsg
 from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
-from std_msgs.msg import Bool, String
+from std_msgs.msg import Bool, Float32MultiArray, String
 from tf2_ros import Buffer, TransformListener
 
 from comfort_core import load_config, nav2_map, odom_to_world
@@ -117,6 +117,21 @@ class TrialResult:
     trajectory: list = field(default_factory=list)
     planned_path: list = field(default_factory=list)
     planned_path_length: float = float("nan")
+    # What surrounded the robot when the verdict was taken. A stall in
+    # front of a Comfort Space (the planner will not drive into the soft
+    # mask, or the protective field stops it next to a wall while it
+    # squeezes past) is told apart from one elsewhere by these, and the
+    # Stage 3 failure classes (comfort_core/failure_class.py) read them.
+    verdict_x: float = float("nan")
+    verdict_y: float = float("nan")
+    verdict_comfort_ahead: bool = False
+    verdict_person: str = ""
+    verdict_person_m: float = float("nan")
+    verdict_person_x: float = float("nan")
+    verdict_person_y: float = float("nan")
+    verdict_person_state: str = ""
+    verdict_nearest_fleet: str = ""
+    verdict_nearest_fleet_m: float = float("nan")
 
 
 class Nav2Trial(Node):
@@ -156,6 +171,14 @@ class Nav2Trial(Node):
                                  self._on_humans_moving, 10)
         self.humans_moving = False
         self.waited_for_humans = 0.0
+        self.comfort_shapes_now = []
+        self.create_subscription(Float32MultiArray, "/comfort_shapes",
+                                 self._on_comfort_shapes, 10)
+        self.gate_margin = float(cfg["comfort_space"].get("yield", {}).get("margin", 0.05))
+        fleet = cfg.get("fleet", {}) or {}
+        self.fleet_names = ([k for k, v in (fleet.get("amrs") or {}).items()
+                             if isinstance(v, dict) and v.get("enabled", True)]
+                            if fleet.get("enabled", False) else [])
         # Time spent stepping out of a walker's lane.
         self.create_subscription(Bool, "/comfort_evading", self._on_evading, 10)
         self.evading = False
@@ -252,6 +275,69 @@ class Nav2Trial(Node):
     def _on_odom(self, msg: Odometry) -> None:
         self.latest = msg
         self.last_odom_wall = time.time()
+
+    def _on_comfort_shapes(self, msg: Float32MultiArray) -> None:
+        """The Comfort Spaces as published (already grown by the robot's
+        inscribed radius): x, y, along, across, heading, speed[, offset]."""
+        data = list(msg.data)
+        n = int(msg.layout.dim[0].size) if msg.layout.dim else 6
+        if n < 6 or len(data) % n:
+            return
+        from comfort_core.shapes import ComfortShape
+        self.comfort_shapes_now = [
+            ComfortShape(str(i // n), data[i], data[i + 1], data[i + 2], data[i + 3],
+                         data[i + 4], data[i + 6] if n >= 7 else 0.0)
+            for i in range(0, len(data), n)]
+
+    def verdict_context(self, x: float, y: float) -> dict:
+        """Comfort Space on the plan ahead, nearest person, nearest fleet AMR."""
+        out = {"verdict_x": x, "verdict_y": y}
+        people = self.human_positions_now()
+        if people:
+            key, (px, py) = min(people.items(), key=lambda kv: math.hypot(kv[1][0] - x, kv[1][1] - y))
+            out["verdict_person"] = key
+            out["verdict_person_m"] = math.hypot(px - x, py - y)
+        ahead = False
+        plan = self.plan_xy or []
+        if plan and self.comfort_shapes_now:
+            i0 = min(range(len(plan)), key=lambda i: math.hypot(plan[i][0] - x, plan[i][1] - y))
+            travelled = 0.0
+            for (ax, ay), (bx, by) in zip(plan[i0:], plan[i0 + 1:]):
+                travelled += math.hypot(bx - ax, by - ay)
+                if travelled > 3.0:
+                    break
+                for s in self.comfort_shapes_now:
+                    if s.contains(bx, by, self.gate_margin):
+                        ahead = True
+                        if people:
+                            out["verdict_person"] = min(
+                                people, key=lambda k: math.hypot(people[k][0] - s.x,
+                                                                 people[k][1] - s.y))
+                        break
+                if ahead:
+                    break
+        out["verdict_comfort_ahead"] = ahead
+        k = out.get("verdict_person")
+        if k and k in people:
+            out["verdict_person_x"], out["verdict_person_y"] = people[k]
+            out["verdict_person_state"] = str((getattr(self, "declared_states", {}) or {}).get(k, ""))
+        best = None
+        for name in self.fleet_names:
+            for frame in ("map", "world"):
+                try:
+                    tf = self.tf_buffer.lookup_transform(frame, f"{name}/base_footprint",
+                                                         rclpy.time.Time(),
+                                                         timeout=Duration(seconds=0.0))
+                except Exception:
+                    continue
+                tr = tf.transform.translation
+                d = math.hypot(tr.x - x, tr.y - y)
+                if best is None or d < best[1]:
+                    best = (name, d)
+                break
+        if best:
+            out["verdict_nearest_fleet"], out["verdict_nearest_fleet_m"] = best
+        return out
 
     def _on_plan(self, msg: PathMsg) -> None:
         self.plan_xy = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
@@ -888,6 +974,11 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
             res.yield_seconds = node.total_yield_seconds()
             res.yielded = res.yield_seconds > 0.0
             res.deadlock_mechanism = mechanism(label)
+            try:
+                for k, v in node.verdict_context(x, y).items():
+                    setattr(res, k, v)
+            except Exception as exc:  # never lose a row to a diagnostic
+                node.get_logger().warn(f"verdict context not recorded: {exc}")
             if node.first_plan_xy:
                 res.planned_path = [(round(px, 3), round(py, 3))
                                     for px, py in node.first_plan_xy]

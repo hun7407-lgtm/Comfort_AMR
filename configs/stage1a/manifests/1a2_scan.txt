@@ -1,0 +1,19 @@
+# Stage 1A-2 model-free context scan at W 2.2 (C1/C2/C3), 1 run each
+configs/stage1a/conditions/b3o_r1.04.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r1.24.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r1.44.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r1.64.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r1.84.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r2.04.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions/b3o_r0.59.yaml configs/stage1a/envs/w2.20_y0.35_c2.yaml
+configs/stage1a/conditions/b3o_r0.71.yaml configs/stage1a/envs/w2.20_y0.35_c2.yaml
+configs/stage1a/conditions/b3o_r0.82.yaml configs/stage1a/envs/w2.20_y0.35_c2.yaml
+configs/stage1a/conditions/b3o_r0.94.yaml configs/stage1a/envs/w2.20_y0.35_c2.yaml
+configs/stage1a/conditions/b3o_r1.05.yaml configs/stage1a/envs/w2.20_y0.35_c2.yaml
+configs/stage1a/conditions/b3o_r1.17.yaml configs/stage1a/envs/w2.20_y0.35_c2.yaml
+configs/stage1a/conditions/b3o_r0.78.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/b3o_r0.93.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/b3o_r1.08.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/b3o_r1.23.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/b3o_r1.38.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions/b3o_r1.53.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml

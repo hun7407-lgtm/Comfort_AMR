@@ -143,9 +143,9 @@ def main() -> int:
     axes[1].set_title("where it stopped", fontsize=10)
     axes[1].legend(fontsize=8)
     axes[1].grid(axis="y", alpha=0.25)
-    fig.suptitle(f"{d.name}: AMR1 failures by mechanism and place (gate hold = Comfort Space held it; "
+    fig.suptitle(f"{d.name}\nAMR1 failures by mechanism and place (gate hold = Comfort Space held it; "
                  "post-evade stall = stepped aside, then did not move again)", fontsize=10)
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     (d / "figures").mkdir(exist_ok=True)
     fig.savefig(d / "figures" / "P12_deadlock_mechanism.png", dpi=130)
     plt.close(fig)

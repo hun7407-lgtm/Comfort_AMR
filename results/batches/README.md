@@ -76,3 +76,14 @@ CSV의 `config` 열은 **실행 당시 경로**입니다. 261105–261106 행의
 - `host_load`는 시행이 끝난 시점의 1분 부하입니다. 24코어 기계에서 20을 넘기면 시뮬레이션이 마감을 놓치고 있었을 수 있습니다.
 - `backoffs`, `off_lane_recoveries`는 게이트가 로봇을 빼낸 횟수입니다. 정책이 아니라 결함을 우회한 횟수이므로, 자주 나오는 칸은 배치 설계를 다시 봐야 합니다.
 - 시행은 결정적이지 않습니다. n=4로는 도달률 차이를 가릴 수 없습니다.
+
+## 2026-11-14 개정 설계 배치
+
+| 폴더 | 내용 |
+|---|---|
+| `261114_stage1a_smoke` | Stage 1 복도 smoke 4건: B1 W1.5 통과, 경로 한계에서 Static/B3-O 모두 gate hold 없이 정지(보호필드) |
+| `261114_stage1a_explore` | 경계 탐색 11건(W2.2 Static 0.62–1.12, W1.5 0.32/0.42, W2.2 B3-O C1). 사전등록 예측 이전 데이터 |
+| `261114_recorder_smoke` | `verdict_*` 기록 컬럼 확인 2건 (복도 1, cross 1) |
+| `261114_stage1a` | Stage 1, 현행 설정(buffer on): step0(B1 10), scan 37, refine 23, 1a2_scan 18(context), diag_nobuffer 11(진단), REPORT.md |
+| `261114_stage1a_nobuf` | Stage 1, 후보 설정(Comfort costmap buffer off): scan 26, refine 16, **사전등록** 1a2 27 + 1b 36, lowe(작은 e 반복), REPORT.md |
+| `261114_diag_nobuffer_cross` | 진단: cross seed 1–5, Static/B3-O 1.20, Comfort costmap buffer off (pilot과 같은 seed 비교) |

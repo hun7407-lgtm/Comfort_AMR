@@ -1,0 +1,21 @@
+campaign  : 18 trial(s) from results/batches/261114_stage1a/1a2_scan/manifest.txt, starting at 1, limit 600s each
+started   : 2026-11-14T02:44:29+09:00   commit c44bc0c
+02:45:39  001_w2.20_y0.35_c1_b3o_r1.04  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [1/18]
+02:46:50  002_w2.20_y0.35_c1_b3o_r1.24  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [2/18]
+02:48:01  003_w2.20_y0.35_c1_b3o_r1.44  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [3/18]
+02:49:14  004_w2.20_y0.35_c1_b3o_r1.64  exit 1  69s  AMR1 DEADLOCK  fleet rows 0  [4/18]
+02:50:25  005_w2.20_y0.35_c1_b3o_r1.84  exit 1  67s  AMR1 DEADLOCK  fleet rows 0  [5/18]
+02:51:38  006_w2.20_y0.35_c1_b3o_r2.04  exit 1  68s  AMR1 DEADLOCK  fleet rows 0  [6/18]
+02:52:49  007_w2.20_y0.35_c2_b3o_r0.59  exit 0  67s  AMR1 SUCCESS  fleet rows 0  [7/18]
+02:54:24  008_w2.20_y0.35_c2_b3o_r0.71  exit 0  91s  AMR1 SUCCESS  fleet rows 0  [8/18]
+02:55:35  009_w2.20_y0.35_c2_b3o_r0.82  exit 0  67s  AMR1 SUCCESS  fleet rows 0  [9/18]
+02:56:47  010_w2.20_y0.35_c2_b3o_r0.94  exit 1  68s  AMR1 DEADLOCK  fleet rows 0  [10/18]
+02:58:00  011_w2.20_y0.35_c2_b3o_r1.05  exit 1  69s  AMR1 DEADLOCK  fleet rows 0  [11/18]
+02:59:12  012_w2.20_y0.35_c2_b3o_r1.17  exit 1  68s  AMR1 DEADLOCK  fleet rows 0  [12/18]
+03:00:22  013_w2.20_y0.35_c3_b3o_r0.78  exit 0  65s  AMR1 SUCCESS  fleet rows 0  [13/18]
+03:01:31  014_w2.20_y0.35_c3_b3o_r0.93  exit 0  64s  AMR1 SUCCESS  fleet rows 0  [14/18]
+03:02:42  015_w2.20_y0.35_c3_b3o_r1.08  exit 0  66s  AMR1 SUCCESS  fleet rows 0  [15/18]
+03:03:53  016_w2.20_y0.35_c3_b3o_r1.23  exit 1  67s  AMR1 DEADLOCK  fleet rows 0  [16/18]
+03:05:04  017_w2.20_y0.35_c3_b3o_r1.38  exit 1  67s  AMR1 DEADLOCK  fleet rows 0  [17/18]
+03:06:15  018_w2.20_y0.35_c3_b3o_r1.53  exit 1  66s  AMR1 DEADLOCK  fleet rows 0  [18/18]
+finished  : 2026-11-14T03:06:20+09:00

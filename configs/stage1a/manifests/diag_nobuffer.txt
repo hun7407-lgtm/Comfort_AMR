@@ -1,0 +1,12 @@
+# DIAGNOSTIC: Static with the Comfort costmap buffer off (configs/stage1a/diagnostic). Not a study condition.
+configs/stage1a/diagnostic/diag_nobuffer_static_r0.82.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r0.92.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.02.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.12.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.22.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r0.82.yaml configs/stage1a/envs/w1.80_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r0.92.yaml configs/stage1a/envs/w1.80_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.32.yaml configs/stage1a/envs/w2.60_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.42.yaml configs/stage1a/envs/w2.60_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.52.yaml configs/stage1a/envs/w2.60_y0.35_c3.yaml
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.62.yaml configs/stage1a/envs/w2.60_y0.35_c3.yaml

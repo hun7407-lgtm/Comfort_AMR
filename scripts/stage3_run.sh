@@ -9,6 +9,12 @@
 #     ./scripts/stage3_run.sh --params my_b3o.yaml  ... or from a calibrated block
 #     ./scripts/stage3_run.sh --seeds 1-8 --out results/batches/261215_stage3_check
 #
+# Main comparison (revised design, docs/STAGES.md):
+#     ./scripts/stage3_run.sh --main --selection-model configs/stage1a/model_exec.json
+#         B2 Static Calibrated vs B3-O Dynamic Selection, seeds 1-100, paired;
+#         the policy order alternates with the seed (odd: B2 first). Refused
+#         while configs/frozen/comfort_requirements.yaml is null.
+#
 # Conditions are the overlays in configs/stage3/ (scripts/stage3_make_configs.py).
 # Every condition of a seed runs on the same cross campaign config, as in
 # Stage 1. b3o_optimized is refused while its target_size_m is still null:
@@ -21,7 +27,7 @@ set -uo pipefail
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd "$PROJECT_ROOT"
 
-SEEDS="1-33"; OUT=""; DRY_RUN=0; WITH_STATIC=0; SKIP=0; LIMIT_S=1500; FLEET_TAIL=150
+SEEDS=""; OUT=""; DRY_RUN=0; WITH_STATIC=0; SKIP=0; LIMIT_S=1500; FLEET_TAIL=150; MAIN=0
 MAKE_ARGS=()
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -31,6 +37,8 @@ while [ $# -gt 0 ]; do
         --limit)   LIMIT_S="$2"; shift 2 ;;
         --fleet-tail) FLEET_TAIL="$2"; shift 2 ;;
         --with-static) WITH_STATIC=1; shift ;;
+        --main)    MAIN=1; shift ;;
+        --selection-model) MAKE_ARGS+=(--selection-model "$2"); shift 2 ;;
         --r-opt)   MAKE_ARGS+=(--r-opt "$2"); shift 2 ;;
         --params)  MAKE_ARGS+=(--params "$2"); shift 2 ;;
         --static-size) MAKE_ARGS+=(--static-size "$2"); shift 2 ;;
@@ -39,9 +47,20 @@ while [ $# -gt 0 ]; do
         *) echo "[ERROR] unknown option $1" >&2; exit 2 ;;
     esac
 done
-[ -n "$OUT" ] || OUT="results/batches/$(date +%y%m%d)_stage3_validation"
-CONDS="b3o_initial b3o_optimized"
-[ "$WITH_STATIC" -eq 1 ] && CONDS="static_baseline $CONDS"
+if [ "$MAIN" -eq 1 ]; then
+    case " ${MAKE_ARGS[*]-} " in
+        *" --selection-model "*) ;;
+        *) echo "[ERROR] --main needs --selection-model configs/stage1a/model_exec.json (the frozen Stage 1 model)" >&2; exit 2 ;;
+    esac
+    [ -n "$SEEDS" ] || SEEDS="1-100"
+    [ -n "$OUT" ] || OUT="results/batches/$(date +%y%m%d)_stage3b_main"
+    CONDS="b2_static_calibrated b3o_selection"
+else
+    [ -n "$SEEDS" ] || SEEDS="1-33"
+    [ -n "$OUT" ] || OUT="results/batches/$(date +%y%m%d)_stage3_validation"
+    CONDS="b3o_initial b3o_optimized"
+    [ "$WITH_STATIC" -eq 1 ] && CONDS="static_baseline $CONDS"
+fi
 
 echo "== Stage 3 validation"
 echo "   conditions : $CONDS"
@@ -63,6 +82,9 @@ for c in conds:
     path = f"configs/stage3/{c}.yaml"
     ov = load_with_base(path)
     assert set(ov) <= SCENARIO_ALLOWED_SECTIONS, f"{path}: sections {set(ov)}"
+    if ov["comfort_space"].get("policy") == "static" and ov["comfort_space"].get("static_radius") is None:
+        sys.exit(f"[ERROR] {path} is a TEMPLATE (static_radius null): B2 is calibrated from the "
+                 f"frozen Stage 2 file, which is not filled yet.")
     sc = ov["comfort_space"].get("aisle_scaling", {}) or {}
     if sc.get("enabled") and sc.get("target_size_m") is None:
         sys.exit(f"[ERROR] {path} is a TEMPLATE (target_size_m null). Give --r-opt R or --params FILE "
@@ -70,7 +92,11 @@ for c in conds:
     ref = None
     for s in range(int(a), int(b) + 1):
         cfg = load_config(scenario=path, common_path=f"configs/campaigns/cross/campaign_h8_a3_cross_s{s}.yaml")
-        g = geometry_record(cfg, make_policy(cfg))
+        try:
+            pol = make_policy(cfg)
+        except ValueError as exc:
+            sys.exit(f"[ERROR] {path}: {exc}")
+        g = geometry_record(cfg, pol)
         ref = ref or g
         assert g == ref, f"{path}: geometry differs between seeds"
     print(f"   {c:16s} size {g['comfort_size_m']} m  engaged F/S/R {g['cs_engaged_front_m']}/{g['cs_engaged_side_m']}/{g['cs_engaged_rear_m']}"
@@ -80,15 +106,19 @@ EOF
 
 MANIFEST_DIR="$OUT"; [ "$DRY_RUN" -eq 1 ] && MANIFEST_DIR="$(mktemp -d)"
 mkdir -p "$MANIFEST_DIR"
-python3 - "$CONDS" "$SEEDS" "$FLEET_TAIL" "$MANIFEST_DIR/manifest.txt" <<'EOF' || exit 2
+python3 - "$CONDS" "$SEEDS" "$FLEET_TAIL" "$MANIFEST_DIR/manifest.txt" "$MAIN" <<'EOF' || exit 2
 import sys
 sys.path.insert(0, 'scripts')
 from stage1_manifest import parse_seeds
 conds, seeds, tail, out = sys.argv[1].split(), parse_seeds([sys.argv[2]]), sys.argv[3], sys.argv[4]
+alternate = sys.argv[5] == "1"
 lines = [f"# Stage 3 validation: {' vs '.join(conds)} x {len(seeds)} seeds = {len(conds) * len(seeds)} trials",
          "# cross scenario; same campaign config for every condition of a seed"]
 for s in seeds:
-    for c in conds:
+    # Paired main comparison: alternate which policy runs first, so a slow
+    # drift over the batch does not always land on the same one.
+    order = conds if not alternate or s % 2 else list(reversed(conds))
+    for c in order:
         lines.append(f"configs/stage3/{c}.yaml configs/campaigns/cross/campaign_h8_a3_cross_s{s}.yaml --fleet-tail {tail}")
 open(out, 'w').write("\n".join(lines) + "\n")
 print(f"   manifest: {len(lines) - 2} trials -> {out}")

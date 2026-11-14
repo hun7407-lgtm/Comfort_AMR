@@ -181,7 +181,7 @@ def main() -> int:
         ax.grid(axis="y", alpha=0.25)
         for sp in ("top", "right"):
             ax.spines[sp].set_visible(False)
-    fig.suptitle(f"{folder}\nV1  Stage 3 validation summary (AMR1)", fontsize=10)
+    fig.suptitle(f"{folder}\nV1  Stage 3 validation summary (AMR 1)", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.93))
     fig.savefig(figs / "V1_summary.png", dpi=150)
     plt.close(fig)
@@ -228,10 +228,10 @@ def main() -> int:
         bottom = [b + v for b, v in zip(bottom, vals)]
     ax.set_xticks(range(len(conds)))
     ax.set_xticklabels([f"{LABEL[c]}\n(n={M[c]['n']})" for c in conds])
-    ax.set_ylabel("AMR1 trials not reaching the goal")
+    ax.set_ylabel("AMR 1 trials not reaching the goal")
     ax.legend(fontsize=8)
     ax.grid(axis="y", alpha=0.25)
-    fig.suptitle(f"{folder}\nV3  how AMR1 stopped", fontsize=10)
+    fig.suptitle(f"{folder}\nV3  how AMR 1 stopped", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.9))
     fig.savefig(figs / "V3_mechanisms.png", dpi=150)
     plt.close(fig)
@@ -321,7 +321,7 @@ def main() -> int:
                           f"{p['optimized']}{' (' + p['optimized_mech'] + ')' if p['optimized_mech'] else ''} | "
                           f"{fmt(p['dt'], 1)} | {fmt(p['dd'])} | {fmt(p['dclr'])} | {fmt(p['dintr'])} |")
     (d / "tables.md").write_text("\n".join(
-        [f"# {folder}: Stage 3 tables", "", "## AMR1 by condition", "", table, "",
+        [f"# {folder}: Stage 3 tables", "", "## AMR 1 by condition", "", table, "",
          "## Failure mechanism", "", "\n".join(mech_t), ""]
         + (["## Paired per seed (Optimized − Initial)", "", "\n".join(pair_t), ""] if pair_t else [])),
         encoding="utf-8")
@@ -329,7 +329,7 @@ def main() -> int:
                                        encoding="utf-8")
     ok_pairs = [p for p in paired if not math.isnan(p["dt"])]
     r = [f"# {folder}: Stage 3 — B3-O Initial vs Optimized" + (" (+ Static baseline)" if "static_baseline" in conds else ""),
-         "", f"{sum(M[c]['n'] for c in conds)} AMR1 trials ({other} rows with other scenario names ignored). "
+         "", f"{sum(M[c]['n'] for c in conds)} AMR 1 trials ({other} rows with other scenario names ignored). "
          "Same campaign config per seed; only the Comfort Space overlay differs.", "",
          "## Headline", "", table, ""]
     if ok_pairs:

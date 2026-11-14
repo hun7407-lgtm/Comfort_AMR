@@ -1,0 +1,17 @@
+# Low-e replication, buffer-off candidate: gate-boundary grazing risk at small Comfort Spaces
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w1.80_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w2.60_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w1.80_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w2.60_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w1.50_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w1.80_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w2.20_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.30.yaml configs/stage1a/envs/w2.60_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/static_r0.81.yaml configs/stage1a/envs/w2.00_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/b3o_r1.62.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml
+configs/stage1a/conditions_nobuf/static_r0.81.yaml configs/stage1a/envs/w2.00_y0.35_c3.yaml
+configs/stage1a/conditions_nobuf/b3o_r1.62.yaml configs/stage1a/envs/w2.20_y0.35_c1.yaml

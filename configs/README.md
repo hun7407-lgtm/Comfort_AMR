@@ -52,6 +52,8 @@ paper_h8_a3_scr_s0012.yaml
 |---|---|---|
 | `stage1/` | `static_r0.80.yaml` … `b3o_r1.60.yaml` (생성물, `scripts/make_size_conditions.py`) | Comfort Space 크기 조건. `scenario`+`comfort_space`만 있는 overlay; cross campaign config 위에 얹어 돌림 |
 | `stage2/` | `stage2_real.yaml` (연구 설정; `r_nav_max_m`, `comfort_acceptance_score`는 null), `scene_template.yaml` (실기 복도 템플릿, 전부 TODO), `conditions/` (생성물), `scenes/` (실제 복도 파일 자리) | 실기 human comfort study |
+| `stage1a/` | `envs/`, `conditions/`, `manifests/` (생성물, `scripts/stage1a_plan.py`), `predictions.json`·`predictions_exec.json` (사전등록 예측), `model_exec.json` (1A-1 보정, 한 번만 기록), `predictions_v0_path_only.json` (첫 계획의 경로 한계 예측, 기록용) | Stage 1 controlled 복도 실험 |
+| `frozen/` | `comfort_requirements.yaml` (Stage 2 결과 자리, 전부 null) | Stage 3 선택 규칙 입력. Stage 3 결과 보고 바꾸지 않음 |
 | `stage3/` | `static_baseline.yaml`, `b3o_initial.yaml`, `b3o_optimized.yaml` (생성물; optimized는 R_opt 전까지 template) | Initial vs Optimized 검증 |
 
 ## 검증·시연용 오버레이 (측정 조건 아님)

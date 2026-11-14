@@ -66,6 +66,9 @@ def main() -> int:
     ap.add_argument("--condition")
     ap.add_argument("--size", type=float)
     ap.add_argument("--order", type=int)
+    ap.add_argument("--context", default="", help="Human Context, e.g. c2_stationary_rear")
+    ap.add_argument("--passing-distance", type=float, default=None,
+                    help="planned passing distance d, m (not the rating)")
     ap.add_argument("--comfort", type=int, help="primary item, 1..7")
     ap.add_argument("--safety", type=int)
     ap.add_argument("--distance", type=int)
@@ -90,7 +93,8 @@ def main() -> int:
     try:
         row = make_response(args.participant, args.trial_id, args.condition, args.size,
                             args.order, answers["comfort_score"], answers["perceived_safety"],
-                            answers["distance_acceptability"], args.notes)
+                            answers["distance_acceptability"], args.notes,
+                            context=args.context, passing_distance_m=args.passing_distance)
     except ValueError as exc:
         print(f"[stage2_questionnaire] not recorded: {exc}", file=sys.stderr)
         return 2

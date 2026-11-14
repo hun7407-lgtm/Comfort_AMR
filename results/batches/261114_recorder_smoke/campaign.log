@@ -1,0 +1,6 @@
+campaign  : 2 trial(s) from results/batches/261114_recorder_smoke/manifest.txt, starting at 1, limit 1500s each
+started   : 2026-11-14T01:04:13+09:00   commit c44bc0c
+01:05:30  001_w2.20_y0.35_c3_static_r0.82  exit 0  73s  AMR1 SUCCESS  fleet rows 0  [1/2]
+01:09:26  002_campaign_h8_a3_cross_s1_static_r1.60  attempt 1 did not start ([ERROR] fleet Nav2 did not activate (1 of 2). Last lines:); retrying
+01:15:10  002_campaign_h8_a3_cross_s1_static_r1.60  exit 1  339s  AMR1 DEADLOCK  fleet rows 1  [2/2]
+finished  : 2026-11-14T01:15:15+09:00
