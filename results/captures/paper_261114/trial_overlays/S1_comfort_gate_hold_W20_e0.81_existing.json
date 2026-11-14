@@ -1,0 +1,12 @@
+[
+  {
+    "trial": "/home/hun/Desktop/Comfort_AMR/results/batches/261114_stage1a_nobuf/lowe/20261114T055337_static_r0.81_w2.00_y0.35_c3.json",
+    "result": "DEADLOCK",
+    "mechanism": "comfort_gate_hold",
+    "cause": "yielding to a Comfort Space",
+    "buffer": 0.0,
+    "env": "configs/stage1a/envs/w2.00_y0.35_c3.yaml",
+    "scenario": "static_r0.81",
+    "condition": "configs/stage1a/conditions_nobuf/static_r0.81.yaml"
+  }
+]

@@ -1,0 +1,50 @@
+# Frozen navigation requirements from Stage 1 (scripts/stage1a_finalize.py --freeze).
+# Written once; Stage 3 reads it and may not change it. B2 and B3-O use the same
+# buffer and the same physical safety layer. Engineering bounds, not comfort distances.
+frozen_at: '2026-11-14T20:53:48'
+frozen_at_commit: 41ca38d1d441afdb57f799cd8e68de27ae6aac71
+stage1_final_model_version: stage1a_buf10_v1
+source:
+  selection: results/batches/261114_stage1a_final/buffer_selection.json
+  batch: results/batches/261114_stage1a_buf10
+  criteria: configs/stage1a/buffer_selection.yaml
+  predictions: configs/stage1a/predictions_exec_buf10.json
+  predictions_commit: 41ca38d+
+comfort_buffer_m: 0.1
+model:
+  file: configs/stage1a/model_exec_buf10.json
+  sha256: e3d32c0b067d37187084f1971873821f29f50f86f0d58950a9efb046d494f0c0
+  wall_clearance_m: 0.49
+  spread_m: 0.1
+robot:
+  footprint_length_m: 0.7
+  footprint_width_m: 0.48
+  inscribed_radius_m (robot_grow): 0.24
+  inflation_radius_m: 0.34
+gate:
+  margin_m: 0.05
+  lookahead_s: 0.6
+physical_safety_layer:
+  collision_monitor:
+    enabled: true
+    stop_margin: 0.25
+    reaction_time: 0.25
+    decel: 1.0
+    scanner_tolerance: 0.1
+    reverse_speed: 0.25
+    simulation_time_step: 0.1
+    min_points: 5
+    slowdown:
+      enabled: true
+      approach_speed: 1.6
+  note: identical for every policy; never scaled with comfort
+r_nav_safe:
+  definition: R_nav_safe := R_path^infl (Conservative Navigation Feasibility Bound)
+  bound: infl
+  computed_by: comfort_core.feasibility.r_path(cfg, kind, human, 'infl')
+  execution_model_bound: exec (comfort_core.feasibility, wall clearance above)
+  table: results/batches/261114_stage1a_final/r_nav_safe.json
+applies_to:
+- b2_static_calibrated
+- b3o_selection
+common_yaml_sha256: 4c1ae48d158c25d756151c2a8ec83582d92f65b730064b5e48091f30439af58c

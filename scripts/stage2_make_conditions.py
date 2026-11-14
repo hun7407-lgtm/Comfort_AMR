@@ -3,6 +3,7 @@
 
     python3 scripts/stage2_make_conditions.py --config configs/stage2/stage2_real.yaml
     python3 scripts/stage2_make_conditions.py --config ... --orders 8
+    python3 scripts/stage2_make_conditions.py --config ... --participants P01 P02 P03
     python3 scripts/stage2_make_conditions.py --config ... --levels 0.5 0.75 1.0 1.25 1.5
             (pipeline check only, NOT recorded as the study's levels)
 
@@ -14,9 +15,12 @@ condition overlay per distinct target is written to configs/stage2/conditions/
 with comfort_core.size_sweep, exactly as Stage 1 writes its own.
 
 conditions.csv lists context, d, target size and condition file.
---orders N writes orders.csv: P01..PNN, context blocks in a Williams order,
-distance levels in a Williams order inside each block
-(comfort_core.stage2.participant_orders).
+--orders N (P01..PNN) or --participants <anonymous IDs> writes orders.csv,
+one row per trial: participant_id, trial_id, block, order_index, context,
+passing_distance_m, repeat, target_size_m, condition. Context blocks in a
+Williams order, distance levels in a Williams order inside each block,
+stage2.trial_repeats times (comfort_core.stage2.participant_orders).
+IDs must match stage2.participant_id_pattern: no names.
 
 Refuses while stage2.distance_levels_m is null: the levels wait for the
 real AMR's protective field and the safety briefing.
@@ -35,8 +39,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from comfort_core.config import load_with_base                      # noqa: E402
 from comfort_core.contexts import CONTEXTS, target_for_extent       # noqa: E402
 from comfort_core.size_sweep import condition_name, write_condition  # noqa: E402
-from comfort_core.stage2 import (distance_levels, participant_orders,  # noqa: E402
-                                 study_contexts)
+from comfort_core.stage2 import (distance_levels, participant_ids,  # noqa: E402
+                                 participant_orders, stage2_block, study_contexts)
 
 
 def main() -> int:
@@ -44,7 +48,8 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--config", default="configs/stage2/stage2_real.yaml")
     ap.add_argument("--out", default="configs/stage2/conditions")
-    ap.add_argument("--orders", type=int, default=0)
+    ap.add_argument("--orders", type=int, default=0, help="P01..PNN")
+    ap.add_argument("--participants", nargs="+", default=None, help="anonymous study IDs")
     ap.add_argument("--levels", type=float, nargs="+", default=None,
                     help="override stage2.distance_levels_m (pipeline check only)")
     args = ap.parse_args()
@@ -56,6 +61,9 @@ def main() -> int:
     try:
         levels = distance_levels(cfg)
         contexts = study_contexts(cfg)
+        repeats = int(stage2_block(cfg).get("trial_repeats") or 1)
+        ids = (participant_ids(cfg, args.participants) if args.participants else
+               participant_ids(cfg, [f"P{i + 1:02d}" for i in range(args.orders)]))
     except ValueError as exc:
         print(f"[stage2_make_conditions] {exc}", file=sys.stderr)
         return 2
@@ -76,20 +84,20 @@ def main() -> int:
     for r in rows:
         print(f"  {r['context']:22s} d {r['passing_distance_m']:.2f} m -> target {r['target_size_m']:.2f} "
               f"({r['condition']})")
-    if args.orders:
+    if ids:
         lookup = {(r["context"], r["passing_distance_m"]): r for r in rows}
-        seq = participant_orders(args.orders, contexts, levels)
+        seq = participant_orders(ids, contexts, levels, repeats)
         with (out / "orders.csv").open("w", newline="", encoding="utf-8") as h:
             w = csv.writer(h)
-            w.writerow(["participant_id", "block", "trial_order", "context",
-                        "passing_distance_m", "target_size_m", "condition"])
+            w.writerow(["participant_id", "trial_id", "block", "order_index", "context",
+                        "passing_distance_m", "repeat", "target_size_m", "condition"])
             for s in seq:
                 r = lookup[(CONTEXTS[s["context"]]["name"], s["passing_distance_m"])]
-                w.writerow([s["participant_id"], s["block"], s["trial_order"], r["context"],
-                            f"{s['passing_distance_m']:.2f}", f"{r['target_size_m']:.2f}",
-                            r["condition"]])
-        print(f"  wrote {out / 'orders.csv'} ({args.orders} participants x "
-              f"{len(contexts) * len(levels)} trials, Williams-balanced)")
+                w.writerow([s["participant_id"], s["trial_id"], s["block"], s["order_index"],
+                            r["context"], f"{s['passing_distance_m']:.2f}", s["repeat"],
+                            f"{r['target_size_m']:.2f}", r["condition"]])
+        print(f"  wrote {out / 'orders.csv'} ({len(ids)} participants x "
+              f"{len(contexts) * len(levels) * repeats} trials, Williams-balanced)")
     return 0
 
 

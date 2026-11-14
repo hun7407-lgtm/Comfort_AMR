@@ -1,0 +1,12 @@
+[
+  {
+    "trial": "/home/hun/Desktop/Comfort_AMR/results/batches/261114_stage1a/refine/20261114T022226_static_r0.82_w2.20_y0.35_c3.json",
+    "result": "DEADLOCK",
+    "mechanism": "stall",
+    "cause": "no progress for 12 s, safety layer holding it for the last 4 s (ProtectiveStop)",
+    "buffer": 0.35,
+    "env": "configs/stage1a/envs/w2.20_y0.35_c3.yaml",
+    "scenario": "static_r0.82",
+    "condition": "configs/stage1a/conditions/static_r0.82.yaml"
+  }
+]

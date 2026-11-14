@@ -1,0 +1,58 @@
+{
+  "config": "configs/stage1a/envs/w2.00_y0.35_c3.yaml",
+  "scenario": "configs/stage1a/conditions_buf10/static_r0.81.yaml",
+  "amr_pose": null,
+  "out": "results/captures/paper_261114/raw",
+  "prefix": "S1_buffer_still_W20",
+  "overlays": [
+    {
+      "tag": "buf000",
+      "buffer": 0.0,
+      "amr": false
+    },
+    {
+      "tag": "buf010",
+      "buffer": 0.1,
+      "amr": false
+    },
+    {
+      "tag": "buf035",
+      "buffer": 0.35,
+      "amr": false
+    }
+  ],
+  "views": [
+    {
+      "name": "top",
+      "ortho": true,
+      "centre": [
+        0.0,
+        0.0
+      ],
+      "width_m": 13.0
+    },
+    {
+      "name": "topzoom",
+      "ortho": true,
+      "centre": [
+        0.0,
+        0.2
+      ],
+      "width_m": 6.0
+    },
+    {
+      "name": "iso",
+      "position": [
+        -7.5,
+        -1.8,
+        7.0
+      ],
+      "look_at": [
+        0.6,
+        0.1,
+        0.0
+      ],
+      "focal": 18.0
+    }
+  ]
+}

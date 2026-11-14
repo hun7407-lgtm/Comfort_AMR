@@ -1,0 +1,93 @@
+{
+  "config": "configs/campaigns/cross/campaign_h8_a3_cross_s2.yaml",
+  "scenario": "configs/stage3/b3o_initial.yaml",
+  "amr_pose": null,
+  "out": "results/captures/paper_261114/raw",
+  "prefix": "CROSS_s002_overview",
+  "overlays": [
+    {
+      "tag": "b3o",
+      "buffer": 0.1
+    },
+    {
+      "tag": "clean",
+      "comfort": false
+    }
+  ],
+  "views": [
+    {
+      "name": "top",
+      "ortho": true,
+      "centre": [
+        0.0,
+        0.0
+      ],
+      "width_m": 30.0
+    },
+    {
+      "name": "iso_se",
+      "position": [
+        16.0,
+        -14.0,
+        11.0
+      ],
+      "look_at": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "focal": 20.0
+    },
+    {
+      "name": "iso_nw",
+      "position": [
+        -16.0,
+        13.0,
+        11.0
+      ],
+      "look_at": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "focal": 20.0
+    },
+    {
+      "name": "crossing",
+      "ortho": true,
+      "centre": [
+        6.0,
+        0.0
+      ],
+      "width_m": 12.0
+    },
+    {
+      "name": "crowd",
+      "position": [
+        0.0,
+        -7.2,
+        3.6
+      ],
+      "look_at": [
+        0.0,
+        -1.5,
+        0.8
+      ],
+      "focal": 20.0
+    },
+    {
+      "name": "north_aisle",
+      "position": [
+        11.5,
+        4.21,
+        1.9
+      ],
+      "look_at": [
+        -10.0,
+        4.21,
+        0.9
+      ],
+      "focal": 22.0
+    }
+  ]
+}

@@ -31,37 +31,95 @@
 base: configs/real_amr.yaml
 
 stage2:
-  # --- the size ladder --------------------------------------------
-  # Largest Comfort Space the aisle can take, from Stage 1
-  # (results/batches/<stage1>/thresholds.json, B3-O R_nav_max). The
-  # ladder starts here and descends.
+  # --- contexts x passing distances ---------------------------------
   # Human Contexts measured (comfort_core/contexts.py). Pilot: all four;
   # the main study drops c4 if the pilot shows it does not differ from c2/c3.
-  contexts: [c1_engaged_rear, c2_stationary_rear, c3_stationary_front, c4_stationary_side]
+  # true = measured. Set c4 false here (not in code) if the pilot drops it.
+  contexts:
+    c1_engaged_rear: true
+    c2_stationary_rear: true
+    c3_stationary_front: true
+    c4_stationary_side: true
+  # Each (context, d) this many times per participant; every repeat is a
+  # further Williams row inside the context block.
+  trial_repeats: 1
+  # Anonymous study codes only; stage2 tools refuse anything else (a name,
+  # an e-mail). The key linking codes to people stays on paper.
+  participant_id_pattern: "^P[0-9]{2,3}$"
   # Passing distances d, m, person centre -> nearest AMR surface (the Stage 1
   # x axis). Proposed 0.50 / 0.75 / 1.00 / 1.25 / 1.50; NOT set until the
   # lowest is checked against the real AMR's protective field, passing speed
   # and the safety briefing. Null = stage2_make_conditions refuses.
   distance_levels_m: null
-  # Superseded (2026-11-14): the ladder descending from Stage 1's R_nav_max.
-  # Kept so old sessions still load; the revised design does not use it.
-  r_nav_max_m: null            # TODO from Stage 1
-  # Descent step and how many rungs. r_nav_max, r_nav_max - step, ...
-  # Never below size_floor_m.
-  comfort_step_m: 0.1
-  n_conditions: 5
-  size_floor_m: 0.4
 
   # --- the questionnaire -------------------------------------------
-  # Cutoff on the primary comfort item (1..7) that counts as acceptable,
-  # used to derive R_comfort_min. NULL ON PURPOSE: decided after the
-  # pilot from the distribution and the reference, never before.
-  comfort_acceptance_score: null
-  # Which per-size statistic the cutoff is applied to: median or mean.
-  acceptance_statistic: median
-  # Items and anchors are in comfort_core/stage2.py QUESTIONNAIRE_ITEMS
-  # (Neggers et al. 2022 protocol for the primary item).
-  questionnaire_language: ko
+  # Wording and scale are HERE, not in code: change them after the pilot
+  # and bump `version` (it is written into every response row). Keys are
+  # fixed (comfort_core/stage2.py RATING_KEYS). `midpoint` marks a
+  # bipolar item (too close .. just right .. too far).
+  questionnaire:
+    version: "v0-draft"
+    language: ko
+    items:
+      - key: comfort_score
+        primary: true
+        scale_min: 1
+        scale_max: 7
+        text:
+          ko: "로봇이 지나갈 때 얼마나 편안하게 느꼈습니까?"
+          en: "How comfortable did you feel while the robot passed you?"
+        anchors:
+          ko: ["1 = 전혀 편안하지 않음", "7 = 매우 편안함"]
+          en: ["1 = not at all comfortable", "7 = very comfortable"]
+        source: "Neggers et al. 2022, perceived comfort, 7-point"
+      - key: perceived_safety
+        primary: false
+        required: false
+        scale_min: 1
+        scale_max: 7
+        text:
+          ko: "로봇이 지나갈 때 얼마나 안전하다고 느꼈습니까?"
+          en: "How safe did you feel while the robot passed you?"
+        anchors:
+          ko: ["1 = 전혀 안전하지 않음", "7 = 매우 안전함"]
+          en: ["1 = not at all safe", "7 = very safe"]
+        source: "TODO confirm wording against the HRI reference before use"
+      - key: acceptability
+        primary: false
+        required: false
+        scale_min: 1
+        scale_max: 7
+        midpoint: 4
+        text:
+          ko: "로봇이 지나간 거리는 어땠습니까?"
+          en: "How was the distance at which the robot passed?"
+        anchors:
+          ko: ["1 = 너무 가까움", "4 = 적당함", "7 = 너무 멈"]
+          en: ["1 = much too close", "4 = just right", "7 = much too far"]
+        source: "TODO confirm wording against the HRI reference before use"
+    comment_prompt:
+      ko: "(선택) 하고 싶은 말이 있으면 적어 주세요."
+      en: "(optional) Any comment?"
+
+  # --- analysis rules ---------------------------------------------
+  # How R_comfort_min and R_pref are read off the curve. NULL ON PURPOSE:
+  # decided after the pilot. Until then scripts/stage2_analysis.py only
+  # lists candidates (every cutoff, argmax, midpoint crossing).
+  comfort_acceptance_score: null   # cutoff on the primary item
+  acceptance_statistic: median     # median or mean, per (context, d)
+  analysis:
+    r_comfort_min_rule: null       # e.g. text of the pre-registered rule, after the pilot
+    r_pref_rule: null              # null -> selection uses the fallback R* = R_comfort_min
+
+  # --- safety / abort -----------------------------------------------
+  # Trial statuses: NORMAL, OPERATOR_ABORT, PARTICIPANT_STOP, E_STOP,
+  # NAVIGATION_FAILURE, INVALID_TRIAL (comfort_core/stage2.py). Ctrl+C
+  # during a trial cancels the goal and asks which one.
+  safety:
+    # A std_msgs/Bool topic that is true while the hardware e-stop is
+    # pressed, if the real AMR publishes one. TODO from the AMR's driver;
+    # null = the operator records E_STOP by hand.
+    estop_topic: null
 
   # --- trial protocol --------------------------------------------
   # Each participant sees every size; the order is a permutation drawn

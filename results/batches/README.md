@@ -87,3 +87,6 @@ CSV의 `config` 열은 **실행 당시 경로**입니다. 261105–261106 행의
 | `261114_stage1a` | Stage 1, 현행 설정(buffer on): step0(B1 10), scan 37, refine 23, 1a2_scan 18(context), diag_nobuffer 11(진단), REPORT.md |
 | `261114_stage1a_nobuf` | Stage 1, 후보 설정(Comfort costmap buffer off): scan 26, refine 16, **사전등록** 1a2 27 + 1b 36, lowe(작은 e 반복), REPORT.md |
 | `261114_diag_nobuffer_cross` | 진단: cross seed 1–5, Static/B3-O 1.20, Comfort costmap buffer off (pilot과 같은 seed 비교) |
+| `261114_stage1a_buf10` | Stage 1, 사전등록 buffer 후보 **0.10 m**: scan 27, refine 28, 1a2 27, 1b 36, lowe 18 (136), REPORT.md — **선택됨** |
+| `261114_stage1a_buf15` | Stage 1, 사전등록 buffer 후보 0.15 m: 동일 구성 136, REPORT.md — B·D 기준 탈락 |
+| `261114_stage1a_final` | Stage 1 최종 판정: `SELECTION.md`, `buffer_selection.json`, `r_nav_safe.json` (새 trial 없음) |

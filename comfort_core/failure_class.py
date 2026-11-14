@@ -21,13 +21,31 @@ comfort one.
                                or the rule was wrong here
     E  ROBOT_ROBOT             stall / Nav2 abort with a fleet AMR within
                                `robot_robot_gap_m` of AMR 1 at the verdict
+    P  PROTECTIVE_STOP         stall while the collision monitor held a
+                               ProtectiveStop (deadlock_cause), no Comfort
+                               Space ahead and no fleet AMR close: the safety
+                               layer stopped AMR 1 at a wall or obstacle
     C  POST_EVADE_STALL        deadlock_mechanism post_evade_stall
     D  NAV2_FAILURE            nav2_abort / planning_failure / timeout
     U  UNCLASSIFIED_STALL      anything else that did not succeed; reported
                                on its own, never merged into another class
 
+Coarse verdicts (`verdict`, the names used in docs/RESULTS_*.md):
+
+    SUCCESS               SUCCESS
+    INVALID               INVALID
+    PASSAGE_INFEASIBLE    PASSAGE_INFEASIBLE
+    COMFORT_GATE_HOLD     STATIC_OVER_RESERVATION, SELECTION_FAILURE (the
+                          gate held, or AMR 1 stalled in front of a
+                          Comfort Space, at a person judged passable)
+    ROBOT_ROBOT_DEADLOCK  ROBOT_ROBOT
+    PROTECTIVE_STOP       PROTECTIVE_STOP
+    POST_EVADE_STALL      POST_EVADE_STALL
+    NAV2_FAILURE          NAV2_FAILURE
+    UNCLASSIFIED          UNCLASSIFIED_STALL
+
 Columns used (all written by comfort_core/metrics.py):
-    result, valid, deadlock_mechanism, policy,
+    result, valid, deadlock_mechanism, deadlock_cause, policy,
     verdict_comfort_ahead       a Comfort Space lay on the plan ahead
     verdict_person              person the gate held at / in front of
     verdict_nearest_fleet_m     AMR 1 to nearest fleet AMR, centre to centre
@@ -42,8 +60,18 @@ from __future__ import annotations
 from typing import Dict, Optional
 
 CLASSES = ("SUCCESS", "INVALID", "PASSAGE_INFEASIBLE", "STATIC_OVER_RESERVATION",
-           "SELECTION_FAILURE", "ROBOT_ROBOT", "POST_EVADE_STALL", "NAV2_FAILURE",
-           "UNCLASSIFIED_STALL")
+           "SELECTION_FAILURE", "ROBOT_ROBOT", "PROTECTIVE_STOP", "POST_EVADE_STALL",
+           "NAV2_FAILURE", "UNCLASSIFIED_STALL")
+
+VERDICTS = ("SUCCESS", "PASSAGE_INFEASIBLE", "COMFORT_GATE_HOLD", "POST_EVADE_STALL",
+            "NAV2_FAILURE", "ROBOT_ROBOT_DEADLOCK", "PROTECTIVE_STOP", "INVALID", "UNCLASSIFIED")
+VERDICT_OF = {"SUCCESS": "SUCCESS", "INVALID": "INVALID",
+              "PASSAGE_INFEASIBLE": "PASSAGE_INFEASIBLE",
+              "STATIC_OVER_RESERVATION": "COMFORT_GATE_HOLD",
+              "SELECTION_FAILURE": "COMFORT_GATE_HOLD",
+              "ROBOT_ROBOT": "ROBOT_ROBOT_DEADLOCK", "PROTECTIVE_STOP": "PROTECTIVE_STOP",
+              "POST_EVADE_STALL": "POST_EVADE_STALL", "NAV2_FAILURE": "NAV2_FAILURE",
+              "UNCLASSIFIED_STALL": "UNCLASSIFIED"}
 
 ROBOT_ROBOT_GAP_M = 1.5   # centre to centre; two 0.70 m bodies plus both protective fields
 
@@ -86,8 +114,15 @@ def classify(row: Dict[str, str], robot_robot_gap_m: float = ROBOT_ROBOT_GAP_M) 
     gap = _f(row.get("verdict_nearest_fleet_m"))
     if mech in ("stall", "nav2_abort") and gap is not None and gap <= robot_robot_gap_m:
         return "ROBOT_ROBOT"
+    if mech == "stall" and "ProtectiveStop" in (row.get("deadlock_cause") or ""):
+        return "PROTECTIVE_STOP"
     if mech == "post_evade_stall":
         return "POST_EVADE_STALL"
     if mech in ("nav2_abort", "planning_failure", "timeout"):
         return "NAV2_FAILURE"
     return "UNCLASSIFIED_STALL"
+
+
+def verdict(row: Dict[str, str], robot_robot_gap_m: float = ROBOT_ROBOT_GAP_M) -> str:
+    """The coarse verdict (VERDICTS) of a trial row."""
+    return VERDICT_OF[classify(row, robot_robot_gap_m)]

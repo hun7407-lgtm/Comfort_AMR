@@ -1,0 +1,11 @@
+# scenario-overlay capture-config tag  (capture runs, not measurements)
+configs/stage1a/conditions_buf10/static_r0.42.yaml configs/captures/paper_261114/rec_W22.yaml S1_E_small_W22_e0.42
+configs/stage1a/conditions_buf10/static_r1.02.yaml configs/captures/paper_261114/rec_W22.yaml S1_E_lastpass_W22_e1.02
+configs/stage1a/conditions_buf10/static_r1.07.yaml configs/captures/paper_261114/rec_W22.yaml S1_E_firstfail_W22_e1.07
+configs/stage1a/conditions_nobuf/static_r0.81.yaml configs/captures/paper_261114/rec_W20.yaml S1_buffer_000_W20_e0.81
+configs/stage1a/conditions_buf10/static_r0.81.yaml configs/captures/paper_261114/rec_W20.yaml S1_buffer_010_W20_e0.81
+results/captures/paper_261114/overlays/static_r0.81.yaml configs/captures/paper_261114/rec_W20.yaml S1_buffer_035_W20_e0.81
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.20_cross.yaml configs/captures/paper_261114/rec_cross_s2.yaml CROSS_s002_B2_diagnostic
+configs/stage1a/diagnostic/diag_nobuffer_b3o_r1.20_cross.yaml configs/captures/paper_261114/rec_cross_s2.yaml CROSS_s002_B3O_diagnostic
+configs/stage1a/diagnostic/diag_nobuffer_static_r1.20_cross.yaml configs/captures/paper_261114/rec_cross_s3.yaml CROSS_s003_B2_diagnostic
+configs/stage1a/diagnostic/diag_nobuffer_b3o_r1.20_cross.yaml configs/captures/paper_261114/rec_cross_s3.yaml CROSS_s003_B3O_diagnostic

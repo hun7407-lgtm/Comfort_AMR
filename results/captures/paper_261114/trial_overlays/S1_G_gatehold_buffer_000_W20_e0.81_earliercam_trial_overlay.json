@@ -1,0 +1,12 @@
+[
+  {
+    "trial": "/home/hun/Desktop/Comfort_AMR/results/captures/paper_261114/capture_trials/20261114T212347_static_r0.81_rec_W20.json",
+    "result": "DEADLOCK",
+    "mechanism": "comfort_gate_hold",
+    "cause": "no progress for 12 s while yielding",
+    "buffer": 0.0,
+    "env": "configs/captures/paper_261114/rec_W20.yaml",
+    "scenario": "static_r0.81",
+    "condition": "configs/stage1a/conditions_nobuf/static_r0.81.yaml"
+  }
+]

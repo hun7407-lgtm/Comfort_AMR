@@ -1,0 +1,12 @@
+[
+  {
+    "trial": "/home/hun/Desktop/Comfort_AMR/results/captures/paper_261114/capture_trials/20261114T215037_static_r0.42_rec_W22.json",
+    "result": "SUCCESS",
+    "mechanism": "",
+    "cause": "",
+    "buffer": 0.1,
+    "env": "configs/captures/paper_261114/rec_W22.yaml",
+    "scenario": "static_r0.42",
+    "condition": "configs/stage1a/conditions_buf10/static_r0.42.yaml"
+  }
+]

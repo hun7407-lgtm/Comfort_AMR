@@ -100,11 +100,30 @@ def main() -> int:
                     help="YAML with a `directional:` block (Stage 2 calibrated parameter set)")
     ap.add_argument("--selection-model", default=None,
                     help="Stage 1 execution model (model_exec.json): write b3o_selection.yaml "
-                         "and b2_static_calibrated.yaml")
+                         "and b2_static_calibrated.yaml (pipeline check; the main run uses --frozen)")
+    ap.add_argument("--frozen", action="store_true",
+                    help="take model, buffer and R_nav_safe bound from "
+                         "configs/frozen/navigation_requirements.yaml (Stage 3 main)")
     ap.add_argument("--campaign", default="configs/campaigns/cross/campaign_h8_a3_cross_s1.yaml",
                     help="campaign config the spot table is computed on")
     args = ap.parse_args()
     out = resolve_path(args.out)
+    if args.frozen:
+        from comfort_core.selection import FROZEN_NAV, frozen_navigation
+        try:
+            nav = frozen_navigation()
+        except ValueError as exc:
+            print(f"[stage3_make_configs] {exc}", file=sys.stderr)
+            return 2
+        if args.selection_model and Path(args.selection_model).resolve() != (PROJECT_ROOT / nav["model"]["file"]).resolve():
+            print(f"[stage3_make_configs] --selection-model differs from the frozen model "
+                  f"{nav['model']['file']}; refusing", file=sys.stderr)
+            return 2
+        args.selection_model = nav["model"]["file"]
+        args.buffer = float(nav["comfort_buffer_m"])
+        args.bound = nav["r_nav_safe"]["bound"]
+        args.frozen_file = str(FROZEN_NAV.relative_to(PROJECT_ROOT))
+        return write_selection(args, out)
     if args.selection_model:
         return write_selection(args, out)
 
@@ -166,7 +185,7 @@ def main() -> int:
     return 0
 
 
-def spot_table(cfg, model: dict, res: float = 0.02) -> list:
+def spot_table(cfg, model: dict, res: float = 0.02, bound: str = "exec") -> list:
     """R_nav_safe per spot and state, by the Stage 1 execution model on the bay.
 
     For each spot a person stands or works at (start positions and walk
@@ -213,7 +232,7 @@ def spot_table(cfg, model: dict, res: float = 0.02) -> list:
                 c["humans"]["state_source"] = "ground_truth"
                 c["navigation"] = dict(c["navigation"], start=[px - 4.0, cy], goal=[px + 4.0, cy])
                 c["_feasibility_window"] = [px - 5.0, px + 5.0]
-                r = fz.r_path(c, "b3o", "a", "exec", res=res, model=model)
+                r = fz.r_path(c, "b3o", "a", bound, res=res, model=model)
                 states[state] = {"context": CONTEXTS[ctx]["name"],
                                  "r_nav_safe_m": None if r["e"] is None else round(r["e"], 3),
                                  "note": r["note"]}
@@ -227,7 +246,16 @@ def write_selection(args, out: Path) -> int:
     from comfort_core.selection import FROZEN, static_calibrated
     model = json.loads(Path(args.selection_model).read_text())
     cfg = load_config(common_path=args.campaign)
-    spots = spot_table(cfg, model)
+    buffer = getattr(args, "buffer", None)
+    bound = getattr(args, "bound", "exec")
+    if buffer is not None:
+        # Both policies plan with the frozen buffer; the spot table too.
+        cfg["comfort_space"].setdefault("costmap", {})["buffer_width"] = buffer
+    spots = spot_table(cfg, model, bound=bound)
+    costmap = {} if buffer is None else {"costmap": {"buffer_width": buffer}}
+    frozen_note = ("" if buffer is None else
+                   f"# Navigation values frozen in {args.frozen_file}: buffer {buffer} m,\n"
+                   f"# R_nav_safe bound '{bound}'. Identical for B2 and B3-O.\n")
     req = yaml.safe_load(FROZEN.read_text()) or {}
     p = write("b3o_selection", "B3-O Dynamic Selection (Stage 3 proposed method)",
               "# Per spot and state: R* = min(R_pref, R_nav_safe) within\n"
@@ -235,13 +263,14 @@ def write_selection(args, out: Path) -> int:
               "# (comfort_core/selection.py). R_nav_safe from the Stage 1 execution model\n"
               f"# ({args.selection_model}, wall clearance {model['wall_clearance_m']} m);\n"
               "# comfort requirements from the frozen Stage 2 file. The policy refuses to\n"
-              "# start while that file is null.",
+              "# start while that file is null.\n" + frozen_note,
               {"scenario": {"name": "b3o_selection",
                             "label": "B3-O Dynamic Comfort Space with environment-aware selection"},
                "comfort_space": {"policy": "b3o_selection",
-                                 "aisle_scaling": {"enabled": False},
+                                 "aisle_scaling": {"enabled": False}, **costmap,
                                  "selection": {"requirements_file": str(FROZEN.relative_to(PROJECT_ROOT)),
                                                "model": args.selection_model,
+                                               "r_nav_safe_bound": bound,
                                                "spot_radius_m": 0.6,
                                                "spots": spots}}}, out)
     print(f"wrote {p}  ({len(spots)} spots)")
@@ -251,17 +280,18 @@ def write_selection(args, out: Path) -> int:
                           for st, v in s["states"].items()))
     try:
         r_b2 = static_calibrated(req.get("contexts") or {})
-        body = {"policy": "static", "static_radius": round(r_b2, 4)}
+        body = {"policy": "static", "static_radius": round(r_b2, 4), **costmap}
         how = (f"# max over contexts of R_comfort_min = {r_b2:.2f} m, from the frozen\n"
                "# Stage 2 file: the smallest single radius meeting every context.")
         note = ""
     except ValueError as exc:
-        body = {"policy": "static", "static_radius": None}
+        body = {"policy": "static", "static_radius": None, **costmap}
         how = ("# TEMPLATE. static_radius is null until configs/frozen/comfort_requirements.yaml\n"
                "# holds R_comfort_min for every context; then it is their maximum.")
         note = f"  (TEMPLATE: {exc})"
     p = write("b2_static_calibrated", "B2 Static Calibrated (one radius meeting every context)",
-              how, {"scenario": {"name": "b2_static_calibrated",
+              how + ("\n" + frozen_note.rstrip("\n") if frozen_note else ""),
+              {"scenario": {"name": "b2_static_calibrated",
                                  "label": "Static Comfort Space calibrated to the human study"},
                     "comfort_space": body}, out)
     print(f"wrote {p}{note}")

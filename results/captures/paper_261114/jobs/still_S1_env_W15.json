@@ -1,0 +1,52 @@
+{
+  "config": "configs/stage1a/envs/w1.50_y0.35_c3.yaml",
+  "scenario": null,
+  "amr_pose": null,
+  "out": "results/captures/paper_261114/raw",
+  "prefix": "S1_env_W15",
+  "overlays": [
+    {
+      "tag": "clean",
+      "comfort": false
+    }
+  ],
+  "views": [
+    {
+      "name": "top",
+      "ortho": true,
+      "centre": [
+        0.0,
+        0.0
+      ],
+      "width_m": 13.0
+    },
+    {
+      "name": "iso",
+      "position": [
+        -7.5,
+        -1.8,
+        7.0
+      ],
+      "look_at": [
+        0.6,
+        0.1,
+        0.0
+      ],
+      "focal": 18.0
+    },
+    {
+      "name": "close",
+      "position": [
+        -4.0,
+        -0.8,
+        2.4
+      ],
+      "look_at": [
+        0.0,
+        0.4,
+        0.5
+      ],
+      "focal": 18.0
+    }
+  ]
+}

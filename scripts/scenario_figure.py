@@ -36,6 +36,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from comfort_core import load_config  # noqa: E402
 from comfort_core.palette import MISSION_COLOUR, fleet_colour  # noqa: E402
+from comfort_core.labels import robot_label  # noqa: E402
 from comfort_core.roadmap import Roadmap  # noqa: E402
 
 Point = Tuple[float, float]
@@ -200,14 +201,14 @@ def main() -> int:
     plan.polyline(plan.offset(mission, 0.0), col, 4)
     plan.ring(mission[0], 0.45, col, 4)
     plan.disc(mission[-1], 0.40, col)
-    plan.label(mission[0], "AMR1 START", col, dy_px=-40)
-    plan.label(mission[-1], "AMR1 GOAL", col, dy_px=46)
+    plan.label(mission[0], f"{robot_label('AMR1')} START", col, dy_px=-40)
+    plan.label(mission[-1], f"{robot_label('AMR1')} GOAL", col, dy_px=46)
 
     # -- the fleet --------------------------------------------------
     lateral = {"a1": 0.22, "a2": 0.44, "a3": 0.66}
     for index, (name, legs) in enumerate(fleet_routes(cfg, roadmap).items()):
         col = bgr(fleet_colour(name))
-        tag = name.upper()
+        tag = robot_label(name)
         start = legs[0][1][0] if legs else None
         # Labels staggered per vehicle so neighbours in one block do
         # not print on top of each other.
@@ -270,10 +271,10 @@ def main() -> int:
     # scenario crosses.
     lx, ly = plan.px(-6.3, 1.25)
     y0 = ly + 22
-    items = [("AMR1 mission (ring start, disc goal)", bgr(MISSION_COLOUR))]
+    items = [(f"{robot_label('AMR1')} mission (ring start, disc goal)", bgr(MISSION_COLOUR))]
     for name in sorted(cfg.get("fleet", {}).get("amrs", {})):
         if cfg["fleet"]["amrs"][name].get("enabled", True) and cfg["fleet"].get("enabled"):
-            items.append((f"{name.upper()} job list", bgr(fleet_colour(name))))
+            items.append((f"{robot_label(name)} job list", bgr(fleet_colour(name))))
     items += [(f"person: {v}", STATE_BGR[k]) for k, v in STATE_KO.items()]
     items.append(("dashed: a person's walk, with when it starts", (90, 90, 90)))
     box_h = 22 * len(items) + 16

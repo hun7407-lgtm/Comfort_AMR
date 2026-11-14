@@ -1,0 +1,12 @@
+{
+  "final_variant": "buf10",
+  "final_buffer_m": 0.1,
+  "selection": {
+    "variant": "buf10",
+    "buffer_width_m": 0.1
+  },
+  "W22_bracket": [
+    1.02,
+    1.07
+  ]
+}

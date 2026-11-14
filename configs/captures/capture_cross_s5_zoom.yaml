@@ -1,0 +1,12 @@
+# CAPTURE ONLY -- not a measurement condition.
+# The cross scenario, seed 5, filmed close on the north aisle (x -2..10,
+# belt edge to cart row) for the figures in results/notion/261109.
+# Only the recording camera differs from the campaign config; the camera
+# has no collider and the LiDAR does not see it (isaac_sim/utils/recorder.py).
+base: configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml
+recording:
+  resolution: [1920, 1080]
+  camera:
+    position: [4.0, 0.0, 9.5]
+    look_at: [4.0, 4.2, 0.0]
+    focal_length: 18.0

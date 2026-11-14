@@ -1,0 +1,50 @@
+{
+  "file": "results/captures/paper_261114/raw/S1_env_W22_human_amr_clean_close.png",
+  "config": "configs/stage1a/envs/w2.20_y0.35_c3.yaml",
+  "scenario": null,
+  "overlay": {
+    "tag": "clean",
+    "comfort": false
+  },
+  "view": {
+    "name": "close",
+    "position": [
+      -4.0,
+      -0.8,
+      2.4
+    ],
+    "look_at": [
+      0.0,
+      0.4,
+      0.5
+    ],
+    "focal": 18.0
+  },
+  "size": [
+    1920,
+    1080
+  ],
+  "amr_pose": [
+    -1.3,
+    0.0,
+    0.0
+  ],
+  "amr_visible": true,
+  "comfort_drawn": false,
+  "buffer_width": 0.35,
+  "policy": "static",
+  "comfort_shapes_ungrown": {},
+  "robots": {
+    "AMR 1": [
+      -1.3,
+      0.0
+    ]
+  },
+  "people": {
+    "a": [
+      0.0,
+      0.75
+    ]
+  },
+  "note": "floor disc = Comfort Space grown by the AMR half width; outer band = + costmap buffer"
+}

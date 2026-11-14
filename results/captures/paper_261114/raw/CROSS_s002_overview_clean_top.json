@@ -1,0 +1,85 @@
+{
+  "file": "results/captures/paper_261114/raw/CROSS_s002_overview_clean_top.png",
+  "config": "configs/campaigns/cross/campaign_h8_a3_cross_s2.yaml",
+  "scenario": "configs/stage3/b3o_initial.yaml",
+  "overlay": {
+    "tag": "clean",
+    "comfort": false
+  },
+  "view": {
+    "name": "top",
+    "ortho": true,
+    "centre": [
+      0.0,
+      0.0
+    ],
+    "width_m": 30.0
+  },
+  "size": [
+    1920,
+    1080
+  ],
+  "amr_pose": [
+    -4.6,
+    5.32
+  ],
+  "amr_visible": true,
+  "comfort_drawn": false,
+  "buffer_width": 0.35,
+  "policy": "state_directional",
+  "comfort_shapes_ungrown": {},
+  "robots": {
+    "AMR 1": [
+      -4.6,
+      5.32
+    ],
+    "AMR 2": [
+      0.0,
+      5.32
+    ],
+    "AMR 3": [
+      1.4,
+      -5.32
+    ]
+  },
+  "people": {
+    "E1": [
+      -3.0,
+      5.6
+    ],
+    "E2": [
+      -3.0,
+      -5.6
+    ],
+    "N1": [
+      -6.5,
+      3.01
+    ],
+    "N2": [
+      -0.5,
+      3.01
+    ],
+    "N3": [
+      5.5,
+      3.01
+    ],
+    "S1": [
+      -6.5,
+      -3.01
+    ],
+    "S2": [
+      -0.5,
+      -3.01
+    ],
+    "S3": [
+      5.5,
+      -3.01
+    ]
+  },
+  "note": "floor disc = Comfort Space grown by the AMR half width; outer band = + costmap buffer",
+  "px_per_m": 64.0,
+  "ortho_origin_px": [
+    960.0,
+    540.0
+  ]
+}

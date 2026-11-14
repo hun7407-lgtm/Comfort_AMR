@@ -1,0 +1,11 @@
+# CAPTURE ONLY -- not a measurement condition.
+# The cross scenario, seed 5, filmed from high enough to hold the whole
+# 24 x 16 m bay, for the figures in results/notion/261109.
+# Only the recording camera differs from the campaign config.
+base: configs/campaigns/cross/campaign_h8_a3_cross_s5.yaml
+recording:
+  resolution: [1920, 1080]
+  camera:
+    position: [0.0, -7.0, 24.0]
+    look_at: [0.0, 0.0, 0.0]
+    focal_length: 18.0

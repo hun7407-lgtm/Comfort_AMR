@@ -1,0 +1,24 @@
+{
+  "config": "configs/campaigns/cross/campaign_h8_a3_cross_s3.yaml",
+  "scenario": null,
+  "amr_pose": null,
+  "out": "results/captures/paper_261114/raw",
+  "prefix": "CROSS_s003_gallery",
+  "overlays": [
+    {
+      "tag": "clean",
+      "comfort": false
+    }
+  ],
+  "views": [
+    {
+      "name": "top",
+      "ortho": true,
+      "centre": [
+        0.0,
+        0.0
+      ],
+      "width_m": 30.0
+    }
+  ]
+}

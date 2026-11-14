@@ -1,0 +1,150 @@
+{
+  "variant": "buf10",
+  "buffer_width_m": 0.1,
+  "definition": "R_nav_safe := R_path^infl; R_exec_model from the fitted execution model",
+  "cells": [
+    {
+      "part": "1a1",
+      "env": "w1.50_y0.35_c3",
+      "kind": "static",
+      "aisle_width_m": 1.5,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 0.5245,
+      "R_path_lethal_e": 0.6132,
+      "R_exec_model_e": null
+    },
+    {
+      "part": "1a1",
+      "env": "w1.80_y0.35_c3",
+      "kind": "static",
+      "aisle_width_m": 1.8,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 0.8234,
+      "R_path_lethal_e": 0.9141,
+      "R_exec_model_e": 0.6132
+    },
+    {
+      "part": "1a1",
+      "env": "w2.20_y0.35_c3",
+      "kind": "static",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 1.2246,
+      "R_path_lethal_e": 1.3133,
+      "R_exec_model_e": 1.0144
+    },
+    {
+      "part": "1a1",
+      "env": "w2.60_y0.35_c3",
+      "kind": "static",
+      "aisle_width_m": 2.6,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 1.6238,
+      "R_path_lethal_e": 1.7145,
+      "R_exec_model_e": 1.4136
+    },
+    {
+      "part": "1a2",
+      "env": "w2.20_y0.35_c1",
+      "kind": "b3o",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c1",
+      "R_nav_safe_e (= R_path^infl)": 1.2247,
+      "R_path_lethal_e": 1.3143,
+      "R_exec_model_e": 1.0144
+    },
+    {
+      "part": "1a2",
+      "env": "w2.20_y0.35_c2",
+      "kind": "b3o",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c2",
+      "R_nav_safe_e (= R_path^infl)": 1.2234,
+      "R_path_lethal_e": 1.3145,
+      "R_exec_model_e": 1.0141
+    },
+    {
+      "part": "1a2",
+      "env": "w2.20_y0.35_c3",
+      "kind": "b3o",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 1.224,
+      "R_path_lethal_e": 1.314,
+      "R_exec_model_e": 1.0144
+    },
+    {
+      "part": "1b",
+      "env": "w2.00_y0.35_c3",
+      "kind": "static",
+      "aisle_width_m": 2.0,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 1.024,
+      "R_path_lethal_e": 1.1146,
+      "R_exec_model_e": 0.8138
+    },
+    {
+      "part": "1b",
+      "env": "w2.00_y0.35_c1",
+      "kind": "b3o",
+      "aisle_width_m": 2.0,
+      "human_wall_offset_m": 0.35,
+      "context": "c1",
+      "R_nav_safe_e (= R_path^infl)": 1.0241,
+      "R_path_lethal_e": 1.1147,
+      "R_exec_model_e": 0.8148
+    },
+    {
+      "part": "1b",
+      "env": "w2.00_y0.35_c3",
+      "kind": "b3o",
+      "aisle_width_m": 2.0,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 1.0247,
+      "R_path_lethal_e": 1.1147,
+      "R_exec_model_e": 0.8138
+    },
+    {
+      "part": "1b",
+      "env": "w2.20_y0.60_c3",
+      "kind": "static",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.6,
+      "context": "c3",
+      "R_nav_safe_e (= R_path^infl)": 0.9739,
+      "R_path_lethal_e": 1.0645,
+      "R_exec_model_e": 0.7636
+    },
+    {
+      "part": "1b",
+      "env": "w2.20_y0.60_c2",
+      "kind": "b3o",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.6,
+      "context": "c2",
+      "R_nav_safe_e (= R_path^infl)": 0.9736,
+      "R_path_lethal_e": 1.0648,
+      "R_exec_model_e": 0.7644
+    },
+    {
+      "part": "1b",
+      "env": "w2.20_y0.35_c4",
+      "kind": "b3o",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c4",
+      "R_nav_safe_e (= R_path^infl)": 1.2237,
+      "R_path_lethal_e": 1.3148,
+      "R_exec_model_e": 1.0139
+    }
+  ]
+}

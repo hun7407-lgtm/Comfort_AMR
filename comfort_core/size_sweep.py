@@ -158,8 +158,8 @@ def ladder(top_m: float, step_m: float, count: int,
            floor_m: float = 0.0) -> List[float]:
     """top, top - step, top - 2 step, ... (`count` values, none below floor).
 
-    The Stage 2 descent from R_nav_max. Rounded to the centimetre so
-    the condition names are stable.
+    A descending size ladder. Rounded to the centimetre so the
+    condition names are stable.
     """
     if step_m <= 0.0:
         raise ValueError("comfort_step_m must be positive")

@@ -1,0 +1,795 @@
+{
+  "written_by": "scripts/stage1a_plan.py",
+  "phase": "predict",
+  "commit": "41ca38d+",
+  "grid_resolution_m": 0.01,
+  "model": {
+    "variant": "buf10",
+    "wall_clearance_m": 0.49,
+    "spread_m": 0.1,
+    "fitted_on": [
+      "w1.50_y0.35_c3",
+      "w1.80_y0.35_c3",
+      "w2.20_y0.35_c3",
+      "w2.60_y0.35_c3"
+    ],
+    "per_width": [
+      {
+        "env": "w1.50_y0.35_c3",
+        "aisle_width_m": 1.5,
+        "R_exec_lo": 0.42,
+        "R_exec_hi": 0.47,
+        "failures_below_lo": [],
+        "points": {
+          "0.32": "1/1",
+          "0.42": "3/3",
+          "0.47": "1/3",
+          "0.52": "0/3",
+          "0.71": "0/1"
+        },
+        "wall_clearance_at_lo": 0.39,
+        "wall_clearance_lower_bound": null
+      },
+      {
+        "env": "w1.80_y0.35_c3",
+        "aisle_width_m": 1.8,
+        "R_exec_lo": 0.72,
+        "R_exec_hi": 0.77,
+        "failures_below_lo": [],
+        "points": {
+          "0.32": "1/1",
+          "0.42": "1/1",
+          "0.52": "1/1",
+          "0.62": "1/1",
+          "0.72": "3/3",
+          "0.77": "0/3",
+          "0.82": "0/3",
+          "1.01": "0/1"
+        },
+        "wall_clearance_at_lo": 0.39,
+        "wall_clearance_lower_bound": null
+      },
+      {
+        "env": "w2.20_y0.35_c3",
+        "aisle_width_m": 2.2,
+        "R_exec_lo": 1.02,
+        "R_exec_hi": 1.07,
+        "failures_below_lo": [],
+        "points": {
+          "0.30": "1/1",
+          "0.72": "1/1",
+          "0.82": "1/1",
+          "0.92": "1/1",
+          "1.02": "3/3",
+          "1.07": "1/3",
+          "1.12": "0/3",
+          "1.22": "0/1",
+          "1.41": "0/1"
+        },
+        "wall_clearance_at_lo": 0.49,
+        "wall_clearance_lower_bound": null
+      },
+      {
+        "env": "w2.60_y0.35_c3",
+        "aisle_width_m": 2.6,
+        "R_exec_lo": 1.42,
+        "R_exec_hi": 1.47,
+        "failures_below_lo": [],
+        "points": {
+          "0.30": "1/1",
+          "1.12": "1/1",
+          "1.22": "1/1",
+          "1.32": "1/1",
+          "1.42": "3/3",
+          "1.47": "0/3",
+          "1.52": "0/3",
+          "1.62": "0/1",
+          "1.81": "0/1"
+        },
+        "wall_clearance_at_lo": 0.49,
+        "wall_clearance_lower_bound": null
+      }
+    ],
+    "comfort_extra_m": 0.34,
+    "method": "wall_clearance = (person centre to far wall) - R_exec_lo - inscribed radius - costmap buffer, per calibration width; model takes the max",
+    "batches": [
+      "scan",
+      "refine"
+    ],
+    "commit": "41ca38d"
+  },
+  "variant": "buf10",
+  "bounds": "R_path^infl / R_path^lethal: robot centre kept (inscribed radius + gate margin) outside the Comfort Space, (humans.radius + clearance) from the body, clearance from walls = inflation radius / inscribed radius. R_exec_model: Comfort Space grown by inscribed radius + costmap buffer, walls and body at the fitted wall_clearance_m.",
+  "cells": [
+    {
+      "part": "1a2",
+      "env": "w2.20_y0.35_c1",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c1",
+      "context_label": "engaged-rear (back to the aisle)",
+      "kind": "b3o",
+      "R_path_infl": {
+        "value": 2.44931640625,
+        "e": 1.2247
+      },
+      "R_path_lethal": {
+        "value": 2.6286865234375,
+        "e": 1.3143
+      },
+      "R_exec_model": {
+        "value": 2.028857421875,
+        "e": 1.0144
+      },
+      "predicted_fail_above_e": 1.1144,
+      "closed_form_e": {
+        "infl": 1.22,
+        "lethal": 1.32,
+        "exec": 1.02
+      },
+      "trials": [
+        {
+          "point": "exec-0.30",
+          "e_target": 0.71,
+          "value": 1.42,
+          "e": 0.71,
+          "condition": "b3o_r1.42",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec-0.10",
+          "e_target": 0.91,
+          "value": 1.82,
+          "e": 0.91,
+          "condition": "b3o_r1.82",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 1.01,
+          "value": 2.02,
+          "e": 1.01,
+          "condition": "b3o_r2.02",
+          "repeats": 3,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 1.11,
+          "value": 2.22,
+          "e": 1.11,
+          "condition": "b3o_r2.22",
+          "repeats": 3,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.30",
+          "e_target": 1.31,
+          "value": 2.62,
+          "e": 1.31,
+          "condition": "b3o_r2.62",
+          "repeats": 1,
+          "feasible_infl": false,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1a2",
+      "env": "w2.20_y0.35_c2",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c2",
+      "context_label": "stationary-rear (back to the aisle)",
+      "kind": "b3o",
+      "R_path_infl": {
+        "value": 1.3981689453125,
+        "e": 1.2234
+      },
+      "R_path_lethal": {
+        "value": 1.5023193359375,
+        "e": 1.3145
+      },
+      "R_exec_model": {
+        "value": 1.1590087890624998,
+        "e": 1.0141
+      },
+      "predicted_fail_above_e": 1.1141,
+      "closed_form_e": {
+        "infl": 1.22,
+        "lethal": 1.32,
+        "exec": 1.02
+      },
+      "trials": [
+        {
+          "point": "exec-0.30",
+          "e_target": 0.71,
+          "value": 0.81,
+          "e": 0.7088,
+          "condition": "b3o_r0.81",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec-0.10",
+          "e_target": 0.91,
+          "value": 1.04,
+          "e": 0.91,
+          "condition": "b3o_r1.04",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 1.01,
+          "value": 1.15,
+          "e": 1.0062,
+          "condition": "b3o_r1.15",
+          "repeats": 3,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 1.11,
+          "value": 1.27,
+          "e": 1.1113,
+          "condition": "b3o_r1.27",
+          "repeats": 3,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.30",
+          "e_target": 1.31,
+          "value": 1.5,
+          "e": 1.3125,
+          "condition": "b3o_r1.50",
+          "repeats": 1,
+          "feasible_infl": false,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1a2",
+      "env": "w2.20_y0.35_c3",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "b3o",
+      "R_path_infl": {
+        "value": 1.835986328125,
+        "e": 1.224
+      },
+      "R_path_lethal": {
+        "value": 1.9709960937499997,
+        "e": 1.314
+      },
+      "R_exec_model": {
+        "value": 1.5216064453125,
+        "e": 1.0144
+      },
+      "predicted_fail_above_e": 1.1144,
+      "closed_form_e": {
+        "infl": 1.22,
+        "lethal": 1.32,
+        "exec": 1.02
+      },
+      "trials": [
+        {
+          "point": "exec-0.30",
+          "e_target": 0.71,
+          "value": 1.06,
+          "e": 0.7067,
+          "condition": "b3o_r1.06",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec-0.10",
+          "e_target": 0.91,
+          "value": 1.36,
+          "e": 0.9067,
+          "condition": "b3o_r1.36",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 1.01,
+          "value": 1.51,
+          "e": 1.0067,
+          "condition": "b3o_r1.51",
+          "repeats": 3,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 1.11,
+          "value": 1.67,
+          "e": 1.1133,
+          "condition": "b3o_r1.67",
+          "repeats": 3,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.30",
+          "e_target": 1.31,
+          "value": 1.96,
+          "e": 1.3067,
+          "condition": "b3o_r1.96",
+          "repeats": 1,
+          "feasible_infl": false,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1b",
+      "env": "w2.00_y0.35_c3",
+      "aisle_width_m": 2.0,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "static",
+      "R_path_infl": {
+        "value": 1.0239990234374998,
+        "e": 1.024
+      },
+      "R_path_lethal": {
+        "value": 1.1146484374999999,
+        "e": 1.1146
+      },
+      "R_exec_model": {
+        "value": 0.81376953125,
+        "e": 0.8138
+      },
+      "predicted_fail_above_e": 0.9138,
+      "closed_form_e": {
+        "infl": 1.02,
+        "lethal": 1.12,
+        "exec": 0.82
+      },
+      "trials": [
+        {
+          "point": "exec-0.10",
+          "e_target": 0.71,
+          "value": 0.71,
+          "e": 0.71,
+          "condition": "static_r0.71",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 0.81,
+          "value": 0.81,
+          "e": 0.81,
+          "condition": "static_r0.81",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 0.91,
+          "value": 0.91,
+          "e": 0.91,
+          "condition": "static_r0.91",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.20",
+          "e_target": 1.01,
+          "value": 1.01,
+          "e": 1.01,
+          "condition": "static_r1.01",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1b",
+      "env": "w2.00_y0.35_c1",
+      "aisle_width_m": 2.0,
+      "human_wall_offset_m": 0.35,
+      "context": "c1",
+      "context_label": "engaged-rear (back to the aisle)",
+      "kind": "b3o",
+      "R_path_infl": {
+        "value": 2.0481445312499997,
+        "e": 1.0241
+      },
+      "R_path_lethal": {
+        "value": 2.229443359375,
+        "e": 1.1147
+      },
+      "R_exec_model": {
+        "value": 1.6296142578125004,
+        "e": 0.8148
+      },
+      "predicted_fail_above_e": 0.9148,
+      "closed_form_e": {
+        "infl": 1.02,
+        "lethal": 1.12,
+        "exec": 0.82
+      },
+      "trials": [
+        {
+          "point": "exec-0.10",
+          "e_target": 0.71,
+          "value": 1.42,
+          "e": 0.71,
+          "condition": "b3o_r1.42",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 0.81,
+          "value": 1.62,
+          "e": 0.81,
+          "condition": "b3o_r1.62",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 0.91,
+          "value": 1.82,
+          "e": 0.91,
+          "condition": "b3o_r1.82",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.20",
+          "e_target": 1.01,
+          "value": 2.02,
+          "e": 1.01,
+          "condition": "b3o_r2.02",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1b",
+      "env": "w2.00_y0.35_c3",
+      "aisle_width_m": 2.0,
+      "human_wall_offset_m": 0.35,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "b3o",
+      "R_path_infl": {
+        "value": 1.5370361328125002,
+        "e": 1.0247
+      },
+      "R_path_lethal": {
+        "value": 1.6720458984375002,
+        "e": 1.1147
+      },
+      "R_exec_model": {
+        "value": 1.2207275390624996,
+        "e": 0.8138
+      },
+      "predicted_fail_above_e": 0.9138,
+      "closed_form_e": {
+        "infl": 1.02,
+        "lethal": 1.12,
+        "exec": 0.82
+      },
+      "trials": [
+        {
+          "point": "exec-0.10",
+          "e_target": 0.71,
+          "value": 1.06,
+          "e": 0.7067,
+          "condition": "b3o_r1.06",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 0.81,
+          "value": 1.21,
+          "e": 0.8067,
+          "condition": "b3o_r1.21",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 0.91,
+          "value": 1.36,
+          "e": 0.9067,
+          "condition": "b3o_r1.36",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.20",
+          "e_target": 1.01,
+          "value": 1.51,
+          "e": 1.0067,
+          "condition": "b3o_r1.51",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1b",
+      "env": "w2.20_y0.60_c3",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.6,
+      "context": "c3",
+      "context_label": "stationary-front (facing the aisle)",
+      "kind": "static",
+      "R_path_infl": {
+        "value": 0.9738525390624998,
+        "e": 0.9739
+      },
+      "R_path_lethal": {
+        "value": 1.064501953125,
+        "e": 1.0645
+      },
+      "R_exec_model": {
+        "value": 0.7636230468749998,
+        "e": 0.7636
+      },
+      "predicted_fail_above_e": 0.8636,
+      "closed_form_e": {
+        "infl": 0.97,
+        "lethal": 1.07,
+        "exec": 0.77
+      },
+      "trials": [
+        {
+          "point": "exec-0.10",
+          "e_target": 0.66,
+          "value": 0.66,
+          "e": 0.66,
+          "condition": "static_r0.66",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 0.76,
+          "value": 0.76,
+          "e": 0.76,
+          "condition": "static_r0.76",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 0.86,
+          "value": 0.86,
+          "e": 0.86,
+          "condition": "static_r0.86",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.20",
+          "e_target": 0.96,
+          "value": 0.96,
+          "e": 0.96,
+          "condition": "static_r0.96",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1b",
+      "env": "w2.20_y0.60_c2",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.6,
+      "context": "c2",
+      "context_label": "stationary-rear (back to the aisle)",
+      "kind": "b3o",
+      "R_path_infl": {
+        "value": 1.1127197265624997,
+        "e": 0.9736
+      },
+      "R_path_lethal": {
+        "value": 1.2168701171874998,
+        "e": 1.0648
+      },
+      "R_exec_model": {
+        "value": 0.8735595703124999,
+        "e": 0.7644
+      },
+      "predicted_fail_above_e": 0.8644,
+      "closed_form_e": {
+        "infl": 0.97,
+        "lethal": 1.07,
+        "exec": 0.77
+      },
+      "trials": [
+        {
+          "point": "exec-0.10",
+          "e_target": 0.66,
+          "value": 0.75,
+          "e": 0.6562,
+          "condition": "b3o_r0.75",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 0.76,
+          "value": 0.87,
+          "e": 0.7612,
+          "condition": "b3o_r0.87",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 0.86,
+          "value": 0.98,
+          "e": 0.8575,
+          "condition": "b3o_r0.98",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.20",
+          "e_target": 0.96,
+          "value": 1.1,
+          "e": 0.9625,
+          "condition": "b3o_r1.10",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    },
+    {
+      "part": "1b",
+      "env": "w2.20_y0.35_c4",
+      "aisle_width_m": 2.2,
+      "human_wall_offset_m": 0.35,
+      "context": "c4",
+      "context_label": "stationary-side (side to the aisle)",
+      "kind": "b3o",
+      "R_path_infl": {
+        "value": 1.6315429687500003,
+        "e": 1.2237
+      },
+      "R_path_lethal": {
+        "value": 1.7530517578125,
+        "e": 1.3148
+      },
+      "R_exec_model": {
+        "value": 1.3518798828124998,
+        "e": 1.0139
+      },
+      "predicted_fail_above_e": 1.1139,
+      "closed_form_e": {
+        "infl": 1.22,
+        "lethal": 1.32,
+        "exec": 1.02
+      },
+      "trials": [
+        {
+          "point": "exec-0.10",
+          "e_target": 0.91,
+          "value": 1.21,
+          "e": 0.9075,
+          "condition": "b3o_r1.21",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.00",
+          "e_target": 1.01,
+          "value": 1.35,
+          "e": 1.0125,
+          "condition": "b3o_r1.35",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": true
+        },
+        {
+          "point": "exec+0.10",
+          "e_target": 1.11,
+          "value": 1.48,
+          "e": 1.11,
+          "condition": "b3o_r1.48",
+          "repeats": 2,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        },
+        {
+          "point": "exec+0.20",
+          "e_target": 1.21,
+          "value": 1.61,
+          "e": 1.2075,
+          "condition": "b3o_r1.61",
+          "repeats": 1,
+          "feasible_infl": true,
+          "feasible_lethal": true,
+          "feasible_exec": false
+        }
+      ]
+    }
+  ]
+}

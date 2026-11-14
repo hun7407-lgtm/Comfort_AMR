@@ -57,6 +57,7 @@ LABEL = {B2: "B2 Static Calibrated", B3O: "B3-O Dynamic Selection"}
 COLOUR = {B2: "#d55e00", B3O: "#0072b2"}
 CLASS_COLOUR = {"PASSAGE_INFEASIBLE": "#999999", "STATIC_OVER_RESERVATION": "#e69f00",
                 "SELECTION_FAILURE": "#b2182b", "ROBOT_ROBOT": "#cc79a7",
+                "PROTECTIVE_STOP": "#009e73",
                 "POST_EVADE_STALL": "#ef8a62", "NAV2_FAILURE": "#56b4e9",
                 "UNCLASSIFIED_STALL": "#444444", "INVALID": "#dddddd"}
 COMFORT_STOP = {"PASSAGE_INFEASIBLE", "STATIC_OVER_RESERVATION", "SELECTION_FAILURE"}

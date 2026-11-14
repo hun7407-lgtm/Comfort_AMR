@@ -1,0 +1,2065 @@
+[
+  {
+    "part": "1a1",
+    "env": "w1.50_y0.35_c3",
+    "aisle_width_m": 1.5,
+    "human_wall_offset_m": 0.35,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "static",
+    "R_path_infl": {
+      "value": 0.524462890625,
+      "e": 0.5245
+    },
+    "R_path_lethal": {
+      "value": 0.61318359375,
+      "e": 0.6132
+    },
+    "R_exec_model": null,
+    "scored_against": "R_path (infl/lethal)",
+    "path_miss_m": 0.104,
+    "R_exec_bracket": [
+      0.42,
+      0.52
+    ],
+    "verdict": "INCONSISTENT",
+    "pass_below_infl": false,
+    "gate_above_lethal": true,
+    "band_points": [],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "observed",
+        "value": 0.3,
+        "e": 0.3,
+        "condition": "static_r0.30",
+        "repeats": 0,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan0",
+        "e_target": 0.32,
+        "value": 0.32,
+        "e": 0.32,
+        "condition": "static_r0.32",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "observed",
+        "value": 0.37,
+        "e": 0.37,
+        "condition": "static_r0.37",
+        "repeats": 0,
+        "n": 3,
+        "pass": 2,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "SUCCESS": 2,
+          "stall": 1
+        },
+        "outcomes": [
+          "pass",
+          "other",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan1",
+        "e_target": 0.42,
+        "value": 0.42,
+        "e": 0.42,
+        "condition": "static_r0.42",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 2,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall/protective-stop": 1,
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "other",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan2",
+        "e_target": 0.52,
+        "value": 0.52,
+        "e": 0.52,
+        "condition": "static_r0.52",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      },
+      {
+        "point": "above_lethal",
+        "e_target": 0.71,
+        "value": 0.71,
+        "e": 0.71,
+        "condition": "static_r0.71",
+        "repeats": 1,
+        "feasible_infl": false,
+        "feasible_lethal": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1a1",
+    "env": "w1.80_y0.35_c3",
+    "aisle_width_m": 1.8,
+    "human_wall_offset_m": 0.35,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "static",
+    "R_path_infl": {
+      "value": 0.8234130859375,
+      "e": 0.8234
+    },
+    "R_path_lethal": {
+      "value": 0.9140624999999999,
+      "e": 0.9141
+    },
+    "R_exec_model": null,
+    "scored_against": "R_path (infl/lethal)",
+    "path_miss_m": 0.103,
+    "R_exec_bracket": [
+      0.72,
+      0.77
+    ],
+    "verdict": "INCONSISTENT",
+    "pass_below_infl": false,
+    "gate_above_lethal": true,
+    "band_points": [],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "observed",
+        "value": 0.3,
+        "e": 0.3,
+        "condition": "static_r0.30",
+        "repeats": 0,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan0",
+        "e_target": 0.32,
+        "value": 0.32,
+        "e": 0.32,
+        "condition": "static_r0.32",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan1",
+        "e_target": 0.42,
+        "value": 0.42,
+        "e": 0.42,
+        "condition": "static_r0.42",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan2",
+        "e_target": 0.52,
+        "value": 0.52,
+        "e": 0.52,
+        "condition": "static_r0.52",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan3",
+        "e_target": 0.62,
+        "value": 0.62,
+        "e": 0.62,
+        "condition": "static_r0.62",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan4",
+        "e_target": 0.72,
+        "value": 0.72,
+        "e": 0.72,
+        "condition": "static_r0.72",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "observed",
+        "value": 0.77,
+        "e": 0.77,
+        "condition": "static_r0.77",
+        "repeats": 0,
+        "n": 3,
+        "pass": 1,
+        "gate": 0,
+        "other": 2,
+        "mechanisms": {
+          "SUCCESS": 1,
+          "stall/protective-stop": 1,
+          "stall": 1
+        },
+        "outcomes": [
+          "pass",
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "scan5",
+        "e_target": 0.82,
+        "value": 0.82,
+        "e": 0.82,
+        "condition": "static_r0.82",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 0,
+        "gate": 0,
+        "other": 3,
+        "mechanisms": {
+          "stall/slowdown": 2,
+          "stall": 1
+        },
+        "outcomes": [
+          "other",
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "above_lethal",
+        "e_target": 1.01,
+        "value": 1.01,
+        "e": 1.01,
+        "condition": "static_r1.01",
+        "repeats": 1,
+        "feasible_infl": false,
+        "feasible_lethal": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1a1",
+    "env": "w2.20_y0.35_c3",
+    "aisle_width_m": 2.2,
+    "human_wall_offset_m": 0.35,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "static",
+    "R_path_infl": {
+      "value": 1.2245849609375,
+      "e": 1.2246
+    },
+    "R_path_lethal": {
+      "value": 1.3133056640624998,
+      "e": 1.3133
+    },
+    "R_exec_model": null,
+    "scored_against": "R_path (infl/lethal)",
+    "path_miss_m": 0.255,
+    "R_exec_bracket": [
+      0.97,
+      1.02
+    ],
+    "verdict": "INCONSISTENT",
+    "pass_below_infl": false,
+    "gate_above_lethal": true,
+    "band_points": [],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "scan0",
+        "e_target": 0.3,
+        "value": 0.3,
+        "e": 0.3,
+        "condition": "static_r0.30",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 4,
+        "pass": 4,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 4
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan1",
+        "e_target": 0.72,
+        "value": 0.72,
+        "e": 0.72,
+        "condition": "static_r0.72",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan2",
+        "e_target": 0.82,
+        "value": 0.82,
+        "e": 0.82,
+        "condition": "static_r0.82",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan3",
+        "e_target": 0.92,
+        "value": 0.92,
+        "e": 0.92,
+        "condition": "static_r0.92",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "observed",
+        "value": 0.97,
+        "e": 0.97,
+        "condition": "static_r0.97",
+        "repeats": 0,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan4",
+        "e_target": 1.02,
+        "value": 1.02,
+        "e": 1.02,
+        "condition": "static_r1.02",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 0,
+        "gate": 0,
+        "other": 3,
+        "mechanisms": {
+          "stall": 3
+        },
+        "outcomes": [
+          "other",
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "scan5",
+        "e_target": 1.12,
+        "value": 1.12,
+        "e": 1.12,
+        "condition": "static_r1.12",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall/protective-stop": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      },
+      {
+        "point": "scan6",
+        "e_target": 1.22,
+        "value": 1.22,
+        "e": 1.22,
+        "condition": "static_r1.22",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      },
+      {
+        "point": "above_lethal",
+        "e_target": 1.41,
+        "value": 1.41,
+        "e": 1.41,
+        "condition": "static_r1.41",
+        "repeats": 1,
+        "feasible_infl": false,
+        "feasible_lethal": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall/protective-stop": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1a1",
+    "env": "w2.60_y0.35_c3",
+    "aisle_width_m": 2.6,
+    "human_wall_offset_m": 0.35,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "static",
+    "R_path_infl": {
+      "value": 1.6238281250000002,
+      "e": 1.6238
+    },
+    "R_path_lethal": {
+      "value": 1.7144775390625,
+      "e": 1.7145
+    },
+    "R_exec_model": null,
+    "scored_against": "R_path (infl/lethal)",
+    "path_miss_m": 0.204,
+    "R_exec_bracket": [
+      1.42,
+      1.52
+    ],
+    "verdict": "INCONSISTENT",
+    "pass_below_infl": false,
+    "gate_above_lethal": true,
+    "band_points": [],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "scan0",
+        "e_target": 0.3,
+        "value": 0.3,
+        "e": 0.3,
+        "condition": "static_r0.30",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 4,
+        "pass": 4,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 4
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan1",
+        "e_target": 1.12,
+        "value": 1.12,
+        "e": 1.12,
+        "condition": "static_r1.12",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan2",
+        "e_target": 1.22,
+        "value": 1.22,
+        "e": 1.22,
+        "condition": "static_r1.22",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "scan3",
+        "e_target": 1.32,
+        "value": 1.32,
+        "e": 1.32,
+        "condition": "static_r1.32",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "observed",
+        "value": 1.37,
+        "e": 1.37,
+        "condition": "static_r1.37",
+        "repeats": 0,
+        "n": 3,
+        "pass": 2,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "SUCCESS": 2,
+          "stall": 1
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "other"
+        ]
+      },
+      {
+        "point": "scan4",
+        "e_target": 1.42,
+        "value": 1.42,
+        "e": 1.42,
+        "condition": "static_r1.42",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 3,
+        "pass": 2,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1,
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "other",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "scan5",
+        "e_target": 1.52,
+        "value": 1.52,
+        "e": 1.52,
+        "condition": "static_r1.52",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      },
+      {
+        "point": "scan6",
+        "e_target": 1.62,
+        "value": 1.62,
+        "e": 1.62,
+        "condition": "static_r1.62",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      },
+      {
+        "point": "above_lethal",
+        "e_target": 1.81,
+        "value": 1.81,
+        "e": 1.81,
+        "condition": "static_r1.81",
+        "repeats": 1,
+        "feasible_infl": false,
+        "feasible_lethal": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall/protective-stop": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1a2",
+    "env": "w2.20_y0.35_c1",
+    "aisle_width_m": 2.2,
+    "human_wall_offset_m": 0.35,
+    "context": "c1",
+    "context_label": "engaged-rear (back to the aisle)",
+    "kind": "b3o",
+    "R_path_infl": {
+      "value": 2.44931640625,
+      "e": 1.2247
+    },
+    "R_path_lethal": {
+      "value": 2.6286865234375,
+      "e": 1.3143
+    },
+    "R_exec_model": {
+      "value": 1.9285644531249997,
+      "e": 0.9643
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.265,
+    "R_exec_bracket": [
+      0.96,
+      1.06
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [
+      [
+        1.06,
+        0,
+        3
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.30",
+        "e_target": 0.66,
+        "value": 1.32,
+        "e": 0.66,
+        "condition": "b3o_r1.32",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "observed",
+        "value": 1.62,
+        "e": 0.81,
+        "condition": "b3o_r1.62",
+        "repeats": 0,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec-0.10",
+        "e_target": 0.86,
+        "value": 1.72,
+        "e": 0.86,
+        "condition": "b3o_r1.72",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.96,
+        "value": 1.92,
+        "e": 0.96,
+        "condition": "b3o_r1.92",
+        "repeats": 3,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 1.06,
+        "value": 2.12,
+        "e": 1.06,
+        "condition": "b3o_r2.12",
+        "repeats": 3,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 3,
+        "pass": 0,
+        "gate": 0,
+        "other": 3,
+        "mechanisms": {
+          "stall": 3
+        },
+        "outcomes": [
+          "other",
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "exec+0.30",
+        "e_target": 1.26,
+        "value": 2.52,
+        "e": 1.26,
+        "condition": "b3o_r2.52",
+        "repeats": 1,
+        "feasible_infl": false,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1a2",
+    "env": "w2.20_y0.35_c2",
+    "aisle_width_m": 2.2,
+    "human_wall_offset_m": 0.35,
+    "context": "c2",
+    "context_label": "stationary-rear (back to the aisle)",
+    "kind": "b3o",
+    "R_path_infl": {
+      "value": 1.3981689453125,
+      "e": 1.2234
+    },
+    "R_path_lethal": {
+      "value": 1.5023193359375,
+      "e": 1.3145
+    },
+    "R_exec_model": {
+      "value": 1.1011474609374998,
+      "e": 0.9635
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.261,
+    "R_exec_bracket": [
+      0.9625,
+      1.0588
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [
+      [
+        1.0588,
+        0,
+        3
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.30",
+        "e_target": 0.66,
+        "value": 0.75,
+        "e": 0.6562,
+        "condition": "b3o_r0.75",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec-0.10",
+        "e_target": 0.86,
+        "value": 0.98,
+        "e": 0.8575,
+        "condition": "b3o_r0.98",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.96,
+        "value": 1.1,
+        "e": 0.9625,
+        "condition": "b3o_r1.10",
+        "repeats": 3,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 1.06,
+        "value": 1.21,
+        "e": 1.0588,
+        "condition": "b3o_r1.21",
+        "repeats": 3,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 3,
+        "pass": 0,
+        "gate": 0,
+        "other": 3,
+        "mechanisms": {
+          "stall": 3
+        },
+        "outcomes": [
+          "other",
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "exec+0.30",
+        "e_target": 1.26,
+        "value": 1.44,
+        "e": 1.26,
+        "condition": "b3o_r1.44",
+        "repeats": 1,
+        "feasible_infl": false,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall/slowdown": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1a2",
+    "env": "w2.20_y0.35_c3",
+    "aisle_width_m": 2.2,
+    "human_wall_offset_m": 0.35,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "b3o",
+    "R_path_infl": {
+      "value": 1.835986328125,
+      "e": 1.224
+    },
+    "R_path_lethal": {
+      "value": 1.9709960937499997,
+      "e": 1.314
+    },
+    "R_exec_model": {
+      "value": 1.44638671875,
+      "e": 0.9643
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.264,
+    "R_exec_bracket": [
+      0.96,
+      1.06
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [
+      [
+        1.06,
+        0,
+        3
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.30",
+        "e_target": 0.66,
+        "value": 0.99,
+        "e": 0.66,
+        "condition": "b3o_r0.99",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec-0.10",
+        "e_target": 0.86,
+        "value": 1.29,
+        "e": 0.86,
+        "condition": "b3o_r1.29",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.96,
+        "value": 1.44,
+        "e": 0.96,
+        "condition": "b3o_r1.44",
+        "repeats": 3,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 1.06,
+        "value": 1.59,
+        "e": 1.06,
+        "condition": "b3o_r1.59",
+        "repeats": 3,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 3,
+        "pass": 0,
+        "gate": 1,
+        "other": 2,
+        "mechanisms": {
+          "comfort_gate_hold": 1,
+          "stall/protective-stop": 1,
+          "stall": 1
+        },
+        "outcomes": [
+          "gate",
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "exec+0.30",
+        "e_target": 1.26,
+        "value": 1.89,
+        "e": 1.26,
+        "condition": "b3o_r1.89",
+        "repeats": 1,
+        "feasible_infl": false,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall/protective-stop": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1b",
+    "env": "w2.00_y0.35_c3",
+    "aisle_width_m": 2.0,
+    "human_wall_offset_m": 0.35,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "static",
+    "R_path_infl": {
+      "value": 1.0239990234374998,
+      "e": 1.024
+    },
+    "R_path_lethal": {
+      "value": 1.1146484374999999,
+      "e": 1.1146
+    },
+    "R_exec_model": {
+      "value": 0.7636230468749998,
+      "e": 0.7636
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.064,
+    "R_exec_bracket": [
+      0.96,
+      null
+    ],
+    "verdict": "INCONSISTENT",
+    "pass_below_infl": true,
+    "gate_above_lethal": false,
+    "band_points": [
+      [
+        0.81,
+        3,
+        3
+      ],
+      [
+        0.86,
+        2,
+        2
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.10",
+        "e_target": 0.66,
+        "value": 0.66,
+        "e": 0.66,
+        "condition": "static_r0.66",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.76,
+        "value": 0.76,
+        "e": 0.76,
+        "condition": "static_r0.76",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "observed",
+        "value": 0.81,
+        "e": 0.81,
+        "condition": "static_r0.81",
+        "repeats": 0,
+        "n": 3,
+        "pass": 3,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 3
+        },
+        "outcomes": [
+          "pass",
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 0.86,
+        "value": 0.86,
+        "e": 0.86,
+        "condition": "static_r0.86",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.20",
+        "e_target": 0.96,
+        "value": 0.96,
+        "e": 0.96,
+        "condition": "static_r0.96",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1b",
+    "env": "w2.00_y0.35_c1",
+    "aisle_width_m": 2.0,
+    "human_wall_offset_m": 0.35,
+    "context": "c1",
+    "context_label": "engaged-rear (back to the aisle)",
+    "kind": "b3o",
+    "R_path_infl": {
+      "value": 2.0481445312499997,
+      "e": 1.0241
+    },
+    "R_path_lethal": {
+      "value": 2.229443359375,
+      "e": 1.1147
+    },
+    "R_exec_model": {
+      "value": 1.5293212890625,
+      "e": 0.7647
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.164,
+    "R_exec_bracket": [
+      0.86,
+      0.96
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [
+      [
+        0.86,
+        2,
+        2
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.10",
+        "e_target": 0.66,
+        "value": 1.32,
+        "e": 0.66,
+        "condition": "b3o_r1.32",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.76,
+        "value": 1.52,
+        "e": 0.76,
+        "condition": "b3o_r1.52",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 0.86,
+        "value": 1.72,
+        "e": 0.86,
+        "condition": "b3o_r1.72",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.20",
+        "e_target": 0.96,
+        "value": 1.92,
+        "e": 0.96,
+        "condition": "b3o_r1.92",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall/protective-stop": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1b",
+    "env": "w2.00_y0.35_c3",
+    "aisle_width_m": 2.0,
+    "human_wall_offset_m": 0.35,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "b3o",
+    "R_path_infl": {
+      "value": 1.5370361328125002,
+      "e": 1.0247
+    },
+    "R_path_lethal": {
+      "value": 1.6720458984375002,
+      "e": 1.1147
+    },
+    "R_exec_model": {
+      "value": 1.1474365234375,
+      "e": 0.765
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.165,
+    "R_exec_bracket": [
+      0.86,
+      0.96
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [
+      [
+        0.86,
+        2,
+        2
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.10",
+        "e_target": 0.66,
+        "value": 0.99,
+        "e": 0.66,
+        "condition": "b3o_r0.99",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.76,
+        "value": 1.14,
+        "e": 0.76,
+        "condition": "b3o_r1.14",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 0.86,
+        "value": 1.29,
+        "e": 0.86,
+        "condition": "b3o_r1.29",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.20",
+        "e_target": 0.96,
+        "value": 1.44,
+        "e": 0.96,
+        "condition": "b3o_r1.44",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1b",
+    "env": "w2.20_y0.60_c3",
+    "aisle_width_m": 2.2,
+    "human_wall_offset_m": 0.6,
+    "context": "c3",
+    "context_label": "stationary-front (facing the aisle)",
+    "kind": "static",
+    "R_path_infl": {
+      "value": 0.9738525390624998,
+      "e": 0.9739
+    },
+    "R_path_lethal": {
+      "value": 1.064501953125,
+      "e": 1.0645
+    },
+    "R_exec_model": {
+      "value": 0.7134765624999999,
+      "e": 0.7135
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.264,
+    "R_exec_bracket": [
+      0.71,
+      0.81
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [
+      [
+        0.81,
+        0,
+        2
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.10",
+        "e_target": 0.61,
+        "value": 0.61,
+        "e": 0.61,
+        "condition": "static_r0.61",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.71,
+        "value": 0.71,
+        "e": 0.71,
+        "condition": "static_r0.71",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 0.81,
+        "value": 0.81,
+        "e": 0.81,
+        "condition": "static_r0.81",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 2,
+        "pass": 0,
+        "gate": 1,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1,
+          "comfort_gate_hold": 1
+        },
+        "outcomes": [
+          "other",
+          "gate"
+        ]
+      },
+      {
+        "point": "exec+0.20",
+        "e_target": 0.91,
+        "value": 0.91,
+        "e": 0.91,
+        "condition": "static_r0.91",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1b",
+    "env": "w2.20_y0.60_c2",
+    "aisle_width_m": 2.2,
+    "human_wall_offset_m": 0.6,
+    "context": "c2",
+    "context_label": "stationary-rear (back to the aisle)",
+    "kind": "b3o",
+    "R_path_infl": {
+      "value": 1.1127197265624997,
+      "e": 0.9736
+    },
+    "R_path_lethal": {
+      "value": 1.2168701171874998,
+      "e": 1.0648
+    },
+    "R_exec_model": {
+      "value": 0.8156982421875,
+      "e": 0.7137
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.265,
+    "R_exec_bracket": [
+      0.7088,
+      0.8138
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.10",
+        "e_target": 0.61,
+        "value": 0.7,
+        "e": 0.6125,
+        "condition": "b3o_r0.70",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.71,
+        "value": 0.81,
+        "e": 0.7088,
+        "condition": "b3o_r0.81",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 0.81,
+        "value": 0.93,
+        "e": 0.8138,
+        "condition": "b3o_r0.93",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 2,
+        "pass": 0,
+        "gate": 0,
+        "other": 2,
+        "mechanisms": {
+          "stall": 2
+        },
+        "outcomes": [
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "exec+0.20",
+        "e_target": 0.91,
+        "value": 1.04,
+        "e": 0.91,
+        "condition": "b3o_r1.04",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "part": "1b",
+    "env": "w2.20_y0.35_c4",
+    "aisle_width_m": 2.2,
+    "human_wall_offset_m": 0.35,
+    "context": "c4",
+    "context_label": "stationary-side (side to the aisle)",
+    "kind": "b3o",
+    "R_path_infl": {
+      "value": 1.6315429687500003,
+      "e": 1.2237
+    },
+    "R_path_lethal": {
+      "value": 1.7530517578125,
+      "e": 1.3148
+    },
+    "R_exec_model": {
+      "value": 1.2863037109374997,
+      "e": 0.9647
+    },
+    "scored_against": "R_exec_model",
+    "path_miss_m": 0.264,
+    "R_exec_bracket": [
+      0.96,
+      1.0575
+    ],
+    "verdict": "consistent",
+    "pass_below_infl": true,
+    "gate_above_lethal": true,
+    "band_points": [
+      [
+        1.0575,
+        0,
+        2
+      ]
+    ],
+    "non_monotonic_e": [],
+    "invalid_runs": 0,
+    "points": [
+      {
+        "point": "exec-0.10",
+        "e_target": 0.86,
+        "value": 1.15,
+        "e": 0.8625,
+        "condition": "b3o_r1.15",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 1,
+        "pass": 1,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 1
+        },
+        "outcomes": [
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.00",
+        "e_target": 0.96,
+        "value": 1.28,
+        "e": 0.96,
+        "condition": "b3o_r1.28",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": true,
+        "n": 2,
+        "pass": 2,
+        "gate": 0,
+        "other": 0,
+        "mechanisms": {
+          "SUCCESS": 2
+        },
+        "outcomes": [
+          "pass",
+          "pass"
+        ]
+      },
+      {
+        "point": "exec+0.10",
+        "e_target": 1.06,
+        "value": 1.41,
+        "e": 1.0575,
+        "condition": "b3o_r1.41",
+        "repeats": 2,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 2,
+        "pass": 0,
+        "gate": 0,
+        "other": 2,
+        "mechanisms": {
+          "stall": 2
+        },
+        "outcomes": [
+          "other",
+          "other"
+        ]
+      },
+      {
+        "point": "exec+0.20",
+        "e_target": 1.16,
+        "value": 1.55,
+        "e": 1.1625,
+        "condition": "b3o_r1.55",
+        "repeats": 1,
+        "feasible_infl": true,
+        "feasible_lethal": true,
+        "feasible_exec": false,
+        "n": 1,
+        "pass": 0,
+        "gate": 0,
+        "other": 1,
+        "mechanisms": {
+          "stall": 1
+        },
+        "outcomes": [
+          "other"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "file": "results/captures/paper_261114/raw/S1_context_C2_b3o_hero.png",
+  "config": "configs/stage1a/envs/w2.20_y0.35_c2.yaml",
+  "scenario": "results/captures/paper_261114/overlays/b3o_r1.20.yaml",
+  "overlay": {
+    "tag": "b3o",
+    "amr": true
+  },
+  "view": {
+    "name": "hero",
+    "position": [
+      2.6,
+      -0.45,
+      1.55
+    ],
+    "look_at": [
+      -0.3,
+      0.45,
+      0.45
+    ],
+    "focal": 16.0
+  },
+  "size": [
+    1920,
+    1080
+  ],
+  "amr_pose": [
+    -1.3,
+    0.0,
+    0.0
+  ],
+  "amr_visible": true,
+  "comfort_drawn": true,
+  "buffer_width": 0.1,
+  "policy": "state_directional",
+  "comfort_shapes_ungrown": {
+    "a": {
+      "centre": [
+        -7.654042494670958e-18,
+        0.625
+      ],
+      "along": 0.925,
+      "across": 0.9,
+      "heading_rad": 1.5707963267948966
+    }
+  },
+  "robots": {
+    "AMR 1": [
+      -1.3,
+      0.0
+    ]
+  },
+  "people": {
+    "a": [
+      0.0,
+      0.75
+    ]
+  },
+  "note": "floor disc = Comfort Space grown by the AMR half width; outer band = + costmap buffer"
+}

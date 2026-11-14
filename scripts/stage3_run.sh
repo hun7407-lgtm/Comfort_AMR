@@ -10,10 +10,13 @@
 #     ./scripts/stage3_run.sh --seeds 1-8 --out results/batches/261215_stage3_check
 #
 # Main comparison (revised design, docs/STAGES.md):
-#     ./scripts/stage3_run.sh --main --selection-model configs/stage1a/model_exec.json
+#     ./scripts/stage3_run.sh --main
 #         B2 Static Calibrated vs B3-O Dynamic Selection, seeds 1-100, paired;
-#         the policy order alternates with the seed (odd: B2 first). Refused
-#         while configs/frozen/comfort_requirements.yaml is null.
+#         the policy order alternates with the seed (odd: B2 first). Model,
+#         buffer and R_nav_safe bound come from configs/frozen/navigation_requirements.yaml
+#         (Stage 1); refused while that file is missing or
+#         configs/frozen/comfort_requirements.yaml (Stage 2) is null. Both
+#         policies must carry the same frozen buffer.
 #
 # Conditions are the overlays in configs/stage3/ (scripts/stage3_make_configs.py).
 # Every condition of a seed runs on the same cross campaign config, as in
@@ -48,10 +51,9 @@ while [ $# -gt 0 ]; do
     esac
 done
 if [ "$MAIN" -eq 1 ]; then
-    case " ${MAKE_ARGS[*]-} " in
-        *" --selection-model "*) ;;
-        *) echo "[ERROR] --main needs --selection-model configs/stage1a/model_exec.json (the frozen Stage 1 model)" >&2; exit 2 ;;
-    esac
+    [ -f configs/frozen/navigation_requirements.yaml ] || {
+        echo "[ERROR] --main needs configs/frozen/navigation_requirements.yaml (scripts/stage1a_finalize.py --freeze)" >&2; exit 2; }
+    MAKE_ARGS+=(--frozen)
     [ -n "$SEEDS" ] || SEEDS="1-100"
     [ -n "$OUT" ] || OUT="results/batches/$(date +%y%m%d)_stage3b_main"
     CONDS="b2_static_calibrated b3o_selection"
@@ -70,7 +72,7 @@ echo "   out        : $OUT"
 python3 scripts/stage3_make_configs.py "${MAKE_ARGS[@]+"${MAKE_ARGS[@]}"}" || exit 2
 
 # Refuse a template optimized condition, and check the overlays load.
-python3 - "$CONDS" "$SEEDS" <<'EOF' || exit 2
+python3 - "$CONDS" "$SEEDS" "$MAIN" <<'EOF' || exit 2
 import sys
 sys.path.insert(0, '.')
 from comfort_core import load_config
@@ -78,6 +80,17 @@ from comfort_core.config import load_with_base, SCENARIO_ALLOWED_SECTIONS
 from comfort_core.comfort_space import make_policy, geometry_record
 conds, seeds = sys.argv[1].split(), sys.argv[2]
 a, b = (seeds.split('-') + [seeds])[:2]
+if sys.argv[3] == "1":
+    from comfort_core.selection import frozen_inputs, frozen_navigation
+    try:
+        nav = frozen_navigation()
+        frozen_inputs()
+    except ValueError as exc:
+        sys.exit(f"[ERROR] {exc}")
+    bufs = {c: (load_with_base(f"configs/stage3/{c}.yaml")["comfort_space"].get("costmap") or {}).get("buffer_width")
+            for c in conds}
+    if set(bufs.values()) != {nav["comfort_buffer_m"]}:
+        sys.exit(f"[ERROR] buffers {bufs} differ from the frozen {nav['comfort_buffer_m']} m")
 for c in conds:
     path = f"configs/stage3/{c}.yaml"
     ov = load_with_base(path)

@@ -1,27 +1,34 @@
 #!/usr/bin/env python3
-"""Stage 2 analysis: the comfort-size curve and R_comfort_min.
+"""Stage 2 analysis: comfort curves per Human Context and the CANDIDATES for
+R_comfort_min and R_pref.
 
     python3 scripts/stage2_analysis.py --session-dir results/stage2/261201_pilot
-    python3 scripts/stage2_analysis.py --session-dir ... --config configs/stage2/stage2_real.yaml
+    python3 scripts/stage2_analysis.py --session-dir ... --item perceived_safety
+    python3 scripts/stage2_analysis.py --session-dir A --session-dir B --out results/stage2/pooled
 
-Reads <session-dir>/questionnaire.csv (and trials.csv when present, for
-the measured passing distance per trial) and writes
+Reads <session-dir>/questionnaire.csv, trials.csv and status_amendments.csv
+(any may be missing) and writes to --out (default: the first session dir)
 
-    <session-dir>/ANALYSIS.md
-    <session-dir>/comfort_by_size.json      per size: n, mean, median, sd, distribution
-    <session-dir>/figures/S1_comfort_vs_size.png     per-size median/IQR + every rating
-    <session-dir>/figures/S2_participant_curves.png  one line per participant (paired view)
-    <session-dir>/figures/S3_distribution.png        1..7 histogram per size
+    ANALYSIS.md
+    comfort_by_context.json     per context x distance: n, mean, median, sd,
+                                distribution; candidates; status counts
+    figures/S1_comfort_curves.png       median (solid) / mean (dashed) per context, every rating
+    figures/S2_participant_curves.png   one line per participant, a panel per context
+    figures/S3_planned_vs_actual.png    planned d vs measured person centre -> AMR surface
 
-R_comfort_min is derived ONLY if stage2.comfort_acceptance_score is set
-in the config. It ships as null, so with the shipped config this script
-reports the curve and says that no cutoff has been decided. A two-segment
-breakpoint fit is reported as exploratory beside it. A repeated-measures
-test (Friedman) is run when scipy is installed and every participant has
-every size; otherwise it says so.
+Only ratings of NORMAL trials enter the curves (comfort_core.stage2.usable_ratings).
+PARTICIPANT_STOP and every other status are counted per (context, d) on
+their own: a stop is not a low comfort score.
 
-Plain Python 3 + matplotlib (+ scipy if present). With no rows it
-prints the schema and exits 0: nothing is produced from nothing.
+Nothing here fixes R_comfort_min or R_pref. The rules are
+stage2.analysis.r_comfort_min_rule / r_pref_rule and
+stage2.comfort_acceptance_score, null until the pilot; until then the
+report lists what each possible rule would give (every cutoff on the
+scale, argmax, the midpoint crossing of a bipolar item). Item wording and
+scales come from the config, never from this file.
+
+Plain Python 3 + matplotlib (+ scipy for Friedman if present). With no rows
+it prints the schema and exits 0: nothing is produced from nothing.
 """
 
 from __future__ import annotations
@@ -30,6 +37,7 @@ import argparse
 import json
 import math
 import sys
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import matplotlib
@@ -40,172 +48,231 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from comfort_core.config import load_with_base  # noqa: E402
-from comfort_core.stage2 import (LIKERT_MAX, LIKERT_MIN, QUESTIONNAIRE_FIELDS,  # noqa: E402
-                                 breakpoint_estimate, by_size, paired_table,
-                                 r_comfort_min, read_rows, validate_response)
+from comfort_core.contexts import key_of  # noqa: E402
+from comfort_core.stage2 import (QUESTIONNAIRE_FIELDS, RATING_KEYS, by_context_distance,  # noqa: E402
+                                 comfort_candidates, questionnaire_items, r_comfort_min,
+                                 read_rows, stage2_block, usable_ratings, validate_response)
 
-BLUE = "#0072b2"
+# Fixed context order and colour (Okabe-Ito), so a context keeps its colour
+# whichever subset is analysed.
+COLOURS = {"c1": "#0072B2", "c2": "#E69F00", "c3": "#009E73", "c4": "#CC79A7"}
+
+
+def ctx_key(name):
+    try:
+        return key_of(name)
+    except ValueError:
+        return None
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--session-dir", required=True)
+    ap.add_argument("--session-dir", action="append", required=True)
+    ap.add_argument("--out", default=None)
     ap.add_argument("--config", default="configs/stage2/stage2_real.yaml")
-    ap.add_argument("--item", default="comfort_score",
-                    choices=("comfort_score", "perceived_safety", "distance_acceptability"))
+    ap.add_argument("--item", default="comfort_score", choices=RATING_KEYS)
     args = ap.parse_args()
-    d = Path(args.session_dir)
+    dirs = [Path(d) for d in args.session_dir]
+    out = Path(args.out) if args.out else dirs[0]
     cfg = load_with_base(args.config)
-    s2 = cfg.get("stage2", {}) or {}
+    s2 = stage2_block(cfg)
+    items = {it["key"]: it for it in questionnaire_items(cfg)}
+    if args.item not in items:
+        print(f"[stage2_analysis] item {args.item} is not in stage2.questionnaire.items")
+        return 2
+    item = items[args.item]
+    scale = (item["scale_min"], item["scale_max"])
     cutoff = s2.get("comfort_acceptance_score")
     statistic = str(s2.get("acceptance_statistic") or "median")
+    rules = s2.get("analysis") or {}
 
-    rows = read_rows(d / "questionnaire.csv")
-    if not rows:
-        print(f"[stage2_analysis] no questionnaire.csv rows in {d}; nothing to analyse.")
-        print("  schema: " + ", ".join(QUESTIONNAIRE_FIELDS))
+    q, trials, amend = [], [], []
+    for d in dirs:
+        q += read_rows(d / "questionnaire.csv")
+        trials += read_rows(d / "trials.csv")
+        amend += read_rows(d / "status_amendments.csv")
+    if not q and not trials:
+        print(f"[stage2_analysis] no questionnaire.csv / trials.csv rows in {dirs}; nothing to analyse.")
+        print("  questionnaire schema: " + ", ".join(QUESTIONNAIRE_FIELDS))
         return 0
-    bad = [(r.get("trial_id"), validate_response(r)) for r in rows]
+    bad = [(r.get("trial_id"), validate_response(r, list(items.values()))) for r in q]
     bad = [(t, p) for t, p in bad if p]
-    if bad:
-        print(f"[stage2_analysis] {len(bad)} invalid row(s), excluded:")
-        for t, p in bad[:10]:
-            print(f"   {t}: {'; '.join(p)}")
-        rows = [r for r in rows if not validate_response(r)]
+    q = [r for r in q if not validate_response(r, list(items.values()))]
+    rows, excluded = usable_ratings(q, trials, amend)
 
-    stats = by_size(rows, args.item)
-    paired = paired_table(rows, args.item)
-    verdict = r_comfort_min(stats, None if cutoff is None else float(cutoff), statistic)
-    knee = breakpoint_estimate(stats, "mean")
-    sizes = sorted(stats)
-    participants = sorted(paired)
-
-    # Friedman, if possible
-    friedman = None
-    complete = [p for p in participants if all(s in paired[p] for s in sizes)]
-    if len(sizes) >= 3 and len(complete) >= 3:
-        try:
-            from scipy.stats import friedmanchisquare
-            cols = [[paired[p][s] for p in complete] for s in sizes]
-            stat, pval = friedmanchisquare(*cols)
-            friedman = {"n_participants": len(complete), "k_sizes": len(sizes),
-                        "chi2": float(stat), "p": float(pval)}
-        except ImportError:
-            friedman = {"note": "scipy not installed; Friedman test skipped"}
-    else:
-        friedman = {"note": f"needs >= 3 sizes and >= 3 participants with every size "
-                            f"(have {len(sizes)} sizes, {len(complete)} complete participants)"}
-
-    # trials.csv join: measured passing distance per size
-    trials = read_rows(d / "trials.csv")
-    clr_by_size = {}
+    # status per (context, d), from trials.csv + amendments
+    status_of = {t.get("trial_id"): t.get("trial_status") or "" for t in trials}
+    for a in amend:
+        status_of[a.get("trial_id")] = a.get("trial_status") or ""
+    status_counts = defaultdict(Counter)
     for t in trials:
-        try:
-            clr_by_size.setdefault(round(float(t["comfort_size_m"]), 4), []).append(float(t["min_clearance"]))
-        except (KeyError, ValueError):
-            pass
+        status_counts[(t.get("context"), t.get("planned_distance_m"))][status_of[t.get("trial_id")]] += 1
 
-    figs = d / "figures"
-    figs.mkdir(exist_ok=True)
-    # S1
-    fig, ax = plt.subplots(figsize=(6.5, 4.2))
-    for s in sizes:
-        vals = [int(r[args.item]) for r in rows if round(float(r["comfort_size"]), 4) == s
-                and r.get(args.item) not in ("", None)]
-        ax.scatter([s] * len(vals), vals, s=18, color=BLUE, alpha=0.35, zorder=2)
-    med = [stats[s]["median"] for s in sizes]
-    ax.plot(sizes, med, color=BLUE, marker="o", lw=2, ms=7, label=f"median ({args.item})", zorder=3)
-    ax.plot(sizes, [stats[s]["mean"] for s in sizes], color=BLUE, ls="--", lw=1, label="mean", zorder=3)
+    curves = by_context_distance(rows, args.item, scale)
+    cands, verdicts = {}, {}
+    for c, stats in curves.items():
+        cands[c] = comfort_candidates(stats, scale, statistic, item.get("midpoint"))
+        verdicts[c] = r_comfort_min(stats, None if cutoff is None else float(cutoff), statistic)
+    contexts = sorted(curves, key=lambda c: (ctx_key(c) or "z", c))
+    participants = sorted({r["participant_id"] for r in rows})
+
+    # Friedman per context: distances as repeated conditions
+    friedman = {}
+    for c in contexts:
+        per = defaultdict(lambda: defaultdict(list))
+        for r in rows:
+            if r.get("context") == c and r.get(args.item) not in ("", None):
+                per[r["participant_id"]][float(r["passing_distance_m"])].append(int(r[args.item]))
+        ds = sorted(curves[c])
+        complete = [p for p in per if all(d in per[p] for d in ds)]
+        if len(ds) >= 3 and len(complete) >= 3:
+            try:
+                from scipy.stats import friedmanchisquare
+                cols = [[sum(per[p][d]) / len(per[p][d]) for p in complete] for d in ds]
+                st, pv = friedmanchisquare(*cols)
+                friedman[c] = {"n": len(complete), "k": len(ds), "chi2": float(st), "p": float(pv)}
+            except ImportError:
+                friedman[c] = {"note": "scipy not installed"}
+        else:
+            friedman[c] = {"note": f"needs >= 3 distances and >= 3 complete participants "
+                                   f"(have {len(ds)}, {len(complete)})"}
+
+    figs = out / "figures"
+    figs.mkdir(parents=True, exist_ok=True)
+    # S1 comfort curves
+    fig, ax = plt.subplots(figsize=(7.5, 5.2))
+    for i, c in enumerate(contexts):
+        k = ctx_key(c)
+        col = COLOURS.get(k, "#555555")
+        ds = sorted(curves[c])
+        jitter = (i - (len(contexts) - 1) / 2) * 0.012
+        for d in ds:
+            vals = [int(r[args.item]) for r in rows if r.get("context") == c
+                    and float(r["passing_distance_m"]) == d and r.get(args.item) not in ("", None)]
+            ax.scatter([d + jitter] * len(vals), vals, s=14, color=col, alpha=0.3, zorder=2)
+        ax.plot(ds, [curves[c][d]["median"] for d in ds], color=col, marker="o", lw=2, ms=6,
+                label=f"{c} median", zorder=3)
+        ax.plot(ds, [curves[c][d]["mean"] for d in ds], color=col, ls="--", lw=1, zorder=3)
     if cutoff is not None:
-        ax.axhline(float(cutoff), color="#b2182b", ls=":", lw=1.2, label=f"acceptance cutoff {cutoff}")
-        if verdict["R_comfort_min_m"] is not None:
-            ax.axvline(verdict["R_comfort_min_m"], color="#b2182b", lw=1,
-                       label=f"R_comfort_min {verdict['R_comfort_min_m']:.2f} m")
-    ax.set_ylim(LIKERT_MIN - 0.3, LIKERT_MAX + 0.3)
-    ax.set_yticks(range(LIKERT_MIN, LIKERT_MAX + 1))
-    ax.set_xlabel("B3-O Comfort Space size (m)")
-    ax.set_ylabel(f"{args.item} (1..7)")
-    ax.set_xticks(sizes)
+        ax.axhline(float(cutoff), color="#444444", ls=":", lw=1.2, label=f"acceptance cutoff {cutoff}")
+    ax.set_ylim(scale[0] - 0.3, scale[1] + 0.3)
+    ax.set_yticks(range(scale[0], scale[1] + 1))
+    ax.set_xlabel("planned passing distance d (m, person centre -> AMR surface)")
+    ax.set_ylabel(f"{args.item} ({scale[0]}..{scale[1]})")
     ax.grid(alpha=0.25)
-    ax.legend(fontsize=8)
-    fig.suptitle(f"{d.name}\nS1  perceived comfort vs Comfort Space size "
-                 f"(n={len(rows)} ratings, {len(participants)} participants)", fontsize=10)
-    fig.tight_layout(rect=(0, 0, 1, 0.92))
-    fig.savefig(figs / "S1_comfort_vs_size.png", dpi=150)
+    ax.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=2, frameon=False)
+    fig.suptitle(f"S1  {args.item} by passing distance, per Human Context\n"
+                 f"{len(rows)} ratings, {len(participants)} participants; solid = median, dashed = mean",
+                 fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.savefig(figs / "S1_comfort_curves.png", dpi=150)
     plt.close(fig)
-    # S2
-    fig, ax = plt.subplots(figsize=(6.5, 4.2))
-    for p in participants:
-        xs = sorted(paired[p])
-        ax.plot(xs, [paired[p][x] for x in xs], marker="o", ms=4, lw=1, alpha=0.7, label=p)
-    ax.set_ylim(LIKERT_MIN - 0.3, LIKERT_MAX + 0.3)
-    ax.set_xlabel("B3-O Comfort Space size (m)")
-    ax.set_ylabel(f"{args.item} (1..7)")
-    ax.set_xticks(sizes)
-    ax.grid(alpha=0.25)
-    if len(participants) <= 12:
-        ax.legend(fontsize=7, ncol=2)
-    fig.suptitle(f"{d.name}\nS2  one line per participant (paired comparison)", fontsize=10)
-    fig.tight_layout(rect=(0, 0, 1, 0.92))
+    # S2 participant curves, a panel per context
+    fig, axes = plt.subplots(1, max(len(contexts), 1), figsize=(3.2 * max(len(contexts), 1) + 0.6, 3.4),
+                             sharey=True, squeeze=False)
+    for ax, c in zip(axes[0], contexts):
+        for p in participants:
+            pts = defaultdict(list)
+            for r in rows:
+                if r["participant_id"] == p and r.get("context") == c and r.get(args.item) not in ("", None):
+                    pts[float(r["passing_distance_m"])].append(int(r[args.item]))
+            xs = sorted(pts)
+            ax.plot(xs, [sum(pts[x]) / len(pts[x]) for x in xs], marker="o", ms=3, lw=1, alpha=0.7,
+                    color="#555555")
+        ax.set_title(c, fontsize=9)
+        ax.set_ylim(scale[0] - 0.3, scale[1] + 0.3)
+        ax.grid(alpha=0.25)
+        ax.set_xlabel("d (m)")
+    axes[0][0].set_ylabel(args.item)
+    fig.suptitle("S2  one line per participant (repeats averaged)", fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.9))
     fig.savefig(figs / "S2_participant_curves.png", dpi=150)
     plt.close(fig)
-    # S3
-    fig, axes = plt.subplots(1, len(sizes), figsize=(2.2 * len(sizes) + 1, 3.2), sharey=True)
-    axes = list(axes) if len(sizes) > 1 else [axes]
-    for ax, s in zip(axes, sizes):
-        dist = stats[s]["distribution"]
-        ax.bar(list(dist), list(dist.values()), color=BLUE, edgecolor="white")
-        ax.set_title(f"{s:.2f} m (n={stats[s]['n']})", fontsize=9)
-        ax.set_xticks(range(LIKERT_MIN, LIKERT_MAX + 1))
-        ax.grid(axis="y", alpha=0.25)
-    axes[0].set_ylabel("ratings")
-    fig.suptitle(f"{d.name}\nS3  rating distribution per size", fontsize=10)
-    fig.tight_layout(rect=(0, 0, 1, 0.88))
-    fig.savefig(figs / "S3_distribution.png", dpi=150)
+    # S3 planned vs actual distance
+    pa = [(float(t["planned_distance_m"]), float(t["actual_min_distance_m"]), ctx_key(t.get("context", "")))
+          for t in trials if t.get("actual_min_distance_m") not in ("", None)
+          and t.get("planned_distance_m") not in ("", None)]
+    fig, ax = plt.subplots(figsize=(4.8, 4.4))
+    if pa:
+        for k in sorted({x[2] for x in pa}, key=str):
+            sel = [x for x in pa if x[2] == k]
+            ax.scatter([x[0] for x in sel], [x[1] for x in sel], s=18, color=COLOURS.get(k, "#555555"),
+                       label=str(k))
+        lo = min(min(x[0], x[1]) for x in pa) - 0.1
+        hi = max(max(x[0], x[1]) for x in pa) + 0.1
+        ax.plot([lo, hi], [lo, hi], color="#999999", lw=1, ls=":")
+        ax.legend(fontsize=8)
+    ax.set_xlabel("planned d (m)")
+    ax.set_ylabel("measured min distance (m, person centre -> AMR surface)")
+    ax.grid(alpha=0.25)
+    fig.suptitle("S3  planned vs measured passing distance (all trials)", fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    fig.savefig(figs / "S3_planned_vs_actual.png", dpi=150)
     plt.close(fig)
 
-    (d / "comfort_by_size.json").write_text(json.dumps(
-        {"item": args.item, "by_size": {f"{s:.2f}": stats[s] for s in sizes},
-         "r_comfort_min": verdict, "breakpoint": knee, "friedman": friedman},
-        indent=2, default=str), encoding="utf-8")
+    measured = defaultdict(list)
+    for t in trials:
+        if status_of[t.get("trial_id")] == "NORMAL" and t.get("actual_min_distance_m") not in ("", None):
+            measured[(t.get("context"), float(t["planned_distance_m"]))].append(float(t["actual_min_distance_m"]))
 
-    lines = [f"# {d.name}: Stage 2 analysis ({args.item})", "",
-             f"{len(rows)} valid ratings from {len(participants)} participants over "
-             f"{len(sizes)} sizes.", "",
-             "## Per size", "",
-             "| size (m) | n | mean | median | sd | min | max | 1 | 2 | 3 | 4 | 5 | 6 | 7 | "
-             "measured min clearance (m, mean) |", "|" + "---|" * 15]
-    for s in sizes:
-        st = stats[s]
-        clr = clr_by_size.get(s)
-        lines.append(f"| {s:.2f} | {st['n']} | {st['mean']:.2f} | {st['median']:.1f} | "
-                     f"{'-' if math.isnan(st['sd']) else f'{st['sd']:.2f}'} | {st['min']} | {st['max']} | "
-                     + " | ".join(str(st["distribution"][k]) for k in range(1, 8))
-                     + f" | {'-' if not clr else f'{sum(clr) / len(clr):.2f}'} |")
-    lines += ["", "## R_comfort_min", "",
-              f"- cutoff (`stage2.comfort_acceptance_score`): **{cutoff}**; statistic: {statistic}",
-              f"- R_comfort_min: **{verdict['R_comfort_min_m']}**",
-              f"- {verdict['note']}", "",
-              "## Exploratory breakpoint (two-segment fit on per-size means)", ""]
-    if knee:
-        lines += [f"- knee at {knee['knee_m']:.2f} m; slope below {knee['slope_below']:.2f}, "
-                  f"above {knee['slope_above']:.2f} per m; residual {knee['residual']:.3f} vs "
-                  f"single line {knee['single_segment_residual']:.3f}"]
-    else:
-        lines += ["- needs >= 4 sizes"]
-    lines += ["", "## Repeated measures", "", f"- Friedman: {friedman}", "",
-              "## Participant x size (mean rating)", "",
-              "| participant | " + " | ".join(f"{s:.2f}" for s in sizes) + " |",
-              "|" + "---|" * (len(sizes) + 1)]
-    for p in participants:
-        lines.append(f"| {p} | " + " | ".join(
-            f"{paired[p][s]:.1f}" if s in paired[p] else "-" for s in sizes) + " |")
-    lines += ["", "Figures: figures/S1_comfort_vs_size.png, S2_participant_curves.png, "
-              "S3_distribution.png. Raw data: questionnaire.csv (never modified by this script).", ""]
-    (d / "ANALYSIS.md").write_text("\n".join(lines), encoding="utf-8")
-    print(f"[stage2_analysis] {len(rows)} ratings, {len(sizes)} sizes -> {d / 'ANALYSIS.md'}")
-    print(f"  R_comfort_min: {verdict['R_comfort_min_m']}  ({verdict['note']})")
+    (out / "comfort_by_context.json").write_text(json.dumps({
+        "item": args.item, "scale": scale, "questionnaire_versions": sorted({r.get("questionnaire_version", "") for r in rows}),
+        "curves": {c: {f"{d:.2f}": curves[c][d] for d in sorted(curves[c])} for c in contexts},
+        "candidates": cands, "r_comfort_min_with_configured_cutoff": verdicts,
+        "rules": {"comfort_acceptance_score": cutoff, "statistic": statistic, **rules},
+        "excluded_ratings": excluded, "invalid_rows": bad,
+        "status_counts": {f"{c}@{d}": dict(v) for (c, d), v in status_counts.items()},
+        "friedman": friedman}, indent=2, default=str), encoding="utf-8")
+
+    L = [f"# Stage 2 analysis: {args.item}", "",
+         f"Sessions: {', '.join(str(d) for d in dirs)}. {len(rows)} usable ratings (NORMAL trials) "
+         f"from {len(participants)} participants. Scale {scale[0]}..{scale[1]}; statistic {statistic}.", "",
+         "R_comfort_min and R_pref are NOT decided here: "
+         f"`comfort_acceptance_score` = {cutoff}, `r_comfort_min_rule` = {rules.get('r_comfort_min_rule')}, "
+         f"`r_pref_rule` = {rules.get('r_pref_rule')}. The tables list candidates only.", ""]
+    L += ["## Trial status per (context, d)", "", "| context | d (m) | " + " | ".join(
+        ("NORMAL", "PARTICIPANT_STOP", "OPERATOR_ABORT", "E_STOP", "NAVIGATION_FAILURE", "INVALID_TRIAL")) + " |",
+          "|" + "---|" * 8]
+    for (c, d), cnt in sorted(status_counts.items(), key=lambda kv: (str(kv[0][0]), str(kv[0][1]))):
+        L.append(f"| {c} | {d} | " + " | ".join(str(cnt.get(s, 0)) for s in (
+            "NORMAL", "PARTICIPANT_STOP", "OPERATOR_ABORT", "E_STOP", "NAVIGATION_FAILURE", "INVALID_TRIAL")) + " |")
+    if excluded:
+        L += ["", "Ratings excluded from the curves: " + "; ".join(
+            f"{k}: {len(v)}" for k, v in sorted(excluded.items()) if k != "no_trial_row")
+            + ("" if "no_trial_row" not in excluded else
+               f"; kept without a trial row: {len(excluded['no_trial_row'])}")]
+    if bad:
+        L += ["", f"Invalid questionnaire rows (excluded): {len(bad)}"]
+    for c in contexts:
+        st = curves[c]
+        L += ["", f"## {c}", "", f"| d (m) | n | mean | median | sd | measured d (mean, m) | "
+              + " | ".join(str(k) for k in range(scale[0], scale[1] + 1)) + " |",
+              "|" + "---|" * (6 + scale[1] - scale[0] + 1)]
+        for d in sorted(st):
+            m = measured.get((c, d))
+            sd = st[d]["sd"]
+            L.append(f"| {d:.2f} | {st[d]['n']} | {st[d]['mean']:.2f} | {st[d]['median']:.1f} | "
+                     f"{'-' if math.isnan(sd) else f'{sd:.2f}'} | "
+                     f"{'-' if not m else f'{sum(m) / len(m):.3f}'} | "
+                     + " | ".join(str(st[d]["distribution"][k]) for k in range(scale[0], scale[1] + 1)) + " |")
+        cd = cands[c]
+        L += ["", f"Candidates ({statistic}):", "",
+              "| cutoff | smallest d reaching it | larger d falling below again |", "|---|---|---|"]
+        for cut, v in cd["r_comfort_min_by_cutoff"].items():
+            L.append(f"| >= {cut} | {v['distance_m'] if v['distance_m'] is not None else '-'} | "
+                     f"{v['non_monotonic_above'] or '-'} |")
+        L += ["", f"- R_pref candidate, argmax of {statistic}: {cd['r_pref_argmax']}"]
+        if "r_pref_midpoint" in cd:
+            mp = cd["r_pref_midpoint"]
+            L.append(f"- R_pref candidate, midpoint {mp['midpoint']}: at {mp['at_midpoint_m'] or '-'}, "
+                     f"linear crossing {mp['linear_crossing_m']}")
+        L += [f"- with the configured cutoff: {verdicts[c]['R_comfort_min_m']} ({verdicts[c]['note']})",
+              f"- Friedman over d: {friedman[c]}"]
+    L += ["", "Figures: figures/S1_comfort_curves.png, S2_participant_curves.png, S3_planned_vs_actual.png.",
+          "Raw files are never modified by this script.", ""]
+    (out / "ANALYSIS.md").write_text("\n".join(L), encoding="utf-8")
+    print(f"[stage2_analysis] {len(rows)} usable ratings, {len(contexts)} contexts -> {out / 'ANALYSIS.md'}")
     return 0
 
 

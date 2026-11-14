@@ -110,17 +110,45 @@ gate-grazing 정지가 생긴다. Stage 3의 두 정책 모두 같은 설정을 
 넓은 통제 공간(또는 niche)에서 측정 권장. 실험 전 체크리스트(기관 절차, 동의, 가명, 철회,
 안전 브리핑, 비상정지, counterbalancing)는 실행 전에 확인.
 
+### Stage 2 도구 (2026-11-14 갱신, 실행 안 함)
+
+| 항목 | 위치 |
+|---|---|
+| context on/off | `stage2.contexts` (이름 → true/false; C4는 pilot 후 config에서 끔) |
+| 거리 수준 | `stage2.distance_levels_m: null` → 생성기·recorder 모두 거부 |
+| 반복·순서 | `stage2.trial_repeats`, context block Williams × 거리 Williams (`orders.csv`: participant_id, trial_id, block, order_index, context, passing_distance_m, repeat, condition) |
+| 참가자 ID | `stage2.participant_id_pattern` (`^P[0-9]{2,3}$`), 이름·이메일 거부 |
+| 문항·척도 | `stage2.questionnaire` (문구·척도·version은 config, 코드는 key만: comfort_score, perceived_safety, acceptability, optional_comment) |
+| trial 기록 | `scripts/stage2_trial.py`: 시작/종료 시각, `actual_min_distance_m`(사람 중심→AMR 표면, primary), `min_center_distance_m`(raw), AMR 속도(평균/최대/최근접 시점), `trial_status`, `stop_reason`, `operator_note` |
+| 상태 | NORMAL / OPERATOR_ABORT / PARTICIPANT_STOP / E_STOP / NAVIGATION_FAILURE / INVALID_TRIAL. Ctrl+C → 목표 취소 후 상태 질문; `stage2.safety.estop_topic`(null, 실기 드라이버 확인 후) 설정 시 자동 E_STOP; 사후 수정 `scripts/stage2_mark_trial.py` |
+| 분석 | `scripts/stage2_analysis.py`: NORMAL만 곡선에, 그 외 상태는 별도 집계. R_comfort_min / R_pref는 **후보표**만 (`stage2.analysis.*_rule`, `comfort_acceptance_score` 모두 null) |
+| 검증 | `scripts/check_stage2.py` |
+
+### Failure verdict 대응표 (`comfort_core/failure_class.py`)
+
+| 보고용 verdict | 세부 class | 판정 |
+|---|---|---|
+| SUCCESS | SUCCESS | 목표 도달 |
+| PASSAGE_INFEASIBLE | PASSAGE_INFEASIBLE | 선택 규칙이 R_nav_safe < R_comfort_min이라 판단한 사람 앞 대기 (의도된 동작) |
+| COMFORT_GATE_HOLD | STATIC_OVER_RESERVATION (B2), SELECTION_FAILURE (B3-O) | 통과 가능하다고 본 사람 앞 gate hold / Comfort Space 앞 stall |
+| ROBOT_ROBOT_DEADLOCK | ROBOT_ROBOT | 판정 시 fleet AMR ≤ 1.5 m |
+| PROTECTIVE_STOP | PROTECTIVE_STOP | collision monitor ProtectiveStop 상태의 stall (Comfort Space·fleet 무관) |
+| POST_EVADE_STALL | POST_EVADE_STALL | 회피 후 정체 |
+| NAV2_FAILURE | NAV2_FAILURE | nav2 abort / planning failure / timeout |
+| INVALID | INVALID | 무효 trial |
+| UNCLASSIFIED | UNCLASSIFIED_STALL | 그 외 (따로 보고) |
+
 ### Stage 3
 
 - `configs/frozen/comfort_requirements.yaml`: Stage 2 값(전부 null). null이면
   `b3o_selection` 정책과 `stage3_run.sh --main`이 거부한다. Stage 3 결과를 보고 값을 바꾸지 않는다.
-- `scripts/stage3_make_configs.py --selection-model configs/stage1a/model_exec.json`:
+- `scripts/stage3_make_configs.py --frozen` (모델·buffer·R_nav_safe bound를 `configs/frozen/navigation_requirements.yaml`에서; 두 정책에 같은 buffer):
   `b3o_selection.yaml`(spot × state별 R_nav_safe 표, 공장 맵 위 국소 경로 탐색) +
   `b2_static_calibrated.yaml`(= max_H R_comfort_min, frozen 전에는 TEMPLATE).
 - `comfort_core/selection_policy.py`: 정책 `b3o_selection` (spot에 선 사람만 선택, 보행자는 기존 moving mapping).
 - 3-B: `scripts/make_cross_campaign.py`가 seed 1–33 cross config를 byte 단위로 재현(규칙: AMR 2 출발
   1.0+0.3·(s mod 2) s, AMR 3 출발 9.0+0.3·((5s) mod 7) s) → seed 34–100 생성 완료.
-  `./scripts/stage3_run.sh --main --selection-model ...` (seed마다 정책 순서 교대).
+  `./scripts/stage3_run.sh --main` (seed마다 정책 순서 교대; 두 frozen 파일 중 하나라도 없거나 null이면 거부).
 - 실패 분류 `comfort_core/failure_class.py`: INVALID → PASSAGE_INFEASIBLE → STATIC_OVER_RESERVATION(B2)
   → SELECTION_FAILURE(B3-O; B2에서는 모델 밖 실패) → ROBOT_ROBOT(판정 시 fleet ≤ 1.5 m) →
   POST_EVADE_STALL → NAV2_FAILURE → UNCLASSIFIED_STALL. 입력은 `nav2_goal.py`가 판정 시점에 기록하는

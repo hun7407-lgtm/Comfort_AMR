@@ -40,6 +40,7 @@ FEASIBLE = "FEASIBLE"
 INFEASIBLE = "PASSAGE_INFEASIBLE"
 
 FROZEN = Path(__file__).resolve().parents[1] / "configs" / "frozen" / "comfort_requirements.yaml"
+FROZEN_NAV = Path(__file__).resolve().parents[1] / "configs" / "frozen" / "navigation_requirements.yaml"
 
 
 @dataclass(frozen=True)
@@ -92,4 +93,22 @@ def frozen_inputs(path: Path = FROZEN) -> Dict[str, Any]:
                if (v or {}).get("r_comfort_min_m") is None]
     if not reqs or missing:
         raise ValueError(f"{path}: not frozen yet; null: {missing or ['contexts']}")
+    return data
+
+
+def frozen_navigation(path: Path = FROZEN_NAV) -> Dict[str, Any]:
+    """The frozen Stage 1 navigation requirements (scripts/stage1a_finalize.py
+    --freeze); raises while the file is missing or incomplete."""
+    p = Path(path)
+    if not p.exists():
+        raise ValueError(f"{p}: Stage 1 navigation values are not frozen yet "
+                         "(scripts/stage1a_finalize.py --freeze)")
+    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    need = {"comfort_buffer_m": data.get("comfort_buffer_m"),
+            "model.file": (data.get("model") or {}).get("file"),
+            "model.wall_clearance_m": (data.get("model") or {}).get("wall_clearance_m"),
+            "r_nav_safe.bound": (data.get("r_nav_safe") or {}).get("bound")}
+    missing = [k for k, v in need.items() if v is None]
+    if missing:
+        raise ValueError(f"{p}: incomplete, null: {missing}")
     return data

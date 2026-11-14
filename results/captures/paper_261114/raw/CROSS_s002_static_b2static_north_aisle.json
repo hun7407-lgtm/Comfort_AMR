@@ -1,0 +1,158 @@
+{
+  "file": "results/captures/paper_261114/raw/CROSS_s002_static_b2static_north_aisle.png",
+  "config": "configs/campaigns/cross/campaign_h8_a3_cross_s2.yaml",
+  "scenario": "configs/stage3/static_baseline.yaml",
+  "overlay": {
+    "tag": "b2static",
+    "buffer": 0.1
+  },
+  "view": {
+    "name": "north_aisle",
+    "position": [
+      11.5,
+      4.21,
+      1.9
+    ],
+    "look_at": [
+      -10.0,
+      4.21,
+      0.9
+    ],
+    "focal": 22.0
+  },
+  "size": [
+    1920,
+    1080
+  ],
+  "amr_pose": [
+    -4.6,
+    5.32
+  ],
+  "amr_visible": true,
+  "comfort_drawn": true,
+  "buffer_width": 0.1,
+  "policy": "static",
+  "comfort_shapes_ungrown": {
+    "E1": {
+      "centre": [
+        -3.0,
+        5.6
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    },
+    "E2": {
+      "centre": [
+        -3.0,
+        -5.6
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    },
+    "N1": {
+      "centre": [
+        -6.5,
+        3.01
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    },
+    "N2": {
+      "centre": [
+        -0.5,
+        3.01
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    },
+    "N3": {
+      "centre": [
+        5.5,
+        3.01
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    },
+    "S1": {
+      "centre": [
+        -6.5,
+        -3.01
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    },
+    "S2": {
+      "centre": [
+        -0.5,
+        -3.01
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    },
+    "S3": {
+      "centre": [
+        5.5,
+        -3.01
+      ],
+      "along": 1.2,
+      "across": 1.2,
+      "heading_rad": 0.0
+    }
+  },
+  "robots": {
+    "AMR 1": [
+      -4.6,
+      5.32
+    ],
+    "AMR 2": [
+      0.0,
+      5.32
+    ],
+    "AMR 3": [
+      1.4,
+      -5.32
+    ]
+  },
+  "people": {
+    "E1": [
+      -3.0,
+      5.6
+    ],
+    "E2": [
+      -3.0,
+      -5.6
+    ],
+    "N1": [
+      -6.5,
+      3.01
+    ],
+    "N2": [
+      -0.5,
+      3.01
+    ],
+    "N3": [
+      5.5,
+      3.01
+    ],
+    "S1": [
+      -6.5,
+      -3.01
+    ],
+    "S2": [
+      -0.5,
+      -3.01
+    ],
+    "S3": [
+      5.5,
+      -3.01
+    ]
+  },
+  "note": "floor disc = Comfort Space grown by the AMR half width; outer band = + costmap buffer"
+}

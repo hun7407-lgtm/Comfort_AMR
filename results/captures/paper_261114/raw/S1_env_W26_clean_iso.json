@@ -1,0 +1,49 @@
+{
+  "file": "results/captures/paper_261114/raw/S1_env_W26_clean_iso.png",
+  "config": "configs/stage1a/envs/w2.60_y0.35_c3.yaml",
+  "scenario": null,
+  "overlay": {
+    "tag": "clean",
+    "comfort": false
+  },
+  "view": {
+    "name": "iso",
+    "position": [
+      -7.5,
+      -1.8,
+      7.0
+    ],
+    "look_at": [
+      0.6,
+      0.1,
+      0.0
+    ],
+    "focal": 18.0
+  },
+  "size": [
+    1920,
+    1080
+  ],
+  "amr_pose": [
+    -5.0,
+    0.0
+  ],
+  "amr_visible": true,
+  "comfort_drawn": false,
+  "buffer_width": 0.35,
+  "policy": "static",
+  "comfort_shapes_ungrown": {},
+  "robots": {
+    "AMR 1": [
+      -5.0,
+      0.0
+    ]
+  },
+  "people": {
+    "a": [
+      0.0,
+      0.95
+    ]
+  },
+  "note": "floor disc = Comfort Space grown by the AMR half width; outer band = + costmap buffer"
+}

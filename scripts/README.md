@@ -44,10 +44,17 @@
 | `stage1a_calibrate.py` | 폭별 관측 경계, refine 매니페스트, 실행 모델 보정(wall clearance) → `configs/stage1a/model_exec.json` |
 | `stage1a_report.py` | 예측(경로 한계 / 실행 모델) 대비 관측 경계, F0–F3 |
 | `make_cross_campaign.py` | cross campaign config를 seed별로 생성; s1–33 byte 재현 확인(`--verify`) |
-| `stage3_make_configs.py --selection-model` | `b3o_selection.yaml`(spot별 R_nav_safe) + `b2_static_calibrated.yaml` |
-| `stage3_run.sh --main` | B2 Static Calibrated vs B3-O Dynamic Selection, seeds 1–100 paired |
+| `stage3_make_configs.py --frozen` | `b3o_selection.yaml`(spot별 R_nav_safe) + `b2_static_calibrated.yaml`, 동결된 buffer를 두 정책에 동일 적용 |
+| `stage3_run.sh --main` | B2 Static Calibrated vs B3-O Dynamic Selection, seeds 1–100 paired. 두 frozen 파일이 없거나 null이면 거부 |
 | `stage3b_report.py` | failure class, exact McNemar, paired Wilcoxon, seed 1–33/34–100 분리 |
-| `stage2_make_conditions.py` | (개정) context × passing distance 조건 + Williams 순서 |
+| `stage2_make_conditions.py` | (개정) context × passing distance 조건 + `orders.csv`(익명 ID, Williams, `trial_repeats`). `distance_levels_m` null이면 거부 |
+| `stage1a_finalize.py [--freeze]` | buffer 후보 판정(사전등록 규칙 `configs/stage1a/buffer_selection.yaml`) → `results/batches/261114_stage1a_final/`, `--freeze`로 `configs/frozen/navigation_requirements.yaml` (한 번만) |
+| `stage2_trial.py` | (개정) 실기 통과 1회: 상태(NORMAL/OPERATOR_ABORT/PARTICIPANT_STOP/E_STOP/NAVIGATION_FAILURE/INVALID_TRIAL), 시작·종료 시각, 사람 중심→AMR 표면 최소거리, AMR 속도. `--plan orders.csv` |
+| `stage2_questionnaire.py` | (개정) 문항·척도는 config(`stage2.questionnaire`), 코드에 문구 없음 |
+| `stage2_mark_trial.py` | trial 상태 사후 수정 → `status_amendments.csv` (trials.csv는 그대로) |
+| `stage2_analysis.py` | (개정) context별 comfort 곡선, 거리별 평균/중앙값, 참가자별, R_comfort_min/R_pref **후보표** (확정 안 함) |
+| `check_stage2.py` | Stage 2 도구 오프라인 검증 (fixture는 임시 폴더) |
+| `check_stage3_interface.py` | 선택 규칙 Case A/B/C, verdict 8종, seed 1–100 짝 무결성, main-run 잠금 |
 
 ## 3단계 실험 (2026-11-12부터, `docs/STAGES.md`)
 
@@ -58,7 +65,7 @@
 | `stage1_manifest.py` | seed-major trial 목록 |
 | `stage1_report.py --dir` | R_deadlock_onset / R_nav_max, 표, P1–P9 |
 | `check_stage1.py [--dir]` | config / scaling / same-seed / 안전층 불변 / CSV 검증 |
-| `stage2_make_conditions.py` | 실기용 크기 사다리 (R_nav_max − kΔ) + 참가자 순서 |
+| `stage2_make_conditions.py` | 실기용 context × passing distance 조건 + 참가자별 Williams 순서 (`distance_levels_m`가 null이면 거부) |
 | `stage2_trial.sh` / `stage2_trial.py` | 실기 AMR 통과 1회 기록 (placeholder가 남아 있으면 거부) |
 | `stage2_questionnaire.py` | 7점 설문 입력 → `questionnaire.csv` |
 | `stage2_analysis.py` | comfort–size 곡선, R_comfort_min (cutoff 설정 시에만) |

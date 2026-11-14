@@ -1,0 +1,95 @@
+{
+  "variant": "buf10",
+  "wall_clearance_m": 0.49,
+  "spread_m": 0.1,
+  "fitted_on": [
+    "w1.50_y0.35_c3",
+    "w1.80_y0.35_c3",
+    "w2.20_y0.35_c3",
+    "w2.60_y0.35_c3"
+  ],
+  "per_width": [
+    {
+      "env": "w1.50_y0.35_c3",
+      "aisle_width_m": 1.5,
+      "R_exec_lo": 0.42,
+      "R_exec_hi": 0.47,
+      "failures_below_lo": [],
+      "points": {
+        "0.32": "1/1",
+        "0.42": "3/3",
+        "0.47": "1/3",
+        "0.52": "0/3",
+        "0.71": "0/1"
+      },
+      "wall_clearance_at_lo": 0.39,
+      "wall_clearance_lower_bound": null
+    },
+    {
+      "env": "w1.80_y0.35_c3",
+      "aisle_width_m": 1.8,
+      "R_exec_lo": 0.72,
+      "R_exec_hi": 0.77,
+      "failures_below_lo": [],
+      "points": {
+        "0.32": "1/1",
+        "0.42": "1/1",
+        "0.52": "1/1",
+        "0.62": "1/1",
+        "0.72": "3/3",
+        "0.77": "0/3",
+        "0.82": "0/3",
+        "1.01": "0/1"
+      },
+      "wall_clearance_at_lo": 0.39,
+      "wall_clearance_lower_bound": null
+    },
+    {
+      "env": "w2.20_y0.35_c3",
+      "aisle_width_m": 2.2,
+      "R_exec_lo": 1.02,
+      "R_exec_hi": 1.07,
+      "failures_below_lo": [],
+      "points": {
+        "0.30": "1/1",
+        "0.72": "1/1",
+        "0.82": "1/1",
+        "0.92": "1/1",
+        "1.02": "3/3",
+        "1.07": "1/3",
+        "1.12": "0/3",
+        "1.22": "0/1",
+        "1.41": "0/1"
+      },
+      "wall_clearance_at_lo": 0.49,
+      "wall_clearance_lower_bound": null
+    },
+    {
+      "env": "w2.60_y0.35_c3",
+      "aisle_width_m": 2.6,
+      "R_exec_lo": 1.42,
+      "R_exec_hi": 1.47,
+      "failures_below_lo": [],
+      "points": {
+        "0.30": "1/1",
+        "1.12": "1/1",
+        "1.22": "1/1",
+        "1.32": "1/1",
+        "1.42": "3/3",
+        "1.47": "0/3",
+        "1.52": "0/3",
+        "1.62": "0/1",
+        "1.81": "0/1"
+      },
+      "wall_clearance_at_lo": 0.49,
+      "wall_clearance_lower_bound": null
+    }
+  ],
+  "comfort_extra_m": 0.34,
+  "method": "wall_clearance = (person centre to far wall) - R_exec_lo - inscribed radius - costmap buffer, per calibration width; model takes the max",
+  "batches": [
+    "scan",
+    "refine"
+  ],
+  "commit": "41ca38d"
+}

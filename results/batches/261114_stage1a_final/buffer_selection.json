@@ -1,0 +1,569 @@
+{
+  "criteria_file": "configs/stage1a/buffer_selection.yaml",
+  "rule": "A candidate passes only if A, B, C and D all hold. If both pass, the smaller buffer is selected (least distortion of the navigation costmap). If neither passes, stop and report the blocker; no further tuning.",
+  "selected": {
+    "variant": "buf10",
+    "buffer_width_m": 0.1
+  },
+  "candidates": [
+    {
+      "variant": "buf10",
+      "buffer_width_m": 0.1,
+      "batch": "results/batches/261114_stage1a_buf10",
+      "criteria": {
+        "A_environment_boundary": {
+          "pass": true,
+          "brackets": [
+            {
+              "W": 1.5,
+              "pass_e": 0.42,
+              "fail_e": 0.47
+            },
+            {
+              "W": 1.8,
+              "pass_e": 0.72,
+              "fail_e": 0.77
+            },
+            {
+              "W": 2.2,
+              "pass_e": 1.02,
+              "fail_e": 1.07
+            },
+            {
+              "W": 2.6,
+              "pass_e": 1.42,
+              "fail_e": 1.47
+            }
+          ],
+          "wall_clearance_spread_m": 0.1
+        },
+        "B_upper_boundary": {
+          "pass": true,
+          "cells": [
+            {
+              "part": "1a2",
+              "env": "w2.20_y0.35_c1",
+              "kind": "b3o",
+              "R_path_infl_e": 1.2247,
+              "R_path_lethal_e": 1.3143,
+              "R_exec_model_e": 1.0144,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.71": "1/1",
+                "0.91": "1/1",
+                "1.01": "3/3",
+                "1.11": "0/3 (protective_stop, stall)",
+                "1.31": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1a2",
+              "env": "w2.20_y0.35_c2",
+              "kind": "b3o",
+              "R_path_infl_e": 1.2234,
+              "R_path_lethal_e": 1.3145,
+              "R_exec_model_e": 1.0141,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.71": "1/1",
+                "0.91": "1/1",
+                "1.01": "3/3",
+                "1.11": "0/3 (stall)",
+                "1.31": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1a2",
+              "env": "w2.20_y0.35_c3",
+              "kind": "b3o",
+              "R_path_infl_e": 1.224,
+              "R_path_lethal_e": 1.314,
+              "R_exec_model_e": 1.0144,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.71": "1/1",
+                "0.91": "1/1",
+                "1.01": "3/3",
+                "1.11": "0/3 (protective_stop, stall)",
+                "1.31": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.00_y0.35_c3",
+              "kind": "static",
+              "R_path_infl_e": 1.024,
+              "R_path_lethal_e": 1.1146,
+              "R_exec_model_e": 0.8138,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.71": "1/1",
+                "0.81": "2/2",
+                "0.91": "2/2",
+                "1.01": "0/1 (protective_stop)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.00_y0.35_c1",
+              "kind": "b3o",
+              "R_path_infl_e": 1.0241,
+              "R_path_lethal_e": 1.1147,
+              "R_exec_model_e": 0.8148,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.71": "1/1",
+                "0.81": "2/2",
+                "0.91": "1/2 (stall)",
+                "1.01": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.00_y0.35_c3",
+              "kind": "b3o",
+              "R_path_infl_e": 1.0247,
+              "R_path_lethal_e": 1.1147,
+              "R_exec_model_e": 0.8138,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.71": "1/1",
+                "0.81": "2/2",
+                "0.91": "2/2",
+                "1.01": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.20_y0.60_c3",
+              "kind": "static",
+              "R_path_infl_e": 0.9739,
+              "R_path_lethal_e": 1.0645,
+              "R_exec_model_e": 0.7636,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.66": "1/1",
+                "0.76": "2/2",
+                "0.86": "0/2 (protective_stop)",
+                "0.96": "0/1 (protective_stop)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.20_y0.60_c2",
+              "kind": "b3o",
+              "R_path_infl_e": 0.9736,
+              "R_path_lethal_e": 1.0648,
+              "R_exec_model_e": 0.7644,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.66": "1/1",
+                "0.76": "2/2",
+                "0.86": "0/2 (protective_stop, stall)",
+                "0.96": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.20_y0.35_c4",
+              "kind": "b3o",
+              "R_path_infl_e": 1.2237,
+              "R_path_lethal_e": 1.3148,
+              "R_exec_model_e": 1.0139,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.91": "1/1",
+                "1.01": "2/2",
+                "1.11": "0/2 (stall)",
+                "1.21": "0/1 (protective_stop)"
+              }
+            }
+          ],
+          "n_cells": 9,
+          "boundary_match": 9
+        },
+        "C_low_e": {
+          "pass": true,
+          "violations": [],
+          "lowe": [
+            {
+              "env": "w1.50_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w1.80_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.00_y0.35_c3",
+              "kind": "static",
+              "e": 0.81,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.20_y0.35_c1",
+              "kind": "b3o",
+              "e": 0.81,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.20_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.60_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            }
+          ]
+        },
+        "D_protective_stop": {
+          "pass": true,
+          "violations": []
+        }
+      },
+      "passed": true,
+      "model": {
+        "file": "configs/stage1a/model_exec_buf10.json",
+        "wall_clearance_m": 0.49,
+        "spread_m": 0.1
+      },
+      "predictions_file": "configs/stage1a/predictions_exec_buf10.json",
+      "predictions_commit": "41ca38d+",
+      "trials": {
+        "scan": 27,
+        "refine": 28,
+        "1a2": 27,
+        "1b": 36,
+        "lowe": 18
+      }
+    },
+    {
+      "variant": "buf15",
+      "buffer_width_m": 0.15,
+      "batch": "results/batches/261114_stage1a_buf15",
+      "criteria": {
+        "A_environment_boundary": {
+          "pass": true,
+          "brackets": [
+            {
+              "W": 1.5,
+              "pass_e": 0.42,
+              "fail_e": 0.52
+            },
+            {
+              "W": 1.8,
+              "pass_e": 0.72,
+              "fail_e": 0.77
+            },
+            {
+              "W": 2.2,
+              "pass_e": 0.97,
+              "fail_e": 1.02
+            },
+            {
+              "W": 2.6,
+              "pass_e": 1.42,
+              "fail_e": 1.52
+            }
+          ],
+          "wall_clearance_spread_m": 0.15
+        },
+        "B_upper_boundary": {
+          "pass": false,
+          "cells": [
+            {
+              "part": "1a2",
+              "env": "w2.20_y0.35_c1",
+              "kind": "b3o",
+              "R_path_infl_e": 1.2247,
+              "R_path_lethal_e": 1.3143,
+              "R_exec_model_e": 0.9643,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.66": "1/1",
+                "0.86": "1/1",
+                "0.96": "3/3",
+                "1.06": "0/3 (stall)",
+                "1.26": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1a2",
+              "env": "w2.20_y0.35_c2",
+              "kind": "b3o",
+              "R_path_infl_e": 1.2234,
+              "R_path_lethal_e": 1.3145,
+              "R_exec_model_e": 0.9635,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.66": "1/1",
+                "0.86": "1/1",
+                "0.96": "3/3",
+                "1.06": "0/3 (stall)",
+                "1.26": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1a2",
+              "env": "w2.20_y0.35_c3",
+              "kind": "b3o",
+              "R_path_infl_e": 1.224,
+              "R_path_lethal_e": 1.314,
+              "R_exec_model_e": 0.9643,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.66": "1/1",
+                "0.86": "1/1",
+                "0.96": "3/3",
+                "1.06": "0/3 (comfort_gate_hold, protective_stop, stall)",
+                "1.26": "0/1 (protective_stop)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.00_y0.35_c3",
+              "kind": "static",
+              "R_path_infl_e": 1.024,
+              "R_path_lethal_e": 1.1146,
+              "R_exec_model_e": 0.7636,
+              "upper_ok": false,
+              "boundary_match": false,
+              "points": {
+                "0.66": "1/1",
+                "0.76": "2/2",
+                "0.86": "2/2",
+                "0.96": "1/1"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.00_y0.35_c1",
+              "kind": "b3o",
+              "R_path_infl_e": 1.0241,
+              "R_path_lethal_e": 1.1147,
+              "R_exec_model_e": 0.7647,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.66": "1/1",
+                "0.76": "2/2",
+                "0.86": "2/2",
+                "0.96": "0/1 (protective_stop)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.00_y0.35_c3",
+              "kind": "b3o",
+              "R_path_infl_e": 1.0247,
+              "R_path_lethal_e": 1.1147,
+              "R_exec_model_e": 0.765,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.66": "1/1",
+                "0.76": "2/2",
+                "0.86": "2/2",
+                "0.96": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.20_y0.60_c3",
+              "kind": "static",
+              "R_path_infl_e": 0.9739,
+              "R_path_lethal_e": 1.0645,
+              "R_exec_model_e": 0.7135,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.61": "1/1",
+                "0.71": "2/2",
+                "0.81": "0/2 (comfort_gate_hold, stall)",
+                "0.91": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.20_y0.60_c2",
+              "kind": "b3o",
+              "R_path_infl_e": 0.9736,
+              "R_path_lethal_e": 1.0648,
+              "R_exec_model_e": 0.7137,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.61": "1/1",
+                "0.71": "2/2",
+                "0.81": "0/2 (stall)",
+                "0.91": "0/1 (stall)"
+              }
+            },
+            {
+              "part": "1b",
+              "env": "w2.20_y0.35_c4",
+              "kind": "b3o",
+              "R_path_infl_e": 1.2237,
+              "R_path_lethal_e": 1.3148,
+              "R_exec_model_e": 0.9647,
+              "upper_ok": true,
+              "boundary_match": true,
+              "points": {
+                "0.86": "1/1",
+                "0.96": "2/2",
+                "1.06": "0/2 (stall)",
+                "1.16": "0/1 (stall)"
+              }
+            }
+          ],
+          "n_cells": 9,
+          "boundary_match": 8
+        },
+        "C_low_e": {
+          "pass": true,
+          "violations": [],
+          "lowe": [
+            {
+              "env": "w1.50_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w1.80_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.00_y0.35_c3",
+              "kind": "static",
+              "e": 0.81,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.20_y0.35_c1",
+              "kind": "b3o",
+              "e": 0.81,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.20_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            },
+            {
+              "env": "w2.60_y0.35_c3",
+              "kind": "static",
+              "e": 0.3,
+              "pass": "3/3",
+              "outcomes": [
+                "pass",
+                "pass",
+                "pass"
+              ]
+            }
+          ]
+        },
+        "D_protective_stop": {
+          "pass": false,
+          "violations": [
+            "1a1 w1.50_y0.35_c3 e 0.42: ['protective_stop', 'pass', 'pass']"
+          ]
+        }
+      },
+      "passed": false,
+      "model": {
+        "file": "configs/stage1a/model_exec_buf15.json",
+        "wall_clearance_m": 0.49,
+        "spread_m": 0.15
+      },
+      "predictions_file": "configs/stage1a/predictions_exec_buf15.json",
+      "predictions_commit": "41ca38d+",
+      "trials": {
+        "scan": 27,
+        "refine": 28,
+        "1a2": 27,
+        "1b": 36,
+        "lowe": 18
+      }
+    }
+  ],
+  "evaluated_at_commit": "41ca38d"
+}
