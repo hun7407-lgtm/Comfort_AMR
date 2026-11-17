@@ -46,6 +46,7 @@ from tf2_ros import Buffer, TransformListener
 
 from comfort_core import load_config
 from comfort_core.clearance import footprint_half_extents
+from comfort_core.labels import robot_label
 from comfort_core.palette import fleet_rgb255, mission_rgb255
 
 WIDTH = 1280
@@ -112,8 +113,8 @@ def _destinations(cfg):
     if nav.get("start") and nav.get("goal"):
         sx, sy = nav["start"][:2]
         gx, gy = nav["goal"][:2]
-        raw.append((sx, sy, "AMR1 START", COLOR_MISSION, False))
-        raw.append((gx, gy, "AMR1 GOAL", COLOR_MISSION, True))
+        raw.append((sx, sy, f"{robot_label('AMR1')} START", COLOR_MISSION, False))
+        raw.append((gx, gy, f"{robot_label('AMR1')} GOAL", COLOR_MISSION, True))
 
     fleet = cfg.get("fleet", {})
     places = fleet.get("places", {})
@@ -123,13 +124,13 @@ def _destinations(cfg):
         home = places.get(str(spec.get("start", "")))
         if home is not None:
             raw.append((float(home[0]), float(home[1]),
-                        f"{name.upper()} home", fleet_rgb255(name), False))
+                        f"{robot_label(name)} home", fleet_rgb255(name), False))
         for order, job in enumerate(spec.get("jobs", []), start=1):
             point = places.get(str(job))
             if point is None:
                 continue
             raw.append((float(point[0]), float(point[1]),
-                        f"{name.upper()}-{order} {job}", fleet_rgb255(name), False))
+                        f"{robot_label(name)}-{order} {job}", fleet_rgb255(name), False))
 
     # A job list visits the same slot twice and ends where it began, so
     # several labels land on one point. Printed separately they overlap
@@ -381,8 +382,8 @@ class CostmapRecorder(Node):
             ("AMR footprint", COLOR_FOOTPRINT),
             ("global plan (/plan)", COLOR_PLAN),
             ("Comfort Space, planner size", COLOR_COMFORT),
-            ("AMR1 start (ring) and goal (disc)", COLOR_MISSION),
-            *[(f"{name.upper()} footprint, home and job legs", fleet_rgb255(name))
+            (f"{robot_label('AMR1')} start (ring) and goal (disc)", COLOR_MISSION),
+            *[(f"{robot_label(name)} footprint, home and job legs", fleet_rgb255(name))
               for name in self.fleet_names],
             ("cost: light = low, red = Comfort Space", (90, 110, 230)),
             ("dark = wall / lethal", (20, 20, 20)),

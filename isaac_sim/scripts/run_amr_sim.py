@@ -136,6 +136,9 @@ def main() -> int:
         recorder = FrameRecorder(cfg, Path(args.record), label)
         print(f"  recording frames to {args.record} from "
               f"{recorder.start:.0f} simulated s", flush=True)
+    snapshot = None
+    if recorder is not None and cfg["recording"].get("pose_log"):
+        snapshot = _pose_snapshot(cfg, fleet)
 
     topics = cfg["ros"]["topics"]
     print("\n=== Simulation running ===", flush=True)
@@ -181,7 +184,7 @@ def main() -> int:
         cart.update(step_dt)
         fleet.update(step_dt)
         if recorder is not None:
-            recorder.maybe_capture(simulation_context.current_time)
+            recorder.maybe_capture(simulation_context.current_time, snapshot)
         steps += 1
         if max_steps and steps >= max_steps:
             print(f"  reached --max-seconds {args.max_seconds}", flush=True)
@@ -189,6 +192,44 @@ def main() -> int:
 
     print(f"  stopped after {steps * physics_dt:.1f} simulated seconds", flush=True)
     return 0
+
+
+def _pose_snapshot(cfg, fleet):
+    """Where everybody is, for recording.pose_log (drawing overlays later).
+
+    Reads only: AMR1's chassis prim, the fleet AMRs' own poses and
+    current job, and each person's collider prim (which WalkerSync keeps
+    under a walking character). Nothing is written.
+    """
+    from isaac_sim.utils.fleet import _pose_of
+    from pxr import UsdGeom
+    from isaacsim.core.utils.stage import get_current_stage
+
+    chassis = str(cfg.get("amr", {}).get("chassis_path", ""))
+    people = [k for k, v in cfg["humans"].items()
+              if isinstance(v, dict) and "position" in v and v.get("enabled", True)]
+
+    def snap():
+        stage = get_current_stage()
+        out = {"amr": {}, "people": {}}
+        ego = _pose_of(chassis) if chassis else None
+        if ego is not None:
+            out["amr"]["AMR1"] = {"x": round(ego[0], 3), "y": round(ego[1], 3)}
+        for m in getattr(fleet, "members", []):
+            job = m.jobs[m.job] if getattr(m, "jobs", None) else None
+            place = getattr(getattr(m, "roadmap", None), "places", {}).get(str(job)) if job else None
+            out["amr"][m.name] = {"x": round(float(m.x), 3), "y": round(float(m.y), 3),
+                                  "yaw": round(float(getattr(m, "yaw", 0.0)), 3), "job": job,
+                                  "target": [round(float(v), 3) for v in place] if place else None}
+        cache = UsdGeom.XformCache()
+        for key in people:
+            prim = stage.GetPrimAtPath(f"/Environment/Corridor/human_{key}")
+            if prim and prim.IsValid():
+                t = cache.GetLocalToWorldTransform(prim).ExtractTranslation()
+                out["people"][key] = [round(float(t[0]), 3), round(float(t[1]), 3)]
+        return out
+
+    return snap
 
 
 if __name__ == "__main__":

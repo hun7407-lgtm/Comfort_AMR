@@ -149,8 +149,23 @@ cleanup() {
     fi
     if [ "$RECORD" -eq 1 ]; then
         echo "[step] encoding video"
-        ./scripts/encode_video.sh "$FRAME_DIR" "$VIDEO_DIR/$VIDEO_NAME.mp4" \
-            && rm -rf "$FRAME_DIR"
+        # Encode at the rate the frames were taken (recording.fps of the
+        # config in use), so the video plays at simulated real time.
+        REC_FPS="$(cd "$PROJECT_ROOT" && python3 -c "
+import sys
+sys.path.insert(0, '.')
+from comfort_core import load_config
+print(load_config(common_path='$CONFIG_PATH')['recording']['fps'])")"
+        ok=1
+        # recording.extra_cameras: one sub-folder of frames per camera
+        for sub in "$FRAME_DIR"/*/; do
+            [ -d "$sub" ] || continue
+            ./scripts/encode_video.sh "$sub" "$VIDEO_DIR/${VIDEO_NAME}_$(basename "$sub").mp4" "$REC_FPS" || ok=0
+        done
+        # recording.pose_log: who was where at each frame, for overlays
+        [ -f "$FRAME_DIR/frames.jsonl" ] && cp "$FRAME_DIR/frames.jsonl" "$VIDEO_DIR/${STAMP}_frames.jsonl"
+        ./scripts/encode_video.sh "$FRAME_DIR" "$VIDEO_DIR/$VIDEO_NAME.mp4" "$REC_FPS" || ok=0
+        [ "$ok" -eq 1 ] && rm -rf "$FRAME_DIR"
     fi
     echo "[info] logs kept in $RUN_DIR"
 }

@@ -19,10 +19,29 @@ a recorded trial's result against an unrecorded one before relying on it.
 
 Writing happens on a background thread. Encoding JPEG on the simulation
 thread stalled every step by the time it took.
+
+Optional, all off unless a config asks (paper/demo captures):
+
+    recording.label: false        no burned-in "<SCENARIO> t = ..." label
+    recording.extra_cameras:      more cameras in the same simulation, each
+      - name: CAM01_TOP           written to <out_dir>/<name>/frame_*.jpg
+        ortho: {centre: [x, y], width_m: 30}           (orthographic, looking down)
+      - name: CAM02_ISOMETRIC
+        position: [..]; look_at: [..]; focal_length: 20  (perspective)
+    a `snapshot` callable           maybe_capture(t, snapshot) appends one
+                                    JSON line per captured frame to
+                                    <out_dir>/frames.jsonl (sim time and
+                                    whatever the callable returns), so
+                                    overlays can be drawn afterwards at the
+                                    exact frame.
+
+Every extra camera is rendered on every step, so it costs simulation
+speed like the main one does.
 """
 
 from __future__ import annotations
 
+import json
 import queue
 import threading
 from pathlib import Path
@@ -81,14 +100,15 @@ class FrameRecorder:
         if hidden:
             print(f"  recording: hid {', '.join(hidden)}", flush=True)
 
-        cam = rep.create.camera(
-            position=tuple(float(v) for v in rec["camera"]["position"]),
-            look_at=tuple(float(v) for v in rec["camera"]["look_at"]),
-            focal_length=float(rec["camera"].get("focal_length", 24.0)),
-        )
-        self.render_product = rep.create.render_product(cam, (width, height))
-        self.annotator = rep.AnnotatorRegistry.get_annotator("rgb")
-        self.annotator.attach(self.render_product)
+        self.draw_label = bool(rec.get("label", True))
+        self.views = [(self.out_dir, self._camera(rep, rec["camera"], None, width, height))]
+        for extra in rec.get("extra_cameras") or []:
+            sub = self.out_dir / str(extra["name"])
+            sub.mkdir(parents=True, exist_ok=True)
+            self.views.append((sub, self._camera(rep, extra, str(extra["name"]), width, height)))
+        # kept for callers that used the single camera directly
+        self.render_product, self.annotator = self.views[0][1]
+        self._log = None
 
         self.next_time = self.start
         self.count = 0
@@ -96,14 +116,57 @@ class FrameRecorder:
         self._writer = threading.Thread(target=self._write_loop, daemon=True)
         self._writer.start()
 
-    def maybe_capture(self, sim_time: float) -> None:
+    @staticmethod
+    def _camera(rep, spec, name, width, height):
+        if spec.get("ortho"):
+            # An unrotated USD camera looks down -z with +y up the image;
+            # aperture in tenths of a scene unit, as isaac_sim/scripts/paper_shots.py.
+            from isaacsim.core.utils.stage import get_current_stage
+            from pxr import Gf, UsdGeom
+            path = f"/World/RecordingOrtho_{name or 'main'}"
+            cam = UsdGeom.Camera.Define(get_current_stage(), path)
+            cam.CreateProjectionAttr(UsdGeom.Tokens.orthographic)
+            w = float(spec["ortho"]["width_m"])
+            cam.CreateHorizontalApertureAttr(w * 10.0)
+            cam.CreateVerticalApertureAttr(w * height / width * 10.0)
+            cam.CreateClippingRangeAttr(Gf.Vec2f(0.1, 200.0))
+            xf = UsdGeom.Xformable(cam.GetPrim())
+            xf.ClearXformOpOrder()
+            cx, cy = spec["ortho"].get("centre", [0.0, 0.0])
+            xf.AddTranslateOp().Set(Gf.Vec3d(float(cx), float(cy), float(spec["ortho"].get("z", 30.0))))
+            product = rep.create.render_product(path, (width, height))
+        else:
+            cam = rep.create.camera(
+                position=tuple(float(v) for v in spec["position"]),
+                look_at=tuple(float(v) for v in spec["look_at"]),
+                focal_length=float(spec.get("focal_length", 24.0)),
+            )
+            product = rep.create.render_product(cam, (width, height))
+        annotator = rep.AnnotatorRegistry.get_annotator("rgb")
+        annotator.attach(product)
+        return product, annotator
+
+    def maybe_capture(self, sim_time: float, snapshot=None) -> None:
         if sim_time + 1e-9 < self.next_time:
             return
-        data = self.annotator.get_data()
-        if data is None or np.asarray(data).size == 0:
-            return
-        frame = np.array(np.asarray(data)[..., :3], copy=True)
-        self._queue.put((self.count, sim_time, frame))
+        frames = []
+        for out, (_product, annotator) in self.views:
+            data = annotator.get_data()
+            if data is None or np.asarray(data).size == 0:
+                return
+            frames.append((out, np.array(np.asarray(data)[..., :3], copy=True)))
+        for out, frame in frames:
+            self._queue.put((out, self.count, sim_time, frame))
+        if snapshot is not None:
+            if self._log is None:
+                self._log = open(self.out_dir / "frames.jsonl", "a")
+            try:
+                extra = snapshot()
+            except Exception as exc:  # a broken overlay log must never stop a trial
+                extra = {"error": str(exc)}
+            self._log.write(json.dumps({"index": self.count, "sim_time": round(sim_time, 4),
+                                        "t": round(sim_time - self.trial_start, 4), **extra}) + "\n")
+            self._log.flush()
         self.count += 1
         # Stay on the grid rather than drifting by whatever step the
         # capture happened to land on.
@@ -117,14 +180,15 @@ class FrameRecorder:
         except TypeError:
             font = ImageFont.load_default()
         while True:
-            index, sim_time, frame = self._queue.get()
+            out, index, sim_time, frame = self._queue.get()
             image = Image.fromarray(frame)
-            draw = ImageDraw.Draw(image)
-            text = f"{self.label}   t = {sim_time - self.trial_start:6.1f} s"
-            draw.rectangle((10, 10, 20 + draw.textlength(text, font=font), 52),
-                           fill=(0, 0, 0))
-            draw.text((16, 14), text, fill=(255, 255, 255), font=font)
-            image.save(self.out_dir / f"frame_{index:05d}.jpg", quality=self.quality)
+            if self.draw_label:
+                draw = ImageDraw.Draw(image)
+                text = f"{self.label}   t = {sim_time - self.trial_start:6.1f} s"
+                draw.rectangle((10, 10, 20 + draw.textlength(text, font=font), 52),
+                               fill=(0, 0, 0))
+                draw.text((16, 14), text, fill=(255, 255, 255), font=font)
+            image.save(out / f"frame_{index:05d}.jpg", quality=self.quality)
             self._queue.task_done()
 
     def flush(self) -> None:

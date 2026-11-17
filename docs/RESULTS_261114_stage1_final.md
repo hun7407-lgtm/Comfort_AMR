@@ -154,6 +154,30 @@ Stage 3는 이 파일을 읽기만 한다:
 - buffer 0, W 2.0, e 0.81은 첫 캡처 실행에서 gate hold, 재촬영에서 통과였다. buffer 0의 gate 경계 스침이 실행마다 다르기 때문이다. 각 이미지에는 그 실행의 판정을 표기했다.
 - PNG와 동영상은 기존 `.gitignore` 규칙(`results/**/*.png`, `*.mp4`)에 따라 로컬에만 있다. 예외로 인덱스의 **추천 TOP 10** PNG는 커밋했다(약 24 MB). 재생성 방법은 인덱스 상단에 있다.
 
+## 9. 논문/발표용 동작 영상 (demonstration, 측정 아님)
+
+[`results/videos/paper_261114/VIDEO_INDEX.md`](../results/videos/paper_261114/VIDEO_INDEX.md) — 영상 목록은 인덱스 참고.
+
+- Stage 1에서 동결한 내비게이션 설정(buffer 0.10 m, B2와 B3-O에 같은 안전층·collision monitor·Nav2)을 기존 cross 시나리오(사람 8, AMR 1/2/3)에 적용한 **demonstration**이다. Stage 3 main 결과가 아니다.
+- Comfort 크기는 기존 diagnostic 쌍(Static r 1.20 / B3-O target 1.20)을 그대로 썼다. Dynamic Selection이 아니다.
+- demo run 8회를 `results/videos/paper_261114/demo_runs`에 따로 저장했다. results batch가 아니다.
+- 카메라 5개(CAM01–05, `configs/captures/paper_261114/video/cameras.yaml`)로 같은 시뮬레이션을 동시에 녹화했다. 15 fps로 찍어 30 fps로 변환했다.
+- **seed 2** (buffer 0.10): B2는 COMFORT_GATE_HOLD, B3-O는 SUCCESS였다. 기존 buffer 0 diagnostic과 같은 패턴이다.
+- **seed 3** (buffer 0.10): 둘 다 SUCCESS였다. buffer 0 diagnostic에서는 B2가 hold였다. 영상과 인덱스에는 각 실행의 실제 판정을 표기했다.
+- **실패 영상:**
+  - COMFORT_GATE_HOLD, PROTECTIVE_STOP: 기록된 판정이 있는 실행만 썼다.
+  - POST_EVADE_STALL, NAV2_FAILURE: size-sweep 실패 trial을 재녹화했지만 둘 다 SUCCESS로 재현되지 않아 쓰지 않았다.
+  - ROBOT_ROBOT_DEADLOCK: 만들지 않았다.
+- **위에서 본 뷰(top view):** 모든 시나리오에 고정 정사영 top view(CAM01_TOP)가 있다(`top/`).
+  - cross demo run은 처음부터 CAM01_TOP으로 녹화했다.
+  - 원래 원근 카메라 하나로만 녹화한 corridor capture run(W 2.2 e 0.42/1.02/1.07, W 2.0 e 0.81 buffer 0/0.10/0.35)과 buffer 0 cross diagnostic 쌍은 같은 condition·base 파일에 top 카메라만 붙여 `results/videos/paper_261114/top_runs`에서 다시 녹화했다(capture run이며 results batch가 아니다).
+  - 재녹화의 판정은 그 실행 자체의 것이다. 캡션에는 그 실행의 판정을 표기했다. 앞선 capture run과 다를 수 있다(예: W 2.2 e 1.07은 재녹화에서 SUCCESS).
+- MP4(약 1.8 GB)는 `.gitignore` 규칙에 따라 로컬에만 있다. 인덱스, pose log, demo trial 기록은 커밋했다.
+- 부수 변경:
+  - `isaac_sim/utils/recorder.py`: 추가 카메라(정사영 포함), 라벨 끄기, 프레임별 pose log 옵션. 기본값에서는 동작이 바뀌지 않는다.
+  - `scripts/run_scenario.sh`: 설정된 fps로 인코딩한다.
+  - `scripts/costmap_recorder.py`: 화면 표기를 AMR 1/2/3으로 바꿨다. 내부 ID는 그대로다.
+
 기존 폴더(`261112_stage1_size_sweep`, `261114_stage1a`, `261114_stage1a_nobuf`, `261114_diag_nobuffer_cross`)는 수정하지 않았다.
 
 > 모든 경계값은 이 내비게이션 스택의 공학적 경계이며 comfort distance가 아니다.

@@ -24,6 +24,7 @@ while [ $# -gt 0 ]; do
         --root) ROOT="$2"; shift 2 ;;
         --only) ONLY="$2"; shift 2 ;;
         --match) MATCH="$2"; shift 2 ;;     # runs: only tags matching this regex
+        --limit) LIMIT_S="$2"; shift 2 ;;   # runs: wall-clock limit per run (s)
         -h|--help) sed -n '2,16p' "$0"; exit 0 ;;
         *) echo "[ERROR] unknown option $1" >&2; exit 2 ;;
     esac

@@ -1,0 +1,8 @@
+# scenario-overlay capture-config tag  (demo runs, not measurements)
+configs/captures/paper_261114/video/demo_b3o_r1.20_buf010.yaml configs/captures/paper_261114/video/rec_s2_overlay.yaml CROSS_seed002_B3O_overlay
+configs/captures/paper_261114/video/demo_b3o_r1.20_buf010.yaml configs/captures/paper_261114/video/rec_s2_clean.yaml CROSS_seed002_B3O_clean
+configs/captures/paper_261114/video/demo_b2_static_r1.20_buf010.yaml configs/captures/paper_261114/video/rec_s2_overlay.yaml CROSS_seed002_B2_overlay
+configs/captures/paper_261114/video/demo_b3o_r1.20_buf010.yaml configs/captures/paper_261114/video/rec_s3_overlay.yaml CROSS_seed003_B3O_overlay
+configs/captures/paper_261114/video/demo_b2_static_r1.20_buf010.yaml configs/captures/paper_261114/video/rec_s3_overlay.yaml CROSS_seed003_B2_overlay
+configs/stage1/b3o_r1.40.yaml configs/captures/paper_261114/video/rec_fail_s5.yaml FAILREPLAY_seed005_POST_EVADE_STALL
+configs/stage1/b3o_r0.80.yaml configs/captures/paper_261114/video/rec_fail_s3.yaml FAILREPLAY_seed003_NAV2_FAILURE
