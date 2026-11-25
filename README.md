@@ -4,7 +4,11 @@
 
 Isaac Sim 5.1과 ROS 2 Jazzy 기반의 실험 환경입니다.
 
-> **최신 결과 진입점:** [`docs/RESULTS_261114_stage1_final.md`](docs/RESULTS_261114_stage1_final.md) — 최종 buffer(0.10 m),
+> **AI 에이전트 / 처음 읽는 사람:** [`AGENTS.md`](AGENTS.md) — 현재 상태, 읽는 순서, 코드 지도, 지켜야 할 규칙.
+> **최종 실험 (2026-11-25, Stage 1–3):** [`docs/FINAL_261125_PLAN.md`](docs/FINAL_261125_PLAN.md),
+> 결과 [`results/batches/261125_final_stage1/analysis/STAGE1_REPORT.md`](results/batches/261125_final_stage1/analysis/STAGE1_REPORT.md).
+>
+> 이전 결과 진입점: [`docs/RESULTS_261114_stage1_final.md`](docs/RESULTS_261114_stage1_final.md) — 최종 buffer(0.10 m),
 > Stage 1 최종, 동결된 내비게이션 요구사항, Stage 2/3 준비 상태, 남은 사용자 작업.
 > 이전(같은 날 오전, buffer 미결정): [`docs/RESULTS_261114.md`](docs/RESULTS_261114.md). 설계 전체는 [`docs/STAGES.md`](docs/STAGES.md).
 
