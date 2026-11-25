@@ -1,0 +1,22 @@
+{
+ "trial_id": "smoke_s012_B1",
+ "seed": 12,
+ "condition": "configs/final/conditions/B1.yaml",
+ "config": "configs/final/seeds/s12.yaml",
+ "commit": "2e9b903",
+ "result": "DEADLOCK",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 348,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 348,
+ "finished": "2026-11-25T00:44:54"
+}

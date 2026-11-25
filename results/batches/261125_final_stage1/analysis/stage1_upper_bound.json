@@ -1,0 +1,1611 @@
+{
+ "source": "results/batches/261125_final_stage1",
+ "partial": true,
+ "decision": {
+  "transition_size_m": 1.0,
+  "R_nav_upper_m": 0.8,
+  "fine_interval": [
+   0.8,
+   1.0
+  ],
+  "rule": "transition = first size with comfort-induced deadlock rate > 5 % (5/100; 1/30 at 30 seeds); R_nav_upper = largest size with comfort-induced deadlock rate <= 5 % and system success >= same-seed B1 - 5 %p",
+  "sizes_tested": [
+   0.8,
+   1.0,
+   1.2,
+   1.4,
+   1.6
+  ]
+ },
+ "conditions": {
+  "B1": {
+   "condition": "B1",
+   "size_m": null,
+   "n": 30,
+   "system_success": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 0,
+    "n": 20,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1611
+    ]
+   },
+   "all_cause_failure": {
+    "count": 10,
+    "n": 30,
+    "rate": 0.3333,
+    "ci95": [
+     0.1923,
+     0.5122
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 25,
+     "n": 30,
+     "rate": 0.8333,
+     "ci95": [
+      0.6644,
+      0.9266
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 25,
+     "n": 30,
+     "rate": 0.8333,
+     "ci95": [
+      0.6644,
+      0.9266
+     ]
+    }
+   },
+   "classes": {
+    "SUCCESS": 78,
+    "HUMAN_MOTION_BLOCK": 2,
+    "NAV2_ABORT": 6,
+    "PROTECTIVE_STOP": 2,
+    "NORMAL_YIELD": 2
+   },
+   "amr1_travel_time_success_median_s": 41.53,
+   "amr1_path_length_success_median_m": 26.55,
+   "hold_s_per_trial_median": 0.93,
+   "amr1_gate_yield_s_median": 0.0,
+   "min_human_amr_m_median": 0.221,
+   "overlap_max_m2_median": null,
+   "overlap_s_median": 0.0,
+   "corridor_intrusion_mean_m2_median": null,
+   "residual_width_min_m_median": null,
+   "replans_per_trial_mean": 0.7,
+   "protective_stop_trials": {
+    "count": 2,
+    "n": 30,
+    "rate": 0.0667,
+    "ci95": [
+     0.0185,
+     0.2132
+    ]
+   }
+  },
+  "B2_r080": {
+   "condition": "B2_r080",
+   "size_m": 0.8,
+   "n": 29,
+   "system_success": {
+    "count": 27,
+    "n": 29,
+    "rate": 0.931,
+    "ci95": [
+     0.7804,
+     0.9809
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 1,
+    "n": 29,
+    "rate": 0.0345,
+    "ci95": [
+     0.0061,
+     0.1718
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 0,
+    "n": 19,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1682
+    ]
+   },
+   "all_cause_failure": {
+    "count": 2,
+    "n": 29,
+    "rate": 0.069,
+    "ci95": [
+     0.0191,
+     0.2196
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 19,
+    "n": 29,
+    "rate": 0.6552,
+    "ci95": [
+     0.4734,
+     0.8006
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 29,
+     "n": 29,
+     "rate": 1.0,
+     "ci95": [
+      0.883,
+      1.0
+     ]
+    },
+    "a1": {
+     "count": 29,
+     "n": 29,
+     "rate": 1.0,
+     "ci95": [
+      0.883,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 27,
+     "n": 29,
+     "rate": 0.931,
+     "ci95": [
+      0.7804,
+      0.9809
+     ]
+    }
+   },
+   "classes": {
+    "SUCCESS": 63,
+    "UNKNOWN": 1,
+    "NORMAL_YIELD": 22,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 1
+   },
+   "amr1_travel_time_success_median_s": 41.32,
+   "amr1_path_length_success_median_m": 26.61,
+   "hold_s_per_trial_median": 1.82,
+   "amr1_gate_yield_s_median": 0.0,
+   "min_human_amr_m_median": 0.232,
+   "overlap_max_m2_median": 0.483,
+   "overlap_s_median": 4.0,
+   "corridor_intrusion_mean_m2_median": 5.109,
+   "residual_width_min_m_median": 1.15,
+   "replans_per_trial_mean": 1.828,
+   "protective_stop_trials": {
+    "count": 0,
+    "n": 29,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.117
+    ]
+   }
+  },
+  "B2_r100": {
+   "condition": "B2_r100",
+   "size_m": 1.0,
+   "n": 30,
+   "system_success": {
+    "count": 24,
+    "n": 30,
+    "rate": 0.8,
+    "ci95": [
+     0.6269,
+     0.905
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 4,
+    "n": 30,
+    "rate": 0.1333,
+    "ci95": [
+     0.0531,
+     0.2968
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 3,
+    "n": 20,
+    "rate": 0.15,
+    "ci95": [
+     0.0524,
+     0.3604
+    ]
+   },
+   "all_cause_failure": {
+    "count": 6,
+    "n": 30,
+    "rate": 0.2,
+    "ci95": [
+     0.095,
+     0.3731
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a2": {
+     "count": 25,
+     "n": 30,
+     "rate": 0.8333,
+     "ci95": [
+      0.6644,
+      0.9266
+     ]
+    }
+   },
+   "classes": {
+    "SUCCESS": 59,
+    "NORMAL_YIELD": 24,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 4,
+    "PROTECTIVE_STOP": 3
+   },
+   "amr1_travel_time_success_median_s": 41.55,
+   "amr1_path_length_success_median_m": 26.77,
+   "hold_s_per_trial_median": 2.52,
+   "amr1_gate_yield_s_median": 0.0,
+   "min_human_amr_m_median": 0.236,
+   "overlap_max_m2_median": 1.177,
+   "overlap_s_median": 6.1,
+   "corridor_intrusion_mean_m2_median": 8.892,
+   "residual_width_min_m_median": 0.95,
+   "replans_per_trial_mean": 2.333,
+   "protective_stop_trials": {
+    "count": 3,
+    "n": 30,
+    "rate": 0.1,
+    "ci95": [
+     0.0346,
+     0.2562
+    ]
+   }
+  },
+  "B2_r120": {
+   "condition": "B2_r120",
+   "size_m": 1.2,
+   "n": 30,
+   "system_success": {
+    "count": 21,
+    "n": 30,
+    "rate": 0.7,
+    "ci95": [
+     0.5212,
+     0.8334
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 6,
+    "n": 30,
+    "rate": 0.2,
+    "ci95": [
+     0.095,
+     0.3731
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 5,
+    "n": 20,
+    "rate": 0.25,
+    "ci95": [
+     0.1119,
+     0.4687
+    ]
+   },
+   "all_cause_failure": {
+    "count": 9,
+    "n": 30,
+    "rate": 0.3,
+    "ci95": [
+     0.1666,
+     0.4788
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a1": {
+     "count": 28,
+     "n": 30,
+     "rate": 0.9333,
+     "ci95": [
+      0.7868,
+      0.9815
+     ]
+    },
+    "a2": {
+     "count": 23,
+     "n": 30,
+     "rate": 0.7667,
+     "ci95": [
+      0.5907,
+      0.8821
+     ]
+    }
+   },
+   "classes": {
+    "SUCCESS": 51,
+    "NORMAL_YIELD": 29,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 5,
+    "PERSISTENT_COMFORT_HOLD": 1,
+    "NAV2_ABORT": 2,
+    "UNKNOWN": 2
+   },
+   "amr1_travel_time_success_median_s": 42.23,
+   "amr1_path_length_success_median_m": 27.0,
+   "hold_s_per_trial_median": 3.355,
+   "amr1_gate_yield_s_median": 0.7,
+   "min_human_amr_m_median": 0.226,
+   "overlap_max_m2_median": 2.273,
+   "overlap_s_median": 7.1,
+   "corridor_intrusion_mean_m2_median": 13.995,
+   "residual_width_min_m_median": 0.75,
+   "replans_per_trial_mean": 3.0,
+   "protective_stop_trials": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   }
+  },
+  "B2_r140": {
+   "condition": "B2_r140",
+   "size_m": 1.4,
+   "n": 30,
+   "system_success": {
+    "count": 10,
+    "n": 30,
+    "rate": 0.3333,
+    "ci95": [
+     0.1923,
+     0.5122
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 16,
+    "n": 30,
+    "rate": 0.5333,
+    "ci95": [
+     0.3614,
+     0.6977
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 13,
+    "n": 20,
+    "rate": 0.65,
+    "ci95": [
+     0.4329,
+     0.8188
+    ]
+   },
+   "all_cause_failure": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 14,
+     "n": 30,
+     "rate": 0.4667,
+     "ci95": [
+      0.3023,
+      0.6386
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 21,
+     "n": 30,
+     "rate": 0.7,
+     "ci95": [
+      0.5212,
+      0.8334
+     ]
+    }
+   },
+   "classes": {
+    "SINGLE_HUMAN_COMFORT_BLOCK": 19,
+    "SUCCESS": 40,
+    "NORMAL_YIELD": 25,
+    "HUMAN_MOTION_BLOCK": 5,
+    "NAV2_ABORT": 1
+   },
+   "amr1_travel_time_success_median_s": 44.64,
+   "amr1_path_length_success_median_m": 27.19,
+   "hold_s_per_trial_median": 18.945,
+   "amr1_gate_yield_s_median": 15.29,
+   "min_human_amr_m_median": 0.238,
+   "overlap_max_m2_median": 3.534,
+   "overlap_s_median": 8.1,
+   "corridor_intrusion_mean_m2_median": 20.361,
+   "residual_width_min_m_median": 0.55,
+   "replans_per_trial_mean": 4.267,
+   "protective_stop_trials": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   }
+  },
+  "B2_r160": {
+   "condition": "B2_r160",
+   "size_m": 1.6,
+   "n": 30,
+   "system_success": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 29,
+    "n": 30,
+    "rate": 0.9667,
+    "ci95": [
+     0.8333,
+     0.9941
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 19,
+    "n": 20,
+    "rate": 0.95,
+    "ci95": [
+     0.7639,
+     0.9911
+    ]
+   },
+   "all_cause_failure": {
+    "count": 30,
+    "n": 30,
+    "rate": 1.0,
+    "ci95": [
+     0.8865,
+     1.0
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 0,
+     "n": 30,
+     "rate": 0.0,
+     "ci95": [
+      0.0,
+      0.1135
+     ]
+    },
+    "a1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a2": {
+     "count": 13,
+     "n": 30,
+     "rate": 0.4333,
+     "ci95": [
+      0.2738,
+      0.608
+     ]
+    }
+   },
+   "classes": {
+    "COMFORT_OVERLAP_BLOCK": 11,
+    "NORMAL_YIELD": 39,
+    "SUCCESS": 1,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 29,
+    "HUMAN_MOTION_BLOCK": 4,
+    "TEMPORARY_HOLD": 2,
+    "PERSISTENT_COMFORT_HOLD": 3,
+    "PROTECTIVE_STOP": 1
+   },
+   "amr1_travel_time_success_median_s": null,
+   "amr1_path_length_success_median_m": null,
+   "hold_s_per_trial_median": 45.96,
+   "amr1_gate_yield_s_median": 30.08,
+   "min_human_amr_m_median": 0.239,
+   "overlap_max_m2_median": 4.885,
+   "overlap_s_median": 10.1,
+   "corridor_intrusion_mean_m2_median": 27.401,
+   "residual_width_min_m_median": 0.325,
+   "replans_per_trial_mean": 13.267,
+   "protective_stop_trials": {
+    "count": 1,
+    "n": 30,
+    "rate": 0.0333,
+    "ci95": [
+     0.0059,
+     0.1667
+    ]
+   }
+  }
+ },
+ "paired_seed_classes": {
+  "1": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "UNKNOWN"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "SUCCESS"
+   ]
+  },
+  "2": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "3": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "4": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "NAV2_ABORT"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SUCCESS",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "5": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "PROTECTIVE_STOP"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "PROTECTIVE_STOP",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "6": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "7": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "HUMAN_MOTION_BLOCK"
+   ]
+  },
+  "8": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "9": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "10": {
+   "B1": [
+    "NAV2_ABORT",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "TEMPORARY_HOLD",
+    "COMFORT_OVERLAP_BLOCK"
+   ]
+  },
+  "11": {
+   "B1": [
+    "NAV2_ABORT",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r160": [
+    "PERSISTENT_COMFORT_HOLD",
+    "NORMAL_YIELD",
+    "HUMAN_MOTION_BLOCK"
+   ]
+  },
+  "12": {
+   "B1": [
+    "NAV2_ABORT",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "PERSISTENT_COMFORT_HOLD",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "13": {
+   "B1": [
+    "NAV2_ABORT",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "14": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r160": [
+    "PERSISTENT_COMFORT_HOLD",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "15": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "16": {
+   "B1": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r120": [
+    "PERSISTENT_COMFORT_HOLD",
+    "SUCCESS",
+    "NAV2_ABORT"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "17": {
+   "B1": [
+    "NAV2_ABORT",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "18": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "19": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "UNKNOWN",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NAV2_ABORT"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "20": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r140": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "21": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "UNKNOWN",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "22": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "23": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "PROTECTIVE_STOP"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "PROTECTIVE_STOP"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "24": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "25": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "PROTECTIVE_STOP"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ]
+  },
+  "26": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r160": [
+    "PROTECTIVE_STOP",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "27": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NAV2_ABORT"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "HUMAN_MOTION_BLOCK"
+   ]
+  },
+  "28": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "29": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r160": [
+    "COMFORT_OVERLAP_BLOCK",
+    "NORMAL_YIELD",
+    "NORMAL_YIELD"
+   ]
+  },
+  "30": {
+   "B1": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r080": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r100": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r120": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r140": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r160": [
+    "SINGLE_HUMAN_COMFORT_BLOCK",
+    "TEMPORARY_HOLD",
+    "HUMAN_MOTION_BLOCK"
+   ]
+  }
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "trial_id": "s017_B1",
+ "seed": 17,
+ "condition": "configs/final/conditions/B1.yaml",
+ "config": "configs/final/seeds/s17.yaml",
+ "commit": "2e9b903",
+ "result": "DEADLOCK",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 335,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 199,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 534,
+ "finished": "2026-11-25T09:56:15"
+}

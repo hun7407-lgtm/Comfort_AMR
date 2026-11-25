@@ -1,0 +1,27 @@
+{
+ "trial_id": "s014_B2_r140",
+ "seed": 14,
+ "condition": "configs/final/conditions/B2_r140.yaml",
+ "config": "configs/final/seeds/s14.yaml",
+ "commit": "2e9b903",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 234,
+   "infra_failure": "did not activate"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 254,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 488,
+ "finished": "2026-11-25T08:37:12"
+}

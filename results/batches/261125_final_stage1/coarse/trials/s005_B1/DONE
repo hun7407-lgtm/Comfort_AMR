@@ -1,0 +1,22 @@
+{
+ "trial_id": "s005_B1",
+ "seed": 5,
+ "condition": "configs/final/conditions/B1.yaml",
+ "config": "configs/final/seeds/s5.yaml",
+ "commit": "2e9b903",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 384,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 384,
+ "finished": "2026-11-25T04:01:48"
+}

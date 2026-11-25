@@ -1,0 +1,27 @@
+{
+ "trial_id": "s001_B2_r080",
+ "seed": 1,
+ "condition": "configs/final/conditions/B2_r080.yaml",
+ "config": "configs/final/seeds/s1.yaml",
+ "commit": "2e9b903",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 366,
+   "infra_failure": "did not come up"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 1099,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 1465,
+ "finished": "2026-11-25T01:21:41"
+}

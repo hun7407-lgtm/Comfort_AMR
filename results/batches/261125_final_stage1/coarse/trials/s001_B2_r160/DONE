@@ -1,0 +1,32 @@
+{
+ "trial_id": "s001_B2_r160",
+ "seed": 1,
+ "condition": "configs/final/conditions/B2_r160.yaml",
+ "config": "configs/final/seeds/s1.yaml",
+ "commit": "2e9b903",
+ "result": "DEADLOCK",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 235,
+   "infra_failure": "did not activate"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 234,
+   "infra_failure": "did not activate"
+  },
+  {
+   "attempt": 3,
+   "wall_s": 226,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 696,
+ "finished": "2026-11-25T02:14:02"
+}

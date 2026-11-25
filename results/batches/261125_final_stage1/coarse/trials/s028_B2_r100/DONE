@@ -1,0 +1,22 @@
+{
+ "trial_id": "s028_B2_r100",
+ "seed": 28,
+ "condition": "configs/final/conditions/B2_r100.yaml",
+ "config": "configs/final/seeds/s28.yaml",
+ "commit": "2e9b903",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 252,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 252,
+ "finished": "2026-11-25T16:08:21"
+}

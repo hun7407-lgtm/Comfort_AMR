@@ -1,0 +1,22 @@
+{
+ "trial_id": "s016_B2_r160",
+ "seed": 16,
+ "condition": "configs/final/conditions/B2_r160.yaml",
+ "config": "configs/final/seeds/s16.yaml",
+ "commit": "2e9b903",
+ "result": "DEADLOCK",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 394,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 394,
+ "finished": "2026-11-25T09:47:21"
+}

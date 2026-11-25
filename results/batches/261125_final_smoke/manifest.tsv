@@ -1,0 +1,8 @@
+# smoke: pipeline check
+# trial_id	seed	condition	config
+smoke_s002_B1	2	configs/final/conditions/B1.yaml	configs/final/seeds/s2.yaml
+smoke_s002_B2_r120	2	configs/final/conditions/B2_r120.yaml	configs/final/seeds/s2.yaml
+smoke_s005_B1	5	configs/final/conditions/B1.yaml	configs/final/seeds/s5.yaml
+smoke_s005_B2_r120	5	configs/final/conditions/B2_r120.yaml	configs/final/seeds/s5.yaml
+smoke_s012_B1	12	configs/final/conditions/B1.yaml	configs/final/seeds/s12.yaml
+smoke_s012_B2_r120	12	configs/final/conditions/B2_r120.yaml	configs/final/seeds/s12.yaml

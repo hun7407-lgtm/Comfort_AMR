@@ -90,3 +90,17 @@ CSV의 `config` 열은 **실행 당시 경로**입니다. 261105–261106 행의
 | `261114_stage1a_buf10` | Stage 1, 사전등록 buffer 후보 **0.10 m**: scan 27, refine 28, 1a2 27, 1b 36, lowe 18 (136), REPORT.md — **선택됨** |
 | `261114_stage1a_buf15` | Stage 1, 사전등록 buffer 후보 0.15 m: 동일 구성 136, REPORT.md — B·D 기준 탈락 |
 | `261114_stage1a_final` | Stage 1 최종 판정: `SELECTION.md`, `buffer_selection.json`, `r_nav_safe.json` (새 trial 없음) |
+
+## 2026-11-25 최종 Stage 1–3 배치 (`docs/FINAL_261125_PLAN.md`)
+
+seed별 trial 폴더 `trials/<trial_id>/` (DONE, trials.csv, fleet_trials.csv, trial JSON). 원본 스트림(`trial_log.jsonl`, `*_frames.jsonl`)과 영상은 커밋하지 않습니다 (`.gitignore`). 지표는 `analysis/trials/<trial_id>.json`(= `comfort_core/final_metrics.py` 결과)에서 읽습니다.
+
+| 폴더 | 내용 |
+|---|---|
+| `261125_final_smoke` | 파이프라인 확인: seed 2/5/12 × B1 / B2 1.20 (6 trial) |
+| `261125_final_stage1/coarse` | Stage 1 coarse: B1 + B2 0.80/1.00/1.20/1.40/1.60 × seed 1–30 (180 trial, 사용자 결정으로 100→30 축소) |
+| `261125_final_stage1/fine` | Stage 1 fine: B2 0.85/0.90/0.95 × seed 1–30 (진행 중) |
+| `261125_final_stage1/analysis` | `STAGE1_REPORT.md`, `stage1_upper_bound.json`, figures, trial별 분석 캐시 |
+| `261125_final_stage2_proxy` | Stage 2 Simulation-derived Provisional Lower Bound (Stage 1 이후 생성) |
+| `261125_final_stage3` | Stage 3 holdout seed 101–130: main(B1/B2/B3-O MID), sensitivity(LOWER/UPPER) (Stage 2 이후 생성) |
+| `261125_final_pipeline.log` | 파이프라인 단계 기록 (커밋 안 함, `*.log`) |

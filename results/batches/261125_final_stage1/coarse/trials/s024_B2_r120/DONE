@@ -1,0 +1,22 @@
+{
+ "trial_id": "s024_B2_r120",
+ "seed": 24,
+ "condition": "configs/final/conditions/B2_r120.yaml",
+ "config": "configs/final/seeds/s24.yaml",
+ "commit": "2e9b903",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 246,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 246,
+ "finished": "2026-11-25T13:53:46"
+}

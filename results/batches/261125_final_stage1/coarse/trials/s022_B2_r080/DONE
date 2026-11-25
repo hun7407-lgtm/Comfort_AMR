@@ -1,0 +1,29 @@
+{
+ "trial_id": "s022_B2_r080",
+ "seed": 22,
+ "condition": "configs/final/conditions/B2_r080.yaml",
+ "config": "configs/final/seeds/s22.yaml",
+ "commit": "2e9b903",
+ "result": null,
+ "infra_failure": "simulation stopped (no odometry)",
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 359,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 364,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 3,
+   "wall_s": 359,
+   "infra_failure": "simulation stopped (no odometry)"
+  }
+ ],
+ "wall_s": 1082,
+ "finished": "2026-11-25T12:38:17"
+}
