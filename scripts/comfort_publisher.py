@@ -27,6 +27,7 @@ is scripts/comfort_gate.py, which is a separate policy decision.
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import sys
 from pathlib import Path
@@ -39,7 +40,7 @@ import rclpy
 import yaml
 from nav2_msgs.msg import CostmapFilterInfo
 from nav_msgs.msg import OccupancyGrid
-from std_msgs.msg import Bool, Float32MultiArray, MultiArrayDimension
+from std_msgs.msg import Bool, Float32MultiArray, MultiArrayDimension, String
 from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
 
@@ -147,6 +148,7 @@ class ComfortPublisher(Node):
         # trying to measure. The trial holds its no-progress timer while
         # this is true.
         self.moving_pub = self.create_publisher(Bool, "/comfort_humans_moving", 10)
+        self.state_log_pub = self.create_publisher(String, "/comfort_state_log", 10)
         self.info_pub = self.create_publisher(CostmapFilterInfo, info_topic, LATCHED)
 
         info = CostmapFilterInfo()
@@ -303,6 +305,7 @@ class ComfortPublisher(Node):
                                  self.get_clock().now().nanoseconds * 1e-9)
         declared = self.provider.states()
         observed = self.tracker.observed_states(declared, self.speed_threshold)
+        self._declared, self._observed = dict(declared), dict(observed)
         if observed != self._reported_states:
             changed = {k: v for k, v in observed.items()
                        if self._reported_states.get(k) != v}
@@ -384,11 +387,41 @@ class ComfortPublisher(Node):
         msg.data = flat
         self.circle_pub.publish(msg)
 
+    def publish_state_log(self, shapes) -> None:
+        """Every person's state and Comfort Space, for the trial log.
+
+        One JSON object on /comfort_state_log per mask update:
+        {key: {s: declared state, o: observed state, x, y, h: heading,
+        v: speed, F/S/R: front/side/rear extent of the person's OWN space
+        (the planner's copy minus the robot half-width), off}}. Read by
+        scripts/trial_logger.py; nothing in the control loop uses it.
+        """
+        grow = robot_grow(self.cfg)
+        speeds = self.tracker.speeds()
+        by_key = {sh.key: sh for sh in shapes}
+        out = {}
+        for key, (x, y) in self.tracker.positions().items():
+            row = {"s": getattr(self, "_declared", {}).get(key),
+                   "o": getattr(self, "_observed", {}).get(key),
+                   "x": round(float(x), 3), "y": round(float(y), 3),
+                   "v": round(float(speeds.get(key, 0.0)), 3)}
+            sh = by_key.get(key)
+            if sh is not None:
+                f, sd, r = sh.extents
+                row.update({"h": round(float(sh.heading), 4),
+                            "F": round(max(f - grow, 0.0), 3), "S": round(max(sd - grow, 0.0), 3),
+                            "R": round(max(r - grow, 0.0), 3)})
+            out[key] = row
+        msg = String()
+        msg.data = json.dumps(out, separators=(",", ":"))
+        self.state_log_pub.publish(msg)
+
     def publish_mask(self) -> None:
         shapes = self.current_shapes()
         grid = self.build_mask()
         self.mask_pub.publish(grid)
         self.publish_shapes(shapes)
+        self.publish_state_log(shapes)
         self.warn_if_mute(shapes)
 
         speeds = self.tracker.speeds()

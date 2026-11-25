@@ -38,6 +38,7 @@ PATTERNS=(
     # configured, and B3 looked like it deadlocked.
     "scripts/comfort_[g]ate.py"
     "scripts/comfort_[p]ublisher.py"
+    "scripts/trial_[l]ogger.py"
     # The person detector, for the same reason and worse. It survived
     # every teardown and each trial left one behind: five of them were
     # found running after a batch, 90% of a core each, five hours old.

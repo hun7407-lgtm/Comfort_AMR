@@ -214,7 +214,8 @@ def _pose_snapshot(cfg, fleet):
         out = {"amr": {}, "people": {}}
         ego = _pose_of(chassis) if chassis else None
         if ego is not None:
-            out["amr"]["AMR1"] = {"x": round(ego[0], 3), "y": round(ego[1], 3)}
+            out["amr"]["AMR1"] = {"x": round(ego[0], 3), "y": round(ego[1], 3),
+                                  "yaw": round(float(ego[2]), 3) if len(ego) > 2 else None}
         for m in getattr(fleet, "members", []):
             job = m.jobs[m.job] if getattr(m, "jobs", None) else None
             place = getattr(getattr(m, "roadmap", None), "places", {}).get(str(job)) if job else None

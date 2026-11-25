@@ -100,6 +100,8 @@ sys.path.insert(0, '.')
 from comfort_core import load_config
 print(load_config(common_path='$CONFIG_PATH')['recording'].get('version', 'unversioned'))")"
 VIDEO_DIR="$PROJECT_ROOT/results/videos/$VERSION/$SCENARIO_DIR/$CONDITION"
+# A batch runner may put the recording beside the trial it belongs to.
+[ -n "${TRIAL_VIDEO_DIR:-}" ] && VIDEO_DIR="$TRIAL_VIDEO_DIR"
 VIDEO_NAME="${STAMP}_camera"
 COSTMAP_NAME="${STAMP}_costmap"
 COSTMAP_FPS=5
@@ -131,6 +133,9 @@ cleanup() {
             kill -0 "$FLEET_GOALS_PID" 2>/dev/null || break
             sleep 0.5
         done
+    fi
+    if [ -n "${LOGGER_PID:-}" ]; then
+        kill -TERM "$LOGGER_PID" 2>/dev/null
     fi
     if [ -n "$COSTMAP_PID" ]; then
         kill -INT "$COSTMAP_PID" 2>/dev/null
@@ -251,6 +256,18 @@ if [ "$RECORD_COSTMAP" -eq 1 ]; then
           --scenario "$SCENARIO" --out "$COSTMAP_DIR" --fps "$COSTMAP_FPS" ) \
         > "$RUN_DIR/costmap.log" 2>&1 &
     COSTMAP_PID=$!
+fi
+
+# TRIAL_LOG=<file>: the interaction / plan log of this trial
+# (scripts/trial_logger.py; listens only).
+LOGGER_PID=""
+if [ -n "${TRIAL_LOG:-}" ]; then
+    echo "[step] trial logger -> $TRIAL_LOG"
+    ( set +u; source /opt/ros/jazzy/setup.bash; set -u
+      export PYTHONPATH="$PROJECT_ROOT:${PYTHONPATH:-}" PYTHONUNBUFFERED=1
+      exec python3 scripts/trial_logger.py "${CONFIG[@]+"${CONFIG[@]}"}" \
+          --scenario "$SCENARIO" --out "$TRIAL_LOG" ) > "$RUN_DIR/trial_logger.log" 2>&1 &
+    LOGGER_PID=$!
 fi
 
 echo "[step] running the trial"

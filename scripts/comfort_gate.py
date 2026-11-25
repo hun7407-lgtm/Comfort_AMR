@@ -172,7 +172,9 @@ class ComfortGate(Node):
         self.off_lane_margin = float(off.get("margin", self._corner_overhang()))
         self.off_lane_hold = float(off.get("hold_seconds", 1.0))
         self._off_lane_since: float | None = None
-        if self.drivable:
+        # recovery.off_lane.enabled: false leaves the wheels to Nav2 alone
+        # (the final experiments run every AMR on Nav2 only).
+        if self.drivable and bool(off.get("enabled", True)):
             self.create_timer(0.1, self._recover_tick)
 
         # A heartbeat on /comfort_gate_state.
