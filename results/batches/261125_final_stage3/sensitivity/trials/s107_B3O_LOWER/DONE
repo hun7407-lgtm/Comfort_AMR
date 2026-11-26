@@ -1,0 +1,32 @@
+{
+ "trial_id": "s107_B3O_LOWER",
+ "seed": 107,
+ "condition": "configs/final/conditions/B3O_LOWER.yaml",
+ "config": "configs/final/seeds/s107.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 235,
+   "infra_failure": "did not activate"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 369,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 3,
+   "wall_s": 245,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 849,
+ "finished": "2026-11-26T09:29:22"
+}

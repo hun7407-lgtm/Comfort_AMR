@@ -1,0 +1,22 @@
+{
+ "trial_id": "s107_B3O_UPPER",
+ "seed": 107,
+ "condition": "configs/final/conditions/B3O_UPPER.yaml",
+ "config": "configs/final/seeds/s107.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 401,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 401,
+ "finished": "2026-11-26T09:36:03"
+}

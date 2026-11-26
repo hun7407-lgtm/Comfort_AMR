@@ -1,0 +1,27 @@
+{
+ "trial_id": "s107_B2_S3_r090",
+ "seed": 107,
+ "condition": "configs/final/conditions/B2_S3_r090.yaml",
+ "config": "configs/final/seeds/s107.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 238,
+   "infra_failure": "did not activate"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 244,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 481,
+ "finished": "2026-11-26T02:16:09"
+}

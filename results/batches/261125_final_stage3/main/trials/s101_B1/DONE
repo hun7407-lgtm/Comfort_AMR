@@ -1,0 +1,27 @@
+{
+ "trial_id": "s101_B1",
+ "seed": 101,
+ "condition": "configs/final/conditions/B1.yaml",
+ "config": "configs/final/seeds/s101.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 345,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 218,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 563,
+ "finished": "2026-11-26T00:47:34"
+}

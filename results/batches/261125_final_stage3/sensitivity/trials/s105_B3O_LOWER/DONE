@@ -1,0 +1,22 @@
+{
+ "trial_id": "s105_B3O_LOWER",
+ "seed": 105,
+ "condition": "configs/final/conditions/B3O_LOWER.yaml",
+ "config": "configs/final/seeds/s105.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 248,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 248,
+ "finished": "2026-11-26T08:55:11"
+}

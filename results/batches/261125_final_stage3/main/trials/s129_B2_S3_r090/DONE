@@ -1,0 +1,27 @@
+{
+ "trial_id": "s129_B2_S3_r090",
+ "seed": 129,
+ "condition": "configs/final/conditions/B2_S3_r090.yaml",
+ "config": "configs/final/seeds/s129.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 367,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 513,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 880,
+ "finished": "2026-11-26T08:01:45"
+}

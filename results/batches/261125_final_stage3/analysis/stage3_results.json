@@ -1,0 +1,745 @@
+{
+ "partial": false,
+ "selection": {
+  "R_nav_upper_m": 0.9,
+  "levels": {
+   "LOWER": {
+    "alpha": 0.0,
+    "R": {
+     "station_engaged|front": 0.9,
+     "station_engaged|side": 0.9,
+     "station_engaged|rear": 0.9,
+     "stationary|front": 0.9,
+     "stationary|side": 0.9,
+     "stationary|rear": 0.9,
+     "moving|front": 0.469,
+     "moving|side": 0.369,
+     "moving|rear": 0.469
+    }
+   },
+   "MID": {
+    "alpha": 0.5,
+    "R": {
+     "station_engaged|front": 0.9,
+     "station_engaged|side": 0.9,
+     "station_engaged|rear": 0.9,
+     "stationary|front": 0.9,
+     "stationary|side": 0.9,
+     "stationary|rear": 0.9,
+     "moving|front": 0.684,
+     "moving|side": 0.635,
+     "moving|rear": 0.684
+    }
+   },
+   "UPPER": {
+    "alpha": 1.0,
+    "R": {
+     "station_engaged|front": 0.9,
+     "station_engaged|side": 0.9,
+     "station_engaged|rear": 0.9,
+     "stationary|front": 0.9,
+     "stationary|side": 0.9,
+     "stationary|rear": 0.9,
+     "moving|front": 0.9,
+     "moving|side": 0.9,
+     "moving|rear": 0.9
+    }
+   }
+  },
+  "cells": {
+   "station_engaged|front": {
+    "R_lower": 0.9,
+    "fill": "same-state max",
+    "capped_at_upper": true
+   },
+   "station_engaged|side": {
+    "R_lower": 0.9,
+    "fill": "proxy",
+    "capped_at_upper": true
+   },
+   "station_engaged|rear": {
+    "R_lower": 0.9,
+    "fill": "proxy",
+    "capped_at_upper": true
+   },
+   "stationary|front": {
+    "R_lower": 0.9,
+    "fill": "same-state max",
+    "capped_at_upper": true
+   },
+   "stationary|side": {
+    "R_lower": 0.9,
+    "fill": "proxy",
+    "capped_at_upper": true
+   },
+   "stationary|rear": {
+    "R_lower": 0.9,
+    "fill": "same-state max",
+    "capped_at_upper": true
+   },
+   "moving|front": {
+    "R_lower": 0.469,
+    "fill": "proxy",
+    "capped_at_upper": false
+   },
+   "moving|side": {
+    "R_lower": 0.369,
+    "fill": "proxy",
+    "capped_at_upper": false
+   },
+   "moving|rear": {
+    "R_lower": 0.469,
+    "fill": "same-state max",
+    "capped_at_upper": false
+   }
+  },
+  "B2_static_m": 0.9
+ },
+ "policies": {
+  "B1": {
+   "n": 30,
+   "system_success": {
+    "count": 24,
+    "n": 30,
+    "rate": 0.8,
+    "ci95": [
+     0.6269,
+     0.905
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 27,
+     "n": 30,
+     "rate": 0.9,
+     "ci95": [
+      0.7438,
+      0.9654
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 25,
+     "n": 30,
+     "rate": 0.8333,
+     "ci95": [
+      0.6644,
+      0.9266
+     ]
+    }
+   },
+   "comfort_deadlock": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "all_failure": {
+    "count": 6,
+    "n": 30,
+    "rate": 0.2,
+    "ci95": [
+     0.095,
+     0.3731
+    ]
+   },
+   "robot_robot_deadlock": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "protective_stop_trials": {
+    "count": 21,
+    "n": 30,
+    "rate": 0.7,
+    "ci95": [
+     0.5212,
+     0.8334
+    ]
+   },
+   "contact_trials": {
+    "count": 24,
+    "n": 30,
+    "rate": 0.8,
+    "ci95": [
+     0.6269,
+     0.905
+    ]
+   },
+   "amr1_travel_median": 41.93,
+   "amr1_path_median": 26.61,
+   "yield_s_median": 0.0,
+   "hold_s_median": 0.83,
+   "replans_median": 0.0,
+   "min_human_median": 0.231,
+   "penetration_max_median": 0.0,
+   "intrusion_s_median": 0.0,
+   "overlap_m2_median": null,
+   "corridor_m2_median": null,
+   "classes": {
+    "SUCCESS": 79,
+    "PROTECTIVE_STOP": 1,
+    "NAV2_ABORT": 3,
+    "UNKNOWN": 1,
+    "NORMAL_YIELD": 3,
+    "HUMAN_MOTION_BLOCK": 3
+   }
+  },
+  "B2": {
+   "n": 30,
+   "system_success": {
+    "count": 22,
+    "n": 30,
+    "rate": 0.7333,
+    "ci95": [
+     0.5555,
+     0.8582
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 23,
+     "n": 30,
+     "rate": 0.7667,
+     "ci95": [
+      0.5907,
+      0.8821
+     ]
+    }
+   },
+   "comfort_deadlock": {
+    "count": 1,
+    "n": 30,
+    "rate": 0.0333,
+    "ci95": [
+     0.0059,
+     0.1667
+    ]
+   },
+   "all_failure": {
+    "count": 8,
+    "n": 30,
+    "rate": 0.2667,
+    "ci95": [
+     0.1418,
+     0.4445
+    ]
+   },
+   "robot_robot_deadlock": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "protective_stop_trials": {
+    "count": 8,
+    "n": 30,
+    "rate": 0.2667,
+    "ci95": [
+     0.1418,
+     0.4445
+    ]
+   },
+   "contact_trials": {
+    "count": 23,
+    "n": 30,
+    "rate": 0.7667,
+    "ci95": [
+     0.5907,
+     0.8821
+    ]
+   },
+   "amr1_travel_median": 41.3,
+   "amr1_path_median": 26.67,
+   "yield_s_median": 0.0,
+   "hold_s_median": 2.2,
+   "replans_median": 1.5,
+   "min_human_median": 0.235,
+   "penetration_max_median": 0.665,
+   "intrusion_s_median": 5.465,
+   "overlap_m2_median": 1.04,
+   "corridor_m2_median": 6.869,
+   "classes": {
+    "SUCCESS": 59,
+    "NORMAL_YIELD": 23,
+    "HUMAN_MOTION_BLOCK": 4,
+    "NAV2_ABORT": 1,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 1,
+    "UNKNOWN": 2
+   }
+  },
+  "B3-O": {
+   "n": 30,
+   "system_success": {
+    "count": 23,
+    "n": 30,
+    "rate": 0.7667,
+    "ci95": [
+     0.5907,
+     0.8821
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a1": {
+     "count": 28,
+     "n": 30,
+     "rate": 0.9333,
+     "ci95": [
+      0.7868,
+      0.9815
+     ]
+    },
+    "a2": {
+     "count": 25,
+     "n": 30,
+     "rate": 0.8333,
+     "ci95": [
+      0.6644,
+      0.9266
+     ]
+    }
+   },
+   "comfort_deadlock": {
+    "count": 1,
+    "n": 30,
+    "rate": 0.0333,
+    "ci95": [
+     0.0059,
+     0.1667
+    ]
+   },
+   "all_failure": {
+    "count": 7,
+    "n": 30,
+    "rate": 0.2333,
+    "ci95": [
+     0.1179,
+     0.4093
+    ]
+   },
+   "robot_robot_deadlock": {
+    "count": 1,
+    "n": 30,
+    "rate": 0.0333,
+    "ci95": [
+     0.0059,
+     0.1667
+    ]
+   },
+   "protective_stop_trials": {
+    "count": 10,
+    "n": 30,
+    "rate": 0.3333,
+    "ci95": [
+     0.1923,
+     0.5122
+    ]
+   },
+   "contact_trials": {
+    "count": 24,
+    "n": 30,
+    "rate": 0.8,
+    "ci95": [
+     0.6269,
+     0.905
+    ]
+   },
+   "amr1_travel_median": 41.32,
+   "amr1_path_median": 26.68,
+   "yield_s_median": 0.0,
+   "hold_s_median": 1.74,
+   "replans_median": 1.0,
+   "min_human_median": 0.22,
+   "penetration_max_median": 0.429,
+   "intrusion_s_median": 4.47,
+   "overlap_m2_median": 0.603,
+   "corridor_m2_median": 6.415,
+   "classes": {
+    "SUCCESS": 68,
+    "HUMAN_MOTION_BLOCK": 4,
+    "PROTECTIVE_STOP": 2,
+    "NORMAL_YIELD": 14,
+    "ROBOT_ROBOT_BLOCK": 1,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 1
+   }
+  },
+  "B3-O LOWER": {
+   "n": 30,
+   "system_success": {
+    "count": 28,
+    "n": 30,
+    "rate": 0.9333,
+    "ci95": [
+     0.7868,
+     0.9815
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 28,
+     "n": 30,
+     "rate": 0.9333,
+     "ci95": [
+      0.7868,
+      0.9815
+     ]
+    }
+   },
+   "comfort_deadlock": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "all_failure": {
+    "count": 2,
+    "n": 30,
+    "rate": 0.0667,
+    "ci95": [
+     0.0185,
+     0.2132
+    ]
+   },
+   "robot_robot_deadlock": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "protective_stop_trials": {
+    "count": 12,
+    "n": 30,
+    "rate": 0.4,
+    "ci95": [
+     0.2459,
+     0.5768
+    ]
+   },
+   "contact_trials": {
+    "count": 23,
+    "n": 30,
+    "rate": 0.7667,
+    "ci95": [
+     0.5907,
+     0.8821
+    ]
+   },
+   "amr1_travel_median": 41.185,
+   "amr1_path_median": 26.67,
+   "yield_s_median": 0.0,
+   "hold_s_median": 0.62,
+   "replans_median": 1.5,
+   "min_human_median": 0.228,
+   "penetration_max_median": 0.185,
+   "intrusion_s_median": 1.315,
+   "overlap_m2_median": 0.262,
+   "corridor_m2_median": 6.113,
+   "classes": {
+    "SUCCESS": 80,
+    "NORMAL_YIELD": 8,
+    "HUMAN_MOTION_BLOCK": 2
+   }
+  },
+  "B3-O UPPER": {
+   "n": 30,
+   "system_success": {
+    "count": 25,
+    "n": 30,
+    "rate": 0.8333,
+    "ci95": [
+     0.6644,
+     0.9266
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 25,
+     "n": 30,
+     "rate": 0.8333,
+     "ci95": [
+      0.6644,
+      0.9266
+     ]
+    }
+   },
+   "comfort_deadlock": {
+    "count": 2,
+    "n": 30,
+    "rate": 0.0667,
+    "ci95": [
+     0.0185,
+     0.2132
+    ]
+   },
+   "all_failure": {
+    "count": 5,
+    "n": 30,
+    "rate": 0.1667,
+    "ci95": [
+     0.0734,
+     0.3356
+    ]
+   },
+   "robot_robot_deadlock": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   },
+   "protective_stop_trials": {
+    "count": 9,
+    "n": 30,
+    "rate": 0.3,
+    "ci95": [
+     0.1666,
+     0.4788
+    ]
+   },
+   "contact_trials": {
+    "count": 22,
+    "n": 30,
+    "rate": 0.7333,
+    "ci95": [
+     0.5555,
+     0.8582
+    ]
+   },
+   "amr1_travel_median": 41.4,
+   "amr1_path_median": 26.695,
+   "yield_s_median": 0.0,
+   "hold_s_median": 3.325,
+   "replans_median": 2.5,
+   "min_human_median": 0.226,
+   "penetration_max_median": 0.675,
+   "intrusion_s_median": 6.3,
+   "overlap_m2_median": 1.021,
+   "corridor_m2_median": 6.866,
+   "classes": {
+    "SUCCESS": 57,
+    "TEMPORARY_HOLD": 2,
+    "NORMAL_YIELD": 26,
+    "HUMAN_MOTION_BLOCK": 3,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 2
+   }
+  }
+ },
+ "paired_tests": {
+  "B2 vs B3-O": {
+   "paired_seeds": 30,
+   "system_success": {
+    "only_second": 5,
+    "only_first": 4,
+    "p_exact": 1.0
+   },
+   "comfort_deadlock": {
+    "only_second": 1,
+    "only_first": 1,
+    "p_exact": 1.0
+   },
+   "amr1_travel": {
+    "n": 28,
+    "median_diff": -0.07,
+    "p": 0.0902
+   },
+   "hold_s": {
+    "n": 30,
+    "median_diff": -0.11,
+    "p": 0.7071
+   },
+   "yield_s": {
+    "n": 30,
+    "median_diff": 0.0,
+    "p": 0.011
+   },
+   "min_human": {
+    "n": 30,
+    "median_diff": 0.005,
+    "p": 0.8394
+   },
+   "overlap_m2": {
+    "n": 30,
+    "median_diff": -0.665,
+    "p": 0.0
+   },
+   "penetration_max": {
+    "n": 30,
+    "median_diff": -0.247,
+    "p": 0.0
+   }
+  },
+  "B1 vs B3-O": {
+   "paired_seeds": 30,
+   "system_success": {
+    "only_second": 5,
+    "only_first": 6,
+    "p_exact": 1.0
+   },
+   "comfort_deadlock": {
+    "only_second": 1,
+    "only_first": 0,
+    "p_exact": 1.0
+   },
+   "amr1_travel": {
+    "n": 26,
+    "median_diff": -0.485,
+    "p": 0.0
+   },
+   "hold_s": {
+    "n": 30,
+    "median_diff": 0.25,
+    "p": 0.2188
+   },
+   "yield_s": {
+    "n": 30,
+    "median_diff": 0.0,
+    "p": 0.0015
+   },
+   "min_human": {
+    "n": 30,
+    "median_diff": -0.003,
+    "p": 0.5699
+   },
+   "overlap_m2": {
+    "n": 0,
+    "p": null
+   },
+   "penetration_max": {
+    "n": 30,
+    "median_diff": 0.429,
+    "p": 0.0
+   }
+  },
+  "B1 vs B2": {
+   "paired_seeds": 30,
+   "system_success": {
+    "only_second": 4,
+    "only_first": 6,
+    "p_exact": 0.7539
+   },
+   "comfort_deadlock": {
+    "only_second": 1,
+    "only_first": 0,
+    "p_exact": 1.0
+   },
+   "amr1_travel": {
+    "n": 26,
+    "median_diff": -0.465,
+    "p": 0.0004
+   },
+   "hold_s": {
+    "n": 30,
+    "median_diff": 0.905,
+    "p": 0.1765
+   },
+   "yield_s": {
+    "n": 30,
+    "median_diff": 0.0,
+    "p": 0.0014
+   },
+   "min_human": {
+    "n": 30,
+    "median_diff": 0.008,
+    "p": 0.2621
+   },
+   "overlap_m2": {
+    "n": 0,
+    "p": null
+   },
+   "penetration_max": {
+    "n": 30,
+    "median_diff": 0.665,
+    "p": 0.0
+   }
+  }
+ }
+}

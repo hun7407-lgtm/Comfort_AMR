@@ -1,0 +1,22 @@
+{
+ "trial_id": "s125_B3O_LOWER",
+ "seed": 125,
+ "condition": "configs/final/conditions/B3O_LOWER.yaml",
+ "config": "configs/final/seeds/s125.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 247,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 247,
+ "finished": "2026-11-26T12:33:27"
+}

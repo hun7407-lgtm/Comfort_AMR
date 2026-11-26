@@ -1,0 +1,27 @@
+{
+ "trial_id": "s105_B3O_UPPER",
+ "seed": 105,
+ "condition": "configs/final/conditions/B3O_UPPER.yaml",
+ "config": "configs/final/seeds/s105.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 452,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 252,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 704,
+ "finished": "2026-11-26T09:06:55"
+}

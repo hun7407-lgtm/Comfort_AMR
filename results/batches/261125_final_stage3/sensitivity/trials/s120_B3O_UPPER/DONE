@@ -1,0 +1,22 @@
+{
+ "trial_id": "s120_B3O_UPPER",
+ "seed": 120,
+ "condition": "configs/final/conditions/B3O_UPPER.yaml",
+ "config": "configs/final/seeds/s120.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 268,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 268,
+ "finished": "2026-11-26T11:46:50"
+}

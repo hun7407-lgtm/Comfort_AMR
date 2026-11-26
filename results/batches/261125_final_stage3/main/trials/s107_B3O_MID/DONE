@@ -1,0 +1,22 @@
+{
+ "trial_id": "s107_B3O_MID",
+ "seed": 107,
+ "condition": "configs/final/conditions/B3O_MID.yaml",
+ "config": "configs/final/seeds/s107.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 400,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 400,
+ "finished": "2026-11-26T02:22:49"
+}

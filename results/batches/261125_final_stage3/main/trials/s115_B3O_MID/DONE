@@ -1,0 +1,22 @@
+{
+ "trial_id": "s115_B3O_MID",
+ "seed": 115,
+ "condition": "configs/final/conditions/B3O_MID.yaml",
+ "config": "configs/final/seeds/s115.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 240,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 240,
+ "finished": "2026-11-26T04:09:14"
+}

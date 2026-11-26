@@ -1,0 +1,27 @@
+{
+ "trial_id": "s128_B1",
+ "seed": 128,
+ "condition": "configs/final/conditions/B1.yaml",
+ "config": "configs/final/seeds/s128.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 236,
+   "infra_failure": "did not activate"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 232,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 468,
+ "finished": "2026-11-26T07:27:06"
+}

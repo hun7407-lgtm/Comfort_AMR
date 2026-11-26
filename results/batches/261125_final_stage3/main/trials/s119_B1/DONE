@@ -1,0 +1,22 @@
+{
+ "trial_id": "s119_B1",
+ "seed": 119,
+ "condition": "configs/final/conditions/B1.yaml",
+ "config": "configs/final/seeds/s119.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "DEADLOCK"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 378,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 378,
+ "finished": "2026-11-26T05:04:36"
+}

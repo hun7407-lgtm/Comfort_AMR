@@ -1,0 +1,22 @@
+{
+ "trial_id": "s106_B2_S3_r090",
+ "seed": 106,
+ "condition": "configs/final/conditions/B2_S3_r090.yaml",
+ "config": "configs/final/seeds/s106.yaml",
+ "commit": "722b97d",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 249,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 249,
+ "finished": "2026-11-26T01:58:32"
+}
