@@ -1,0 +1,19 @@
+{
+ "trial_id": "rt_safety_headon_B1",
+ "seed": 1,
+ "condition": "configs/final/conditions/B1.yaml",
+ "config": "configs/nav2only/smoke/safety_headon.yaml",
+ "commit": "58c7bb9",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 80,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 80,
+ "finished": "2026-11-26T22:38:40"
+}

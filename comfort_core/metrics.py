@@ -428,6 +428,9 @@ def record_trial(cfg: Dict[str, Any], result: Dict[str, Any],
         # every trial written before they were recorded.
         "trajectory": _jsonable(result.get("trajectory", [])),
         "planned_path": _jsonable(result.get("planned_path", [])),
+        # control.mode and, for nav2_only, the runtime ROS graph check
+        # (comfort_core/control_mode.py); empty for older trials.
+        "control": _jsonable(result.get("control", {})),
     }, indent=2), encoding="utf-8")
     return (csv_path, json_path)
 

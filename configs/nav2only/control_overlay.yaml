@@ -1,0 +1,22 @@
+# Nav2-only control block, copied into new env configs.
+control:
+  mode: nav2_only
+comfort_space:
+  costmap:
+    buffer_width: 0.10
+  yield:
+    enabled: false
+    evade:
+      enabled: false
+recovery:
+  backoff:
+    enabled: false
+  off_lane:
+    enabled: false
+traffic_rule:
+  enabled: false
+navigation:
+  collision_monitor:
+    enabled: true
+recording:
+  version: nav2only_261126

@@ -92,7 +92,9 @@ def nav2_stack(cfg: Dict[str, Any], common: Dict[str, Any], params_file: str,
     """
     frames = cfg["ros"]["frames"]
     start_x, start_y, start_yaw = start
-    cmd_out = "cmd_vel_safe" if namespace else "cmd_vel_nav"
+    # nav2_only (comfort_core/control_mode.py): AMR1 like the fleet, no gate.
+    from comfort_core.control_mode import nav2_only
+    cmd_out = "cmd_vel_safe" if (namespace or nav2_only(cfg)) else "cmd_vel_nav"
     return [
         laserscan_node(cfg, common, namespace),
 

@@ -1,0 +1,64 @@
+# GENERATED 2026-11-26: Nav2-only safety smoke (B1, same-lane walker).
+base: configs/common.yaml
+scenario_meta:
+  scenario_id: nav2only_safety_headon
+  stage: Nav2-only runtime smoke
+  label: 'Safety check: walker head-on in the AMR''s own lane (expects a collision-monitor
+    stop)'
+  human_count: 1
+  amr_count: 1
+  aisle_width_m: 3.0
+corridor:
+  width: 3.0
+  length: 16.0
+  center:
+  - 0.0
+  - 0.0
+humans:
+  a:
+    position:
+    - 7.0
+    - 0.0
+    state: moving
+    route:
+    - - -7.0
+      - 0.0
+    avoid_robot: false
+  b:
+    enabled: false
+  c:
+    enabled: false
+navigation:
+  start:
+  - -5.5
+  - 0.0
+  goal:
+  - 5.5
+  - 0.0
+  collision_monitor:
+    enabled: true
+stations:
+  a:
+    enabled: false
+  b:
+    enabled: false
+fleet:
+  enabled: false
+control:
+  mode: nav2_only
+comfort_space:
+  costmap:
+    buffer_width: 0.1
+  yield:
+    enabled: false
+    evade:
+      enabled: false
+recovery:
+  backoff:
+    enabled: false
+  off_lane:
+    enabled: false
+traffic_rule:
+  enabled: false
+recording:
+  version: nav2only_261126

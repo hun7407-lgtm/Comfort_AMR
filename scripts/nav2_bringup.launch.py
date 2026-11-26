@@ -60,6 +60,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import launch_nodes  # noqa: E402
 from comfort_core import load_config  # noqa: E402
+from comfort_core.control_mode import nav2_only  # noqa: E402
 from comfort_core.frames import fleet_spawn, odom_origin_in_world  # noqa: E402
 
 
@@ -137,12 +138,15 @@ def generate_launch_description():
 
         # Nav2's velocity goes to the gate, not straight to the robot.
         # The gate decides whether obeying it would intrude on someone.
-        ExecuteProcess(
+        # Not launched in control.mode nav2_only: there the controller
+        # publishes cmd_vel_safe itself (launch_nodes.nav2_stack) and
+        # nothing else writes a velocity.
+        *([] if nav2_only(cfg) else [ExecuteProcess(
             cmd=[sys.executable,
                  str(PROJECT_ROOT / "scripts" / "comfort_gate.py"),
                  "--config", config_path, "--scenario", str(scenario),
                  "--out-topic", "/cmd_vel_safe",
                  "--ros-args", "-p", "use_sim_time:=true"],
             output="screen",
-        ),
+        )]),
     ])

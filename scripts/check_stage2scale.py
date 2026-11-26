@@ -23,7 +23,7 @@ from comfort_core import comfort_reference as cref  # noqa: E402
 from comfort_core import stage2scale as s2  # noqa: E402
 from comfort_core.config import load_config  # noqa: E402
 
-S = yaml.safe_load((PROJECT_ROOT / "configs/stage2scale/stage2scale.yaml").read_text())
+S = yaml.safe_load((PROJECT_ROOT / "configs/stage2scale/stage2scale_v2_nav2only.yaml").read_text())
 BASE = load_config(common_path=str(PROJECT_ROOT / "configs/common.yaml"))
 CS = BASE["comfort_space"]
 RAW = s2.raw_templates(CS, 1.0)
@@ -55,7 +55,7 @@ def test_pure_multiplication_and_no_clip():
                 assert close(ex[st][a], al * NORM[st][a], 1e-12)
                 assert ex[st][a] >= CS["min_radius"] - 1e-12, (al, st, a)
     assert close(s2.min_alpha_without_clip(NORM, 0.30), 0.30 / 0.675)
-    assert min(S["alphas"]) >= s2.min_alpha_without_clip(NORM, 0.30)
+    assert min(s2.alpha_grid(NORM, 0.30)) >= s2.min_alpha_without_clip(NORM, 0.30)
 
 
 def test_condition_block_is_what_the_policy_uses():
@@ -75,20 +75,53 @@ def test_condition_block_is_what_the_policy_uses():
 
 
 # 2. generator: identical physics, lanes ----------------------------------
-def test_generator_check_all_phases_that_can_run():
-    for ph in ("smoke", "pilot"):
-        r = subprocess.run([sys.executable, "scripts/stage2scale_plan.py", "--phase", ph, "--check"],
-                           cwd=PROJECT_ROOT, capture_output=True, text=True)
-        assert r.returncode == 0, r.stdout + r.stderr
-        assert "check OK" in r.stdout
+def test_generator_check_v2():
+    r = subprocess.run([sys.executable, "scripts/stage2scale_plan.py", "--phase", "pilot", "--check"],
+                       cwd=PROJECT_ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "check OK" in r.stdout and "control nav2_only" in r.stdout
     r = subprocess.run([sys.executable, "scripts/stage2scale_plan.py", "--phase", "coarse", "--check"],
                        cwd=PROJECT_ROOT, capture_output=True, text=True)
-    assert r.returncode != 0 and "not frozen" in (r.stdout + r.stderr)     # no coarse run before the pilot freeze
+    assert r.returncode != 0 and "no frozen geometry" in (r.stdout + r.stderr)   # pilot first
+
+
+def test_alpha_grid_follows_anchor():
+    for R, lo in ((0.85, 0.5), (0.90, 0.45), (1.00, 0.40)):
+        g = s2.alpha_grid(s2.normalise(RAW, R), 0.30)
+        assert g[0] == 1.0 and abs(g[-1] - lo) < 1e-9, (R, g)
+        assert all(a * R * 0.75 >= 0.30 - 1e-9 for a in g)      # smallest ratio 0.675/0.90
+
+
+def test_nav2_only_config_guard():
+    from comfort_core import control_mode as cm
+    legacy = load_config(scenario="configs/final/conditions/B2_r090.yaml", common_path="configs/final/seeds/s1.yaml")
+    assert cm.mode(legacy) == cm.LEGACY and cm.config_problems(legacy) == []
+    new = load_config(scenario="configs/final/conditions/B2_r090.yaml", common_path="configs/nav2only/seeds/s1.yaml")
+    assert cm.nav2_only(new) and cm.config_problems(new) == []
+    broken = {**new, "comfort_space": {**new["comfort_space"], "yield": {"enabled": True}}}
+    assert any("yield" in p for p in cm.config_problems(broken))
+    # physical signature sees the control mode and the buffer
+    assert s2.physical_signature(new) != s2.physical_signature(legacy)
+
+
+def test_nav2_only_graph_guard():
+    from comfort_core import control_mode as cm
+    good_p = {"/cmd_vel_safe": ["controller_server", "behavior_server"], "/cmd_vel": ["collision_monitor"],
+              "/a1/cmd_vel_safe": ["controller_server"], "/a1/cmd_vel": ["collision_monitor"]}
+    subs = {"/cmd_vel_safe": ["collision_monitor"], "/a1/cmd_vel_safe": ["collision_monitor"]}
+    nodes = ["/controller_server", "/collision_monitor", "/a1/controller_server"]
+    assert cm.graph_problems(nodes, good_p, subs, ["", "a1"]) == []
+    assert cm.graph_problems(nodes + ["/comfort_gate"], good_p, subs, ["", "a1"])
+    bad = {**good_p, "/cmd_vel_safe": ["comfort_gate"]}
+    assert cm.graph_problems(nodes, bad, subs, ["", "a1"])
+    bad = {**good_p, "/cmd_vel": ["collision_monitor", "teleop"]}
+    assert cm.graph_problems(nodes, bad, subs, ["", "a1"])
+    assert cm.graph_problems(nodes, good_p, {"/cmd_vel_safe": []}, [""])
 
 
 def test_moving_lanes_distinct_and_opposite():
     m = S["geometry"]["moving"]
-    for gap in m["lane_gap_candidates_m"]:
+    for gap in S["phases"]["pilot"]["moving_lane_gaps"]:
         ov = s2.moving_env(m, 3.0, gap)
         L = ov["_lanes"]
         assert close(abs(L["human_lane_y"] - L["amr_lane_y"]), gap, 1e-6)

@@ -1,0 +1,4 @@
+# Nav2-only runtime + safety smoke
+# trial_id	seed	condition	config
+rt_stage1_s001_B2_r090	1	configs/final/conditions/B2_r090.yaml	configs/nav2only/seeds/s1.yaml
+rt_safety_headon_B1	1	configs/final/conditions/B1.yaml	configs/nav2only/smoke/safety_headon.yaml

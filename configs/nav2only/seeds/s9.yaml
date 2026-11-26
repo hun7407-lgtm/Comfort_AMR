@@ -1,0 +1,25 @@
+# GENERATED 2026-11-26 for the Nav2-only re-runs (docs/NAV2_ONLY_STAGE2_MAIN_EXPERIMENT_SPEC.md).
+# Same scene as configs/final/seeds/s9.yaml; only the motion-control chain differs:
+# no comfort_gate (yield / evade / backoff / off-lane), buffer 0.10, safety layer on.
+base: configs/final/seeds/s9.yaml
+control:
+  mode: nav2_only
+comfort_space:
+  costmap:
+    buffer_width: 0.10
+  yield:
+    enabled: false
+    evade:
+      enabled: false
+recovery:
+  backoff:
+    enabled: false
+  off_lane:
+    enabled: false
+traffic_rule:
+  enabled: false
+navigation:
+  collision_monitor:
+    enabled: true
+recording:
+  version: nav2only_261126

@@ -90,6 +90,8 @@ class TrialResult:
     off_lane_recoveries: int = 0
     # State estimation: (true, estimated) -> ticks, and the rule used.
     state_confusion: dict = field(default_factory=dict)
+    # control.mode and the nav2_only runtime graph check (control_mode.py)
+    control: dict = field(default_factory=dict)
     state_rule: str = ""
     deadlock_cause: str = ""
     invalid_reason: str = ""
@@ -648,6 +650,19 @@ class Nav2Trial(Node):
             pose.pose.orientation.w = math.cos(half)
         return pose
 
+    def velocity_graph(self) -> dict:
+        """Who publishes / subscribes the velocity topics, from the live graph."""
+        ns = [""] + list(self.fleet_names)
+        topics = []
+        for n in ns:
+            pre = f"/{n}" if n else ""
+            topics += [f"{pre}/cmd_vel_safe", f"{pre}/cmd_vel", f"{pre}/cmd_vel_nav"]
+        pubs = {t: sorted(i.node_name for i in self.get_publishers_info_by_topic(t)) for t in topics}
+        subs = {t: sorted(i.node_name for i in self.get_subscriptions_info_by_topic(t)) for t in topics}
+        nodes = sorted(f"{s.rstrip('/')}/{n}" if s != "/" else n
+                       for n, s in self.get_node_names_and_namespaces())
+        return {"namespaces": ns, "nodes": nodes, "publishers": pubs, "subscribers": subs}
+
     def wait_for_rendezvous(self, verbose: bool = True) -> None:
         """Hold until the simulation clock reaches the agreed start time.
 
@@ -731,7 +746,24 @@ def run_trial(node: Nav2Trial, verbose: bool = True) -> TrialResult:
 
     node.wait_for_costmap(verbose)
     node.wait_for_rendezvous(verbose)
-    if not node.gate_seen:
+    from comfort_core import control_mode as cm
+    res.control = {"mode": cm.mode(node.cfg)}
+    if cm.nav2_only(node.cfg):
+        # No gate in this chain: prove it from the live ROS graph instead
+        # of waiting for a gate heartbeat that will never come.
+        g = node.velocity_graph()
+        probs = cm.config_problems(node.cfg) + cm.graph_problems(
+            g["nodes"], g["publishers"], g["subscribers"], g["namespaces"])
+        res.control.update({"graph": g, "problems": probs, "gate_seen": node.gate_seen})
+        if verbose:
+            print(f"  control            : nav2_only, {'OK' if not probs else probs}", flush=True)
+        if probs or node.gate_seen:
+            res.result = "INVALID"
+            res.deadlock_mechanism = "invalid"
+            res.invalid_reason = "nav2_only guard: " + "; ".join(
+                probs + (["comfort_gate published its state"] if node.gate_seen else []))
+            return res
+    elif not node.gate_seen:
         res.result = "INVALID"
         res.deadlock_mechanism = "invalid"
         res.invalid_reason = ("the comfort gate published nothing; it is not "

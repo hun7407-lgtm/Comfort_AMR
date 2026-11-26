@@ -79,6 +79,24 @@ def min_alpha_without_clip(norm: Dict[str, Dict[str, float]], min_radius: float)
     return max(min_radius / min(e.values()) for e in norm.values())
 
 
+def alpha_grid(norm: Dict[str, Dict[str, float]], min_radius: float, step: float = 0.10,
+               fine: float = 0.05) -> List[float]:
+    """1.00, 0.90, ... down to the smallest unclipped alpha; if that is not
+    on the 0.10 grid, its value rounded UP to 0.05 is appended."""
+    lo = min_alpha_without_clip(norm, min_radius)
+    out, k = [], 0
+    while True:
+        a = round(1.0 - step * k, 4)
+        if a < lo - 1e-9:
+            break
+        out.append(a)
+        k += 1
+    last = round(math.ceil(lo / fine - 1e-9) * fine, 4)
+    if last < out[-1] - 1e-9:
+        out.append(last)
+    return out
+
+
 def bounding_radius(e: Dict[str, float]) -> float:
     """Farthest reach from the person: comfort_core.shapes.from_extents ->
     ComfortShape.bounding_radius, plus a dense numeric check of the offset
@@ -138,10 +156,15 @@ def moving_env(m: Dict[str, Any], width: float, lane_gap: float) -> Dict[str, An
     }
 
 
+POLICY_KEYS = ("policy", "static_radius", "state_radius", "directional", "aisle_scaling")
+
+
 def physical_signature(cfg: Dict[str, Any]) -> str:
-    """Hash of everything in a merged config except the Comfort Space policy
-    and the scenario label: walls, people, start/goal, timing, Nav2, safety."""
+    """Hash of everything in a merged config except the Comfort Space POLICY
+    (policy, sizes, shapes) and the scenario label: walls, people, start/goal,
+    timing, Nav2, safety, control mode, costmap buffer / mask value."""
     keep = {k: v for k, v in cfg.items() if k not in ("comfort_space", "scenario")}
+    keep["comfort_space"] = {k: v for k, v in (cfg.get("comfort_space") or {}).items() if k not in POLICY_KEYS}
     return hashlib.sha256(json.dumps(keep, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
 
