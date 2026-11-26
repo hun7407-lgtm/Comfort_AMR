@@ -1,0 +1,113 @@
+# Stage 2 — state-wise UNIFORM SCALE sweep (v1, 2026-11-26).
+# Authority: docs/STAGE2_UNIFORM_SCALE_PROTOCOL.md. Code: comfort_core/stage2scale.py,
+# scripts/stage2scale_plan.py, scripts/stage2scale_report.py, tests scripts/check_stage2scale.py.
+#
+#   python3 scripts/stage2scale_plan.py --check            # print, write nothing
+#   python3 scripts/stage2scale_plan.py --phase smoke      # short smoke (1 launch per cell)
+#   python3 scripts/stage2scale_plan.py --phase pilot      # width / lane-gap pilot
+#   python3 scripts/stage2scale_plan.py --phase coarse     # main screening (after the pilot freeze)
+#   python3 scripts/final_run.py --dir <batch>
+#   python3 scripts/stage2scale_report.py --dir <batch>
+#
+# Older Stage 2 assets (configs/stage2sim/, results/batches/261126_stage2sim*)
+# are not read or written by this module.
+# Every value marked ASSUMPTION is a study choice, not a published number.
+
+version: v1
+batch_prefix: results/batches/261126_stage2scale_v1
+
+# ---- shapes
+anchor_m: 0.90                 # Stage 1 B2 R_nav_upper: normalisation anchor, not a comfort threshold
+moving_reference_speed_mps: 1.0  # moving template frozen at this speed (ASSUMPTION, protocol §2)
+alphas: [1.00, 0.90, 0.80, 0.70, 0.60, 0.50, 0.45]   # 0.45 = smallest without the 0.30 m min_radius clip
+b2_radius_m: 0.90              # B2 static circle baseline
+include_b1: true
+
+# ---- scoring (comfort_core/comfort_reference.py)
+reference:
+  stationary: N22a_B
+  station_engaged: N22a_B      # TRANSFER: no task-engaged rating curve exists
+  moving: N22b_E1
+criteria:
+  comfort_metric: predicted_comfort_at_closest
+  primary_target: 5.0          # ASSUMPTION (C* = 5/7, operational choice)
+  sensitivity_targets: [4.5, 5.5]
+  joint_min: 0.80              # ASSUMPTION
+  nav_min: 0.80                # ASSUMPTION
+  joint_min_sensitivity: 0.90
+  min_distance_response_m: 0.10  # ASSUMPTION: engineering detectability rule, alpha 1.00 vs 0.45 median d_cc
+  reference_speed_tolerance_mps: 0.10   # flag OUT_OF_REFERENCE_DOMAIN above 0.35 + this
+
+# ---- scenarios (one AMR, one person, straight corridor, no fleet)
+# intended_sector = where the AMR must be, seen from the person, at the closest point.
+# context: comfort_core/contexts.py facing (c1 engaged back to aisle, c2 standing back
+# to aisle, c3 facing the aisle, c4 side to the aisle).
+scenarios:
+  ST-F: {state: stationary, context: c3, intended_sector: front, primary: true,
+         label: "Stationary, AMR passes in front"}
+  ST-S: {state: stationary, context: c4, intended_sector: side, primary: true,
+         label: "Stationary, AMR passes beside (person's right; left = TODO balance in pilot)"}
+  ST-R: {state: stationary, context: c2, intended_sector: rear, primary: true,
+         label: "Stationary, AMR passes behind"}
+  EN-R: {state: station_engaged, context: c1, intended_sector: rear, primary: true,
+         label: "Station engaged, AMR passes behind (stationary-reference TRANSFER)"}
+  MV-P: {state: moving, intended_sector: side, primary: true,
+         label: "Moving, oncoming lateral pass in separate lanes"}
+  MV-O: {state: moving, intended_sector: rear, primary: false, feasibility: overtake,
+         label: "Moving, AMR overtakes (not run if infeasible)"}
+
+geometry:
+  static:
+    corridor_length_m: 12.0
+    person_wall_gap_m: 0.50
+    path_offset_m: 0.30        # AMR start-goal line, centre to centre, below the person
+    start_x: -5.0
+    goal_x: 5.0
+    width_candidates_m: [2.0, 2.2, 2.4, 2.6]   # pilot candidates, NOT confirmed feasible
+    tight_width_m: null        # frozen after the pilot (TODO); smoke uses smoke_width_m
+    wide_width_m: 3.0          # secondary, independent of alpha
+    smoke_width_m: 2.6
+  moving:
+    corridor_length_m: 16.0
+    walker_start_x: 7.0
+    walker_end_x: -7.0
+    amr_start_x: -5.5
+    amr_goal_x: 5.5
+    lane_centre_y: 0.0
+    # +1: walker on +y. The recording camera (common.yaml recording.camera,
+    # at y = -5.5 looking at the origin) shows +y at the TOP of the frame and
+    # +x to the right; the corridor runs left-right in the image. Seen from
+    # the AMR driving +x, +y is its LEFT: walker on the AMR's left, AMR on the
+    # walker's left, both keeping right. Checked on the smoke video
+    # (MV-P_w3.00_g1.00_S3_a1.00_rep01, t = 6 s and 9 s): walker in the upper lane walking
+    # right-to-left, AMR in the lower lane driving left-to-right.
+    human_side: 1.0
+    lane_gap_candidates_m: [0.65, 0.80, 1.00]   # pilot candidates (centre-line separation)
+    lane_gap_m: null           # frozen after the pilot (TODO)
+    width_candidates_m: [2.6, 2.8, 3.0]
+    tight_width_m: null        # frozen after the pilot (TODO); smoke uses smoke_width_m
+    wide_width_m: 3.4
+    smoke_width_m: 3.0
+
+overtake:                       # same numbers as the earlier feasibility check
+  walker_speed_mps: 1.04
+  amr_max_speed_mps: 1.0
+  gain_m: 3.0
+
+phases:
+  smoke:
+    repeats: 1
+    conditions: [B1, B2, "1.00", "0.45"]
+    static_widths: smoke        # smoke_width_m
+    moving_lane_gaps: candidates
+    moving_repeats: 2
+  pilot:
+    repeats: 2
+    conditions: [B1, B2, "1.00", "0.70", "0.45"]
+    static_widths: candidates
+    moving_lane_gaps: candidates
+  coarse:
+    repeats: 10
+    conditions: [B1, B2, all]
+    static_widths: tight        # requires geometry.*.tight_width_m (and lane_gap_m) frozen
+    moving_lane_gaps: frozen

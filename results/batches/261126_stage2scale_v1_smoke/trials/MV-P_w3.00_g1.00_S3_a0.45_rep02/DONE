@@ -1,0 +1,19 @@
+{
+ "trial_id": "MV-P_w3.00_g1.00_S3_a0.45_rep02",
+ "seed": 2,
+ "condition": "configs/stage2scale/conditions/S3_a0.45.yaml",
+ "config": "configs/stage2scale/envs/MV-P_w3.00_g1.00.yaml",
+ "commit": "64472ff",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 80,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 80,
+ "finished": "2026-11-26T21:47:36"
+}

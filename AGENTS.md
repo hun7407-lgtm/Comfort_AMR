@@ -69,6 +69,11 @@ B2 vs B3-O MID McNemar 4 vs 5, p = 1.0 → **차이 없음**.
 - R_nav_upper를 "급증 지점"으로 정할지 논의됨 → 사전등록 규칙 유지. 로지스틱 R₅%/R₅₀% 보조 분석은 아직 안 함.
 - Stage 3 영상 case A(B2 comfort deadlock & B3-O 성공)는 발생하지 않아 만들지 않음.
 
+**Stage 2 재설계 (2026-11-26, 진행 중):** 상태별 Comfort Space 모양을 0.90 m로 정규화하고 α 하나로 전체 크기를 줄이는
+uniform-scale 실험. 설계 `docs/STAGE2_UNIFORM_SCALE_PROTOCOL.md`, 구현·smoke 결과 `docs/STAGE2_SCALE_IMPLEMENTATION.md`,
+코드 `comfort_core/stage2scale.py`, `scripts/stage2scale_{plan,report}.py`, 테스트 `scripts/check_stage2scale.py`.
+smoke만 완료(`results/batches/261126_stage2scale_v1_smoke`); pilot·본실험은 사용자 승인 전 실행하지 않음.
+
 ## 3. 읽는 순서
 
 1. 이 파일

@@ -142,3 +142,5 @@ results/batches/261125_final_*/**/*_frames.jsonl
 # live in analysis/trials/<id>.json and analysis/stage2sim_trials.csv.
 results/batches/261126_stage2sim*/**/trial_log.jsonl
 results/batches/261126_stage2sim*/**/*_frames.jsonl
+results/batches/261126_stage2scale*/**/trial_log.jsonl
+results/batches/261126_stage2scale*/**/*_frames.jsonl
