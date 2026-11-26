@@ -1,0 +1,22 @@
+{
+ "trial_id": "s003_B2_r090",
+ "seed": 3,
+ "condition": "configs/final/conditions/B2_r090.yaml",
+ "config": "configs/final/seeds/s3.yaml",
+ "commit": "2e9b903",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 250,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 250,
+ "finished": "2026-11-25T17:58:24"
+}

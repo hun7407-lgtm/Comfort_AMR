@@ -1,16 +1,19 @@
 {
  "source": "results/batches/261125_final_stage1",
- "partial": true,
+ "partial": false,
  "decision": {
-  "transition_size_m": 1.0,
-  "R_nav_upper_m": 0.8,
+  "transition_size_m": 0.95,
+  "R_nav_upper_m": 0.9,
   "fine_interval": [
-   0.8,
-   1.0
+   0.9,
+   0.95
   ],
   "rule": "transition = first size with comfort-induced deadlock rate > 5 % (5/100; 1/30 at 30 seeds); R_nav_upper = largest size with comfort-induced deadlock rate <= 5 % and system success >= same-seed B1 - 5 %p",
   "sizes_tested": [
    0.8,
+   0.85,
+   0.9,
+   0.95,
    1.0,
    1.2,
    1.4,
@@ -224,6 +227,322 @@
     "ci95": [
      0.0,
      0.117
+    ]
+   }
+  },
+  "B2_r085": {
+   "condition": "B2_r085",
+   "size_m": 0.85,
+   "n": 30,
+   "system_success": {
+    "count": 26,
+    "n": 30,
+    "rate": 0.8667,
+    "ci95": [
+     0.7032,
+     0.9469
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 1,
+    "n": 30,
+    "rate": 0.0333,
+    "ci95": [
+     0.0059,
+     0.1667
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 1,
+    "n": 20,
+    "rate": 0.05,
+    "ci95": [
+     0.0089,
+     0.2361
+    ]
+   },
+   "all_cause_failure": {
+    "count": 4,
+    "n": 30,
+    "rate": 0.1333,
+    "ci95": [
+     0.0531,
+     0.2968
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a1": {
+     "count": 29,
+     "n": 30,
+     "rate": 0.9667,
+     "ci95": [
+      0.8333,
+      0.9941
+     ]
+    },
+    "a2": {
+     "count": 27,
+     "n": 30,
+     "rate": 0.9,
+     "ci95": [
+      0.7438,
+      0.9654
+     ]
+    }
+   },
+   "classes": {
+    "SUCCESS": 62,
+    "NORMAL_YIELD": 23,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 1,
+    "PROTECTIVE_STOP": 1,
+    "ROBOT_ROBOT_BLOCK": 1,
+    "HUMAN_MOTION_BLOCK": 2
+   },
+   "amr1_travel_time_success_median_s": 41.42,
+   "amr1_path_length_success_median_m": 26.66,
+   "hold_s_per_trial_median": 2.05,
+   "amr1_gate_yield_s_median": 0.0,
+   "min_human_amr_m_median": 0.236,
+   "overlap_max_m2_median": 0.625,
+   "overlap_s_median": 4.55,
+   "corridor_intrusion_mean_m2_median": 5.921,
+   "residual_width_min_m_median": 1.1,
+   "replans_per_trial_mean": 2.7,
+   "protective_stop_trials": {
+    "count": 1,
+    "n": 30,
+    "rate": 0.0333,
+    "ci95": [
+     0.0059,
+     0.1667
+    ]
+   }
+  },
+  "B2_r090": {
+   "condition": "B2_r090",
+   "size_m": 0.9,
+   "n": 30,
+   "system_success": {
+    "count": 28,
+    "n": 30,
+    "rate": 0.9333,
+    "ci95": [
+     0.7868,
+     0.9815
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 1,
+    "n": 30,
+    "rate": 0.0333,
+    "ci95": [
+     0.0059,
+     0.1667
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 1,
+    "n": 20,
+    "rate": 0.05,
+    "ci95": [
+     0.0089,
+     0.2361
+    ]
+   },
+   "all_cause_failure": {
+    "count": 2,
+    "n": 30,
+    "rate": 0.0667,
+    "ci95": [
+     0.0185,
+     0.2132
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 28,
+     "n": 30,
+     "rate": 0.9333,
+     "ci95": [
+      0.7868,
+      0.9815
+     ]
+    }
+   },
+   "classes": {
+    "SUCCESS": 61,
+    "NORMAL_YIELD": 27,
+    "NAV2_ABORT": 1,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 1
+   },
+   "amr1_travel_time_success_median_s": 41.39,
+   "amr1_path_length_success_median_m": 26.685,
+   "hold_s_per_trial_median": 1.84,
+   "amr1_gate_yield_s_median": 0.0,
+   "min_human_amr_m_median": 0.239,
+   "overlap_max_m2_median": 0.804,
+   "overlap_s_median": 5.05,
+   "corridor_intrusion_mean_m2_median": 6.87,
+   "residual_width_min_m_median": 1.05,
+   "replans_per_trial_mean": 2.167,
+   "protective_stop_trials": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
+    ]
+   }
+  },
+  "B2_r095": {
+   "condition": "B2_r095",
+   "size_m": 0.95,
+   "n": 30,
+   "system_success": {
+    "count": 26,
+    "n": 30,
+    "rate": 0.8667,
+    "ci95": [
+     0.7032,
+     0.9469
+    ]
+   },
+   "comfort_deadlock": {
+    "count": 2,
+    "n": 30,
+    "rate": 0.0667,
+    "ci95": [
+     0.0185,
+     0.2132
+    ]
+   },
+   "comfort_deadlock_paired_b1_success": {
+    "count": 2,
+    "n": 20,
+    "rate": 0.1,
+    "ci95": [
+     0.0279,
+     0.301
+    ]
+   },
+   "all_cause_failure": {
+    "count": 4,
+    "n": 30,
+    "rate": 0.1333,
+    "ci95": [
+     0.0531,
+     0.2968
+    ]
+   },
+   "b1_system_success_same_seeds": {
+    "count": 20,
+    "n": 30,
+    "rate": 0.6667,
+    "ci95": [
+     0.4878,
+     0.8077
+    ]
+   },
+   "per_amr_success": {
+    "AMR1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a1": {
+     "count": 30,
+     "n": 30,
+     "rate": 1.0,
+     "ci95": [
+      0.8865,
+      1.0
+     ]
+    },
+    "a2": {
+     "count": 26,
+     "n": 30,
+     "rate": 0.8667,
+     "ci95": [
+      0.7032,
+      0.9469
+     ]
+    }
+   },
+   "classes": {
+    "SUCCESS": 58,
+    "NORMAL_YIELD": 27,
+    "TEMPORARY_HOLD": 1,
+    "HUMAN_MOTION_BLOCK": 1,
+    "SINGLE_HUMAN_COMFORT_BLOCK": 2,
+    "NAV2_ABORT": 1
+   },
+   "amr1_travel_time_success_median_s": 41.41,
+   "amr1_path_length_success_median_m": 26.735,
+   "hold_s_per_trial_median": 2.23,
+   "amr1_gate_yield_s_median": 0.0,
+   "min_human_amr_m_median": 0.23,
+   "overlap_max_m2_median": 0.972,
+   "overlap_s_median": 6.05,
+   "corridor_intrusion_mean_m2_median": 7.837,
+   "residual_width_min_m_median": 1.0,
+   "replans_per_trial_mean": 2.367,
+   "protective_stop_trials": {
+    "count": 0,
+    "n": 30,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.1135
     ]
    }
   },
@@ -682,6 +1001,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "SUCCESS"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "2": {
@@ -714,6 +1048,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "3": {
@@ -746,6 +1095,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "TEMPORARY_HOLD"
    ]
   },
   "4": {
@@ -778,6 +1142,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "5": {
@@ -810,6 +1189,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "6": {
@@ -842,6 +1236,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "7": {
@@ -874,6 +1283,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NAV2_ABORT"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "8": {
@@ -906,6 +1330,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "9": {
@@ -938,6 +1377,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "PROTECTIVE_STOP",
+    "ROBOT_ROBOT_BLOCK",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "10": {
@@ -970,6 +1424,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "TEMPORARY_HOLD",
     "COMFORT_OVERLAP_BLOCK"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "11": {
@@ -1002,6 +1471,21 @@
     "PERSISTENT_COMFORT_HOLD",
     "NORMAL_YIELD",
     "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "12": {
@@ -1034,6 +1518,21 @@
     "PERSISTENT_COMFORT_HOLD",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
    ]
   },
   "13": {
@@ -1066,6 +1565,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "14": {
@@ -1098,6 +1612,21 @@
     "PERSISTENT_COMFORT_HOLD",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "15": {
@@ -1130,6 +1659,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "16": {
@@ -1161,6 +1705,21 @@
    "B2_r160": [
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
     "SINGLE_HUMAN_COMFORT_BLOCK"
    ]
   },
@@ -1194,6 +1753,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "18": {
@@ -1226,6 +1800,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NAV2_ABORT"
    ]
   },
   "19": {
@@ -1258,6 +1847,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "20": {
@@ -1290,6 +1894,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "21": {
@@ -1322,6 +1941,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "22": {
@@ -1348,6 +1982,21 @@
    "B2_r160": [
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
     "SINGLE_HUMAN_COMFORT_BLOCK"
    ]
   },
@@ -1381,6 +2030,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "24": {
@@ -1413,6 +2077,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "25": {
@@ -1445,6 +2124,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "26": {
@@ -1477,6 +2171,21 @@
     "PROTECTIVE_STOP",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "27": {
@@ -1509,6 +2218,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   },
   "28": {
@@ -1541,6 +2265,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "NORMAL_YIELD",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "29": {
@@ -1573,6 +2312,21 @@
     "COMFORT_OVERLAP_BLOCK",
     "NORMAL_YIELD",
     "NORMAL_YIELD"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "SUCCESS"
    ]
   },
   "30": {
@@ -1605,6 +2359,21 @@
     "SINGLE_HUMAN_COMFORT_BLOCK",
     "TEMPORARY_HOLD",
     "HUMAN_MOTION_BLOCK"
+   ],
+   "B2_r085": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r090": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
+   ],
+   "B2_r095": [
+    "SUCCESS",
+    "SUCCESS",
+    "NORMAL_YIELD"
    ]
   }
  }

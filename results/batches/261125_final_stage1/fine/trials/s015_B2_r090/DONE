@@ -1,0 +1,27 @@
+{
+ "trial_id": "s015_B2_r090",
+ "seed": 15,
+ "condition": "configs/final/conditions/B2_r090.yaml",
+ "config": "configs/final/seeds/s15.yaml",
+ "commit": "2e9b903",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 357,
+   "infra_failure": "simulation stopped (no odometry)"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 244,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 601,
+ "finished": "2026-11-25T20:46:55"
+}
