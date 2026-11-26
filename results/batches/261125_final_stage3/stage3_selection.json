@@ -1,0 +1,95 @@
+{
+ "R_nav_upper_m": 0.9,
+ "levels": {
+  "LOWER": {
+   "alpha": 0.0,
+   "R": {
+    "station_engaged|front": 0.9,
+    "station_engaged|side": 0.9,
+    "station_engaged|rear": 0.9,
+    "stationary|front": 0.9,
+    "stationary|side": 0.9,
+    "stationary|rear": 0.9,
+    "moving|front": 0.469,
+    "moving|side": 0.369,
+    "moving|rear": 0.469
+   }
+  },
+  "MID": {
+   "alpha": 0.5,
+   "R": {
+    "station_engaged|front": 0.9,
+    "station_engaged|side": 0.9,
+    "station_engaged|rear": 0.9,
+    "stationary|front": 0.9,
+    "stationary|side": 0.9,
+    "stationary|rear": 0.9,
+    "moving|front": 0.684,
+    "moving|side": 0.635,
+    "moving|rear": 0.684
+   }
+  },
+  "UPPER": {
+   "alpha": 1.0,
+   "R": {
+    "station_engaged|front": 0.9,
+    "station_engaged|side": 0.9,
+    "station_engaged|rear": 0.9,
+    "stationary|front": 0.9,
+    "stationary|side": 0.9,
+    "stationary|rear": 0.9,
+    "moving|front": 0.9,
+    "moving|side": 0.9,
+    "moving|rear": 0.9
+   }
+  }
+ },
+ "cells": {
+  "station_engaged|front": {
+   "R_lower": 0.9,
+   "fill": "same-state max",
+   "capped_at_upper": true
+  },
+  "station_engaged|side": {
+   "R_lower": 0.9,
+   "fill": "proxy",
+   "capped_at_upper": true
+  },
+  "station_engaged|rear": {
+   "R_lower": 0.9,
+   "fill": "proxy",
+   "capped_at_upper": true
+  },
+  "stationary|front": {
+   "R_lower": 0.9,
+   "fill": "same-state max",
+   "capped_at_upper": true
+  },
+  "stationary|side": {
+   "R_lower": 0.9,
+   "fill": "proxy",
+   "capped_at_upper": true
+  },
+  "stationary|rear": {
+   "R_lower": 0.9,
+   "fill": "same-state max",
+   "capped_at_upper": true
+  },
+  "moving|front": {
+   "R_lower": 0.469,
+   "fill": "proxy",
+   "capped_at_upper": false
+  },
+  "moving|side": {
+   "R_lower": 0.369,
+   "fill": "proxy",
+   "capped_at_upper": false
+  },
+  "moving|rear": {
+   "R_lower": 0.469,
+   "fill": "same-state max",
+   "capped_at_upper": false
+  }
+ },
+ "B2_static_m": 0.9
+}
