@@ -24,6 +24,17 @@ You are implementing the next Stage 2 experiment in the \`hun7407-lgtm/Comfort_A
 - The existing \`StateDirectionalComfortPolicy._squeeze\` default behavior is \`floor + scale*(raw-floor)\`; do not use this with a nonzero floor as an allegedly pure multiplier. Prefer generating **direct per-condition extents** and \`aisle_scaling.enabled: false\`. Unit-test exact ratios at every alpha and absence of clipping.
 - Existing task-engaged rear compression is an **unverified engineering hypothesis**. The literature does not establish its human comfort threshold. Never mislabel it as experimentally validated.
 
+## NEW RESEARCHER REQUIREMENT — moving smoke scenario must have two separated lanes (PRIORITY)
+
+The researcher observed that the existing moving smoke-test video places the oncoming pedestrian and AMR **directly in line**, which is not desired. In `scripts/stage2sim_plan.py:env_overlay()`, the existing moving case assigns the SAME `y` to the walker route and AMR start/goal via `lane_y`. **Do not reproduce that geometry** in the new Stage 2 module.
+
+- Make an **oncoming, side-by-side passing** scenario, not a face-to-face, same-centreline potential collision. In the top-view video, the **pedestrian should be in the visually left lane; AMR in the visually right lane**. Use explicit `human_lane_y` and `amr_lane_y` (and preserve different y-values along the intended straight trajectories). Reverse world-y signs if camera orientation requires it; verify actual rendered camera orientation instead of assuming how world y maps to screen left.
+- Example initial geometry **for pilot only**: walker begins `(+7,+0.40)`, walks toward `(-7,+0.40)`; AMR starts `(-5.5,-0.40)`, navigates toward `(+5.5,-0.40)`. This yields 0.80 m lateral separation between nominal lane centre lines. The user cares about the observed left/right relationship, not these precise coordinates; do not silently assert they are guaranteed visually correct.
+- Treat lateral separations `0.65/0.80/1.00m` as **pilot candidate offsets** and select via physical feasibility and **alpha-to-actual-clearance sensitivity**; do not tune a geometry solely because it forces the desired Comfort score. Keep the chosen separation, corridor width, human speed/route, headings, starts/goals and safety settings **identical for B1/B2/all alpha**. Do not disable/relax protective stop or alter safety to make tight lanes pass.
+- Important: too much fixed lateral separation can yield the SAME actual clearance for every alpha. In that case return `UNIDENTIFIABLE_GEOMETRY`, not a Lower Bound; re-pilot a fixed geometry under a new version.
+- Add unit/integration checks that `abs(human_lane_y-amr_lane_y)>0`, opposing route x direction and same world geometry across policy/scale variants. Add smoke capture/top-view inspection criteria: two distinct lateral lanes, pedestrian visually left and AMR visually right, no direct same-line encounter, AMR finishes intended pass, measured min centre-to-centre/footprint-edge clearance, and reporter confirms whether distance varies with scale.
+- Do **not** edit old `configs/stage2sim/` or overwrite prior smoke results. Implement only in the new `configs/stage2scale/` generator and tests. Include a before/after figure or top-view screenshot from the actual scene **if available**; if not, mark camera verification outstanding and do not claim visual acceptance.
+
 ## Required implementation scope
 
 1. Create a **new independent experiment module**: \`configs/stage2scale/\` with new \`stage2scale.yaml\` and generated configs, \`scripts/stage2scale_plan.py\`, \`scripts/stage2scale_report.py\` (or equivalent clear naming); keep old Stage 2 pilot and all Stage 1/3 results untouched. Reuse stable existing runner/logger/reference code rather than rewriting Nav2.
@@ -47,6 +58,7 @@ You are implementing the next Stage 2 experiment in the \`hun7407-lgtm/Comfort_A
 - completed passage too near with C<5 gives \`J=0\`;
 - intended, collision-free completed pass with C>=5 gives \`J=1\`;
 - nonmonotone synthetic: alpha 1.0 nav FAIL, 0.7 joint PASS, 0.45 comfort FAIL ⇒ selected alpha 0.7;
+- MV-P moving-person and AMR routes have distinct parallel lanes, opposite travel directions, and consistent fixed geometry across B1/B2/all alpha; top-view must confirm pedestrian-left/AMR-right rather than same-y head-on;
 - flat achieved distance across all alpha ⇒ flag \`UNIDENTIFIABLE_GEOMETRY\` / \`BOUND_NOT_OBSERVED\` without assigning a validated comfort lower bound;
 - ST-F/S pass but ST-R fail ⇒ no common stationary alpha at that candidate;
 - identical actual trajectories under different policy labels ⇒ identical predicted comfort score;
