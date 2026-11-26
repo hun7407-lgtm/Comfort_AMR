@@ -1,0 +1,22 @@
+{
+ "trial_id": "s007_B2_r100",
+ "seed": 7,
+ "condition": "configs/final/conditions/B2_r100.yaml",
+ "config": "configs/nav2only/seeds/s7.yaml",
+ "commit": "1120756",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 246,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 246,
+ "finished": "2026-11-27T01:13:32"
+}

@@ -1,0 +1,27 @@
+{
+ "trial_id": "s010_B2_r100",
+ "seed": 10,
+ "condition": "configs/final/conditions/B2_r100.yaml",
+ "config": "configs/nav2only/seeds/s10.yaml",
+ "commit": "1120756",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 366,
+   "infra_failure": "did not come up"
+  },
+  {
+   "attempt": 2,
+   "wall_s": 245,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 612,
+ "finished": "2026-11-27T02:23:49"
+}

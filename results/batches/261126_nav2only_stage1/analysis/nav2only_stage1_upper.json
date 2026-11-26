@@ -1,0 +1,329 @@
+{
+ "decision": {
+  "status": "IDENTIFIED",
+  "R_nav_upper": 0.95,
+  "transition": 1.0,
+  "rule": "(same thresholds as the legacy rule of\ndocs/FINAL_261125_PLAN.md \u00a74, with the gate-based quantities replaced):\n    comfort-mask no-progress = an AMR's class is a comfort class of\n        final_metrics (a person's Comfort Space, grown by the AMR half width,\n        blocks its plan / position for >= 50 % of the 12 s before the verdict).\n        Without a gate this can only come from the costmap mask; the gate-only\n        class PERSISTENT_COMFORT_HOLD cannot occur.\n    size r PASSES iff\n        comfort-mask no-progress rate <= 5 %                 (0 of 10 at n = 10)\n        system success >= same-seed B1 system success - 5 %p  (>= B1 count at n = 10)\n        human-AMR contact trials <= same-seed B1 contact trials\n    R_nav_upper(nav2-only) = largest tested size that passes (legacy rule, not monotone);\n    transition = smallest tested size that fails above it.\n    Extension: if the largest tested size passes -> upper NOT identified in the tested range;\n    if no size passes -> upper not justified (stop, report).",
+  "n_launches": 50,
+  "n_excluded": 0
+ },
+ "rows": [
+  {
+   "condition": "B1",
+   "size_m": null,
+   "n": 10,
+   "system_success": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "b1_success_same_seeds": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "comfort_mask_no_progress": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.2775401687666166
+    ]
+   },
+   "contact_trials": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "b1_contact_same_seeds": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "protective_stop_trials": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "classes": [
+    "AMR1:NAV2_ABORT",
+    "a2:HUMAN_MOTION_BLOCK",
+    "a2:NAV2_ABORT"
+   ],
+   "gate_free": true
+  },
+  {
+   "condition": "B2_r085",
+   "size_m": 0.85,
+   "n": 10,
+   "system_success": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.7224598312333834,
+     1.0
+    ]
+   },
+   "b1_success_same_seeds": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "comfort_mask_no_progress": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.2775401687666166
+    ]
+   },
+   "contact_trials": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "b1_contact_same_seeds": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "protective_stop_trials": {
+    "k": 2,
+    "n": 10,
+    "rate": 0.2,
+    "ci95": [
+     0.056680947980693314,
+     0.5098431532792765
+    ]
+   },
+   "classes": [],
+   "gate_free": true,
+   "pass": true
+  },
+  {
+   "condition": "B2_r090",
+   "size_m": 0.9,
+   "n": 10,
+   "system_success": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.7224598312333834,
+     1.0
+    ]
+   },
+   "b1_success_same_seeds": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "comfort_mask_no_progress": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.2775401687666166
+    ]
+   },
+   "contact_trials": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "b1_contact_same_seeds": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "protective_stop_trials": {
+    "k": 2,
+    "n": 10,
+    "rate": 0.2,
+    "ci95": [
+     0.056680947980693314,
+     0.5098431532792765
+    ]
+   },
+   "classes": [],
+   "gate_free": true,
+   "pass": true
+  },
+  {
+   "condition": "B2_r095",
+   "size_m": 0.95,
+   "n": 10,
+   "system_success": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.7224598312333834,
+     1.0
+    ]
+   },
+   "b1_success_same_seeds": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "comfort_mask_no_progress": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.2775401687666166
+    ]
+   },
+   "contact_trials": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "b1_contact_same_seeds": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "protective_stop_trials": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.2775401687666166
+    ]
+   },
+   "classes": [],
+   "gate_free": true,
+   "pass": true
+  },
+  {
+   "condition": "B2_r100",
+   "size_m": 1.0,
+   "n": 10,
+   "system_success": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "b1_success_same_seeds": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci95": [
+     0.49015684672072335,
+     0.9433190520193067
+    ]
+   },
+   "comfort_mask_no_progress": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.2775401687666166
+    ]
+   },
+   "contact_trials": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.7224598312333834,
+     1.0
+    ]
+   },
+   "b1_contact_same_seeds": {
+    "k": 9,
+    "n": 10,
+    "rate": 0.9,
+    "ci95": [
+     0.5958436145024278,
+     0.9821242504842788
+    ]
+   },
+   "protective_stop_trials": {
+    "k": 2,
+    "n": 10,
+    "rate": 0.2,
+    "ci95": [
+     0.056680947980693314,
+     0.5098431532792765
+    ]
+   },
+   "classes": [
+    "AMR1:ROBOT_ROBOT_BLOCK",
+    "a1:ROBOT_ROBOT_BLOCK",
+    "a2:HUMAN_MOTION_BLOCK"
+   ],
+   "gate_free": true,
+   "pass": false
+  }
+ ]
+}

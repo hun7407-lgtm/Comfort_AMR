@@ -291,7 +291,7 @@ def figures(out, cell_tab, plan, crit):
         ax[2].plot(x, [c["by_target"][T]["joint_rate"] for c in sc], "s--", label=f"joint @ {T}")
         for c in cs:
             if c["alpha"] is None:
-                lab = "B1" if c["condition"] == "B1" else "B2 0.90"
+                lab = "B1" if c["condition"] == "B1" else f"B2 {plan['anchor_m']:.2f}"
                 col = "grey" if lab == "B1" else "black"
                 if c["median_min_cc_all_m"] is not None:
                     ax[0].axhline(c["median_min_cc_all_m"], color=col, ls=":", lw=0.8, label=lab)
@@ -317,7 +317,7 @@ def report(out, plan, summary, sel, rows):
          "closest centre distance and bearing. Not a measurement of anyone's comfort, not an experimentally "
          "validated comfort distance. A smallest passing alpha without an observed comfort violation is NOT a "
          "comfort lower bound.", "",
-         "## Shapes (alpha = 1, normalised to the 0.90 m anchor)", "",
+         "## Shapes (alpha = 1, normalised to the R_ref anchor)", "",
          "| state | raw F/S/R | alpha=1 F/S/R |", "|---|---|---|"]
     for st in s2.STATES:
         r, n = plan["templates_raw"][st], plan["templates_normalised"][st]

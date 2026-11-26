@@ -1,0 +1,22 @@
+{
+ "trial_id": "s004_B2_r095",
+ "seed": 4,
+ "condition": "configs/final/conditions/B2_r095.yaml",
+ "config": "configs/nav2only/seeds/s4.yaml",
+ "commit": "1120756",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 243,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 243,
+ "finished": "2026-11-27T00:04:24"
+}

@@ -12,8 +12,8 @@ batch_prefix: results/batches/261126_nav2only_stage2_v2
 control_overlay: configs/nav2only/control_overlay.yaml   # control.mode nav2_only, buffer 0.10, no gate
 
 # R_ref: set from the Nav2-only Stage 1 revalidation BEFORE the pilot (provenance recorded).
-anchor_m: 0.90
-anchor_provenance: legacy_0.90m           # -> new_nav2_only_upper after revalidation, if identified
+anchor_m: 0.95
+anchor_provenance: new_nav2_only_upper     # 261126_nav2only_stage1: IDENTIFIED, upper 0.95, transition 1.00 (ABBREVIATED n=10)
 moving_reference_speed_mps: 1.0
 alphas: auto                              # 1.00, 0.90, ... down to the smallest alpha without min_radius clip
 reference:
