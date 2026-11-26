@@ -1,0 +1,125 @@
+# Stage 2 (simulation, rev. 2026-11-26): minimum Comfort Space per Human
+# State x direction that still meets a LITERATURE-PREDICTED comfort level.
+#
+#   python3 scripts/stage2sim_plan.py          # envs, conditions, manifest
+#   python3 scripts/final_run.py --dir results/batches/261126_stage2sim
+#   python3 scripts/stage2sim_report.py        # scoring, selection, report
+#
+# Every value marked ASSUMPTION is a choice of this study, not a published
+# number; the report shows the result for the alternatives as well.
+# Reference model and sources: comfort_core/comfort_reference.py.
+# Design and limits: docs/STAGE2_SIM_PLAN.md.
+
+batch: results/batches/261126_stage2sim
+
+# Search start = Stage 1 R_nav_upper (static circle, cross scenario). It is
+# the start of the search, not a ceiling for every adaptive shape.
+ladder:
+  start_m: 0.90
+  mode: linear_fraction     # linear_fraction: step = fraction * start_m; geometric: r_k = start * ratio^k
+  fraction: 0.10            # 0.90, 0.81, 0.72, 0.63, 0.54, 0.45, 0.36
+  ratio: 0.90
+  min_m: 0.36
+  floor_m: 0.30             # comfort_space.min_radius: added as the last size; below it every size is floored
+
+# Two corridors (smoke 2026-11-26: in the 2.6 m corridor the planner centres
+# the AMR in the free space, so the clearance follows the corridor, not r:
+# r 0.54 -> edge 0.95 m, r 0.90 -> 1.36 m).
+#   tight  PRIMARY (worst case): the free lane beside the Comfort Space is
+#          lane_free_m wide, so the AMR has to pass close to the space's edge.
+#          Corridor width = person_wall_gap_m + r + lane_free_m, per size.
+#   wide   SECONDARY: fixed corridor (geometry.corridor_width_m); what the
+#          stack does with room to spare.
+# Each identical trial is repeated (run-to-run spread of Isaac Sim / ROS 2 / Nav2).
+variants:
+  tight: {repeats: 5}
+  wide: {repeats: 3}
+primary_variant: tight
+smoke_variants: [tight]
+include_b1: true            # B1 (no Comfort Space) per scenario: what Nav2 alone leaves
+
+# Reference model per human state (keys of comfort_reference.REFERENCES).
+reference:
+  stationary: N22a_B        # standing participant, non-humanoid AGV (Neggers 2022 IJSR, study B)
+  station_engaged: N22a_B   # ASSUMPTION: no study manipulated task engagement
+  moving: N22b_E1           # walking participant, head-on passing, 0.35 m/s (Neggers 2022 Front., Exp. 1)
+  engaged_extra_m: 0.0      # ASSUMPTION knob: extra rear extent for an engaged person (no evidence -> 0)
+  distance_basis: center_to_center   # also reported: clearance_matched
+
+criteria:
+  variant: tight            # selection uses the primary (worst-case) corridor
+  comfort_metric: predicted_comfort_at_closest   # or predicted_comfort_min
+  targets: [4.0, 4.5, 5.0, 5.5, 6.0]             # 7-point scale; 4 = scale midpoint
+  primary_target: 5.0       # ASSUMPTION (user to confirm): one point above the midpoint
+  max_violation_rate: 0.2   # ASSUMPTION: share of repeats allowed below target
+  min_nav_ok_rate: 0.8      # ASSUMPTION: share of repeats that must succeed (no deadlock / contact / abort)
+  monotone: true            # a size passes only if every larger ladder size passes too
+  out_of_view_half_angle_deg: 90.0   # ASSUMPTION: AMR "behind" the person = |bearing| > 90 deg (kinematic indicator only)
+
+# Controlled scenarios: one AMR, one person, straight corridor, no fleet.
+# Geometry: the AMR's start-goal line passes 0.30 m (centre to centre) from
+# the person, so the Comfort Space, not the corridor, decides the clearance;
+# the person stands 0.50 m from the +y wall so the AMR cannot pass behind
+# them unless the scenario says so; the AMR detours to -y.
+scenarios:
+  SE_rear:
+    label: Station Engaged - Rear (AMR passes behind a person working, back to the aisle)
+    state: station_engaged
+    context: c1             # comfort_core/contexts.py: back to the passage
+    tested: rear
+    versions: [static, adaptive]
+  ST_front:
+    label: Stationary - Front (AMR passes in front of a standing person facing the aisle)
+    state: stationary
+    context: c3
+    tested: front
+    versions: [static, adaptive]
+  ST_side:
+    label: Stationary - Side (AMR passes beside a standing person)
+    state: stationary
+    context: c4
+    tested: side
+    versions: [static, adaptive]
+  MV_pass:
+    label: Moving - Passing (person walks head-on toward the AMR)
+    state: moving
+    tested: side
+    # Adaptive = static for walkers: no published side/front dependence for
+    # a walking person (Neggers 2022 Front. fits one curve), so only static.
+    versions: [static]
+  MV_overtake:
+    label: Moving - Overtaking (AMR overtakes a person walking the same way)
+    state: moving
+    tested: rear
+    versions: [static]
+    # Checked by the planner; written to plan.json either way.
+    feasibility_check: overtake
+
+geometry:
+  tight:
+    lane_free_m: 1.0        # ASSUMPTION: AMR 0.48 m wide + 0.26 m each side
+  corridor_width_m: 2.6
+  corridor_length_m: 12.0
+  person_wall_gap_m: 0.50
+  path_offset_m: 0.30       # AMR start-goal line, centre to centre, from the person
+  start_x: -5.0
+  goal_x: 5.0
+  moving:
+    corridor_width_m: 3.0
+    corridor_length_m: 16.0
+    lane_y: 0.6             # walker and AMR on the same line, head-on
+    walker_start_x: 7.0
+    walker_end_x: -7.0
+    start_x: -5.5
+    goal_x: 5.5
+
+# Overtaking needs the AMR to be faster than the walker. The character
+# walks at its animation speed (humans.walk_speed scaling is off): median
+# 1.04 m/s (P90 1.14) over moving people faster than 0.5 m/s in the Stage 3
+# B1 logs, seeds 101-105. AMR: DWB max_vel_x 1.0 m/s (configs/nav2), observed
+# ~0.73-0.80 m/s at encounters. The AMR must gain gain_m on the walker
+# within the corridor: amr_speed * gain_m / (amr_speed - walker_speed) <= length.
+overtake:
+  walker_speed_mps: 1.04
+  amr_max_speed_mps: 1.0
+  gain_m: 3.0

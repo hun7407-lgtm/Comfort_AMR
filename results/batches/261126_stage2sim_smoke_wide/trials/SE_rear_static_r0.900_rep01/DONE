@@ -1,0 +1,19 @@
+{
+ "trial_id": "SE_rear_static_r0.900_rep01",
+ "seed": 1,
+ "condition": "configs/stage2sim/conditions/S2_static_r0.900.yaml",
+ "config": "configs/stage2sim/envs/SE_rear.yaml",
+ "commit": "9b067d6",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 78,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 78,
+ "finished": "2026-11-26T17:08:10"
+}

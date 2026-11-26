@@ -1,0 +1,19 @@
+{
+ "trial_id": "ST_side_tight_static_r0.900_rep01",
+ "seed": 1,
+ "condition": "configs/stage2sim/conditions/S2_static_r0.900.yaml",
+ "config": "configs/stage2sim/envs/ST_side_tight_w2.400.yaml",
+ "commit": "9b067d6",
+ "result": "DEADLOCK",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 153,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 153,
+ "finished": "2026-11-26T17:50:54"
+}

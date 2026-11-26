@@ -1,0 +1,1209 @@
+{
+ "ladder_m": [
+  0.9,
+  0.81,
+  0.72,
+  0.63,
+  0.54,
+  0.45,
+  0.36,
+  0.3
+ ],
+ "variants": {
+  "tight": {
+   "repeats": 5
+  },
+  "wide": {
+   "repeats": 3
+  }
+ },
+ "amr_half_width_m": 0.24,
+ "reference": {
+  "stationary": "N22a_B",
+  "station_engaged": "N22a_B",
+  "moving": "N22b_E1",
+  "engaged_extra_m": 0.0,
+  "distance_basis": "center_to_center"
+ },
+ "criteria": {
+  "variant": "tight",
+  "comfort_metric": "predicted_comfort_at_closest",
+  "targets": [
+   4.0,
+   4.5,
+   5.0,
+   5.5,
+   6.0
+  ],
+  "primary_target": 5.0,
+  "max_violation_rate": 0.2,
+  "min_nav_ok_rate": 0.8,
+  "monotone": true,
+  "out_of_view_half_angle_deg": 90.0
+ },
+ "scenarios": {
+  "SE_rear": {
+   "label": "Station Engaged - Rear (AMR passes behind a person working, back to the aisle)",
+   "state": "station_engaged",
+   "tested": "rear",
+   "versions": [
+    "static",
+    "adaptive"
+   ],
+   "status": "RUN",
+   "literature_shape_at_primary": {
+    "front": 0.4561,
+    "rear": 0.5551,
+    "side": 0.5372
+   },
+   "required_extent_by_target": {
+    "4.0": {
+     "front": 0.3052,
+     "rear": 0.3306,
+     "side": 0.3621
+    },
+    "4.5": {
+     "front": 0.3762,
+     "rear": 0.4248,
+     "side": 0.4435
+    },
+    "5.0": {
+     "front": 0.4561,
+     "rear": 0.5551,
+     "side": 0.5372
+    },
+    "5.5": {
+     "front": 0.5526,
+     "rear": 0.8727,
+     "side": 0.656
+    },
+    "6.0": {
+     "front": 0.6866,
+     "rear": null,
+     "side": 0.842
+    }
+   },
+   "adaptive_extents": {
+    "0.900": {
+     "front": 0.739,
+     "side": 0.871,
+     "rear": 0.9
+    },
+    "0.810": {
+     "front": 0.666,
+     "side": 0.784,
+     "rear": 0.81
+    },
+    "0.720": {
+     "front": 0.592,
+     "side": 0.697,
+     "rear": 0.72
+    },
+    "0.630": {
+     "front": 0.518,
+     "side": 0.61,
+     "rear": 0.63
+    },
+    "0.540": {
+     "front": 0.444,
+     "side": 0.523,
+     "rear": 0.54
+    },
+    "0.450": {
+     "front": 0.37,
+     "side": 0.435,
+     "rear": 0.45
+    },
+    "0.360": {
+     "front": 0.296,
+     "side": 0.348,
+     "rear": 0.36
+    },
+    "0.300": {
+     "front": 0.246,
+     "side": 0.29,
+     "rear": 0.3
+    }
+   },
+   "conditions": [
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.310"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.220"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.130"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.040"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w1.950"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w1.860"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "tight",
+     "env": "SE_rear_tight_w1.800"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.900",
+     "radius_m": 0.9,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.400"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.810",
+     "radius_m": 0.81,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.310"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.720",
+     "radius_m": 0.72,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.220"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.630",
+     "radius_m": 0.63,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.130"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.540",
+     "radius_m": 0.54,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w2.040"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.450",
+     "radius_m": 0.45,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w1.950"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.360",
+     "radius_m": 0.36,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w1.860"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.300",
+     "radius_m": 0.3,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "SE_rear_tight_w1.800"
+    },
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.900",
+     "radius_m": 0.9,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.810",
+     "radius_m": 0.81,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.720",
+     "radius_m": 0.72,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.630",
+     "radius_m": 0.63,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.540",
+     "radius_m": 0.54,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.450",
+     "radius_m": 0.45,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.360",
+     "radius_m": 0.36,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    },
+    {
+     "condition": "S2_SE_rear_adapt_r0.300",
+     "radius_m": 0.3,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "SE_rear"
+    }
+   ]
+  },
+  "ST_front": {
+   "label": "Stationary - Front (AMR passes in front of a standing person facing the aisle)",
+   "state": "stationary",
+   "tested": "front",
+   "versions": [
+    "static",
+    "adaptive"
+   ],
+   "status": "RUN",
+   "literature_shape_at_primary": {
+    "front": 0.4561,
+    "rear": 0.5551,
+    "side": 0.5372
+   },
+   "required_extent_by_target": {
+    "4.0": {
+     "front": 0.3052,
+     "rear": 0.3306,
+     "side": 0.3621
+    },
+    "4.5": {
+     "front": 0.3762,
+     "rear": 0.4248,
+     "side": 0.4435
+    },
+    "5.0": {
+     "front": 0.4561,
+     "rear": 0.5551,
+     "side": 0.5372
+    },
+    "5.5": {
+     "front": 0.5526,
+     "rear": 0.8727,
+     "side": 0.656
+    },
+    "6.0": {
+     "front": 0.6866,
+     "rear": null,
+     "side": 0.842
+    }
+   },
+   "adaptive_extents": {
+    "0.900": {
+     "front": 0.9,
+     "side": 1.06,
+     "rear": 1.095
+    },
+    "0.810": {
+     "front": 0.81,
+     "side": 0.954,
+     "rear": 0.986
+    },
+    "0.720": {
+     "front": 0.72,
+     "side": 0.848,
+     "rear": 0.876
+    },
+    "0.630": {
+     "front": 0.63,
+     "side": 0.742,
+     "rear": 0.767
+    },
+    "0.540": {
+     "front": 0.54,
+     "side": 0.636,
+     "rear": 0.657
+    },
+    "0.450": {
+     "front": 0.45,
+     "side": 0.53,
+     "rear": 0.548
+    },
+    "0.360": {
+     "front": 0.36,
+     "side": 0.424,
+     "rear": 0.438
+    },
+    "0.300": {
+     "front": 0.3,
+     "side": 0.353,
+     "rear": 0.365
+    }
+   },
+   "conditions": [
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.310"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.220"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.130"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.040"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w1.950"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w1.860"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_front_tight_w1.800"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.900",
+     "radius_m": 0.9,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.400"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.810",
+     "radius_m": 0.81,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.310"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.720",
+     "radius_m": 0.72,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.220"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.630",
+     "radius_m": 0.63,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.130"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.540",
+     "radius_m": 0.54,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w2.040"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.450",
+     "radius_m": 0.45,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w1.950"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.360",
+     "radius_m": 0.36,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w1.860"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.300",
+     "radius_m": 0.3,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_front_tight_w1.800"
+    },
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.900",
+     "radius_m": 0.9,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.810",
+     "radius_m": 0.81,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.720",
+     "radius_m": 0.72,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.630",
+     "radius_m": 0.63,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.540",
+     "radius_m": 0.54,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.450",
+     "radius_m": 0.45,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.360",
+     "radius_m": 0.36,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    },
+    {
+     "condition": "S2_ST_front_adapt_r0.300",
+     "radius_m": 0.3,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_front"
+    }
+   ]
+  },
+  "ST_side": {
+   "label": "Stationary - Side (AMR passes beside a standing person)",
+   "state": "stationary",
+   "tested": "side",
+   "versions": [
+    "static",
+    "adaptive"
+   ],
+   "status": "RUN",
+   "literature_shape_at_primary": {
+    "front": 0.4561,
+    "rear": 0.5551,
+    "side": 0.5372
+   },
+   "required_extent_by_target": {
+    "4.0": {
+     "front": 0.3052,
+     "rear": 0.3306,
+     "side": 0.3621
+    },
+    "4.5": {
+     "front": 0.3762,
+     "rear": 0.4248,
+     "side": 0.4435
+    },
+    "5.0": {
+     "front": 0.4561,
+     "rear": 0.5551,
+     "side": 0.5372
+    },
+    "5.5": {
+     "front": 0.5526,
+     "rear": 0.8727,
+     "side": 0.656
+    },
+    "6.0": {
+     "front": 0.6866,
+     "rear": null,
+     "side": 0.842
+    }
+   },
+   "adaptive_extents": {
+    "0.900": {
+     "front": 0.764,
+     "side": 0.9,
+     "rear": 0.93
+    },
+    "0.810": {
+     "front": 0.688,
+     "side": 0.81,
+     "rear": 0.837
+    },
+    "0.720": {
+     "front": 0.611,
+     "side": 0.72,
+     "rear": 0.744
+    },
+    "0.630": {
+     "front": 0.535,
+     "side": 0.63,
+     "rear": 0.651
+    },
+    "0.540": {
+     "front": 0.458,
+     "side": 0.54,
+     "rear": 0.558
+    },
+    "0.450": {
+     "front": 0.382,
+     "side": 0.45,
+     "rear": 0.465
+    },
+    "0.360": {
+     "front": 0.306,
+     "side": 0.36,
+     "rear": 0.372
+    },
+    "0.300": {
+     "front": 0.255,
+     "side": 0.3,
+     "rear": 0.31
+    }
+   },
+   "conditions": [
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.310"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.220"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.130"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.040"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w1.950"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w1.860"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "tight",
+     "env": "ST_side_tight_w1.800"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.900",
+     "radius_m": 0.9,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.400"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.810",
+     "radius_m": 0.81,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.310"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.720",
+     "radius_m": 0.72,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.220"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.630",
+     "radius_m": 0.63,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.130"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.540",
+     "radius_m": 0.54,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w2.040"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.450",
+     "radius_m": 0.45,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w1.950"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.360",
+     "radius_m": 0.36,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w1.860"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.300",
+     "radius_m": 0.3,
+     "version": "adaptive",
+     "variant": "tight",
+     "env": "ST_side_tight_w1.800"
+    },
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.900",
+     "radius_m": 0.9,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.810",
+     "radius_m": 0.81,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.720",
+     "radius_m": 0.72,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.630",
+     "radius_m": 0.63,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.540",
+     "radius_m": 0.54,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.450",
+     "radius_m": 0.45,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.360",
+     "radius_m": 0.36,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    },
+    {
+     "condition": "S2_ST_side_adapt_r0.300",
+     "radius_m": 0.3,
+     "version": "adaptive",
+     "variant": "wide",
+     "env": "ST_side"
+    }
+   ]
+  },
+  "MV_pass": {
+   "label": "Moving - Passing (person walks head-on toward the AMR)",
+   "state": "moving",
+   "tested": "side",
+   "versions": [
+    "static"
+   ],
+   "status": "RUN",
+   "literature_shape_at_primary": {
+    "front": 0.4464,
+    "rear": 0.4464,
+    "side": 0.4464
+   },
+   "required_extent_by_target": {
+    "4.0": {
+     "front": 0.2996,
+     "rear": 0.2996,
+     "side": 0.2996
+    },
+    "4.5": {
+     "front": 0.369,
+     "rear": 0.369,
+     "side": 0.369
+    },
+    "5.0": {
+     "front": 0.4464,
+     "rear": 0.4464,
+     "side": 0.4464
+    },
+    "5.5": {
+     "front": 0.5386,
+     "rear": 0.5386,
+     "side": 0.5386
+    },
+    "6.0": {
+     "front": 0.6625,
+     "rear": 0.6625,
+     "side": 0.6625
+    }
+   },
+   "conditions": [
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "tight",
+     "env": "MV_pass_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w2.400"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w2.310"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w2.220"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w2.130"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w2.040"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w1.950"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w1.860"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "tight",
+     "env": "MV_pass_tight_w1.800"
+    },
+    {
+     "condition": "B1",
+     "radius_m": null,
+     "version": "B1",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.900",
+     "radius_m": 0.9,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.810",
+     "radius_m": 0.81,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.720",
+     "radius_m": 0.72,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.630",
+     "radius_m": 0.63,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.540",
+     "radius_m": 0.54,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.450",
+     "radius_m": 0.45,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.360",
+     "radius_m": 0.36,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    },
+    {
+     "condition": "S2_static_r0.300",
+     "radius_m": 0.3,
+     "version": "static",
+     "variant": "wide",
+     "env": "MV_pass"
+    }
+   ]
+  },
+  "MV_overtake": {
+   "label": "Moving - Overtaking (AMR overtakes a person walking the same way)",
+   "state": "moving",
+   "tested": "rear",
+   "versions": [
+    "static"
+   ],
+   "status": "INFEASIBLE",
+   "feasibility": {
+    "amr_max_speed_mps": 1.0,
+    "walker_speed_mps": 1.04,
+    "amr_can_overtake": false,
+    "distance_needed_m": null,
+    "reference_curve": null,
+    "note": "Overtaking needs the AMR faster than the walker; the walker's animation speed cannot be lowered in this simulation (humans.walk_speed off). No published overtaking comfort curve with numeric parameters either (Neggers 2022 Front. Exp. 2 gives them only in Fig. 10/11)."
+   }
+  }
+ },
+ "references": [
+  "N22a_B: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study B (AGV) (standing still, robot 0.35 m/s); right a0 5.39 sigma 46.14 cm, front a0 5.62 sigma 44.13 cm, left a0 5.39 sigma 47.21 cm, back a0 4.58 sigma 39.11 cm",
+  "N22a_A: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study A (Pepper) (standing still, robot 0.35 m/s); right a0 6.15 sigma 47.25 cm, front a0 6.15 sigma 41.51 cm, left a0 6.04 sigma 49.52 cm, back a0 3.92 sigma 35.65 cm",
+  "N22b_E1: Neggers et al. 2022, Front Robot AI 9:915972, Exp. 1, Table 2 (eta = 0) (walking, passed head-on, robot 0.35 m/s); right a0 5.71 sigma 44.2 cm, front a0 5.71 sigma 44.2 cm, left a0 5.71 sigma 44.2 cm, back a0 5.71 sigma 44.2 cm"
+ ]
+}

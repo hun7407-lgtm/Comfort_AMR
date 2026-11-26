@@ -1,0 +1,1082 @@
+{
+ "metric": "predicted_comfort_at_closest",
+ "criteria": {
+  "variant": "tight",
+  "comfort_metric": "predicted_comfort_at_closest",
+  "targets": [
+   4.0,
+   4.5,
+   5.0,
+   5.5,
+   6.0
+  ],
+  "primary_target": 5.0,
+  "max_violation_rate": 0.2,
+  "min_nav_ok_rate": 0.8,
+  "monotone": true,
+  "out_of_view_half_angle_deg": 90.0
+ },
+ "conditions": [
+  {
+   "scenario": "MV_pass",
+   "variant": "wide",
+   "env": "MV_pass",
+   "version": "B1",
+   "radius_m": null,
+   "n": 1,
+   "nav_ok_rate": 0.0,
+   "comfort_median": 4.243,
+   "comfort_min": 4.243,
+   "min_cc_median": 0.573,
+   "min_edge_median": 0.221,
+   "hold_median": 0.22,
+   "travel_median": 20.55,
+   "sectors": [
+    "front"
+   ],
+   "states": [
+    "moving"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 1.0,
+    "5.0": 1.0,
+    "5.5": 1.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "MV_pass",
+   "variant": "wide",
+   "env": "MV_pass",
+   "version": "static",
+   "radius_m": 0.9,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 6.381,
+   "comfort_min": 6.381,
+   "min_cc_median": 1.056,
+   "min_edge_median": 0.81,
+   "hold_median": 1.4,
+   "travel_median": 24.07,
+   "sectors": [
+    "side"
+   ],
+   "states": [
+    "moving"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 0.0
+   }
+  },
+  {
+   "scenario": "MV_pass",
+   "variant": "wide",
+   "env": "MV_pass",
+   "version": "static",
+   "radius_m": 0.54,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 5.667,
+   "comfort_min": 5.667,
+   "min_cc_median": 0.815,
+   "min_edge_median": 0.574,
+   "hold_median": 1.5,
+   "travel_median": 23.78,
+   "sectors": [
+    "side"
+   ],
+   "states": [
+    "moving"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "SE_rear",
+   "variant": "wide",
+   "env": "SE_rear",
+   "version": "B1",
+   "radius_m": null,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 3.697,
+   "comfort_min": 3.697,
+   "min_cc_median": 0.521,
+   "min_edge_median": 0.276,
+   "hold_median": 0.23,
+   "travel_median": 15.92,
+   "sectors": [
+    "rear"
+   ],
+   "states": [
+    "station_engaged"
+   ],
+   "violation_rate": {
+    "4.0": 1.0,
+    "4.5": 1.0,
+    "5.0": 1.0,
+    "5.5": 1.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "SE_rear",
+   "variant": "wide",
+   "env": "SE_rear",
+   "version": "adaptive",
+   "radius_m": 0.54,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 5.543,
+   "comfort_min": 5.543,
+   "min_cc_median": 1.207,
+   "min_edge_median": 0.956,
+   "hold_median": 0.22,
+   "travel_median": 16.25,
+   "sectors": [
+    "rear"
+   ],
+   "states": [
+    "station_engaged"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "SE_rear",
+   "variant": "wide",
+   "env": "SE_rear",
+   "version": "static",
+   "radius_m": 0.9,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 5.579,
+   "comfort_min": 5.579,
+   "min_cc_median": 1.606,
+   "min_edge_median": 1.361,
+   "hold_median": 0.22,
+   "travel_median": 16.42,
+   "sectors": [
+    "rear"
+   ],
+   "states": [
+    "station_engaged"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "SE_rear",
+   "variant": "wide",
+   "env": "SE_rear",
+   "version": "static",
+   "radius_m": 0.54,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 5.544,
+   "comfort_min": 5.544,
+   "min_cc_median": 1.202,
+   "min_edge_median": 0.954,
+   "hold_median": 0.2,
+   "travel_median": 16.15,
+   "sectors": [
+    "rear"
+   ],
+   "states": [
+    "station_engaged"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "ST_front",
+   "variant": "wide",
+   "env": "ST_front",
+   "version": "B1",
+   "radius_m": null,
+   "n": 1,
+   "nav_ok_rate": 0.0,
+   "comfort_median": 3.756,
+   "comfort_min": 3.756,
+   "min_cc_median": 0.522,
+   "min_edge_median": 0.239,
+   "hold_median": 11.43,
+   "travel_median": 21.33,
+   "sectors": [
+    "front"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 1.0,
+    "4.5": 1.0,
+    "5.0": 1.0,
+    "5.5": 1.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "ST_front",
+   "variant": "wide",
+   "env": "ST_front",
+   "version": "adaptive",
+   "radius_m": 0.54,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 6.487,
+   "comfort_min": 6.487,
+   "min_cc_median": 1.207,
+   "min_edge_median": 0.957,
+   "hold_median": 0.2,
+   "travel_median": 16.28,
+   "sectors": [
+    "front"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 0.0
+   }
+  },
+  {
+   "scenario": "ST_front",
+   "variant": "wide",
+   "env": "ST_front",
+   "version": "static",
+   "radius_m": 0.9,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 6.611,
+   "comfort_min": 6.611,
+   "min_cc_median": 1.582,
+   "min_edge_median": 1.338,
+   "hold_median": 0.22,
+   "travel_median": 16.37,
+   "sectors": [
+    "front"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 0.0
+   }
+  },
+  {
+   "scenario": "ST_front",
+   "variant": "wide",
+   "env": "ST_front",
+   "version": "static",
+   "radius_m": 0.54,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 6.486,
+   "comfort_min": 6.486,
+   "min_cc_median": 1.205,
+   "min_edge_median": 0.955,
+   "hold_median": 0.23,
+   "travel_median": 16.02,
+   "sectors": [
+    "front"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 0.0
+   }
+  },
+  {
+   "scenario": "ST_side",
+   "variant": "wide",
+   "env": "ST_side",
+   "version": "B1",
+   "radius_m": null,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 3.908,
+   "comfort_min": 3.908,
+   "min_cc_median": 0.575,
+   "min_edge_median": 0.33,
+   "hold_median": 0.45,
+   "travel_median": 16.03,
+   "sectors": [
+    "side"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 1.0,
+    "4.5": 1.0,
+    "5.0": 1.0,
+    "5.5": 1.0,
+    "6.0": 1.0
+   }
+  },
+  {
+   "scenario": "ST_side",
+   "variant": "wide",
+   "env": "ST_side",
+   "version": "adaptive",
+   "radius_m": 0.54,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 6.232,
+   "comfort_min": 6.232,
+   "min_cc_median": 1.204,
+   "min_edge_median": 0.959,
+   "hold_median": 0.23,
+   "travel_median": 16.07,
+   "sectors": [
+    "side"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 0.0
+   }
+  },
+  {
+   "scenario": "ST_side",
+   "variant": "wide",
+   "env": "ST_side",
+   "version": "static",
+   "radius_m": 0.9,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 6.431,
+   "comfort_min": 6.431,
+   "min_cc_median": 1.584,
+   "min_edge_median": 1.333,
+   "hold_median": 0.22,
+   "travel_median": 16.48,
+   "sectors": [
+    "side"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 0.0
+   }
+  },
+  {
+   "scenario": "ST_side",
+   "variant": "wide",
+   "env": "ST_side",
+   "version": "static",
+   "radius_m": 0.54,
+   "n": 1,
+   "nav_ok_rate": 1.0,
+   "comfort_median": 6.227,
+   "comfort_min": 6.227,
+   "min_cc_median": 1.226,
+   "min_edge_median": 0.98,
+   "hold_median": 0.23,
+   "travel_median": 16.18,
+   "sectors": [
+    "side"
+   ],
+   "states": [
+    "stationary"
+   ],
+   "violation_rate": {
+    "4.0": 0.0,
+    "4.5": 0.0,
+    "5.0": 0.0,
+    "5.5": 0.0,
+    "6.0": 0.0
+   }
+  }
+ ],
+ "selection": {
+  "SE_rear": {
+   "tight/static": {
+    "4.0": {
+     "status": "NO_DATA"
+    },
+    "4.5": {
+     "status": "NO_DATA"
+    },
+    "5.0": {
+     "status": "NO_DATA"
+    },
+    "5.5": {
+     "status": "NO_DATA"
+    },
+    "6.0": {
+     "status": "NO_DATA"
+    }
+   },
+   "tight/adaptive": {
+    "4.0": {
+     "status": "NO_DATA"
+    },
+    "4.5": {
+     "status": "NO_DATA"
+    },
+    "5.0": {
+     "status": "NO_DATA"
+    },
+    "5.5": {
+     "status": "NO_DATA"
+    },
+    "6.0": {
+     "status": "NO_DATA"
+    }
+   },
+   "wide/static": {
+    "4.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "4.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "6.0": {
+     "status": "INFEASIBLE_AT_START",
+     "detail": "predicted comfort below 6.0 even at 0.9 m: needs slow-down / wait / yield / detour",
+     "ladder": [
+      [
+       0.9,
+       false,
+       true
+      ],
+      [
+       0.54,
+       false,
+       true
+      ]
+     ]
+    }
+   },
+   "wide/adaptive": {
+    "4.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "4.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "6.0": {
+     "status": "INFEASIBLE_AT_START",
+     "detail": "predicted comfort below 6.0 even at 0.54 m: needs slow-down / wait / yield / detour",
+     "ladder": [
+      [
+       0.54,
+       false,
+       true
+      ]
+     ]
+    }
+   }
+  },
+  "ST_front": {
+   "tight/static": {
+    "4.0": {
+     "status": "NO_DATA"
+    },
+    "4.5": {
+     "status": "NO_DATA"
+    },
+    "5.0": {
+     "status": "NO_DATA"
+    },
+    "5.5": {
+     "status": "NO_DATA"
+    },
+    "6.0": {
+     "status": "NO_DATA"
+    }
+   },
+   "tight/adaptive": {
+    "4.0": {
+     "status": "NO_DATA"
+    },
+    "4.5": {
+     "status": "NO_DATA"
+    },
+    "5.0": {
+     "status": "NO_DATA"
+    },
+    "5.5": {
+     "status": "NO_DATA"
+    },
+    "6.0": {
+     "status": "NO_DATA"
+    }
+   },
+   "wide/static": {
+    "4.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "4.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "6.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    }
+   },
+   "wide/adaptive": {
+    "4.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "4.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "6.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    }
+   }
+  },
+  "ST_side": {
+   "tight/static": {
+    "4.0": {
+     "status": "NO_DATA"
+    },
+    "4.5": {
+     "status": "NO_DATA"
+    },
+    "5.0": {
+     "status": "NO_DATA"
+    },
+    "5.5": {
+     "status": "NO_DATA"
+    },
+    "6.0": {
+     "status": "NO_DATA"
+    }
+   },
+   "tight/adaptive": {
+    "4.0": {
+     "status": "NO_DATA"
+    },
+    "4.5": {
+     "status": "NO_DATA"
+    },
+    "5.0": {
+     "status": "NO_DATA"
+    },
+    "5.5": {
+     "status": "NO_DATA"
+    },
+    "6.0": {
+     "status": "NO_DATA"
+    }
+   },
+   "wide/static": {
+    "4.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "4.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "6.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    }
+   },
+   "wide/adaptive": {
+    "4.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "4.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "6.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    }
+   }
+  },
+  "MV_pass": {
+   "tight/static": {
+    "4.0": {
+     "status": "NO_DATA"
+    },
+    "4.5": {
+     "status": "NO_DATA"
+    },
+    "5.0": {
+     "status": "NO_DATA"
+    },
+    "5.5": {
+     "status": "NO_DATA"
+    },
+    "6.0": {
+     "status": "NO_DATA"
+    }
+   },
+   "wide/static": {
+    "4.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "4.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.0": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "5.5": {
+     "status": "OK_AT_LADDER_END",
+     "R_min_m": 0.54,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       true,
+       true
+      ]
+     ]
+    },
+    "6.0": {
+     "status": "OK",
+     "R_min_m": 0.9,
+     "ladder": [
+      [
+       0.9,
+       true,
+       true
+      ],
+      [
+       0.54,
+       false,
+       true
+      ]
+     ]
+    }
+   }
+  },
+  "MV_overtake": {
+   "status": "INFEASIBLE",
+   "feasibility": {
+    "amr_max_speed_mps": 1.0,
+    "walker_speed_mps": 1.04,
+    "amr_can_overtake": false,
+    "distance_needed_m": null,
+    "reference_curve": null,
+    "note": "Overtaking needs the AMR faster than the walker; the walker's animation speed cannot be lowered in this simulation (humans.walk_speed off). No published overtaking comfort curve with numeric parameters either (Neggers 2022 Front. Exp. 2 gives them only in Fig. 10/11)."
+   }
+  }
+ },
+ "n_trials": 15,
+ "n_excluded": 0
+}

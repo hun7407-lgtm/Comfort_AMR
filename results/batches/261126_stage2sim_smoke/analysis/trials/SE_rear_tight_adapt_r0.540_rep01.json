@@ -1,0 +1,96 @@
+{
+ "analysis": {
+  "trial_id": "SE_rear_tight_adapt_r0.540_rep01",
+  "seed": 1,
+  "condition": "S2_SE_rear_adapt_r0.540",
+  "infra_failure": null,
+  "system_success": true,
+  "comfort_deadlock": false,
+  "comfort_deadlock_amrs": [],
+  "any_failure": false,
+  "amrs": {
+   "AMR1": {
+    "result": "SUCCESS",
+    "t_verdict": 62.55,
+    "t_begin": 45.0,
+    "travel_time": 17.55,
+    "path_length": 9.94,
+    "hold_s": 0.22,
+    "contact_s": 0.0,
+    "protective_stop_s": 0.12,
+    "planning_success": "True",
+    "nav2_abort": false,
+    "min_human_m": 0.901,
+    "min_robot_m": null,
+    "plans": 17,
+    "replans": 0,
+    "goals_planned": 1,
+    "first_plan_m": 10.282,
+    "planned": true,
+    "gate_yield_s": 0.0,
+    "min_robot_centre_m": null,
+    "residual_width_min_m": null,
+    "residual_width_all_min_m": null,
+    "class": "SUCCESS",
+    "class_detail": "hold 0.2 s",
+    "residual_width_at_verdict_m": null
+   }
+  },
+  "spatial": {
+   "corridor_intrusion_max_m2": null,
+   "corridor_intrusion_mean_m2": null,
+   "overlap_max_m2": null,
+   "overlap_s": 0.0,
+   "overlap_humans_max": 0
+  },
+  "interactions": [
+   {
+    "amr": "AMR1",
+    "human": "a",
+    "t0": 48.05,
+    "t_min": 52.517,
+    "min_clearance": 0.901,
+    "state": "station_engaged",
+    "direction": "rear",
+    "amr_speed": 0.378,
+    "human_speed": 0.0,
+    "extent": 0.541,
+    "penetration": 0.0,
+    "intrusion_s": 0.0,
+    "hold_s": 0.0
+   }
+  ],
+  "has_comfort_space": true,
+  "n_ticks": 225
+ },
+ "reference_score": {
+  "state": "station_engaged",
+  "reference": "N22a_B",
+  "t_closest": 52.95,
+  "min_cc_m": 1.1492,
+  "min_edge_m_approx": 0.9092,
+  "rel_deg": 172.8,
+  "sector": "rear",
+  "theta_n22": 4.5859,
+  "predicted_comfort_at_closest": 5.525,
+  "predicted_comfort_min": 5.521,
+  "amr_speed_at_closest_mps": 0.606,
+  "human_speed_at_closest_mps": 0.0,
+  "relative_speed_at_closest_mps": 0.606,
+  "min_ttc": {
+   "ttc_s": 5.457,
+   "t": 45.817,
+   "d_cc": 4.576
+  },
+  "contact_m": 0.49,
+  "jafari_dmin_ok": true,
+  "inside_tested_range": false,
+  "amr_speed_vs_reference": 0.256,
+  "predicted_comfort_clearance_matched": 5.472
+ },
+ "person": "a",
+ "min_edge_m": 0.901,
+ "intrusion_s": 0.0,
+ "penetration_max_m": 0.0,
+ "out_of_view_s": 7.62
+}

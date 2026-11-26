@@ -1,0 +1,19 @@
+{
+ "trial_id": "MV_pass_tight_B1_rep01",
+ "seed": 1,
+ "condition": "configs/stage2sim/conditions/B1.yaml",
+ "config": "configs/stage2sim/envs/MV_pass_tight_w2.400.yaml",
+ "commit": "9b067d6",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 84,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 84,
+ "finished": "2026-11-26T17:56:21"
+}

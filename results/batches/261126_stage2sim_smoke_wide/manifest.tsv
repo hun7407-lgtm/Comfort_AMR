@@ -1,0 +1,17 @@
+# Stage 2 (simulation)
+# trial_id	repeat	condition	config
+SE_rear_B1_rep01	1	configs/stage2sim/conditions/B1.yaml	configs/stage2sim/envs/SE_rear.yaml
+SE_rear_static_r0.900_rep01	1	configs/stage2sim/conditions/S2_static_r0.900.yaml	configs/stage2sim/envs/SE_rear.yaml
+SE_rear_static_r0.540_rep01	1	configs/stage2sim/conditions/S2_static_r0.540.yaml	configs/stage2sim/envs/SE_rear.yaml
+SE_rear_adapt_r0.540_rep01	1	configs/stage2sim/conditions/S2_SE_rear_adapt_r0.540.yaml	configs/stage2sim/envs/SE_rear.yaml
+ST_front_B1_rep01	1	configs/stage2sim/conditions/B1.yaml	configs/stage2sim/envs/ST_front.yaml
+ST_front_static_r0.900_rep01	1	configs/stage2sim/conditions/S2_static_r0.900.yaml	configs/stage2sim/envs/ST_front.yaml
+ST_front_static_r0.540_rep01	1	configs/stage2sim/conditions/S2_static_r0.540.yaml	configs/stage2sim/envs/ST_front.yaml
+ST_front_adapt_r0.540_rep01	1	configs/stage2sim/conditions/S2_ST_front_adapt_r0.540.yaml	configs/stage2sim/envs/ST_front.yaml
+ST_side_B1_rep01	1	configs/stage2sim/conditions/B1.yaml	configs/stage2sim/envs/ST_side.yaml
+ST_side_static_r0.900_rep01	1	configs/stage2sim/conditions/S2_static_r0.900.yaml	configs/stage2sim/envs/ST_side.yaml
+ST_side_static_r0.540_rep01	1	configs/stage2sim/conditions/S2_static_r0.540.yaml	configs/stage2sim/envs/ST_side.yaml
+ST_side_adapt_r0.540_rep01	1	configs/stage2sim/conditions/S2_ST_side_adapt_r0.540.yaml	configs/stage2sim/envs/ST_side.yaml
+MV_pass_B1_rep01	1	configs/stage2sim/conditions/B1.yaml	configs/stage2sim/envs/MV_pass.yaml
+MV_pass_static_r0.900_rep01	1	configs/stage2sim/conditions/S2_static_r0.900.yaml	configs/stage2sim/envs/MV_pass.yaml
+MV_pass_static_r0.540_rep01	1	configs/stage2sim/conditions/S2_static_r0.540.yaml	configs/stage2sim/envs/MV_pass.yaml

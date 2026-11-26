@@ -1,0 +1,19 @@
+{
+ "trial_id": "ST_front_B1_rep01",
+ "seed": 1,
+ "condition": "configs/stage2sim/conditions/B1.yaml",
+ "config": "configs/stage2sim/envs/ST_front.yaml",
+ "commit": "9b067d6",
+ "result": "DEADLOCK",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 81,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 81,
+ "finished": "2026-11-26T17:12:08"
+}

@@ -1,0 +1,19 @@
+{
+ "trial_id": "MV_pass_static_r0.540_rep01",
+ "seed": 1,
+ "condition": "configs/stage2sim/conditions/S2_static_r0.540.yaml",
+ "config": "configs/stage2sim/envs/MV_pass.yaml",
+ "commit": "9b067d6",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 90,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 90,
+ "finished": "2026-11-26T17:31:44"
+}

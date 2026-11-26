@@ -138,3 +138,7 @@ results/**/*.log
 # The raw streams stay on the experiment PC.
 results/batches/261125_final_*/**/trial_log.jsonl
 results/batches/261125_final_*/**/*_frames.jsonl
+# Same for the Stage 2 simulation batches (261126_stage2sim*): the scores
+# live in analysis/trials/<id>.json and analysis/stage2sim_trials.csv.
+results/batches/261126_stage2sim*/**/trial_log.jsonl
+results/batches/261126_stage2sim*/**/*_frames.jsonl
