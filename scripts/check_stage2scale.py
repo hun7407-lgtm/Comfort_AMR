@@ -82,7 +82,14 @@ def test_generator_check_v2():
     assert "check OK" in r.stdout and "control nav2_only" in r.stdout
     r = subprocess.run([sys.executable, "scripts/stage2scale_plan.py", "--phase", "coarse", "--check"],
                        cwd=PROJECT_ROOT, capture_output=True, text=True)
-    assert r.returncode != 0 and "no frozen geometry" in (r.stdout + r.stderr)   # pilot first
+    S = yaml.safe_load((PROJECT_ROOT / "configs/stage2scale/stage2scale_v2_nav2only.yaml").read_text())
+    if not S.get("frozen"):
+        assert r.returncode != 0 and "no frozen geometry" in (r.stdout + r.stderr)   # pilot first
+    else:   # after the pilot freeze: runs, and a context frozen as unidentifiable is skipped, not run
+        assert r.returncode == 0, r.stdout + r.stderr
+        for k, v in S["frozen"].items():
+            if v == s2.UNIDENTIFIABLE:
+                assert f"{k}  {s2.UNIDENTIFIABLE}" in r.stdout, r.stdout
 
 
 def test_alpha_grid_follows_anchor():
