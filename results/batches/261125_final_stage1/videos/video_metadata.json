@@ -1,0 +1,1863 @@
+{
+ "condition_videos": [
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s006_B1",
+   "seed": 6,
+   "policy": "B1",
+   "comfort_size": null,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 6.9,
+     "edge_start_at": 9.18,
+     "belt_speed": 0.96,
+     "edge_speed": 1.0
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 9.8,
+     "edge_start_at": 11.95,
+     "belt_speed": 1.15,
+     "edge_speed": 1.01
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s006_B1_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s006_B1/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s006_B1/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B1",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s006_B1_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s018_B1",
+   "seed": 18,
+   "policy": "B1",
+   "comfort_size": null,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 10.1,
+     "edge_start_at": 12.33,
+     "belt_speed": 1.03,
+     "edge_speed": 1.09
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 10.9,
+     "edge_start_at": 13.06,
+     "belt_speed": 1.14,
+     "edge_speed": 0.97
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s018_B1_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s018_B1/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s018_B1/DONE",
+   "selection_reason": "success with the least standing time",
+   "condition": "B1",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s018_B1_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s007_B1",
+   "seed": 7,
+   "policy": "B1",
+   "comfort_size": null,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 10.1,
+     "edge_start_at": 12.24,
+     "belt_speed": 1.17,
+     "edge_speed": 0.95
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 13.8,
+     "edge_start_at": 16.1,
+     "belt_speed": 0.94,
+     "edge_speed": 0.94
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s007_B1_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s007_B1/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s007_B1/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B1",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s007_B1_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s002_B1",
+   "seed": 2,
+   "policy": "B1",
+   "comfort_size": null,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 6.5,
+     "edge_start_at": 8.9,
+     "belt_speed": 0.83,
+     "edge_speed": 1.06
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 10.9,
+     "edge_start_at": 13.33,
+     "belt_speed": 0.81,
+     "edge_speed": 0.8
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "HUMAN_MOTION_BLOCK",
+   "deadlock_type": [
+    "HUMAN_MOTION_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s002_B1_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s002_B1/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s002_B1/DONE",
+   "selection_reason": "failure (not comfort-induced)",
+   "condition": "B1",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s002_B1_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s001_B1",
+   "seed": 1,
+   "policy": "B1",
+   "comfort_size": null,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 7.5,
+     "edge_start_at": 9.9,
+     "belt_speed": 0.83,
+     "edge_speed": 0.97
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 9.3,
+     "edge_start_at": 11.48,
+     "belt_speed": 1.11,
+     "edge_speed": 1.06
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s001_B1_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s001_B1/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s001_B1/DONE",
+   "selection_reason": "further success (fill to 5, lowest seed)",
+   "condition": "B1",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/B1/s001_B1_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s021_B2_r080",
+   "seed": 21,
+   "policy": "B2",
+   "comfort_size": 0.8,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 6.9,
+     "edge_start_at": 9.05,
+     "belt_speed": 1.16,
+     "edge_speed": 1.05
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 13.3,
+     "edge_start_at": 15.63,
+     "belt_speed": 0.9,
+     "edge_speed": 1.02
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s021_B2_r080_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s021_B2_r080/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s021_B2_r080/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B2_r080",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s021_B2_r080_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s008_B2_r080",
+   "seed": 8,
+   "policy": "B2",
+   "comfort_size": 0.8,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 9.9,
+     "edge_start_at": 12.24,
+     "belt_speed": 0.89,
+     "edge_speed": 0.86
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 13.7,
+     "edge_start_at": 16.06,
+     "belt_speed": 0.87,
+     "edge_speed": 1.03
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s008_B2_r080_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s008_B2_r080/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s008_B2_r080/DONE",
+   "selection_reason": "success with the least standing time",
+   "condition": "B2_r080",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s008_B2_r080_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s026_B2_r080",
+   "seed": 26,
+   "policy": "B2",
+   "comfort_size": 0.8,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 10.3,
+     "edge_start_at": 12.6,
+     "belt_speed": 0.94,
+     "edge_speed": 0.89
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 12.5,
+     "edge_start_at": 14.67,
+     "belt_speed": 1.12,
+     "edge_speed": 0.97
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s026_B2_r080_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s026_B2_r080/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s026_B2_r080/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B2_r080",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s026_B2_r080_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s004_B2_r080",
+   "seed": 4,
+   "policy": "B2",
+   "comfort_size": 0.8,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 10.4,
+     "edge_start_at": 12.75,
+     "belt_speed": 0.88,
+     "edge_speed": 1.03
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 14.3,
+     "edge_start_at": 16.51,
+     "belt_speed": 1.05,
+     "edge_speed": 1.01
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s004_B2_r080_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s004_B2_r080/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s004_B2_r080/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r080",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s004_B2_r080_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s017_B2_r080",
+   "seed": 17,
+   "policy": "B2",
+   "comfort_size": 0.8,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 8.7,
+     "edge_start_at": 10.94,
+     "belt_speed": 1.02,
+     "edge_speed": 0.84
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 10.8,
+     "edge_start_at": 13.17,
+     "belt_speed": 0.86,
+     "edge_speed": 1.12
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s017_B2_r080_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s017_B2_r080/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s017_B2_r080/DONE",
+   "selection_reason": "largest Comfort Space overlap (multi-human)",
+   "condition": "B2_r080",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_080/s017_B2_r080_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s014_B2_r085",
+   "seed": 14,
+   "policy": "B2",
+   "comfort_size": 0.85,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 7.7,
+     "edge_start_at": 9.9,
+     "belt_speed": 1.07,
+     "edge_speed": 0.91
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 14.2,
+     "edge_start_at": 16.41,
+     "belt_speed": 1.06,
+     "edge_speed": 1.13
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s014_B2_r085_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s014_B2_r085/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s014_B2_r085/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B2_r085",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s014_B2_r085_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s001_B2_r085",
+   "seed": 1,
+   "policy": "B2",
+   "comfort_size": 0.85,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 7.5,
+     "edge_start_at": 9.9,
+     "belt_speed": 0.83,
+     "edge_speed": 0.97
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 9.3,
+     "edge_start_at": 11.48,
+     "belt_speed": 1.11,
+     "edge_speed": 1.06
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s001_B2_r085_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s001_B2_r085/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s001_B2_r085/DONE",
+   "selection_reason": "success with the least standing time",
+   "condition": "B2_r085",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s001_B2_r085_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s026_B2_r085",
+   "seed": 26,
+   "policy": "B2",
+   "comfort_size": 0.85,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 10.3,
+     "edge_start_at": 12.6,
+     "belt_speed": 0.94,
+     "edge_speed": 0.89
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 12.5,
+     "edge_start_at": 14.67,
+     "belt_speed": 1.12,
+     "edge_speed": 0.97
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s026_B2_r085_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s026_B2_r085/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s026_B2_r085/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B2_r085",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s026_B2_r085_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s003_B2_r085",
+   "seed": 3,
+   "policy": "B2",
+   "comfort_size": 0.85,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 7.4,
+     "edge_start_at": 9.61,
+     "belt_speed": 1.05,
+     "edge_speed": 0.85
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 10.7,
+     "edge_start_at": 13.09,
+     "belt_speed": 0.84,
+     "edge_speed": 1.01
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s003_B2_r085_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s003_B2_r085/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s003_B2_r085/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r085",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s003_B2_r085_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s019_B2_r085",
+   "seed": 19,
+   "policy": "B2",
+   "comfort_size": 0.85,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 8.6,
+     "edge_start_at": 10.95,
+     "belt_speed": 0.88,
+     "edge_speed": 1.06
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 12.3,
+     "edge_start_at": 14.54,
+     "belt_speed": 1.02,
+     "edge_speed": 1.12
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s019_B2_r085_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s019_B2_r085/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s019_B2_r085/DONE",
+   "selection_reason": "largest Comfort Space overlap (multi-human)",
+   "condition": "B2_r085",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_085/s019_B2_r085_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s008_B2_r090",
+   "seed": 8,
+   "policy": "B2",
+   "comfort_size": 0.9,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 9.9,
+     "edge_start_at": 12.24,
+     "belt_speed": 0.89,
+     "edge_speed": 0.86
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 13.7,
+     "edge_start_at": 16.06,
+     "belt_speed": 0.87,
+     "edge_speed": 1.03
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s008_B2_r090_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s008_B2_r090/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s008_B2_r090/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B2_r090",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s008_B2_r090_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s001_B2_r090",
+   "seed": 1,
+   "policy": "B2",
+   "comfort_size": 0.9,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 7.5,
+     "edge_start_at": 9.9,
+     "belt_speed": 0.83,
+     "edge_speed": 0.97
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 9.3,
+     "edge_start_at": 11.48,
+     "belt_speed": 1.11,
+     "edge_speed": 1.06
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s001_B2_r090_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s001_B2_r090/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s001_B2_r090/DONE",
+   "selection_reason": "success with the least standing time",
+   "condition": "B2_r090",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s001_B2_r090_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s017_B2_r090",
+   "seed": 17,
+   "policy": "B2",
+   "comfort_size": 0.9,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 8.7,
+     "edge_start_at": 10.94,
+     "belt_speed": 1.02,
+     "edge_speed": 0.84
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 10.8,
+     "edge_start_at": 13.17,
+     "belt_speed": 0.86,
+     "edge_speed": 1.12
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s017_B2_r090_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s017_B2_r090/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s017_B2_r090/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B2_r090",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s017_B2_r090_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s022_B2_r090",
+   "seed": 22,
+   "policy": "B2",
+   "comfort_size": 0.9,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 6.4,
+     "edge_start_at": 8.8,
+     "belt_speed": 0.83,
+     "edge_speed": 0.99
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 11.4,
+     "edge_start_at": 13.62,
+     "belt_speed": 1.04,
+     "edge_speed": 0.8
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s022_B2_r090_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s022_B2_r090/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s022_B2_r090/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r090",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s022_B2_r090_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s002_B2_r090",
+   "seed": 2,
+   "policy": "B2",
+   "comfort_size": 0.9,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 6.5,
+     "edge_start_at": 8.9,
+     "belt_speed": 0.83,
+     "edge_speed": 1.06
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 10.9,
+     "edge_start_at": 13.33,
+     "belt_speed": 0.81,
+     "edge_speed": 0.8
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s002_B2_r090_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s002_B2_r090/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s002_B2_r090/DONE",
+   "selection_reason": "further success (fill to 5, lowest seed)",
+   "condition": "B2_r090",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_090/s002_B2_r090_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s019_B2_r095",
+   "seed": 19,
+   "policy": "B2",
+   "comfort_size": 0.95,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 8.6,
+     "edge_start_at": 10.95,
+     "belt_speed": 0.88,
+     "edge_speed": 1.06
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 12.3,
+     "edge_start_at": 14.54,
+     "belt_speed": 1.02,
+     "edge_speed": 1.12
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s019_B2_r095_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s019_B2_r095/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s019_B2_r095/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B2_r095",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s019_B2_r095_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s014_B2_r095",
+   "seed": 14,
+   "policy": "B2",
+   "comfort_size": 0.95,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 7.7,
+     "edge_start_at": 9.9,
+     "belt_speed": 1.07,
+     "edge_speed": 0.91
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 14.2,
+     "edge_start_at": 16.41,
+     "belt_speed": 1.06,
+     "edge_speed": 1.13
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s014_B2_r095_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s014_B2_r095/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s014_B2_r095/DONE",
+   "selection_reason": "success with the least standing time",
+   "condition": "B2_r095",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s014_B2_r095_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s003_B2_r095",
+   "seed": 3,
+   "policy": "B2",
+   "comfort_size": 0.95,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 7.4,
+     "edge_start_at": 9.61,
+     "belt_speed": 1.05,
+     "edge_speed": 0.85
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 10.7,
+     "edge_start_at": 13.09,
+     "belt_speed": 0.84,
+     "edge_speed": 1.01
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "TEMPORARY_HOLD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s003_B2_r095_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s003_B2_r095/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s003_B2_r095/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B2_r095",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s003_B2_r095_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s016_B2_r095",
+   "seed": 16,
+   "policy": "B2",
+   "comfort_size": 0.95,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 5.4,
+     "edge_start_at": 7.6,
+     "belt_speed": 1.07,
+     "edge_speed": 1.19
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 11.1,
+     "edge_start_at": 13.5,
+     "belt_speed": 0.83,
+     "edge_speed": 0.95
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s016_B2_r095_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s016_B2_r095/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s016_B2_r095/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r095",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s016_B2_r095_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s017_B2_r095",
+   "seed": 17,
+   "policy": "B2",
+   "comfort_size": 0.95,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 8.7,
+     "edge_start_at": 10.94,
+     "belt_speed": 1.02,
+     "edge_speed": 0.84
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 10.8,
+     "edge_start_at": 13.17,
+     "belt_speed": 0.86,
+     "edge_speed": 1.12
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s017_B2_r095_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/fine/trials/s017_B2_r095/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/fine/trials/s017_B2_r095/DONE",
+   "selection_reason": "largest Comfort Space overlap (multi-human)",
+   "condition": "B2_r095",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/fine/size_095/s017_B2_r095_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s030_B2_r100",
+   "seed": 30,
+   "policy": "B2",
+   "comfort_size": 1.0,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 7.6,
+     "edge_start_at": 10.04,
+     "belt_speed": 0.8,
+     "edge_speed": 1.13
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 12.9,
+     "edge_start_at": 15.3,
+     "belt_speed": 0.83,
+     "edge_speed": 0.81
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s030_B2_r100_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s030_B2_r100/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s030_B2_r100/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B2_r100",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s030_B2_r100_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s024_B2_r100",
+   "seed": 24,
+   "policy": "B2",
+   "comfort_size": 1.0,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 10.2,
+     "edge_start_at": 12.39,
+     "belt_speed": 1.08,
+     "edge_speed": 0.99
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 11.9,
+     "edge_start_at": 14.27,
+     "belt_speed": 0.86,
+     "edge_speed": 1.02
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s024_B2_r100_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s024_B2_r100/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s024_B2_r100/DONE",
+   "selection_reason": "success with the least standing time",
+   "condition": "B2_r100",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s024_B2_r100_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s009_B2_r100",
+   "seed": 9,
+   "policy": "B2",
+   "comfort_size": 1.0,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 7.2,
+     "edge_start_at": 9.38,
+     "belt_speed": 1.1,
+     "edge_speed": 0.9
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 11.7,
+     "edge_start_at": 13.94,
+     "belt_speed": 1.01,
+     "edge_speed": 0.97
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s009_B2_r100_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s009_B2_r100/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s009_B2_r100/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B2_r100",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s009_B2_r100_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s003_B2_r100",
+   "seed": 3,
+   "policy": "B2",
+   "comfort_size": 1.0,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 7.4,
+     "edge_start_at": 9.61,
+     "belt_speed": 1.05,
+     "edge_speed": 0.85
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 10.7,
+     "edge_start_at": 13.09,
+     "belt_speed": 0.84,
+     "edge_speed": 1.01
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s003_B2_r100_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s003_B2_r100/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s003_B2_r100/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r100",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s003_B2_r100_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s012_B2_r100",
+   "seed": 12,
+   "policy": "B2",
+   "comfort_size": 1.0,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 9.0,
+     "edge_start_at": 11.33,
+     "belt_speed": 0.9,
+     "edge_speed": 1.0
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 11.5,
+     "edge_start_at": 13.74,
+     "belt_speed": 1.02,
+     "edge_speed": 0.93
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s012_B2_r100_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s012_B2_r100/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s012_B2_r100/DONE",
+   "selection_reason": "largest Comfort Space overlap (multi-human)",
+   "condition": "B2_r100",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_100/s012_B2_r100_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s026_B2_r120",
+   "seed": 26,
+   "policy": "B2",
+   "comfort_size": 1.2,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 10.3,
+     "edge_start_at": 12.6,
+     "belt_speed": 0.94,
+     "edge_speed": 0.89
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 12.5,
+     "edge_start_at": 14.67,
+     "belt_speed": 1.12,
+     "edge_speed": 0.97
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s026_B2_r120_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s026_B2_r120/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s026_B2_r120/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B2_r120",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s026_B2_r120_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s024_B2_r120",
+   "seed": 24,
+   "policy": "B2",
+   "comfort_size": 1.2,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 10.2,
+     "edge_start_at": 12.39,
+     "belt_speed": 1.08,
+     "edge_speed": 0.99
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 11.9,
+     "edge_start_at": 14.27,
+     "belt_speed": 0.86,
+     "edge_speed": 1.02
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s024_B2_r120_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s024_B2_r120/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s024_B2_r120/DONE",
+   "selection_reason": "success with the least standing time",
+   "condition": "B2_r120",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s024_B2_r120_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s012_B2_r120",
+   "seed": 12,
+   "policy": "B2",
+   "comfort_size": 1.2,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 9.0,
+     "edge_start_at": 11.33,
+     "belt_speed": 0.9,
+     "edge_speed": 1.0
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 11.5,
+     "edge_start_at": 13.74,
+     "belt_speed": 1.02,
+     "edge_speed": 0.93
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s012_B2_r120_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s012_B2_r120/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s012_B2_r120/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B2_r120",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s012_B2_r120_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s006_B2_r120",
+   "seed": 6,
+   "policy": "B2",
+   "comfort_size": 1.2,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 6.9,
+     "edge_start_at": 9.18,
+     "belt_speed": 0.96,
+     "edge_speed": 1.0
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 9.8,
+     "edge_start_at": 11.95,
+     "belt_speed": 1.15,
+     "edge_speed": 1.01
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s006_B2_r120_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s006_B2_r120/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s006_B2_r120/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r120",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s006_B2_r120_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s011_B2_r120",
+   "seed": 11,
+   "policy": "B2",
+   "comfort_size": 1.2,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 9.1,
+     "edge_start_at": 11.37,
+     "belt_speed": 0.98,
+     "edge_speed": 0.85
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 12.9,
+     "edge_start_at": 15.1,
+     "belt_speed": 1.07,
+     "edge_speed": 1.2
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s011_B2_r120_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s011_B2_r120/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s011_B2_r120/DONE",
+   "selection_reason": "largest Comfort Space overlap (multi-human)",
+   "condition": "B2_r120",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_120/s011_B2_r120_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s014_B2_r140",
+   "seed": 14,
+   "policy": "B2",
+   "comfort_size": 1.4,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": 7.7,
+     "edge_start_at": 9.9,
+     "belt_speed": 1.07,
+     "edge_speed": 0.91
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 14.2,
+     "edge_start_at": 16.41,
+     "belt_speed": 1.06,
+     "edge_speed": 1.13
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s014_B2_r140_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s014_B2_r140/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s014_B2_r140/DONE",
+   "selection_reason": "typical success (AMR 1 travel time nearest the median)",
+   "condition": "B2_r140",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s014_B2_r140_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s005_B2_r140",
+   "seed": 5,
+   "policy": "B2",
+   "comfort_size": 1.4,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 6.7,
+     "edge_start_at": 8.92,
+     "belt_speed": 1.04,
+     "edge_speed": 1.1
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 13.9,
+     "edge_start_at": 16.31,
+     "belt_speed": 0.82,
+     "edge_speed": 1.18
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "NORMAL_YIELD",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s005_B2_r140_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s005_B2_r140/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s005_B2_r140/DONE",
+   "selection_reason": "success with the most standing time (high yield / hold)",
+   "condition": "B2_r140",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s005_B2_r140_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s001_B2_r140",
+   "seed": 1,
+   "policy": "B2",
+   "comfort_size": 1.4,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 7.5,
+     "edge_start_at": 9.9,
+     "belt_speed": 0.83,
+     "edge_speed": 0.97
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 9.3,
+     "edge_start_at": 11.48,
+     "belt_speed": 1.11,
+     "edge_speed": 1.06
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s001_B2_r140_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s001_B2_r140/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s001_B2_r140/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r140",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s001_B2_r140_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s012_B2_r140",
+   "seed": 12,
+   "policy": "B2",
+   "comfort_size": 1.4,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 9.0,
+     "edge_start_at": 11.33,
+     "belt_speed": 0.9,
+     "edge_speed": 1.0
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 11.5,
+     "edge_start_at": 13.74,
+     "belt_speed": 1.02,
+     "edge_speed": 0.93
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "NORMAL_YIELD",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s012_B2_r140_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s012_B2_r140/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s012_B2_r140/DONE",
+   "selection_reason": "largest Comfort Space overlap (multi-human)",
+   "condition": "B2_r140",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s012_B2_r140_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s007_B2_r140",
+   "seed": 7,
+   "policy": "B2",
+   "comfort_size": 1.4,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 10.1,
+     "edge_start_at": 12.24,
+     "belt_speed": 1.17,
+     "edge_speed": 0.95
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": 13.8,
+     "edge_start_at": 16.1,
+     "belt_speed": 0.94,
+     "edge_speed": 0.94
+    }
+   ],
+   "system_success": true,
+   "amr1_result": "SUCCESS",
+   "a1_result": "SUCCESS",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s007_B2_r140_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s007_B2_r140/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s007_B2_r140/DONE",
+   "selection_reason": "further success (fill to 5, lowest seed)",
+   "condition": "B2_r140",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_140/s007_B2_r140_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s001_B2_r160",
+   "seed": 1,
+   "policy": "B2",
+   "comfort_size": 1.6,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 7.5,
+     "edge_start_at": 9.9,
+     "belt_speed": 0.83,
+     "edge_speed": 0.97
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 9.3,
+     "edge_start_at": 11.48,
+     "belt_speed": 1.11,
+     "edge_speed": 1.06
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "COMFORT_OVERLAP_BLOCK",
+   "a1_result": "NORMAL_YIELD",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [
+    "COMFORT_OVERLAP_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_160/s001_B2_r160_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s001_B2_r160/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s001_B2_r160/DONE",
+   "selection_reason": "comfort-induced deadlock",
+   "condition": "B2_r160",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_160/s001_B2_r160_clean.mp4"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s017_B2_r160",
+   "seed": 17,
+   "policy": "B2",
+   "comfort_size": 1.6,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": 8.7,
+     "edge_start_at": 10.94,
+     "belt_speed": 1.02,
+     "edge_speed": 0.84
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 10.8,
+     "edge_start_at": 13.17,
+     "belt_speed": 0.86,
+     "edge_speed": 1.12
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "a1_result": "NORMAL_YIELD",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/coarse/size_160/s017_B2_r160_overlay.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s017_B2_r160/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s017_B2_r160/DONE",
+   "selection_reason": "largest Comfort Space overlap (multi-human)",
+   "condition": "B2_r160",
+   "clean_video_path": "results/batches/261125_final_stage1/videos/coarse/size_160/s017_B2_r160_clean.mp4"
+  }
+ ],
+ "comparisons": [
+  {
+   "file": "results/batches/261125_final_stage1/videos/comparisons/seed001_size_comparison_B1_080_100_120_140_160.mp4",
+   "seed": 1,
+   "conditions": [
+    "B1",
+    "B2_r080",
+    "B2_r100",
+    "B2_r120",
+    "B2_r140",
+    "B2_r160"
+   ],
+   "system": [
+    true,
+    false,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "file": "results/batches/261125_final_stage1/videos/comparisons/seed002_size_comparison_B1_080_100_120_140_160.mp4",
+   "seed": 2,
+   "conditions": [
+    "B1",
+    "B2_r080",
+    "B2_r100",
+    "B2_r120",
+    "B2_r140",
+    "B2_r160"
+   ],
+   "system": [
+    false,
+    true,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  {
+   "file": "results/batches/261125_final_stage1/videos/comparisons/seed003_size_comparison_B1_080_100_120_140_160.mp4",
+   "seed": 3,
+   "conditions": [
+    "B1",
+    "B2_r080",
+    "B2_r100",
+    "B2_r120",
+    "B2_r140",
+    "B2_r160"
+   ],
+   "system": [
+    true,
+    true,
+    false,
+    true,
+    false,
+    false
+   ]
+  }
+ ],
+ "extra": [
+  {
+   "file": "results/batches/261125_final_stage1/videos/comparisons/seed003_upper_bound_085_090_095.mp4",
+   "kind": "upper_bound_comparison",
+   "seed": 3,
+   "conditions": [
+    "B2_r085",
+    "B2_r090",
+    "B2_r095"
+   ],
+   "R_nav_upper_m": 0.9,
+   "system": [
+    false,
+    true,
+    true
+   ]
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s018_B2_r160",
+   "seed": 18,
+   "policy": "B2",
+   "comfort_size": 1.6,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 10.1,
+     "edge_start_at": 12.33,
+     "belt_speed": 1.03,
+     "edge_speed": 1.09
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 10.9,
+     "edge_start_at": 13.06,
+     "belt_speed": 1.14,
+     "edge_speed": 0.97
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "COMFORT_OVERLAP_BLOCK",
+   "a1_result": "NORMAL_YIELD",
+   "a2_result": "NORMAL_YIELD",
+   "deadlock_type": [
+    "COMFORT_OVERLAP_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/overlap_cases/s018_B2_r160_overlap_deadlock.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s018_B2_r160/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s018_B2_r160/DONE",
+   "selection_reason": "COMFORT_OVERLAP_BLOCK example (largest overlap first)",
+   "condition": "B2_r160"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s001_B2_r160",
+   "seed": 1,
+   "policy": "B2",
+   "comfort_size": 1.6,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 7.5,
+     "edge_start_at": 9.9,
+     "belt_speed": 0.83,
+     "edge_speed": 0.97
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": 9.3,
+     "edge_start_at": 11.48,
+     "belt_speed": 1.11,
+     "edge_speed": 1.06
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "COMFORT_OVERLAP_BLOCK",
+   "a1_result": "NORMAL_YIELD",
+   "a2_result": "SUCCESS",
+   "deadlock_type": [
+    "COMFORT_OVERLAP_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/overlap_cases/s001_B2_r160_overlap_deadlock.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s001_B2_r160/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s001_B2_r160/DONE",
+   "selection_reason": "COMFORT_OVERLAP_BLOCK example (largest overlap first)",
+   "condition": "B2_r160"
+  },
+  {
+   "experiment_id": "Stage 1",
+   "trial_id": "s024_B2_r160",
+   "seed": 24,
+   "policy": "B2",
+   "comfort_size": 1.6,
+   "camera": "CAM01_TOP (orthographic, 30 m)",
+   "human_shift_pattern": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": 10.2,
+     "edge_start_at": 12.39,
+     "belt_speed": 1.08,
+     "edge_speed": 0.99
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": 11.9,
+     "edge_start_at": 14.27,
+     "belt_speed": 0.86,
+     "edge_speed": 1.02
+    }
+   ],
+   "system_success": false,
+   "amr1_result": "COMFORT_OVERLAP_BLOCK",
+   "a1_result": "NORMAL_YIELD",
+   "a2_result": "SINGLE_HUMAN_COMFORT_BLOCK",
+   "deadlock_type": [
+    "COMFORT_OVERLAP_BLOCK",
+    "SINGLE_HUMAN_COMFORT_BLOCK"
+   ],
+   "video_path": "results/batches/261125_final_stage1/videos/overlap_cases/s024_B2_r160_overlap_deadlock.mp4",
+   "trial_log_path": "results/batches/261125_final_stage1/coarse/trials/s024_B2_r160/trial_log.jsonl",
+   "trial_result_path": "results/batches/261125_final_stage1/coarse/trials/s024_B2_r160/DONE",
+   "selection_reason": "COMFORT_OVERLAP_BLOCK example (largest overlap first)",
+   "condition": "B2_r160"
+  }
+ ]
+}
