@@ -226,6 +226,11 @@ def main() -> int:
             plan["scenarios"][name] = entry
             if not ok:
                 continue
+        fz = (S.get("frozen") or {}).get(name)
+        if phase.get("geometry") == "frozen" and fz == s2.UNIDENTIFIABLE:
+            entry["status"] = s2.UNIDENTIFIABLE    # pilot freeze rule found no feasible + sensitive geometry
+            plan["scenarios"][name] = entry
+            continue
         entry["status"] = "RUN"
         plan["scenarios"][name] = entry
         want = (S.get("confirm_conditions") or {}).get(name) if phase.get("conditions") == "confirm" else phase["conditions"]

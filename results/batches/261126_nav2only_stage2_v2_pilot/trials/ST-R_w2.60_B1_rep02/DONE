@@ -1,0 +1,19 @@
+{
+ "trial_id": "ST-R_w2.60_B1_rep02",
+ "seed": 2,
+ "condition": "configs/stage2scale/v2_nav2only/conditions/B1.yaml",
+ "config": "configs/stage2scale/v2_nav2only/envs/ST-R_w2.60.yaml",
+ "commit": "cc7dd0b",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 75,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 75,
+ "finished": "2026-11-27T04:22:02"
+}

@@ -1,0 +1,458 @@
+{
+ "version": "v2_nav2only",
+ "phase": "coarse",
+ "config": "configs/stage2scale/stage2scale_v2_nav2only.yaml",
+ "commit_at_plan": "cc7dd0b",
+ "control_mode": "nav2_only",
+ "anchor_m": 0.95,
+ "anchor_provenance": "new_nav2_only_upper",
+ "alphas": [
+  1.0,
+  0.9,
+  0.8,
+  0.7,
+  0.6,
+  0.5,
+  0.45
+ ],
+ "moving_reference_speed_mps": 1.0,
+ "templates_raw": {
+  "station_engaged": {
+   "front": 0.8,
+   "side": 0.7,
+   "rear": 0.6
+  },
+  "stationary": {
+   "front": 0.8,
+   "side": 0.9,
+   "rear": 1.05
+  },
+  "moving": {
+   "front": 1.2,
+   "side": 0.9,
+   "rear": 0.9
+  }
+ },
+ "templates_normalised": {
+  "station_engaged": {
+   "front": 0.9499999999999998,
+   "side": 0.8312499999999998,
+   "rear": 0.7124999999999998
+  },
+  "stationary": {
+   "front": 0.7238095238095238,
+   "side": 0.8142857142857142,
+   "rear": 0.95
+  },
+  "moving": {
+   "front": 0.95,
+   "side": 0.7125,
+   "rear": 0.7125
+  }
+ },
+ "min_radius_m": 0.3,
+ "min_alpha_without_clip": 0.42105263157894746,
+ "extents_by_alpha": {
+  "1.00": {
+   "station_engaged": {
+    "front": 0.9499999999999998,
+    "side": 0.8312499999999998,
+    "rear": 0.7124999999999998
+   },
+   "stationary": {
+    "front": 0.7238095238095238,
+    "side": 0.8142857142857142,
+    "rear": 0.95
+   },
+   "moving": {
+    "front": 0.95,
+    "side": 0.7125,
+    "rear": 0.7125
+   }
+  },
+  "0.90": {
+   "station_engaged": {
+    "front": 0.8549999999999999,
+    "side": 0.7481249999999998,
+    "rear": 0.6412499999999999
+   },
+   "stationary": {
+    "front": 0.6514285714285715,
+    "side": 0.7328571428571428,
+    "rear": 0.855
+   },
+   "moving": {
+    "front": 0.855,
+    "side": 0.64125,
+    "rear": 0.64125
+   }
+  },
+  "0.80": {
+   "station_engaged": {
+    "front": 0.7599999999999999,
+    "side": 0.6649999999999999,
+    "rear": 0.5699999999999998
+   },
+   "stationary": {
+    "front": 0.579047619047619,
+    "side": 0.6514285714285714,
+    "rear": 0.76
+   },
+   "moving": {
+    "front": 0.76,
+    "side": 0.5700000000000001,
+    "rear": 0.5700000000000001
+   }
+  },
+  "0.70": {
+   "station_engaged": {
+    "front": 0.6649999999999998,
+    "side": 0.5818749999999998,
+    "rear": 0.4987499999999998
+   },
+   "stationary": {
+    "front": 0.5066666666666666,
+    "side": 0.5699999999999998,
+    "rear": 0.6649999999999999
+   },
+   "moving": {
+    "front": 0.6649999999999999,
+    "side": 0.49874999999999997,
+    "rear": 0.49874999999999997
+   }
+  },
+  "0.60": {
+   "station_engaged": {
+    "front": 0.5699999999999998,
+    "side": 0.49874999999999986,
+    "rear": 0.4274999999999999
+   },
+   "stationary": {
+    "front": 0.4342857142857143,
+    "side": 0.4885714285714285,
+    "rear": 0.57
+   },
+   "moving": {
+    "front": 0.57,
+    "side": 0.4275,
+    "rear": 0.4275
+   }
+  },
+  "0.50": {
+   "station_engaged": {
+    "front": 0.4749999999999999,
+    "side": 0.4156249999999999,
+    "rear": 0.3562499999999999
+   },
+   "stationary": {
+    "front": 0.3619047619047619,
+    "side": 0.4071428571428571,
+    "rear": 0.475
+   },
+   "moving": {
+    "front": 0.475,
+    "side": 0.35625,
+    "rear": 0.35625
+   }
+  },
+  "0.45": {
+   "station_engaged": {
+    "front": 0.42749999999999994,
+    "side": 0.3740624999999999,
+    "rear": 0.32062499999999994
+   },
+   "stationary": {
+    "front": 0.32571428571428573,
+    "side": 0.3664285714285714,
+    "rear": 0.4275
+   },
+   "moving": {
+    "front": 0.4275,
+    "side": 0.320625,
+    "rear": 0.320625
+   }
+  }
+ },
+ "conditions": {
+  "B1": {
+   "label": "B1 no Comfort Space",
+   "alpha": null
+  },
+  "B2_r0.950": {
+   "label": "B2 static circle 0.950 m (R_ref, new_nav2_only_upper)",
+   "alpha": null
+  },
+  "S3_a1.00": {
+   "label": "State-wise uniform scale alpha 1.00 of R_ref 0.950 (station_engaged F0.950 S0.831 R0.712; stationary F0.724 S0.814 R0.950; moving F0.950 S0.713 R0.713)",
+   "alpha": 1.0
+  },
+  "S3_a0.90": {
+   "label": "State-wise uniform scale alpha 0.90 of R_ref 0.950 (station_engaged F0.855 S0.748 R0.641; stationary F0.651 S0.733 R0.855; moving F0.855 S0.641 R0.641)",
+   "alpha": 0.9
+  },
+  "S3_a0.80": {
+   "label": "State-wise uniform scale alpha 0.80 of R_ref 0.950 (station_engaged F0.760 S0.665 R0.570; stationary F0.579 S0.651 R0.760; moving F0.760 S0.570 R0.570)",
+   "alpha": 0.8
+  },
+  "S3_a0.70": {
+   "label": "State-wise uniform scale alpha 0.70 of R_ref 0.950 (station_engaged F0.665 S0.582 R0.499; stationary F0.507 S0.570 R0.665; moving F0.665 S0.499 R0.499)",
+   "alpha": 0.7
+  },
+  "S3_a0.60": {
+   "label": "State-wise uniform scale alpha 0.60 of R_ref 0.950 (station_engaged F0.570 S0.499 R0.427; stationary F0.434 S0.489 R0.570; moving F0.570 S0.427 R0.427)",
+   "alpha": 0.6
+  },
+  "S3_a0.50": {
+   "label": "State-wise uniform scale alpha 0.50 of R_ref 0.950 (station_engaged F0.475 S0.416 R0.356; stationary F0.362 S0.407 R0.475; moving F0.475 S0.356 R0.356)",
+   "alpha": 0.5
+  },
+  "S3_a0.45": {
+   "label": "State-wise uniform scale alpha 0.45 of R_ref 0.950 (station_engaged F0.427 S0.374 R0.321; stationary F0.326 S0.366 R0.427; moving F0.427 S0.321 R0.321)",
+   "alpha": 0.45
+  }
+ },
+ "reference": {
+  "stationary": "N22a_B",
+  "station_engaged": "N22a_B",
+  "moving": "N22b_E1"
+ },
+ "criteria": {
+  "comfort_metric": "predicted_comfort_at_closest",
+  "primary_target": 5.0,
+  "sensitivity_targets": [
+   4.5,
+   5.5
+  ],
+  "joint_min": 0.8,
+  "nav_min": 0.8,
+  "joint_min_sensitivity": 0.9,
+  "min_distance_response_m": 0.1,
+  "reference_speed_tolerance_mps": 0.1
+ },
+ "references": [
+  "N22a_B: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study B (AGV) (standing still, robot 0.35 m/s); right a0 5.39 sigma 46.14 cm, front a0 5.62 sigma 44.13 cm, left a0 5.39 sigma 47.21 cm, back a0 4.58 sigma 39.11 cm",
+  "N22a_A: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study A (Pepper) (standing still, robot 0.35 m/s); right a0 6.15 sigma 47.25 cm, front a0 6.15 sigma 41.51 cm, left a0 6.04 sigma 49.52 cm, back a0 3.92 sigma 35.65 cm",
+  "N22b_E1: Neggers et al. 2022, Front Robot AI 9:915972, Exp. 1, Table 2 (eta = 0) (walking, passed head-on, robot 0.35 m/s); right a0 5.71 sigma 44.2 cm, front a0 5.71 sigma 44.2 cm, left a0 5.71 sigma 44.2 cm, back a0 5.71 sigma 44.2 cm"
+ ],
+ "amr_half_length_m": 0.35,
+ "amr_half_width_m": 0.24,
+ "human_radius_m": 0.25,
+ "frozen": {
+  "ST-S": {
+   "width_m": 2.6
+  },
+  "ST-R": {
+   "width_m": 2.6
+  },
+  "EN-R": {
+   "width_m": 2.2
+  },
+  "MV-P": {
+   "width_m": 3.0,
+   "lane_gap_m": 0.65
+  },
+  "ST-F": "UNIDENTIFIABLE_GEOMETRY"
+ },
+ "scenarios": {
+  "ST-F": {
+   "state": "stationary",
+   "context": "c3",
+   "intended_sector": "front",
+   "primary": true,
+   "label": "Stationary, AMR passes in front",
+   "status": "UNIDENTIFIABLE_GEOMETRY"
+  },
+  "ST-S": {
+   "state": "stationary",
+   "context": "c4",
+   "intended_sector": "side",
+   "primary": true,
+   "label": "Stationary, AMR passes beside (person's right; left = TODO balance in pilot)",
+   "status": "RUN",
+   "run_conditions": [
+    "B1",
+    "B2_r0.950",
+    "S3_a1.00",
+    "S3_a0.90",
+    "S3_a0.80",
+    "S3_a0.70",
+    "S3_a0.60",
+    "S3_a0.50",
+    "S3_a0.45"
+   ]
+  },
+  "ST-R": {
+   "state": "stationary",
+   "context": "c2",
+   "intended_sector": "rear",
+   "primary": true,
+   "label": "Stationary, AMR passes behind",
+   "status": "RUN",
+   "run_conditions": [
+    "B1",
+    "B2_r0.950",
+    "S3_a1.00",
+    "S3_a0.90",
+    "S3_a0.80",
+    "S3_a0.70",
+    "S3_a0.60",
+    "S3_a0.50",
+    "S3_a0.45"
+   ]
+  },
+  "EN-R": {
+   "state": "station_engaged",
+   "context": "c1",
+   "intended_sector": "rear",
+   "primary": true,
+   "label": "Station engaged, AMR passes behind (stationary-reference TRANSFER)",
+   "status": "RUN",
+   "run_conditions": [
+    "B1",
+    "B2_r0.950",
+    "S3_a1.00",
+    "S3_a0.90",
+    "S3_a0.80",
+    "S3_a0.70",
+    "S3_a0.60",
+    "S3_a0.50",
+    "S3_a0.45"
+   ]
+  },
+  "MV-P": {
+   "state": "moving",
+   "context": null,
+   "intended_sector": "side",
+   "primary": true,
+   "label": "Moving, oncoming lateral pass in separate lanes",
+   "status": "RUN",
+   "run_conditions": [
+    "B1",
+    "B2_r0.950",
+    "S3_a1.00",
+    "S3_a0.90",
+    "S3_a0.80",
+    "S3_a0.70",
+    "S3_a0.60",
+    "S3_a0.50",
+    "S3_a0.45"
+   ]
+  },
+  "MV-O": {
+   "state": "moving",
+   "context": null,
+   "intended_sector": "rear",
+   "primary": false,
+   "label": "Moving, AMR overtakes (not run if infeasible)",
+   "status": "INFEASIBLE",
+   "feasibility": {
+    "walker_speed_mps": 1.04,
+    "amr_max_speed_mps": 1.0,
+    "gain_m": 3.0,
+    "note": "AMR max speed <= walker animation speed: cannot overtake; no numeric overtaking comfort curve either"
+   }
+  }
+ },
+ "geometries": {
+  "ST-S_w2.60": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "width_m": 2.6,
+   "facing_deg": 0.0,
+   "start": [
+    -5.0,
+    0.5
+   ],
+   "goal": [
+    5.0,
+    0.5
+   ],
+   "person": {
+    "position": [
+     0.0,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 0.0
+   },
+   "physical_signature": "70f822c3e5048c7f"
+  },
+  "ST-R_w2.60": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "width_m": 2.6,
+   "facing_deg": 90.0,
+   "start": [
+    -5.0,
+    0.5
+   ],
+   "goal": [
+    5.0,
+    0.5
+   ],
+   "person": {
+    "position": [
+     0.0,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 90.0
+   },
+   "physical_signature": "b952bdd4cb969d79"
+  },
+  "EN-R_w2.20": {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "width_m": 2.2,
+   "facing_deg": 90.0,
+   "start": [
+    -5.0,
+    0.3
+   ],
+   "goal": [
+    5.0,
+    0.3
+   ],
+   "person": {
+    "position": [
+     0.0,
+     0.6
+    ],
+    "state": "station_engaged",
+    "facing_deg": 90.0
+   },
+   "physical_signature": "783ab7aec3756671"
+  },
+  "MV-P_w3.00_g0.65": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "width_m": 3.0,
+   "human_lane_y": 0.325,
+   "amr_lane_y": -0.325,
+   "lane_gap_m": 0.65,
+   "start": [
+    -5.5,
+    -0.325
+   ],
+   "goal": [
+    5.5,
+    -0.325
+   ],
+   "person": {
+    "position": [
+     7.0,
+     0.325
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.325
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "186e2802c2fba52c"
+  }
+ }
+}

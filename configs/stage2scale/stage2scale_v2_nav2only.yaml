@@ -112,5 +112,10 @@ phases:
     conditions: confirm                   # per scenario, from confirm_conditions below
     geometry: frozen
 
-frozen: {}                                # written after the pilot (decision log)
+frozen:  # from results/batches/261126_nav2only_stage2_v2_pilot/analysis/pilot_freeze.json
+  ST-S: {"width_m": 2.6}
+  ST-R: {"width_m": 2.6}
+  EN-R: {"width_m": 2.2}
+  MV-P: {"width_m": 3.0, "lane_gap_m": 0.65}
+  ST-F: UNIDENTIFIABLE_GEOMETRY   # both widths rejected: B1 incomplete / contact (pilot_freeze.json); not run further                                # written after the pilot (decision log)
 confirm_conditions: {}                    # written after coarse: B1, B2, alpha*, next smaller tested alpha

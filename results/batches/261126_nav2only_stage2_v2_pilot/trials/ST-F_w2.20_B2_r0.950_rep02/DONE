@@ -1,0 +1,19 @@
+{
+ "trial_id": "ST-F_w2.20_B2_r0.950_rep02",
+ "seed": 2,
+ "condition": "configs/stage2scale/v2_nav2only/conditions/B2_r0.950.yaml",
+ "config": "configs/stage2scale/v2_nav2only/envs/ST-F_w2.20.yaml",
+ "commit": "cc7dd0b",
+ "result": "DEADLOCK",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 79,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 79,
+ "finished": "2026-11-27T04:31:27"
+}

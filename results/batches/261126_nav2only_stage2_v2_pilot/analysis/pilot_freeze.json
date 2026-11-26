@@ -1,0 +1,229 @@
+{
+ "rule": "Apply the pilot freeze rule (declared in stage2scale_v2_nav2only.yaml before the pilot).\n\n    python3 scripts/stage2scale_freeze.py --dir results/batches/261126_nav2only_stage2_v2_pilot [--write]\n\nReads <dir>/analysis/scale_trials.csv (scripts/stage2scale_report.py). Per\ngeometry: TECHNICALLY INFEASIBLE if B1 did not complete every launch or had a\ncontact; SENSITIVE if median d_cc(largest alpha >= 0.70 with a completed\npassage) - median d_cc(smallest alpha) >= min_distance_response_m (completed\npassages only). Per context the first feasible and sensitive geometry in the\ndeclared order is frozen (static: narrowest width first; moving: gap 0.80,\n0.65, 1.00). Writes <dir>/analysis/pilot_freeze.json (every geometry with its\nreason, accepted or not); --write also fills `frozen:` in the config yaml.",
+ "contexts": {
+  "ST-F": {
+   "geometries": [
+    {
+     "feasible": false,
+     "sensitive": true,
+     "response_m": 0.4126,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [
+      "B1 did not complete every launch",
+      "B1 contact"
+     ],
+     "n": 10,
+     "b1_completed": "1/2",
+     "env": "ST-F_w2.20",
+     "width_m": 2.2,
+     "lane_gap_m": null,
+     "decision": "REJECTED"
+    },
+    {
+     "feasible": false,
+     "sensitive": true,
+     "response_m": 0.4067,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [
+      "B1 did not complete every launch",
+      "B1 contact"
+     ],
+     "n": 10,
+     "b1_completed": "1/2",
+     "env": "ST-F_w2.60",
+     "width_m": 2.6,
+     "lane_gap_m": null,
+     "decision": "REJECTED"
+    }
+   ],
+   "frozen": null,
+   "status": "UNIDENTIFIABLE_GEOMETRY"
+  },
+  "ST-S": {
+   "geometries": [
+    {
+     "feasible": false,
+     "sensitive": true,
+     "response_m": 0.4631,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [
+      "B1 did not complete every launch",
+      "B1 contact"
+     ],
+     "n": 10,
+     "b1_completed": "1/2",
+     "env": "ST-S_w2.20",
+     "width_m": 2.2,
+     "lane_gap_m": null,
+     "decision": "REJECTED"
+    },
+    {
+     "feasible": true,
+     "sensitive": true,
+     "response_m": 0.4652,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [],
+     "n": 10,
+     "b1_completed": "2/2",
+     "env": "ST-S_w2.60",
+     "width_m": 2.6,
+     "lane_gap_m": null,
+     "decision": "FROZEN"
+    }
+   ],
+   "frozen": "ST-S_w2.60",
+   "status": "FROZEN"
+  },
+  "ST-R": {
+   "geometries": [
+    {
+     "feasible": false,
+     "sensitive": true,
+     "response_m": 0.2552,
+     "compared_alpha": [
+      0.7,
+      0.45
+     ],
+     "reasons": [
+      "B1 did not complete every launch",
+      "B1 contact"
+     ],
+     "n": 10,
+     "b1_completed": "1/2",
+     "env": "ST-R_w2.20",
+     "width_m": 2.2,
+     "lane_gap_m": null,
+     "decision": "REJECTED"
+    },
+    {
+     "feasible": true,
+     "sensitive": true,
+     "response_m": 0.5437,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [],
+     "n": 10,
+     "b1_completed": "2/2",
+     "env": "ST-R_w2.60",
+     "width_m": 2.6,
+     "lane_gap_m": null,
+     "decision": "FROZEN"
+    }
+   ],
+   "frozen": "ST-R_w2.60",
+   "status": "FROZEN"
+  },
+  "EN-R": {
+   "geometries": [
+    {
+     "feasible": true,
+     "sensitive": true,
+     "response_m": 0.3925,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [],
+     "n": 10,
+     "b1_completed": "2/2",
+     "env": "EN-R_w2.20",
+     "width_m": 2.2,
+     "lane_gap_m": null,
+     "decision": "FROZEN"
+    },
+    {
+     "feasible": false,
+     "sensitive": true,
+     "response_m": 0.4012,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [
+      "B1 contact"
+     ],
+     "n": 10,
+     "b1_completed": "2/2",
+     "env": "EN-R_w2.60",
+     "width_m": 2.6,
+     "lane_gap_m": null,
+     "decision": "REJECTED"
+    }
+   ],
+   "frozen": "EN-R_w2.20",
+   "status": "FROZEN"
+  },
+  "MV-P": {
+   "geometries": [
+    {
+     "feasible": true,
+     "sensitive": false,
+     "response_m": 0.0459,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [
+      "distance response 0.0459 m < 0.1 m"
+     ],
+     "n": 10,
+     "b1_completed": "2/2",
+     "env": "MV-P_w3.00_g0.80",
+     "width_m": 3.0,
+     "lane_gap_m": 0.8,
+     "decision": "REJECTED"
+    },
+    {
+     "feasible": true,
+     "sensitive": true,
+     "response_m": 0.1135,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [],
+     "n": 10,
+     "b1_completed": "2/2",
+     "env": "MV-P_w3.00_g0.65",
+     "width_m": 3.0,
+     "lane_gap_m": 0.65,
+     "decision": "FROZEN"
+    },
+    {
+     "feasible": true,
+     "sensitive": false,
+     "response_m": 0.0154,
+     "compared_alpha": [
+      1.0,
+      0.45
+     ],
+     "reasons": [
+      "distance response 0.0154 m < 0.1 m"
+     ],
+     "n": 10,
+     "b1_completed": "2/2",
+     "env": "MV-P_w3.00_g1.00",
+     "width_m": 3.0,
+     "lane_gap_m": 1.0,
+     "decision": "REJECTED"
+    }
+   ],
+   "frozen": "MV-P_w3.00_g0.65",
+   "status": "FROZEN"
+  }
+ }
+}
