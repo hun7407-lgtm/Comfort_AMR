@@ -1,7 +1,7 @@
 # AGENTS.md — AI 에이전트용 진입점
 
 이 저장소를 처음 읽는 AI 에이전트(및 사람)를 위한 안내입니다. **먼저 이 파일을 읽고**, 아래 "읽는 순서"를 따르세요.
-작성 기준일: 2026-11-25 (branch `feature/b1-baseline-and-yield`).
+작성 기준일: 2026-11-26 (branch `feature/b1-baseline-and-yield`).
 
 ---
 
@@ -19,42 +19,61 @@ AMR 교착(deadlock)이 어떻게 생기는지 측정하고, 사람 상태 × �
 
 (state-only "B3"는 최종 실험에서 쓰지 않습니다.)
 
-## 2. 현재 상태 (2026-11-25 17:30 기준)
+## 2. 현재 상태 (2026-11-26 14:10 기준 — 최종 실험 완료)
 
-최종 실험 = `docs/FINAL_261125_PLAN.md`. **사용자 결정으로 조건당 100 → 30 seed로 축소** (Stage 1 seed 1–30, Stage 3 holdout seed 101–130).
+최종 실험 = `docs/FINAL_261125_PLAN.md`. **사용자 결정으로 조건당 100 → 30 seed로 축소** (Stage 1 seed 1–30, Stage 3 holdout seed 101–130). 진행 기록과 모든 예외는 plan §8.
 
 | 단계 | 상태 | 결과 위치 |
 |---|---|---|
-| Stage 1 coarse (B1 + B2 0.80–1.60, 180 trial) | **완료** | `results/batches/261125_final_stage1/analysis/STAGE1_REPORT.md` |
-| Stage 1 fine (B2 0.85/0.90/0.95, 90 trial) | 진행 중 (11-26 01시경 완료 예상) | `results/batches/261125_final_stage1/fine/` |
-| Stage 2 provisional lower bound | 대기 (자동) | `results/batches/261125_final_stage2_proxy/` |
-| Stage 3 B1/B2/B3-O + sensitivity (150 trial) | 대기 (자동) | `results/batches/261125_final_stage3/` |
-| 리포트 + 영상 | 대기 (자동, `scripts/final_post.sh`) | 각 stage의 `videos/`, `VIDEO_INDEX.md` |
+| Stage 1 coarse + fine (B1 + B2 0.80–1.60, 270 trial) | 완료 | `results/batches/261125_final_stage1/analysis/STAGE1_REPORT.md`, `stage1_upper_bound.json` |
+| Stage 2 Simulation-derived Provisional Lower Bound | 완료 | `results/batches/261125_final_stage2_proxy/STAGE2_PROXY.md` |
+| Stage 3 B1/B2/B3-O MID + sensitivity LOWER/UPPER (150 trial) | 완료 | `results/batches/261125_final_stage3/analysis/STAGE3_REPORT.md`, `stage3_selection.json` |
+| 영상 | 완료 (mp4는 실험 PC에만) | 각 stage `videos/**/VIDEO_INDEX.md`, `video_metadata.json` |
 
-Stage 1 coarse (seed 1–30, 사전등록 규칙 그대로):
+**Stage 1 (seed 1–30): R_nav_upper = 0.90 m**, transition 0.95 m. 규칙: comfort-induced deadlock ≤ 5 % (30 seed에서 ≤ 1/30) 그리고 system success ≥ 같은 seed B1 − 5 %p.
 
-| 조건 | n | system success (AMR 3대 모두 성공) | comfort-induced deadlock |
+| 조건 | n | system success | comfort-induced deadlock |
 |---|---|---|---|
 | B1 | 30 | 20/30 | 0/30 |
 | B2 0.80 | 29 | 27/29 | 1/29 |
+| B2 0.85 | 30 | 26/30 | 1/30 |
+| B2 0.90 | 30 | 28/30 | 1/30 |
+| B2 0.95 | 30 | 26/30 | 2/30 |
 | B2 1.00 | 30 | 24/30 | 4/30 |
 | B2 1.20 | 30 | 21/30 | 6/30 |
 | B2 1.40 | 30 | 10/30 | 16/30 |
 | B2 1.60 | 30 | 0/30 | 29/30 |
 
-→ transition 1.00 m, R_nav_upper 후보 0.80 m (fine search 후 확정). 규칙: comfort-induced deadlock ≤ 5 % (30 seed에서 ≤ 1/30) **그리고** system success ≥ 같은 seed B1 − 5 %p.
+**Stage 2:** moving|front 0.469, moving|side 0.369 m. stationary|side, station_engaged|side/rear는 R_nav_upper보다 커서 0.90으로 잘림; 나머지 4칸 INSUFFICIENT (N < 20).
+→ Stage 3에서 B2 = 0.90, B3-O MID = 정지·작업 중 사람 0.90 / 걷는 사람 0.684·0.635·0.684, LOWER 걷는 사람 0.469·0.369·0.469, **UPPER = B2와 동일**.
 
-알려진 사항 (보고서에 반영할 것):
-- B1이 B2 소형보다 약함 — B1 실패는 대부분 Comfort Space와 무관한 `NAV2_ABORT`.
-- `s022_B2_r080`은 3회 모두 INVALID (사람–AMR 접촉 시 물리 발산, 재현됨) → n = 29, `docs/FINAL_261125_PLAN.md` §8에 기록.
-- min human–AMR distance(≈0.24 m)는 걸어가는 사람이 AMR 옆을 스치는 경우가 지배 → Comfort Space 비교 지표로 부적합, 상태별로 나눠 보고 예정.
-- "처음 5 % 초과" 대신 "급증 지점(1.2→1.4 m)"을 기준으로 할지 논의됨 → **사전등록 규칙 유지**, 로지스틱 R₅%/R₅₀%는 보조 분석으로만 추가 예정.
+**Stage 3 (seed 101–130):**
+
+| Policy | system success | comfort deadlock | protective-stop trial | hold s (median) |
+|---|---|---|---|---|
+| B1 | 24/30 | 0/30 | 21/30 | 0.83 |
+| B2 (0.90) | 22/30 | 1/30 | 8/30 | 2.2 |
+| B3-O MID | 23/30 | 1/30 | 10/30 | 1.74 |
+| B3-O LOWER | 28/30 | 0/30 | 12/30 | 0.62 |
+| B3-O UPPER (= B2 설정) | 25/30 | 2/30 | 9/30 | 3.33 |
+
+B2 vs B3-O MID McNemar 4 vs 5, p = 1.0 → **차이 없음**.
+
+알려진 사항 (결과 해석 시 반드시 고려):
+- **재현성:** UPPER와 B2는 같은 seed·같은 설정인데 30 seed 중 11개에서 성공/실패가 다름 → 같은 seed라도 결과가 반복되지 않음 (ROS·렌더 타이밍). n = 30에서 ±3–4 성공 차이는 노이즈 수준. LOWER 28/30도 이 범위를 감안해 읽을 것.
+- penetration / intrusion은 각 정책 자신의 반경 기준 → 반경이 작으면 정의상 작게 나옴. 사람을 더 멀리 두었다는 증거가 아님.
+- min human–AMR distance(≈0.22–0.24 m)는 걸어가는 사람이 AMR 옆을 스치는 경우가 지배 → 모든 정책 동일, Comfort Space 비교 지표로 부적합.
+- Comfort Space가 있으면 protective stop(물리 안전층 정지)이 있는 trial이 크게 줄어듦 (B1 21/30 vs B2 8/30, B3-O 10/30). B1 실패 원인은 `NAV2_ABORT`·`HUMAN_MOTION_BLOCK` 등 Comfort Space와 무관한 것.
+- Stage 2 proxy는 "안전하게 성공했을 때 실제로 유지된 거리의 Q10"이라 정지·작업 중 사람은 통로 구조를 반영 (R_nav_upper 초과) → B3-O가 B2와 다른 곳은 걷는 사람뿐. 규칙은 데이터를 본 뒤 바꾸지 않음.
+- `s022_B2_r080`은 3회 모두 INVALID (사람–AMR 접촉 시 물리 발산, 재현됨) → n = 29.
+- R_nav_upper를 "급증 지점"으로 정할지 논의됨 → 사전등록 규칙 유지. 로지스틱 R₅%/R₅₀% 보조 분석은 아직 안 함.
+- Stage 3 영상 case A(B2 comfort deadlock & B3-O 성공)는 발생하지 않아 만들지 않음.
 
 ## 3. 읽는 순서
 
 1. 이 파일
 2. `docs/FINAL_261125_PLAN.md` — 최종 실험 설계, 고정 조건, Stage별 판정 규칙, 진행 기록(§8)
-3. `results/batches/261125_final_stage1/analysis/STAGE1_REPORT.md` — 현재 결과
+3. `results/batches/261125_final_stage1/analysis/STAGE1_REPORT.md`, `results/batches/261125_final_stage2_proxy/STAGE2_PROXY.md`, `results/batches/261125_final_stage3/analysis/STAGE3_REPORT.md` — 결과
 4. `comfort_core/final_metrics.py` — trial 하나를 어떻게 판정·측정하는지 (분류 순서, 지표 정의)
 5. 배경이 필요하면: `docs/STAGES.md`(개정 설계), `docs/RESULTS_261114_stage1_final.md`(buffer 0.10 동결),
    `configs/frozen/navigation_requirements.yaml`, `docs/NAV2.md`, `docs/SCENARIO.md`, `README.md`
@@ -80,7 +99,7 @@ Stage 1 coarse (seed 1–30, 사전등록 규칙 그대로):
 
 - trial 폴더: `results/batches/261125_final_stage1/coarse/trials/<trial_id>/` — `DONE`(판정·재시도 기록), `trials.csv`(AMR1), `fleet_trials.csv`(a1, a2), trial JSON.
 - 분석값: `results/batches/261125_final_stage1/analysis/trials/<trial_id>.json` — 리포트의 모든 숫자는 여기서 나옵니다.
-- **커밋되지 않은 것** (실험 PC에만 있음): `trial_log.jsonl`, `*_frames.jsonl`(원본 스트림, 180 trial에 184 MB), `*.mp4`, `logs/`, `*.log`.
+- **커밋되지 않은 것** (실험 PC에만 있음): `trial_log.jsonl`, `*_frames.jsonl`(원본 스트림, Stage 1 coarse 180 trial만 184 MB), `*.mp4`, `logs/`, `*.log`.
 - 이전 배치 목록: `results/batches/README.md`.
 
 ## 6. 반드시 지킬 규칙 (사용자 지시)
