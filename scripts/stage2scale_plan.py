@@ -234,6 +234,9 @@ def main() -> int:
         entry["status"] = "RUN"
         plan["scenarios"][name] = entry
         want = (S.get("confirm_conditions") or {}).get(name) if phase.get("conditions") == "confirm" else phase["conditions"]
+        if want is None and phase.get("conditions") == "confirm" and name in (S.get("not_confirmed") or {}):
+            entry["status"] = S["not_confirmed"][name]   # recorded reason (e.g. unidentifiable at coarse)
+            continue
         if want is None:
             raise SystemExit(f"[ERROR] no confirm_conditions for {name}")
         run_conds = resolve(want, conds, S, sh)

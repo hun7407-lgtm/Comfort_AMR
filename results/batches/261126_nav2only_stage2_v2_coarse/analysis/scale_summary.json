@@ -1,0 +1,2896 @@
+{
+ "plan_phase": "coarse",
+ "n_launches": 180,
+ "n_infra_excluded": 0,
+ "targets": [
+  5.0,
+  4.5,
+  5.5
+ ],
+ "cells": [
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "B1",
+   "alpha": null,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.5132,
+   "median_min_cc_all_m": 0.5132,
+   "median_footprint_edge_m": 0.2679,
+   "median_comfort_completed": 3.6295,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 1,
+   "comfort_deadlock_k": 0,
+   "contact_k": 1,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS",
+    "TEMPORARY_HOLD"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 4,
+     "nav_rate": 0.8,
+     "nav_ci": [
+      0.3755,
+      0.9638
+     ],
+     "encounter_k": 4,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 4,
+     "nav_rate": 0.8,
+     "nav_ci": [
+      0.3755,
+      0.9638
+     ],
+     "encounter_k": 4,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 4,
+     "nav_rate": 0.8,
+     "nav_ci": [
+      0.3755,
+      0.9638
+     ],
+     "encounter_k": 4,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "B2_r0.950",
+   "alpha": null,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.3247,
+   "median_min_cc_all_m": 1.3599,
+   "median_footprint_edge_m": 1.0884,
+   "median_comfort_completed": 5.569,
+   "terminal_protective_stop_k": 4,
+   "transient_protective_stop_k": 1,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 13.3,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "PROTECTIVE_STOP",
+    "TEMPORARY_HOLD"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 1,
+     "nav_rate": 0.2,
+     "nav_ci": [
+      0.0362,
+      0.6245
+     ],
+     "encounter_k": 1,
+     "comfort_k": 1,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 1,
+     "joint_rate": 0.2,
+     "joint_ci": [
+      0.0362,
+      0.6245
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 1,
+     "nav_rate": 0.2,
+     "nav_ci": [
+      0.0362,
+      0.6245
+     ],
+     "encounter_k": 1,
+     "comfort_k": 1,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 1,
+     "joint_rate": 0.2,
+     "joint_ci": [
+      0.0362,
+      0.6245
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 1,
+     "nav_rate": 0.2,
+     "nav_ci": [
+      0.0362,
+      0.6245
+     ],
+     "encounter_k": 1,
+     "comfort_k": 1,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 1,
+     "joint_rate": 0.2,
+     "joint_ci": [
+      0.0362,
+      0.6245
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "S3_a0.45",
+   "alpha": 0.45,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.7301,
+   "median_min_cc_all_m": 0.7301,
+   "median_footprint_edge_m": 0.4853,
+   "median_comfort_completed": 4.777,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "S3_a0.50",
+   "alpha": 0.5,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.7412,
+   "median_min_cc_all_m": 0.7412,
+   "median_footprint_edge_m": 0.4943,
+   "median_comfort_completed": 4.815,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "S3_a0.60",
+   "alpha": 0.6,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.8339,
+   "median_min_cc_all_m": 0.8339,
+   "median_footprint_edge_m": 0.5846,
+   "median_comfort_completed": 5.107,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "S3_a0.70",
+   "alpha": 0.7,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.898,
+   "median_min_cc_all_m": 0.898,
+   "median_footprint_edge_m": 0.6522,
+   "median_comfort_completed": 5.252,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "S3_a0.80",
+   "alpha": 0.8,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.9781,
+   "median_min_cc_all_m": 0.9781,
+   "median_footprint_edge_m": 0.7307,
+   "median_comfort_completed": 5.379,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "S3_a0.90",
+   "alpha": 0.9,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.0352,
+   "median_min_cc_all_m": 1.0352,
+   "median_footprint_edge_m": 0.7882,
+   "median_comfort_completed": 5.448,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "condition": "S3_a1.00",
+   "alpha": 1.0,
+   "n": 5,
+   "width_m": 2.2,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.1286,
+   "median_min_cc_all_m": 1.1286,
+   "median_footprint_edge_m": 0.8797,
+   "median_comfort_completed": 5.517,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "B1",
+   "alpha": null,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.7229,
+   "median_min_cc_all_m": 0.7229,
+   "median_footprint_edge_m": 0.4571,
+   "median_comfort_completed": 5.211,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 2,
+     "comfort_rate_given_completion": 0.4,
+     "joint_k": 2,
+     "joint_rate": 0.4,
+     "joint_ci": [
+      0.1176,
+      0.7693
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "B2_r0.950",
+   "alpha": null,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.9343,
+   "median_min_cc_all_m": 0.9343,
+   "median_footprint_edge_m": 0.6216,
+   "median_comfort_completed": 6.098,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.2,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "S3_a0.45",
+   "alpha": 0.45,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.8274,
+   "median_min_cc_all_m": 0.8274,
+   "median_footprint_edge_m": 0.5531,
+   "median_comfort_completed": 5.72,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 4,
+     "comfort_rate_given_completion": 0.8,
+     "joint_k": 4,
+     "joint_rate": 0.8,
+     "joint_ci": [
+      0.3755,
+      0.9638
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "S3_a0.50",
+   "alpha": 0.5,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.8049,
+   "median_min_cc_all_m": 0.8049,
+   "median_footprint_edge_m": 0.5249,
+   "median_comfort_completed": 5.622,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.2,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 3,
+     "comfort_rate_given_completion": 0.6,
+     "joint_k": 3,
+     "joint_rate": 0.6,
+     "joint_ci": [
+      0.2307,
+      0.8824
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "S3_a0.60",
+   "alpha": 0.6,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.7728,
+   "median_min_cc_all_m": 0.7728,
+   "median_footprint_edge_m": 0.4996,
+   "median_comfort_completed": 5.472,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 2,
+     "comfort_rate_given_completion": 0.4,
+     "joint_k": 2,
+     "joint_rate": 0.4,
+     "joint_ci": [
+      0.1176,
+      0.7693
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "S3_a0.70",
+   "alpha": 0.7,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.8266,
+   "median_min_cc_all_m": 0.8266,
+   "median_footprint_edge_m": 0.5518,
+   "median_comfort_completed": 5.716,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.2,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 4,
+     "comfort_rate_given_completion": 0.8,
+     "joint_k": 4,
+     "joint_rate": 0.8,
+     "joint_ci": [
+      0.3755,
+      0.9638
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "S3_a0.80",
+   "alpha": 0.8,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.8147,
+   "median_min_cc_all_m": 0.8147,
+   "median_footprint_edge_m": 0.5332,
+   "median_comfort_completed": 5.666,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "S3_a0.90",
+   "alpha": 0.9,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.8695,
+   "median_min_cc_all_m": 0.8695,
+   "median_footprint_edge_m": 0.5807,
+   "median_comfort_completed": 5.885,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 1,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.65",
+   "condition": "S3_a1.00",
+   "alpha": 1.0,
+   "n": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.65,
+   "median_min_cc_completed_m": 0.9018,
+   "median_min_cc_all_m": 0.9018,
+   "median_footprint_edge_m": 0.6082,
+   "median_comfort_completed": 5.998,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "B1",
+   "alpha": null,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.5164,
+   "median_min_cc_all_m": 0.5164,
+   "median_footprint_edge_m": 0.2726,
+   "median_comfort_completed": 3.718,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 1,
+   "comfort_deadlock_k": 0,
+   "contact_k": 2,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "NORMAL_YIELD",
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 3,
+     "nav_rate": 0.6,
+     "nav_ci": [
+      0.2307,
+      0.8824
+     ],
+     "encounter_k": 3,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 3,
+     "nav_rate": 0.6,
+     "nav_ci": [
+      0.2307,
+      0.8824
+     ],
+     "encounter_k": 3,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 3,
+     "nav_rate": 0.6,
+     "nav_ci": [
+      0.2307,
+      0.8824
+     ],
+     "encounter_k": 3,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "B2_r0.950",
+   "alpha": null,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.3835,
+   "median_min_cc_all_m": 1.3835,
+   "median_footprint_edge_m": 1.1362,
+   "median_comfort_completed": 5.573,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "S3_a0.45",
+   "alpha": 0.45,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.8255,
+   "median_min_cc_all_m": 0.8255,
+   "median_footprint_edge_m": 0.5804,
+   "median_comfort_completed": 5.085,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "S3_a0.50",
+   "alpha": 0.5,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.8733,
+   "median_min_cc_all_m": 0.8733,
+   "median_footprint_edge_m": 0.6307,
+   "median_comfort_completed": 5.202,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "S3_a0.60",
+   "alpha": 0.6,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.9689,
+   "median_min_cc_all_m": 0.9689,
+   "median_footprint_edge_m": 0.7234,
+   "median_comfort_completed": 5.376,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "S3_a0.70",
+   "alpha": 0.7,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.0717,
+   "median_min_cc_all_m": 1.0717,
+   "median_footprint_edge_m": 0.8217,
+   "median_comfort_completed": 5.479,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "S3_a0.80",
+   "alpha": 0.8,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.1542,
+   "median_min_cc_all_m": 1.1542,
+   "median_footprint_edge_m": 0.9041,
+   "median_comfort_completed": 5.524,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "S3_a0.90",
+   "alpha": 0.9,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.2821,
+   "median_min_cc_all_m": 1.2821,
+   "median_footprint_edge_m": 1.0351,
+   "median_comfort_completed": 5.559,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "condition": "S3_a1.00",
+   "alpha": 1.0,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.3746,
+   "median_min_cc_all_m": 1.3746,
+   "median_footprint_edge_m": 1.1262,
+   "median_comfort_completed": 5.576,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "rear"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "B1",
+   "alpha": null,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.5343,
+   "median_min_cc_all_m": 0.5343,
+   "median_footprint_edge_m": 0.2843,
+   "median_comfort_completed": 3.644,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 3,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 1.37,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "NORMAL_YIELD",
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "B2_r0.950",
+   "alpha": null,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.3705,
+   "median_min_cc_all_m": 1.3705,
+   "median_footprint_edge_m": 1.1238,
+   "median_comfort_completed": 6.296,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "S3_a0.45",
+   "alpha": 0.45,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.7828,
+   "median_min_cc_all_m": 0.7828,
+   "median_footprint_edge_m": 0.5359,
+   "median_comfort_completed": 5.126,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "S3_a0.50",
+   "alpha": 0.5,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.7938,
+   "median_min_cc_all_m": 0.7938,
+   "median_footprint_edge_m": 0.5472,
+   "median_comfort_completed": 5.151,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 0,
+     "comfort_rate_given_completion": 0.0,
+     "joint_k": 0,
+     "joint_rate": 0.0,
+     "joint_ci": [
+      0.0,
+      0.4345
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "S3_a0.60",
+   "alpha": 0.6,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.895,
+   "median_min_cc_all_m": 0.895,
+   "median_footprint_edge_m": 0.648,
+   "median_comfort_completed": 5.55,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "S3_a0.70",
+   "alpha": 0.7,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 0.9785,
+   "median_min_cc_all_m": 0.9785,
+   "median_footprint_edge_m": 0.7295,
+   "median_comfort_completed": 5.816,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.22,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "S3_a0.80",
+   "alpha": 0.8,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.0551,
+   "median_min_cc_all_m": 1.0551,
+   "median_footprint_edge_m": 0.8052,
+   "median_comfort_completed": 5.981,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "S3_a0.90",
+   "alpha": 0.9,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.148,
+   "median_min_cc_all_m": 1.148,
+   "median_footprint_edge_m": 0.9013,
+   "median_comfort_completed": 6.176,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "condition": "S3_a1.00",
+   "alpha": 1.0,
+   "n": 5,
+   "width_m": 2.6,
+   "lane_gap_m": null,
+   "median_min_cc_completed_m": 1.2416,
+   "median_min_cc_all_m": 1.2416,
+   "median_footprint_edge_m": 0.9944,
+   "median_comfort_completed": 6.28,
+   "terminal_protective_stop_k": 0,
+   "transient_protective_stop_k": 0,
+   "comfort_deadlock_k": 0,
+   "contact_k": 0,
+   "median_hold_s": 0.23,
+   "sectors": [
+    "side"
+   ],
+   "classes": [
+    "SUCCESS"
+   ],
+   "by_target": {
+    "5.0": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "4.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    },
+    "5.5": {
+     "n": 5,
+     "nav_k": 5,
+     "nav_rate": 1.0,
+     "nav_ci": [
+      0.5655,
+      1.0
+     ],
+     "encounter_k": 5,
+     "comfort_k": 5,
+     "comfort_rate_given_completion": 1.0,
+     "joint_k": 5,
+     "joint_rate": 1.0,
+     "joint_ci": [
+      0.5655,
+      1.0
+     ]
+    }
+   }
+  }
+ ]
+}

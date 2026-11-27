@@ -1,0 +1,19 @@
+{
+ "trial_id": "MV-P_w3.00_g0.65_B1_rep01",
+ "seed": 1,
+ "condition": "configs/stage2scale/v2_nav2only/conditions/B1.yaml",
+ "config": "configs/stage2scale/v2_nav2only/envs/MV-P_w3.00_g0.65.yaml",
+ "commit": "d3bb4ab",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 134,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 134,
+ "finished": "2026-11-27T05:35:54"
+}

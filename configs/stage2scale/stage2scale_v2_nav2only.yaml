@@ -118,4 +118,10 @@ frozen:  # from results/batches/261126_nav2only_stage2_v2_pilot/analysis/pilot_f
   EN-R: {"width_m": 2.2}
   MV-P: {"width_m": 3.0, "lane_gap_m": 0.65}
   ST-F: UNIDENTIFIABLE_GEOMETRY   # both widths rejected: B1 incomplete / contact (pilot_freeze.json); not run further                                # written after the pilot (decision log)
-confirm_conditions: {}                    # written after coarse: B1, B2, alpha*, next smaller tested alpha
+confirm_conditions:  # from results/batches/261126_nav2only_stage2_v2_coarse/analysis/selected_state_scales.json (C* 5.0)
+  EN-R: [B1, B2, "0.60", "0.50"]   # IDENTIFIED_BRACKET alpha* 0.60, next smaller tested 0.50
+  ST-S: [B1, B2, "0.45"]           # FLOOR_LIMITED: alpha* = smallest tested, no smaller alpha exists
+  ST-R: [B1, B2, "0.45"]           # FLOOR_LIMITED: as ST-S
+not_confirmed:   # contexts without confirm_conditions, with the recorded reason
+  MV-P: UNIDENTIFIABLE_GEOMETRY   # coarse distance response 0.074 m < 0.10
+  ST-F: UNIDENTIFIABLE_GEOMETRY   # pilot freeze: no feasible + sensitive geometry

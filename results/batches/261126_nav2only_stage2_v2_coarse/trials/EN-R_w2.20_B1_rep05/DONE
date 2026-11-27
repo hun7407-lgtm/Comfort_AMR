@@ -1,0 +1,19 @@
+{
+ "trial_id": "EN-R_w2.20_B1_rep05",
+ "seed": 5,
+ "condition": "configs/stage2scale/v2_nav2only/conditions/B1.yaml",
+ "config": "configs/stage2scale/v2_nav2only/envs/EN-R_w2.20.yaml",
+ "commit": "d3bb4ab",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 76,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 76,
+ "finished": "2026-11-27T08:58:27"
+}
