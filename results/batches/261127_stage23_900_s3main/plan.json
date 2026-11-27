@@ -1,0 +1,1249 @@
+{
+ "version": "stage23_900",
+ "phase": "s3main",
+ "stage": 3,
+ "config": "configs/final_nav2only_stage23_900/stage23_900.yaml",
+ "commit_at_plan": "fee64d2",
+ "control_mode": "nav2_only",
+ "anchor_m": 0.95,
+ "anchor_provenance": "new_nav2_only_upper_abbreviated_261126",
+ "moving_reference_speed_mps": 1.0,
+ "templates_raw": {
+  "station_engaged": {
+   "front": 0.8,
+   "side": 0.7,
+   "rear": 0.6
+  },
+  "stationary": {
+   "front": 0.8,
+   "side": 0.9,
+   "rear": 1.05
+  },
+  "moving": {
+   "front": 1.2,
+   "side": 0.9,
+   "rear": 0.9
+  }
+ },
+ "templates_normalised": {
+  "station_engaged": {
+   "front": 0.9499999999999998,
+   "side": 0.8312499999999998,
+   "rear": 0.7124999999999998
+  },
+  "stationary": {
+   "front": 0.7238095238095238,
+   "side": 0.8142857142857142,
+   "rear": 0.95
+  },
+  "moving": {
+   "front": 0.95,
+   "side": 0.7125,
+   "rear": 0.7125
+  }
+ },
+ "min_radius_m": 0.3,
+ "min_alpha_without_clip": 0.42105263157894746,
+ "extents_by_alpha": {
+  "0.50": {
+   "station_engaged": {
+    "front": 0.4749999999999999,
+    "side": 0.4156249999999999,
+    "rear": 0.3562499999999999
+   },
+   "stationary": {
+    "front": 0.3619047619047619,
+    "side": 0.4071428571428571,
+    "rear": 0.475
+   },
+   "moving": {
+    "front": 0.475,
+    "side": 0.35625,
+    "rear": 0.35625
+   }
+  },
+  "0.60": {
+   "station_engaged": {
+    "front": 0.5699999999999998,
+    "side": 0.49874999999999986,
+    "rear": 0.4274999999999999
+   },
+   "stationary": {
+    "front": 0.4342857142857143,
+    "side": 0.4885714285714285,
+    "rear": 0.57
+   },
+   "moving": {
+    "front": 0.57,
+    "side": 0.4275,
+    "rear": 0.4275
+   }
+  },
+  "0.70": {
+   "station_engaged": {
+    "front": 0.6649999999999998,
+    "side": 0.5818749999999998,
+    "rear": 0.4987499999999998
+   },
+   "stationary": {
+    "front": 0.5066666666666666,
+    "side": 0.5699999999999998,
+    "rear": 0.6649999999999999
+   },
+   "moving": {
+    "front": 0.6649999999999999,
+    "side": 0.49874999999999997,
+    "rear": 0.49874999999999997
+   }
+  },
+  "0.80": {
+   "station_engaged": {
+    "front": 0.7599999999999999,
+    "side": 0.6649999999999999,
+    "rear": 0.5699999999999998
+   },
+   "stationary": {
+    "front": 0.579047619047619,
+    "side": 0.6514285714285714,
+    "rear": 0.76
+   },
+   "moving": {
+    "front": 0.76,
+    "side": 0.5700000000000001,
+    "rear": 0.5700000000000001
+   }
+  },
+  "0.90": {
+   "station_engaged": {
+    "front": 0.8549999999999999,
+    "side": 0.7481249999999998,
+    "rear": 0.6412499999999999
+   },
+   "stationary": {
+    "front": 0.6514285714285715,
+    "side": 0.7328571428571428,
+    "rear": 0.855
+   },
+   "moving": {
+    "front": 0.855,
+    "side": 0.64125,
+    "rear": 0.64125
+   }
+  }
+ },
+ "reference": {
+  "stationary": "N22a_B",
+  "station_engaged": "N22a_B",
+  "moving": "N22b_E1"
+ },
+ "criteria": {
+  "primary_target": 5.0,
+  "sensitivity_targets": [
+   4.5,
+   5.5
+  ],
+  "joint_min": 0.8,
+  "nav_min": 0.8,
+  "joint_min_sensitivity": 0.9,
+  "min_distance_response_m": 0.1,
+  "reference_speed_tolerance_mps": 0.1
+ },
+ "references": [
+  "N22a_B: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study B (AGV) (standing still, robot 0.35 m/s); right a0 5.39 sigma 46.14 cm, front a0 5.62 sigma 44.13 cm, left a0 5.39 sigma 47.21 cm, back a0 4.58 sigma 39.11 cm",
+  "N22a_A: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study A (Pepper) (standing still, robot 0.35 m/s); right a0 6.15 sigma 47.25 cm, front a0 6.15 sigma 41.51 cm, left a0 6.04 sigma 49.52 cm, back a0 3.92 sigma 35.65 cm",
+  "N22b_E1: Neggers et al. 2022, Front Robot AI 9:915972, Exp. 1, Table 2 (eta = 0) (walking, passed head-on, robot 0.35 m/s); right a0 5.71 sigma 44.2 cm, front a0 5.71 sigma 44.2 cm, left a0 5.71 sigma 44.2 cm, back a0 5.71 sigma 44.2 cm"
+ ],
+ "amr_half_length_m": 0.35,
+ "amr_half_width_m": 0.24,
+ "human_radius_m": 0.25,
+ "frozen": {
+  "ST-F": {
+   "width_m": 2.6
+  },
+  "ST-S": {
+   "width_m": 2.6
+  },
+  "ST-R": {
+   "width_m": 2.6
+  },
+  "EN-R": {
+   "width_m": 2.6
+  },
+  "MV-P": {
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "status": "UNIDENTIFIABLE_GEOMETRY"
+  }
+ },
+ "scenarios": {},
+ "geometries": {},
+ "seeds": {
+  "1018": {
+   "seed": 1018,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      8.9,
+      400.0
+     ],
+     "edge_start_at": [
+      11.13,
+      402.23
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      12.9,
+      400.0
+     ],
+     "edge_start_at": [
+      15.13,
+      402.23
+     ]
+    }
+   ],
+   "physical_signature": "de60fea48dd49ebc"
+  },
+  "1008": {
+   "seed": 1008,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      7.6,
+      7.6
+     ],
+     "edge_start_at": [
+      9.82,
+      9.82
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      11.7,
+      11.7
+     ],
+     "edge_start_at": [
+      13.88,
+      13.88
+     ]
+    }
+   ],
+   "physical_signature": "48d4697b03bb447d"
+  },
+  "1019": {
+   "seed": 1019,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      7.2,
+      400.0
+     ],
+     "edge_start_at": [
+      9.4,
+      402.2
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      14.8,
+      400.0
+     ],
+     "edge_start_at": [
+      16.98,
+      402.18
+     ]
+    }
+   ],
+   "physical_signature": "c0d899932d1041ee"
+  },
+  "1001": {
+   "seed": 1001,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      5.5,
+      5.5
+     ],
+     "edge_start_at": [
+      7.71,
+      7.71
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      13.6,
+      13.6
+     ],
+     "edge_start_at": [
+      15.87,
+      15.87
+     ]
+    }
+   ],
+   "physical_signature": "380a5327472100e4"
+  },
+  "1029": {
+   "seed": 1029,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      8.6,
+      5.0
+     ],
+     "edge_start_at": [
+      11.0,
+      7.4
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      11.1,
+      25.9
+     ],
+     "edge_start_at": [
+      13.53,
+      28.33
+     ]
+    }
+   ],
+   "physical_signature": "7daf0e19b610e9da"
+  },
+  "1007": {
+   "seed": 1007,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      7.0,
+      7.0
+     ],
+     "edge_start_at": [
+      9.19,
+      9.19
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      10.8,
+      10.8
+     ],
+     "edge_start_at": [
+      13.18,
+      13.18
+     ]
+    }
+   ],
+   "physical_signature": "83457dbcb9157cf9"
+  },
+  "1011": {
+   "seed": 1011,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      7.4,
+      400.0
+     ],
+     "edge_start_at": [
+      9.55,
+      402.15
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      14.9,
+      400.0
+     ],
+     "edge_start_at": [
+      17.14,
+      402.24
+     ]
+    }
+   ],
+   "physical_signature": "3c90e41cff5719dc"
+  },
+  "1009": {
+   "seed": 1009,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      7.0,
+      7.0
+     ],
+     "edge_start_at": [
+      9.21,
+      9.21
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      12.8,
+      12.8
+     ],
+     "edge_start_at": [
+      15.12,
+      15.12
+     ]
+    }
+   ],
+   "physical_signature": "6b71314c614ddf30"
+  },
+  "1017": {
+   "seed": 1017,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      6.9,
+      400.0
+     ],
+     "edge_start_at": [
+      9.04,
+      402.14
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      9.4,
+      400.0
+     ],
+     "edge_start_at": [
+      11.61,
+      402.21
+     ]
+    }
+   ],
+   "physical_signature": "ef489e7739b59ff4"
+  },
+  "1014": {
+   "seed": 1014,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      7.9,
+      400.0
+     ],
+     "edge_start_at": [
+      10.28,
+      402.38
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      11.3,
+      400.0
+     ],
+     "edge_start_at": [
+      13.57,
+      402.27
+     ]
+    }
+   ],
+   "physical_signature": "29fd83a5ae11b498"
+  },
+  "1005": {
+   "seed": 1005,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      6.1,
+      6.1
+     ],
+     "edge_start_at": [
+      8.41,
+      8.41
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      13.6,
+      13.6
+     ],
+     "edge_start_at": [
+      15.81,
+      15.81
+     ]
+    }
+   ],
+   "physical_signature": "51ee53feaffe0d01"
+  },
+  "1016": {
+   "seed": 1016,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      9.3,
+      400.0
+     ],
+     "edge_start_at": [
+      11.49,
+      402.19
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      13.4,
+      400.0
+     ],
+     "edge_start_at": [
+      15.61,
+      402.21
+     ]
+    }
+   ],
+   "physical_signature": "f05c983675fa9d86"
+  },
+  "1013": {
+   "seed": 1013,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      8.0,
+      400.0
+     ],
+     "edge_start_at": [
+      10.32,
+      402.32
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      14.9,
+      400.0
+     ],
+     "edge_start_at": [
+      17.05,
+      402.15
+     ]
+    }
+   ],
+   "physical_signature": "de2bba772f1c687b"
+  },
+  "1023": {
+   "seed": 1023,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      7.0,
+      4.0
+     ],
+     "edge_start_at": [
+      9.25,
+      6.25
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      10.3,
+      22.7
+     ],
+     "edge_start_at": [
+      12.7,
+      25.1
+     ]
+    }
+   ],
+   "physical_signature": "8e4ddabf32ef51ec"
+  },
+  "1010": {
+   "seed": 1010,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      6.3,
+      6.3
+     ],
+     "edge_start_at": [
+      8.61,
+      8.61
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      13.4,
+      13.4
+     ],
+     "edge_start_at": [
+      15.61,
+      15.61
+     ]
+    }
+   ],
+   "physical_signature": "7454047c148e0c9f"
+  },
+  "1003": {
+   "seed": 1003,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      5.7,
+      5.7
+     ],
+     "edge_start_at": [
+      8.07,
+      8.07
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      11.5,
+      11.5
+     ],
+     "edge_start_at": [
+      13.9,
+      13.9
+     ]
+    }
+   ],
+   "physical_signature": "61a2ee7e1c769595"
+  },
+  "1022": {
+   "seed": 1022,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      8.6,
+      4.9
+     ],
+     "edge_start_at": [
+      10.77,
+      7.07
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      11.5,
+      24.5
+     ],
+     "edge_start_at": [
+      13.71,
+      26.71
+     ]
+    }
+   ],
+   "physical_signature": "5ef5608adcd9eb2b"
+  },
+  "1027": {
+   "seed": 1027,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      5.9,
+      5.5
+     ],
+     "edge_start_at": [
+      8.3,
+      7.9
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      11.9,
+      26.4
+     ],
+     "edge_start_at": [
+      14.04,
+      28.54
+     ]
+    }
+   ],
+   "physical_signature": "6c24dc027ed38d5f"
+  },
+  "1012": {
+   "seed": 1012,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      7.7,
+      400.0
+     ],
+     "edge_start_at": [
+      9.97,
+      402.27
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      11.3,
+      400.0
+     ],
+     "edge_start_at": [
+      13.45,
+      402.15
+     ]
+    }
+   ],
+   "physical_signature": "82dc5c38fccfdfa2"
+  },
+  "1025": {
+   "seed": 1025,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      7.7,
+      4.0
+     ],
+     "edge_start_at": [
+      9.86,
+      6.16
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      13.3,
+      25.9
+     ],
+     "edge_start_at": [
+      15.54,
+      28.14
+     ]
+    }
+   ],
+   "physical_signature": "aaf94fbffa9ab3bf"
+  },
+  "1020": {
+   "seed": 1020,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      8.6,
+      400.0
+     ],
+     "edge_start_at": [
+      10.85,
+      402.25
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      11.8,
+      400.0
+     ],
+     "edge_start_at": [
+      14.15,
+      402.35
+     ]
+    }
+   ],
+   "physical_signature": "c5b038ff021f1fe4"
+  },
+  "1028": {
+   "seed": 1028,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      10.2,
+      4.7
+     ],
+     "edge_start_at": [
+      12.52,
+      7.02
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      13.2,
+      24.2
+     ],
+     "edge_start_at": [
+      15.58,
+      26.58
+     ]
+    }
+   ],
+   "physical_signature": "bbbfb21577af0964"
+  },
+  "1030": {
+   "seed": 1030,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      6.4,
+      4.5
+     ],
+     "edge_start_at": [
+      8.76,
+      6.86
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      10.6,
+      26.5
+     ],
+     "edge_start_at": [
+      13.04,
+      28.94
+     ]
+    }
+   ],
+   "physical_signature": "85bd84f3237801e0"
+  },
+  "1006": {
+   "seed": 1006,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      6.3,
+      6.3
+     ],
+     "edge_start_at": [
+      8.71,
+      8.71
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      11.0,
+      11.0
+     ],
+     "edge_start_at": [
+      13.32,
+      13.32
+     ]
+    }
+   ],
+   "physical_signature": "e99b0c49b9141a97"
+  },
+  "1024": {
+   "seed": 1024,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      8.1,
+      4.3
+     ],
+     "edge_start_at": [
+      10.25,
+      6.45
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      15.0,
+      27.0
+     ],
+     "edge_start_at": [
+      17.21,
+      29.21
+     ]
+    }
+   ],
+   "physical_signature": "39099db2deda3a1e"
+  },
+  "1002": {
+   "seed": 1002,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      5.4,
+      5.4
+     ],
+     "edge_start_at": [
+      7.62,
+      7.62
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      10.5,
+      10.5
+     ],
+     "edge_start_at": [
+      12.7,
+      12.7
+     ]
+    }
+   ],
+   "physical_signature": "f659ca98eccfe68e"
+  },
+  "1004": {
+   "seed": 1004,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      8.5,
+      8.5
+     ],
+     "edge_start_at": [
+      10.69,
+      10.69
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S2",
+     "edge": "E2",
+     "belt_start_at": [
+      14.6,
+      14.6
+     ],
+     "edge_start_at": [
+      16.97,
+      16.97
+     ]
+    }
+   ],
+   "physical_signature": "4e633fdaaf95a108"
+  },
+  "1015": {
+   "seed": 1015,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      10.5,
+      400.0
+     ],
+     "edge_start_at": [
+      12.65,
+      402.15
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      11.6,
+      400.0
+     ],
+     "edge_start_at": [
+      13.97,
+      402.37
+     ]
+    }
+   ],
+   "physical_signature": "0fcbb40245793a90"
+  },
+  "1021": {
+   "seed": 1021,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      10.1,
+      5.9
+     ],
+     "edge_start_at": [
+      12.25,
+      8.05
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      12.4,
+      25.7
+     ],
+     "edge_start_at": [
+      14.61,
+      27.91
+     ]
+    }
+   ],
+   "physical_signature": "75d975e4c91ed3d6"
+  },
+  "1026": {
+   "seed": 1026,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N3",
+     "edge": "E1",
+     "belt_start_at": [
+      9.9,
+      4.1
+     ],
+     "edge_start_at": [
+      12.06,
+      6.26
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      9.8,
+      25.9
+     ],
+     "edge_start_at": [
+      11.95,
+      28.05
+     ]
+    }
+   ],
+   "physical_signature": "d0d2eaf2cb772bd8"
+  }
+ },
+ "policies": {
+  "C1": "B2_r0.950",
+  "C2": "S3_a0.60",
+  "C3": "S3_a0.70",
+  "C4": "S3_a0.80",
+  "C5": "S3_a0.90"
+ },
+ "conditions": {
+  "B2_r0.950": {
+   "label": "B2 static circle 0.950 m (R_ref, new_nav2_only_upper_abbreviated_261126)",
+   "alpha": null
+  },
+  "S3_a0.60": {
+   "label": "State-wise uniform scale alpha 0.60 of R_ref 0.950 (station_engaged F0.570 S0.499 R0.427; stationary F0.434 S0.489 R0.570; moving F0.570 S0.427 R0.427)",
+   "alpha": 0.6
+  },
+  "S3_a0.70": {
+   "label": "State-wise uniform scale alpha 0.70 of R_ref 0.950 (station_engaged F0.665 S0.582 R0.499; stationary F0.507 S0.570 R0.665; moving F0.665 S0.499 R0.499)",
+   "alpha": 0.7
+  },
+  "S3_a0.80": {
+   "label": "State-wise uniform scale alpha 0.80 of R_ref 0.950 (station_engaged F0.760 S0.665 R0.570; stationary F0.579 S0.651 R0.760; moving F0.760 S0.570 R0.570)",
+   "alpha": 0.8
+  },
+  "S3_a0.90": {
+   "label": "State-wise uniform scale alpha 0.90 of R_ref 0.950 (station_engaged F0.855 S0.748 R0.641; stationary F0.651 S0.733 R0.855; moving F0.855 S0.641 R0.641)",
+   "alpha": 0.9
+  }
+ },
+ "encounter": {
+  "radius_m": 1.5,
+  "scored_at": "closest"
+ },
+ "winner_rule": "Eligible policy: contact trials <= 1/30, nav completion (all 3 AMRs) >= 0.80, primary joint\n>= 0.80, encounter scoring coverage >= 0.90. None eligible -> NO_ACCEPTABLE_SCALE.\nAmong eligible: highest observed joint is the reference; every other eligible policy is\ncompared with it by exact paired McNemar (Holm over the comparisons). Policies not\nsignificantly worse (adjusted p >= 0.05) form the top set; the top set's Pareto front on\n(joint, nav, median capped system time) is reported; tie-break = smallest median capped\nsystem time (failures capped at the run limit). All comparisons are exploratory at n = 30.\n",
+ "n_trials": 150,
+ "checksums": {
+  "manifest_sha256_16": "82c1e3bba664ba49",
+  "config_sha256_16": "cd654c19b78810dc",
+  "files": {
+   "configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml": "11d0dbd4e99d3024",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.50.yaml": "3bfaebc961686653",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.60.yaml": "e1f39a8b2cd71681",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml": "4b2190a877771b45",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.80.yaml": "e44abfd1fb3d4147",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.90.yaml": "84ecfb1f55d685fc",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1001.yaml": "4c0b05582a190c7e",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1002.yaml": "7d002b07628cf87b",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1003.yaml": "7f5c06b8e3214420",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1004.yaml": "7846447e7e83d919",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1005.yaml": "ed9cefdbe73f34ac",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1006.yaml": "e924768442908ba7",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1007.yaml": "5e76c3428cbcc59a",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1008.yaml": "082e8b7f8c2201c0",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1009.yaml": "89840a77557b590b",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1010.yaml": "85a57f52bd474b88",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1011.yaml": "5f540e83ba56d755",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1012.yaml": "0d6f6f7c34f7a1f8",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1013.yaml": "df97ba2da43cc841",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1014.yaml": "bbb302b47edf6aee",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1015.yaml": "d53f77828250fd56",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1016.yaml": "2bc5b00b76de346e",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1017.yaml": "0c6b6cb63dd9bbe3",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1018.yaml": "3351ee77eb88da05",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1019.yaml": "7d5554ea0a10d98c",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1020.yaml": "a815bd6882215b89",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1021.yaml": "f55456826adaaa1b",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1022.yaml": "80d842e96c1529fd",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1023.yaml": "eeadc87ab5a13a76",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1024.yaml": "3e72ad796ab79b6a",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1025.yaml": "243df40da48ec408",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1026.yaml": "be74439c92e8aeed",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1027.yaml": "57ee1d7e4486f984",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1028.yaml": "36c0d1ac3573d600",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1029.yaml": "9c74c1dac4d28f98",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s1030.yaml": "00c8349745dca83b"
+  }
+ }
+}

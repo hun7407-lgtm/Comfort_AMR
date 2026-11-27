@@ -1,0 +1,252 @@
+{
+ "rule": "Per context, over all pilot launches of a candidate geometry (every alpha pooled, so\nno alpha is favoured):\n  VALID     no human-AMR contact in any launch, pooled completion >= 0.50, and every\n            completed launch passes on the intended side and in the intended sector;\n  SENSITIVE median d_cc(alpha 0.90) - median d_cc(alpha 0.50) >= min_distance_response_m\n            (completed launches; if 0.90 never completes, the largest completed alpha >= 0.70).\nThe first VALID and SENSITIVE candidate in declared order is frozen. None ->\nUNIDENTIFIABLE_GEOMETRY for that context; it is still run in MAIN at the first VALID\ncandidate (or the first candidate if none is valid) so its 150 launches are reported, and\nis labelled unidentifiable. The choice never looks at comfort or at which alpha passes.\n",
+ "contexts": {
+  "ST-F": {
+   "status": "FROZEN",
+   "geometry": "w2.60",
+   "candidates": [
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.2832,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.7577,
+      "0.7": 0.8897,
+      "0.9": 1.0409
+     },
+     "reasons": [],
+     "geometry": "w2.60",
+     "width_m": 2.6,
+     "decision": "FROZEN"
+    },
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.2777,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.7736,
+      "0.7": 0.8901,
+      "0.9": 1.0513
+     },
+     "reasons": [],
+     "geometry": "w2.20",
+     "width_m": 2.2,
+     "decision": "not chosen"
+    }
+   ]
+  },
+  "ST-S": {
+   "status": "FROZEN",
+   "geometry": "w2.60",
+   "candidates": [
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.3608,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.7873,
+      "0.7": 0.9717,
+      "0.9": 1.1481
+     },
+     "reasons": [],
+     "geometry": "w2.60",
+     "width_m": 2.6,
+     "decision": "FROZEN"
+    },
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.3559,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.7938,
+      "0.7": 0.9695,
+      "0.9": 1.1497
+     },
+     "reasons": [],
+     "geometry": "w2.20",
+     "width_m": 2.2,
+     "decision": "not chosen"
+    }
+   ]
+  },
+  "ST-R": {
+   "status": "FROZEN",
+   "geometry": "w2.60",
+   "candidates": [
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.3553,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.909,
+      "0.7": 1.0719,
+      "0.9": 1.2643
+     },
+     "reasons": [],
+     "geometry": "w2.60",
+     "width_m": 2.6,
+     "decision": "FROZEN"
+    },
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.3955,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.8759,
+      "0.7": 1.0833,
+      "0.9": 1.2714
+     },
+     "reasons": [],
+     "geometry": "w2.20",
+     "width_m": 2.2,
+     "decision": "not chosen"
+    }
+   ]
+  },
+  "EN-R": {
+   "status": "FROZEN",
+   "geometry": "w2.60",
+   "candidates": [
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.2959,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.7421,
+      "0.7": 0.8785,
+      "0.9": 1.038
+     },
+     "reasons": [],
+     "geometry": "w2.60",
+     "width_m": 2.6,
+     "decision": "FROZEN"
+    },
+    {
+     "valid": true,
+     "sensitive": true,
+     "response_m": 0.3059,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 0,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.7401,
+      "0.7": 0.8911,
+      "0.9": 1.046
+     },
+     "reasons": [],
+     "geometry": "w2.20",
+     "width_m": 2.2,
+     "decision": "not chosen"
+    }
+   ]
+  },
+  "MV-P": {
+   "status": "UNIDENTIFIABLE_GEOMETRY",
+   "geometry": "w3.00_g0.40",
+   "candidates": [
+    {
+     "valid": false,
+     "sensitive": true,
+     "response_m": 0.1374,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 5,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.5066,
+      "0.7": 0.5199,
+      "0.9": 0.644
+     },
+     "reasons": [
+      "contact in 5/6"
+     ],
+     "geometry": "w3.00_g0.40",
+     "width_m": 3.0,
+     "lane_gap_m": 0.4,
+     "decision": "REJECTED (run in MAIN, labelled UNIDENTIFIABLE)"
+    },
+    {
+     "valid": false,
+     "sensitive": false,
+     "response_m": -0.0214,
+     "compared_alpha": [
+      0.9,
+      0.5
+     ],
+     "n": 6,
+     "completed": 6,
+     "contact": 6,
+     "median_d_cc_by_alpha": {
+      "0.5": 0.5004,
+      "0.7": 0.491,
+      "0.9": 0.479
+     },
+     "reasons": [
+      "contact in 6/6",
+      "distance response -0.0214 m < 0.1 m"
+     ],
+     "geometry": "w3.00_g0.25",
+     "width_m": 3.0,
+     "lane_gap_m": 0.25,
+     "decision": "REJECTED"
+    }
+   ]
+  }
+ }
+}

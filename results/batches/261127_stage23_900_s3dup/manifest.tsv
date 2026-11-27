@@ -1,0 +1,8 @@
+# stage23_900 s3dup
+# trial_id	repeat	condition	config
+s2002_B2_r0.950_dup1	2002	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml
+s2003_B2_r0.950_dup1	2003	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml
+s2001_B2_r0.950_dup1	2001	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml
+s2002_B2_r0.950_dup2	2002	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml
+s2003_B2_r0.950_dup2	2003	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml
+s2001_B2_r0.950_dup2	2001	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml

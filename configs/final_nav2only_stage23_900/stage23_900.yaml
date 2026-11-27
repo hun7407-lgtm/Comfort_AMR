@@ -87,7 +87,12 @@ stage2:
   jitter:
     static: {person_x_m: 0.30, facing_deg: 5.0, path_offset_m: 0.03, start_x_m: 0.20}
     moving: {walker_start_x_m: 0.50, walker_lane_y_m: 0.03, amr_start_x_m: 0.20}
-frozen: {}                                        # written by final_stage23_900_freeze.py after the Stage 2 pilot
+frozen:  # from results/batches/261127_stage23_900_s2pilot/analysis/pilot_freeze.json
+  ST-F: {"width_m": 2.6}
+  ST-S: {"width_m": 2.6}
+  ST-R: {"width_m": 2.6}
+  EN-R: {"width_m": 2.6}
+  MV-P: {"width_m": 3.0, "lane_gap_m": 0.4, "status": "UNIDENTIFIABLE_GEOMETRY"}                                        # written by final_stage23_900_freeze.py after the Stage 2 pilot
 
 # ------------------------------------------------------------------ Stage 3
 stage3:
@@ -123,6 +128,13 @@ stage3:
     significantly worse (adjusted p >= 0.05) form the top set; the top set's Pareto front on
     (joint, nav, median capped system time) is reported; tie-break = smallest median capped
     system time (failures capped at the run limit). All comparisons are exploratory at n = 30.
+  secondary_contact_sensitivity: |              # declared 2026-11-28 00:40 KST, after the pilots, BEFORE any main data
+    Pilot finding: every pilot contact (Stage 2: 12 MV-P launches; Stage 3: 9/15 trials, all five
+    policies incl. B2) was closed by the scripted person walking into an AMR (robot-closed share 0);
+    people never avoid the AMR (configs/common.yaml avoid_robot: false). The PRIMARY endpoints and
+    the winner rule above count ALL human-AMR contact and are unchanged. A SECONDARY sensitivity
+    analysis repeats the same winner rule counting only robot-closed contact. It is reported next
+    to the primary decision and never replaces it. The scenarios are not altered to remove contacts.
   duplicate_control:
     policy: B2
     seeds: [2001, 2002, 2003]

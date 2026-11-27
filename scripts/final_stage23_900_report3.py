@@ -7,7 +7,10 @@
 Per launch (comfort_core/final_metrics.analyse_trial + the trial logs):
   nav (system)   all three AMRs reached their missions (SUCCESS / SUCCESS_IDLE / SUCCESS_LONG_IDLE)
   contact        any human-AMR PHYSICAL contact (trials.csv contact_person_seconds for AMR1,
-                 fleet_trials.csv contact_person_s for a1 / a2) -- robot-robot contact is reported apart
+                 fleet_trials.csv contact_person_s for a1 / a2) PLUS the robot-closed share
+                 (contact_robot_seconds / contact_robot_s). The simulator splits one human-AMR
+                 touch by who closed the last centimetre; both halves are human-AMR contact
+                 (protocol: worker-induced contact is never hidden). The split is reported.
   encounters     every (AMR, person) pair with min centre distance < encounter.radius_m while that AMR
                  is on its mission; scored with comfort_reference.score_passage at the closest point
                  (ACTUAL distance, bearing, state); C = None -> NOT_SCORABLE (never a pass)
@@ -105,6 +108,7 @@ def score_trial(tdir, plan):
     R = float(plan["encounter"]["radius_m"])
     ref = plan["reference"]
     cap = float(cfg["navigation"].get("max_trial_time", 120.0))
+    # person_closed / robot_closed: who closed the last centimetre of a HUMAN-AMR touch.
     human_contact = {"AMR1": F((D["amr1"] or {}).get("contact_person_seconds")) or 0.0}
     robot_contact = {"AMR1": F((D["amr1"] or {}).get("contact_robot_seconds")) or 0.0}
     for f in D["fleet"]:
@@ -142,11 +146,13 @@ def score_trial(tdir, plan):
                          "clearance_matched_comfort": sc.get("predicted_comfort_clearance_matched")})
     names = list(a["amrs"])
     nav = all(a["amrs"][n]["class"] in fm.SUCCESS_CLASSES for n in names)
-    contact = any(v > 0 for v in human_contact.values())
+    contact = any(v > 0 for v in human_contact.values()) or any(v > 0 for v in robot_contact.values())
     times = [a["amrs"][n]["travel_time"] for n in names]
     sys_time = max(times) if nav and all(t is not None for t in times) else None
-    row = {"nav": nav, "contact": contact, "human_contact_s": round(sum(human_contact.values()), 2),
-           "robot_contact_s": round(sum(robot_contact.values()), 2),
+    row = {"nav": nav, "contact": contact,
+           "human_contact_s": round(sum(human_contact.values()) + sum(robot_contact.values()), 2),
+           "contact_person_closed_s": round(sum(human_contact.values()), 2),
+           "contact_robot_closed_s": round(sum(robot_contact.values()), 2),
            "amr_success_k": sum(a["amrs"][n]["class"] in fm.SUCCESS_CLASSES for n in names), "amr_n": len(names),
            "classes": ";".join(f"{n}:{a['amrs'][n]['class']}" for n in names),
            "comfort_deadlock": a["comfort_deadlock"],
@@ -180,6 +186,11 @@ def score_trial(tdir, plan):
         else:
             cat = "JOINT_PASS"
         row[f"category@{tg}"] = cat
+    # SECONDARY sensitivity (declared before the main data): contact counted only when the AMR
+    # closed the last centimetre. Scripted people never avoid (configs/common.yaml avoid_robot).
+    row["contact_rc"] = any(v > 0 for v in robot_contact.values())
+    allok5 = bool(encs) and all(e["scorable"] for e in encs) and all(e["predicted_comfort"] >= 5.0 - 1e-9 for e in encs)
+    row["joint_rc@5.0"] = nav and not row["contact_rc"] and allok5
     return row, encs, a
 
 
@@ -229,6 +240,48 @@ def write_csv(p, rows):
         w.writerows(rows)
 
 
+def select(tab, by, plan, jk, ck):
+    """Winner rule (yaml stage3.winner_rule) on joint key jk and contact key ck."""
+    elig = [e for e in tab if e["n"] and e[ck]["k"] <= 1 and e["nav"]["rate"] >= 0.80 - 1e-9
+            and e[jk]["rate"] >= 0.80 - 1e-9 and (e["coverage"] or 0) >= 0.90 - 1e-9]
+    selection = {"rule": plan["winner_rule"], "joint_key": jk, "contact_key": ck,
+                 "eligible": [e["policy"] for e in elig],
+                 "screen": {e["policy"]: {"contact_k": e[ck]["k"], "nav": e["nav"]["rate"],
+                                          "joint": e[jk]["rate"], "coverage": e["coverage"]} for e in tab}}
+    pairs = {}
+    if not elig:
+        selection["decision"] = "NO_ACCEPTABLE_SCALE"
+    else:
+        best = max(elig, key=lambda e: (e[jk]["rate"], e["nav"]["rate"]))
+        others = [e for e in elig if e is not best]
+        ps = []
+        for e in others:
+            seeds = sorted(set(by[best["policy"]]) & set(by[e["policy"]]))
+            b = sum(by[best["policy"]][s][jk] and not by[e["policy"]][s][jk] for s in seeds)
+            c = sum(by[e["policy"]][s][jk] and not by[best["policy"]][s][jk] for s in seeds)
+            p = mcnemar_exact(b, c)
+            ps.append(p)
+            pairs[e["policy"]] = {"vs": best["policy"], "best_only": b, "other_only": c, "n_pairs": len(seeds), "p": round(p, 4)}
+        for (k, v), pa in zip(pairs.items(), holm(ps)):
+            v["p_holm"] = round(pa, 4)
+        top = [best] + [e for e in others if pairs[e["policy"]]["p_holm"] >= 0.05]
+
+        def dom(x, y):   # x dominates y
+            ge = (x[jk]["rate"] >= y[jk]["rate"] and x["nav"]["rate"] >= y["nav"]["rate"]
+                  and x["median_time_capped_s"] <= y["median_time_capped_s"])
+            gt = (x[jk]["rate"] > y[jk]["rate"] or x["nav"]["rate"] > y["nav"]["rate"]
+                  or x["median_time_capped_s"] < y["median_time_capped_s"])
+            return ge and gt
+        pareto = [e for e in top if not any(dom(o, e) for o in top if o is not e)]
+        pick = min(pareto, key=lambda e: e["median_time_capped_s"])
+        selection.update({"reference_best_joint": best["policy"], "top_set": [e["policy"] for e in top],
+                          "pareto": [e["policy"] for e in pareto], "decision": pick["policy"],
+                          "tie_break": "smallest median capped system time within the Pareto front",
+                          "statistically_distinguishable_from_best": [k for k, v in pairs.items() if v["p_holm"] < 0.05]})
+    selection["mcnemar_vs_best"] = pairs
+    return selection, pairs, elig
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", required=True)
@@ -253,6 +306,8 @@ def main() -> int:
              "nav": rate(sum(r["nav"] for r in rs), n),
              "safe_nav": rate(sum(r["nav"] and not r["contact"] for r in rs), n),
              "contact": rate(sum(r["contact"] for r in rs), n),
+             "contact_rc": rate(sum(r["contact_rc"] for r in rs), n),
+             "joint_rc@5.0": rate(sum(r["joint_rc@5.0"] for r in rs), n),
              "amr_completion": rate(sum(r["amr_success_k"] for r in rs), sum(r["amr_n"] for r in rs)),
              "comfort_deadlock": rate(sum(r["comfort_deadlock"] for r in rs), n),
              "robot_robot_block": rate(sum(r["robot_robot_block"] for r in rs), n),
@@ -289,42 +344,11 @@ def main() -> int:
             e[f"categories@{tg}"] = {c: sum(r[f"category@{tg}"] == c for r in rs)
                                      for c in ("JOINT_PASS", "FAIL_NAV", "FAIL_CONTACT", "NOT_SCORABLE", "FAIL_COMFORT")}
         tab.append(e)
-    # winner rule (fixed before the data)
-    elig = [e for e in tab if e["n"] and e["contact"]["k"] <= 1 and e["nav"]["rate"] >= 0.80 - 1e-9
-            and e["joint@5.0"]["rate"] >= 0.80 - 1e-9 and (e["coverage"] or 0) >= 0.90 - 1e-9]
-    selection = {"rule": plan["winner_rule"], "eligible": [e["policy"] for e in elig],
-                 "screen": {e["policy"]: {"contact_k": e["contact"]["k"], "nav": e["nav"]["rate"],
-                                          "joint": e["joint@5.0"]["rate"], "coverage": e["coverage"]} for e in tab}}
-    pairs = {}
-    if not elig:
-        selection["decision"] = "NO_ACCEPTABLE_SCALE"
-    else:
-        best = max(elig, key=lambda e: (e["joint@5.0"]["rate"], e["nav"]["rate"]))
-        others = [e for e in elig if e is not best]
-        ps = []
-        for e in others:
-            seeds = sorted(set(by[best["policy"]]) & set(by[e["policy"]]))
-            b = sum(by[best["policy"]][s]["joint@5.0"] and not by[e["policy"]][s]["joint@5.0"] for s in seeds)
-            c = sum(by[e["policy"]][s]["joint@5.0"] and not by[best["policy"]][s]["joint@5.0"] for s in seeds)
-            p = mcnemar_exact(b, c)
-            ps.append(p)
-            pairs[e["policy"]] = {"vs": best["policy"], "best_only": b, "other_only": c, "n_pairs": len(seeds), "p": round(p, 4)}
-        for (k, v), pa in zip(pairs.items(), holm(ps)):
-            v["p_holm"] = round(pa, 4)
-        top = [best] + [e for e in others if pairs[e["policy"]]["p_holm"] >= 0.05]
-
-        def dom(x, y):   # x dominates y
-            ge = (x["joint@5.0"]["rate"] >= y["joint@5.0"]["rate"] and x["nav"]["rate"] >= y["nav"]["rate"]
-                  and x["median_time_capped_s"] <= y["median_time_capped_s"])
-            gt = (x["joint@5.0"]["rate"] > y["joint@5.0"]["rate"] or x["nav"]["rate"] > y["nav"]["rate"]
-                  or x["median_time_capped_s"] < y["median_time_capped_s"])
-            return ge and gt
-        pareto = [e for e in top if not any(dom(o, e) for o in top if o is not e)]
-        pick = min(pareto, key=lambda e: e["median_time_capped_s"])
-        selection.update({"reference_best_joint": best["policy"], "top_set": [e["policy"] for e in top],
-                          "pareto": [e["policy"] for e in pareto], "decision": pick["policy"],
-                          "tie_break": "smallest median capped system time within the Pareto front",
-                          "statistically_distinguishable_from_best": [k for k, v in pairs.items() if v["p_holm"] < 0.05]})
+    # winner rule (fixed before the data); primary = ALL human-AMR contact
+    selection, pairs, elig = select(tab, by, plan, "joint@5.0", "contact")
+    # SECONDARY sensitivity, declared in the yaml before the main data: robot-closed contact only
+    sel_rc, _p, _e = select(tab, by, plan, "joint_rc@5.0", "contact_rc")
+    selection["secondary_robot_closed_contact"] = sel_rc
     selection["mcnemar_vs_best"] = pairs
     # paired descriptive comparisons vs B2 (all policies)
     b2 = pols[0][1]
@@ -473,6 +497,18 @@ def main() -> int:
           "| vs best | best only | other only | pairs | p | p (Holm) |", "|---|---:|---:|---:|---:|---:|"]
     for k, v in pairs.items():
         L.append(f"| {k} vs {v['vs']} | {v['best_only']} | {v['other_only']} | {v['n_pairs']} | {v['p']} | {v['p_holm']} |")
+    sr = selection["secondary_robot_closed_contact"]
+    L += ["", "### SECONDARY sensitivity (declared before the main data): robot-closed contact only", "",
+          "Scripted people never avoid the AMR (configs/common.yaml `avoid_robot: false`), so a person can walk "
+          "into an AMR that has already stopped. The PRIMARY endpoint counts every human-AMR contact; this "
+          "secondary analysis repeats the same rule counting only contacts the AMR closed. It does not replace "
+          "the primary decision.", "",
+          "| policy | contact (all) | contact (robot-closed) | joint@5.0 primary | joint@5.0 robot-closed |",
+          "|---|---|---|---|---|"]
+    for e in tab:
+        L.append(f"| {e['policy']} | {fr(e['contact'])} | {fr(e['contact_rc'])} | {fr(e['joint@5.0'])} | {fr(e['joint_rc@5.0'])} |")
+    L += ["", f"Secondary eligible: {sr['eligible'] or 'none'}. Secondary decision: {sr['decision']}"
+          + (f"; top set {sr.get('top_set')}, Pareto {sr.get('pareto')}" if sr.get('top_set') else ""), ""]
     L += ["", "Paired vs B2 (exploratory): joint McNemar, nav McNemar, bootstrap median capped-time difference:", "",
           "| policy | pairs | joint B2-only / policy-only | p (Holm) | nav B2-only / policy-only | p | Δ capped time s (95 % CI) |",
           "|---|---:|---|---:|---|---:|---|"]

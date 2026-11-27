@@ -1,0 +1,22 @@
+{
+ "trial_id": "s2003_B2_r0.950",
+ "seed": 2003,
+ "condition": "configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml",
+ "config": "configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml",
+ "commit": "062a7b3",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {
+  "a1": "SUCCESS",
+  "a2": "SUCCESS"
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 248,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 248,
+ "finished": "2026-11-27T22:01:31"
+}

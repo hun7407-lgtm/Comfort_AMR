@@ -99,6 +99,7 @@ def main() -> int:
              "nav": rate(sum(T(r["completed"]) for r in rs), n),
              "safe_nav": rate(sum(T(r["completed"]) and not T(r["contact"]) for r in rs), n),
              "contact": rate(sum(T(r["contact"]) for r in rs), n),
+             "contact_robot_closed": rate(sum(T(r.get("contact_robot_closed")) for r in rs), n),
              "deadlock_terminal_stop": rate(sum(T(r["terminal_protective_stop"]) for r in rs), n),
              "comfort_deadlock": rate(sum(T(r["comfort_deadlock"]) for r in rs), n),
              "collision_monitor_stop": rate(sum(T(r.get("collision_monitor_stop")) for r in rs), n),
@@ -188,13 +189,13 @@ def main() -> int:
          + (f" ({', '.join(r['trial_id'] for r in excl)})" if excl else "") + ".",
          f"Commit at plan {plan['commit_at_plan']}; manifest sha {plan.get('checksums', {}).get('manifest_sha256_16')}.",
          "", "## Cells", "",
-         "| context | geom | alpha | n | nav | safe nav | joint@5.0 (95 % CI) | joint@4.5 | joint@5.5 | contact | "
+         "| context | geom | alpha | n | nav | safe nav | joint@5.0 (95 % CI) | joint@4.5 | joint@5.5 | contact (robot-closed) | "
          "term. stop | CM stop | med d_cc | P10 d_cc | med C | P10 C | med time s | med path m | med replans |",
          "|---|---|---:|---:|---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|"]
     for e in tab:
         L.append(f"| {e['context']} | {e['geometry']} | {e['alpha']:.2f} | {e['n']} | {fr(e['nav'])} | {fr(e['safe_nav'])} | "
                  f"{fr(e['joint@5.0'])} | {e['joint@4.5']['k']}/{e['n']} | {e['joint@5.5']['k']}/{e['n']} | "
-                 f"{e['contact']['k']} | {e['deadlock_terminal_stop']['k']} | {e['collision_monitor_stop']['k']} | "
+                 f"{e['contact']['k']} ({e['contact_robot_closed']['k']}) | {e['deadlock_terminal_stop']['k']} | {e['collision_monitor_stop']['k']} | "
                  f"{e['median_d_cc_m']} | {e['p10_d_cc_m']} | {e['median_comfort']} | {e['p10_comfort']} | "
                  f"{e['median_travel_s']} | {e['median_path_m']} | {e['median_replans']} |")
     L += ["", "## Identification per context (tested alpha 0.50–0.90)", "",

@@ -1,0 +1,19 @@
+{
+ "trial_id": "ST-S_w2.20_s901_S3_a0.50",
+ "seed": 901,
+ "condition": "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.50.yaml",
+ "config": "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.20_s901.yaml",
+ "commit": "062a7b3",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 78,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 78,
+ "finished": "2026-11-27T22:36:49"
+}

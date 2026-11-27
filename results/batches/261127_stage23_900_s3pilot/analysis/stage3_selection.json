@@ -1,0 +1,1415 @@
+{
+ "policies": [
+  {
+   "case": "C1",
+   "policy": "B2_r0.950",
+   "alpha": null,
+   "n": 3,
+   "nav": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci": [
+     0.4385,
+     1.0
+    ]
+   },
+   "safe_nav": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "contact": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "contact_rc": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "joint_rc@5.0": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "amr_completion": {
+    "k": 9,
+    "n": 9,
+    "rate": 1.0,
+    "ci": [
+     0.7009,
+     1.0
+    ]
+   },
+   "comfort_deadlock": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "robot_robot_block": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "nav2_abort": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "protective_stop_trial": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "terminal_protective_stop": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "median_contact_s": 0.4,
+   "median_stop_s": 0.0,
+   "median_idle_s": 0.62,
+   "median_replans": 0.0,
+   "median_time_success_s": 41.33,
+   "median_time_capped_s": 41.33,
+   "median_path_m": 43.435,
+   "median_min_cc_m": 0.7798,
+   "median_min_edge_m": 0.451,
+   "encounters": 13,
+   "scorable": 13,
+   "coverage": 1.0,
+   "median_comfort": 5.574,
+   "p10_comfort": 5.5174,
+   "encounter_ge_5": {
+    "k": 12,
+    "n": 13,
+    "rate": 0.9231,
+    "ci": [
+     0.6669,
+     0.9863
+    ]
+   },
+   "per_state": {
+    "stationary": {
+     "n": 2,
+     "median_C": 6.5505,
+     "p10_C": 6.5485,
+     "ge_5": {
+      "k": 2,
+      "n": 2,
+      "rate": 1.0,
+      "ci": [
+       0.3424,
+       1.0
+      ]
+     },
+     "median_d_cc": 1.3077
+    },
+    "station_engaged": {
+     "n": 8,
+     "median_C": 5.5735,
+     "p10_C": 5.5651,
+     "ge_5": {
+      "k": 8,
+      "n": 8,
+      "rate": 1.0,
+      "ci": [
+       0.6756,
+       1.0
+      ]
+     },
+     "median_d_cc": 1.3485
+    },
+    "moving": {
+     "n": 3,
+     "median_C": 5.506,
+     "p10_C": 4.3932,
+     "ge_5": {
+      "k": 2,
+      "n": 3,
+      "rate": 0.6667,
+      "ci": [
+       0.2077,
+       0.9385
+      ]
+     },
+     "median_d_cc": 0.7798
+    }
+   },
+   "per_family_joint": {
+    "NOMINAL": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    },
+    "BOTTLENECK": {
+     "k": 1,
+     "n": 1,
+     "rate": 1.0,
+     "ci": [
+      0.2065,
+      1.0
+     ]
+    },
+    "CROSSING": {
+     "k": 1,
+     "n": 1,
+     "rate": 1.0,
+     "ci": [
+      0.2065,
+      1.0
+     ]
+    }
+   },
+   "joint@5.0": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "categories@5.0": {
+    "JOINT_PASS": 2,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 1,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@4.5": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "categories@4.5": {
+    "JOINT_PASS": 2,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 1,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@5.5": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "categories@5.5": {
+    "JOINT_PASS": 2,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 1,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   }
+  },
+  {
+   "case": "C2",
+   "policy": "S3_a0.60",
+   "alpha": 0.6,
+   "n": 3,
+   "nav": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci": [
+     0.4385,
+     1.0
+    ]
+   },
+   "safe_nav": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "contact": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "contact_rc": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "joint_rc@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "amr_completion": {
+    "k": 9,
+    "n": 9,
+    "rate": 1.0,
+    "ci": [
+     0.7009,
+     1.0
+    ]
+   },
+   "comfort_deadlock": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "robot_robot_block": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "nav2_abort": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "protective_stop_trial": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "terminal_protective_stop": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "median_contact_s": 0.79,
+   "median_stop_s": 0.0,
+   "median_idle_s": 0.64,
+   "median_replans": 0.0,
+   "median_time_success_s": 41.15,
+   "median_time_capped_s": 41.15,
+   "median_path_m": 42.968,
+   "median_min_cc_m": 0.5473,
+   "median_min_edge_m": 0.2061,
+   "encounters": 10,
+   "scorable": 10,
+   "coverage": 1.0,
+   "median_comfort": 5.243,
+   "p10_comfort": 4.0186,
+   "encounter_ge_5": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci": [
+     0.4902,
+     0.9433
+    ]
+   },
+   "per_state": {
+    "stationary": {
+     "n": 2,
+     "median_C": 5.8865,
+     "p10_C": 5.7197,
+     "ge_5": {
+      "k": 2,
+      "n": 2,
+      "rate": 1.0,
+      "ci": [
+       0.3424,
+       1.0
+      ]
+     },
+     "median_d_cc": 0.8985
+    },
+    "station_engaged": {
+     "n": 5,
+     "median_C": 5.2,
+     "p10_C": 5.057,
+     "ge_5": {
+      "k": 5,
+      "n": 5,
+      "rate": 1.0,
+      "ci": [
+       0.5655,
+       1.0
+      ]
+     },
+     "median_d_cc": 0.8731
+    },
+    "moving": {
+     "n": 3,
+     "median_C": 4.057,
+     "p10_C": 3.7498,
+     "ge_5": {
+      "k": 1,
+      "n": 3,
+      "rate": 0.3333,
+      "ci": [
+       0.0615,
+       0.7923
+      ]
+     },
+     "median_d_cc": 0.5473
+    }
+   },
+   "per_family_joint": {
+    "NOMINAL": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    },
+    "BOTTLENECK": {
+     "k": 1,
+     "n": 1,
+     "rate": 1.0,
+     "ci": [
+      0.2065,
+      1.0
+     ]
+    },
+    "CROSSING": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    }
+   },
+   "joint@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@5.0": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@4.5": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@4.5": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@5.5": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "categories@5.5": {
+    "JOINT_PASS": 0,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 1
+   }
+  },
+  {
+   "case": "C3",
+   "policy": "S3_a0.70",
+   "alpha": 0.7,
+   "n": 3,
+   "nav": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci": [
+     0.4385,
+     1.0
+    ]
+   },
+   "safe_nav": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "contact": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "contact_rc": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "joint_rc@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "amr_completion": {
+    "k": 9,
+    "n": 9,
+    "rate": 1.0,
+    "ci": [
+     0.7009,
+     1.0
+    ]
+   },
+   "comfort_deadlock": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "robot_robot_block": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "nav2_abort": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "protective_stop_trial": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "terminal_protective_stop": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "median_contact_s": 0.79,
+   "median_stop_s": 0.0,
+   "median_idle_s": 0.62,
+   "median_replans": 0.0,
+   "median_time_success_s": 41.33,
+   "median_time_capped_s": 41.33,
+   "median_path_m": 43.015,
+   "median_min_cc_m": 0.5451,
+   "median_min_edge_m": 0.2085,
+   "encounters": 11,
+   "scorable": 11,
+   "coverage": 1.0,
+   "median_comfort": 5.264,
+   "p10_comfort": 4.041,
+   "encounter_ge_5": {
+    "k": 9,
+    "n": 11,
+    "rate": 0.8182,
+    "ci": [
+     0.523,
+     0.9486
+    ]
+   },
+   "per_state": {
+    "stationary": {
+     "n": 2,
+     "median_C": 6.226,
+     "p10_C": 6.214,
+     "ge_5": {
+      "k": 2,
+      "n": 2,
+      "rate": 1.0,
+      "ci": [
+       0.3424,
+       1.0
+      ]
+     },
+     "median_d_cc": 1.0203
+    },
+    "station_engaged": {
+     "n": 5,
+     "median_C": 5.221,
+     "p10_C": 5.1924,
+     "ge_5": {
+      "k": 5,
+      "n": 5,
+      "rate": 1.0,
+      "ci": [
+       0.5655,
+       1.0
+      ]
+     },
+     "median_d_cc": 0.8827
+    },
+    "moving": {
+     "n": 4,
+     "median_C": 5.276,
+     "p10_C": 3.908,
+     "ge_5": {
+      "k": 2,
+      "n": 4,
+      "rate": 0.5,
+      "ci": [
+       0.15,
+       0.85
+      ]
+     },
+     "median_d_cc": 0.8452
+    }
+   },
+   "per_family_joint": {
+    "NOMINAL": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    },
+    "BOTTLENECK": {
+     "k": 1,
+     "n": 1,
+     "rate": 1.0,
+     "ci": [
+      0.2065,
+      1.0
+     ]
+    },
+    "CROSSING": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    }
+   },
+   "joint@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@5.0": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@4.5": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@4.5": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@5.5": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "categories@5.5": {
+    "JOINT_PASS": 0,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 1
+   }
+  },
+  {
+   "case": "C4",
+   "policy": "S3_a0.80",
+   "alpha": 0.8,
+   "n": 3,
+   "nav": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci": [
+     0.4385,
+     1.0
+    ]
+   },
+   "safe_nav": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "contact": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "contact_rc": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "joint_rc@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "amr_completion": {
+    "k": 9,
+    "n": 9,
+    "rate": 1.0,
+    "ci": [
+     0.7009,
+     1.0
+    ]
+   },
+   "comfort_deadlock": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "robot_robot_block": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "nav2_abort": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "protective_stop_trial": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "terminal_protective_stop": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "median_contact_s": 0.6,
+   "median_stop_s": 0.0,
+   "median_idle_s": 0.62,
+   "median_replans": 0.0,
+   "median_time_success_s": 41.22,
+   "median_time_capped_s": 41.22,
+   "median_path_m": 43.058,
+   "median_min_cc_m": 0.5483,
+   "median_min_edge_m": 0.2187,
+   "encounters": 10,
+   "scorable": 10,
+   "coverage": 1.0,
+   "median_comfort": 5.3675,
+   "p10_comfort": 4.035,
+   "encounter_ge_5": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci": [
+     0.4902,
+     0.9433
+    ]
+   },
+   "per_state": {
+    "stationary": {
+     "n": 2,
+     "median_C": 6.108,
+     "p10_C": 6.0648,
+     "ge_5": {
+      "k": 2,
+      "n": 2,
+      "rate": 1.0,
+      "ci": [
+       0.3424,
+       1.0
+      ]
+     },
+     "median_d_cc": 0.9667
+    },
+    "station_engaged": {
+     "n": 5,
+     "median_C": 5.366,
+     "p10_C": 5.3262,
+     "ge_5": {
+      "k": 5,
+      "n": 5,
+      "rate": 1.0,
+      "ci": [
+       0.5655,
+       1.0
+      ]
+     },
+     "median_d_cc": 0.967
+    },
+    "moving": {
+     "n": 3,
+     "median_C": 4.065,
+     "p10_C": 3.825,
+     "ge_5": {
+      "k": 1,
+      "n": 3,
+      "rate": 0.3333,
+      "ci": [
+       0.0615,
+       0.7923
+      ]
+     },
+     "median_d_cc": 0.5483
+    }
+   },
+   "per_family_joint": {
+    "NOMINAL": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    },
+    "BOTTLENECK": {
+     "k": 1,
+     "n": 1,
+     "rate": 1.0,
+     "ci": [
+      0.2065,
+      1.0
+     ]
+    },
+    "CROSSING": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    }
+   },
+   "joint@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@5.0": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@4.5": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@4.5": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@5.5": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "categories@5.5": {
+    "JOINT_PASS": 0,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 1
+   }
+  },
+  {
+   "case": "C5",
+   "policy": "S3_a0.90",
+   "alpha": 0.9,
+   "n": 3,
+   "nav": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci": [
+     0.4385,
+     1.0
+    ]
+   },
+   "safe_nav": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "contact": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6667,
+    "ci": [
+     0.2077,
+     0.9385
+    ]
+   },
+   "contact_rc": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "joint_rc@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "amr_completion": {
+    "k": 9,
+    "n": 9,
+    "rate": 1.0,
+    "ci": [
+     0.7009,
+     1.0
+    ]
+   },
+   "comfort_deadlock": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "robot_robot_block": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "nav2_abort": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "protective_stop_trial": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "terminal_protective_stop": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "median_contact_s": 0.56,
+   "median_stop_s": 0.0,
+   "median_idle_s": 0.64,
+   "median_replans": 0.0,
+   "median_time_success_s": 41.15,
+   "median_time_capped_s": 41.15,
+   "median_path_m": 43.205,
+   "median_min_cc_m": 0.5936,
+   "median_min_edge_m": 0.2108,
+   "encounters": 10,
+   "scorable": 10,
+   "coverage": 1.0,
+   "median_comfort": 5.4375,
+   "p10_comfort": 4.3058,
+   "encounter_ge_5": {
+    "k": 8,
+    "n": 10,
+    "rate": 0.8,
+    "ci": [
+     0.4902,
+     0.9433
+    ]
+   },
+   "per_state": {
+    "stationary": {
+     "n": 2,
+     "median_C": 6.2765,
+     "p10_C": 6.2729,
+     "ge_5": {
+      "k": 2,
+      "n": 2,
+      "rate": 1.0,
+      "ci": [
+       0.3424,
+       1.0
+      ]
+     },
+     "median_d_cc": 1.0441
+    },
+    "station_engaged": {
+     "n": 5,
+     "median_C": 5.436,
+     "p10_C": 5.4124,
+     "ge_5": {
+      "k": 5,
+      "n": 5,
+      "rate": 1.0,
+      "ci": [
+       0.5655,
+       1.0
+      ]
+     },
+     "median_d_cc": 1.024
+    },
+    "moving": {
+     "n": 3,
+     "median_C": 4.392,
+     "p10_C": 3.7024,
+     "ge_5": {
+      "k": 1,
+      "n": 3,
+      "rate": 0.3333,
+      "ci": [
+       0.0615,
+       0.7923
+      ]
+     },
+     "median_d_cc": 0.5936
+    }
+   },
+   "per_family_joint": {
+    "NOMINAL": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    },
+    "BOTTLENECK": {
+     "k": 1,
+     "n": 1,
+     "rate": 1.0,
+     "ci": [
+      0.2065,
+      1.0
+     ]
+    },
+    "CROSSING": {
+     "k": 0,
+     "n": 1,
+     "rate": 0.0,
+     "ci": [
+      0.0,
+      0.7935
+     ]
+    }
+   },
+   "joint@5.0": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@5.0": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@4.5": {
+    "k": 1,
+    "n": 3,
+    "rate": 0.3333,
+    "ci": [
+     0.0615,
+     0.7923
+    ]
+   },
+   "categories@4.5": {
+    "JOINT_PASS": 1,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 0
+   },
+   "joint@5.5": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci": [
+     0.0,
+     0.5615
+    ]
+   },
+   "categories@5.5": {
+    "JOINT_PASS": 0,
+    "FAIL_NAV": 0,
+    "FAIL_CONTACT": 2,
+    "NOT_SCORABLE": 0,
+    "FAIL_COMFORT": 1
+   }
+  }
+ ],
+ "selection": {
+  "rule": "Eligible policy: contact trials <= 1/30, nav completion (all 3 AMRs) >= 0.80, primary joint\n>= 0.80, encounter scoring coverage >= 0.90. None eligible -> NO_ACCEPTABLE_SCALE.\nAmong eligible: highest observed joint is the reference; every other eligible policy is\ncompared with it by exact paired McNemar (Holm over the comparisons). Policies not\nsignificantly worse (adjusted p >= 0.05) form the top set; the top set's Pareto front on\n(joint, nav, median capped system time) is reported; tie-break = smallest median capped\nsystem time (failures capped at the run limit). All comparisons are exploratory at n = 30.\n",
+  "joint_key": "joint@5.0",
+  "contact_key": "contact",
+  "eligible": [],
+  "screen": {
+   "B2_r0.950": {
+    "contact_k": 1,
+    "nav": 1.0,
+    "joint": 0.6667,
+    "coverage": 1.0
+   },
+   "S3_a0.60": {
+    "contact_k": 2,
+    "nav": 1.0,
+    "joint": 0.3333,
+    "coverage": 1.0
+   },
+   "S3_a0.70": {
+    "contact_k": 2,
+    "nav": 1.0,
+    "joint": 0.3333,
+    "coverage": 1.0
+   },
+   "S3_a0.80": {
+    "contact_k": 2,
+    "nav": 1.0,
+    "joint": 0.3333,
+    "coverage": 1.0
+   },
+   "S3_a0.90": {
+    "contact_k": 2,
+    "nav": 1.0,
+    "joint": 0.3333,
+    "coverage": 1.0
+   }
+  },
+  "decision": "NO_ACCEPTABLE_SCALE",
+  "mcnemar_vs_best": {},
+  "secondary_robot_closed_contact": {
+   "rule": "Eligible policy: contact trials <= 1/30, nav completion (all 3 AMRs) >= 0.80, primary joint\n>= 0.80, encounter scoring coverage >= 0.90. None eligible -> NO_ACCEPTABLE_SCALE.\nAmong eligible: highest observed joint is the reference; every other eligible policy is\ncompared with it by exact paired McNemar (Holm over the comparisons). Policies not\nsignificantly worse (adjusted p >= 0.05) form the top set; the top set's Pareto front on\n(joint, nav, median capped system time) is reported; tie-break = smallest median capped\nsystem time (failures capped at the run limit). All comparisons are exploratory at n = 30.\n",
+   "joint_key": "joint_rc@5.0",
+   "contact_key": "contact_rc",
+   "eligible": [],
+   "screen": {
+    "B2_r0.950": {
+     "contact_k": 0,
+     "nav": 1.0,
+     "joint": 0.6667,
+     "coverage": 1.0
+    },
+    "S3_a0.60": {
+     "contact_k": 0,
+     "nav": 1.0,
+     "joint": 0.3333,
+     "coverage": 1.0
+    },
+    "S3_a0.70": {
+     "contact_k": 0,
+     "nav": 1.0,
+     "joint": 0.3333,
+     "coverage": 1.0
+    },
+    "S3_a0.80": {
+     "contact_k": 0,
+     "nav": 1.0,
+     "joint": 0.3333,
+     "coverage": 1.0
+    },
+    "S3_a0.90": {
+     "contact_k": 0,
+     "nav": 1.0,
+     "joint": 0.3333,
+     "coverage": 1.0
+    }
+   },
+   "decision": "NO_ACCEPTABLE_SCALE",
+   "mcnemar_vs_best": {}
+  },
+  "paired_vs_B2": {
+   "S3_a0.60": {
+    "n_pairs": 3,
+    "joint_B2_only": 1,
+    "joint_policy_only": 0,
+    "joint_p": 1.0,
+    "nav_B2_only": 0,
+    "nav_policy_only": 0,
+    "nav_p": 1.0,
+    "capped_time_policy_minus_B2": {
+     "median_diff": -0.07,
+     "ci95": [
+      -0.31,
+      0.27
+     ]
+    },
+    "joint_p_holm": 1.0
+   },
+   "S3_a0.70": {
+    "n_pairs": 3,
+    "joint_B2_only": 1,
+    "joint_policy_only": 0,
+    "joint_p": 1.0,
+    "nav_B2_only": 0,
+    "nav_policy_only": 0,
+    "nav_p": 1.0,
+    "capped_time_policy_minus_B2": {
+     "median_diff": 0.11,
+     "ci95": [
+      -0.18,
+      1.67
+     ]
+    },
+    "joint_p_holm": 1.0
+   },
+   "S3_a0.80": {
+    "n_pairs": 3,
+    "joint_B2_only": 1,
+    "joint_policy_only": 0,
+    "joint_p": 1.0,
+    "nav_B2_only": 0,
+    "nav_policy_only": 0,
+    "nav_p": 1.0,
+    "capped_time_policy_minus_B2": {
+     "median_diff": 0.0,
+     "ci95": [
+      -0.15,
+      0.72
+     ]
+    },
+    "joint_p_holm": 1.0
+   },
+   "S3_a0.90": {
+    "n_pairs": 3,
+    "joint_B2_only": 1,
+    "joint_policy_only": 0,
+    "joint_p": 1.0,
+    "nav_B2_only": 0,
+    "nav_policy_only": 0,
+    "nav_p": 1.0,
+    "capped_time_policy_minus_B2": {
+     "median_diff": -0.07,
+     "ci95": [
+      -0.26,
+      0.5
+     ]
+    },
+    "joint_p_holm": 1.0
+   }
+  },
+  "duplicate_control": null
+ }
+}

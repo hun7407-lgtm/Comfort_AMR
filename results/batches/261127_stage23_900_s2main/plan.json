@@ -1,0 +1,5431 @@
+{
+ "version": "stage23_900",
+ "phase": "s2main",
+ "stage": 2,
+ "config": "configs/final_nav2only_stage23_900/stage23_900.yaml",
+ "commit_at_plan": "fee64d2",
+ "control_mode": "nav2_only",
+ "anchor_m": 0.95,
+ "anchor_provenance": "new_nav2_only_upper_abbreviated_261126",
+ "moving_reference_speed_mps": 1.0,
+ "templates_raw": {
+  "station_engaged": {
+   "front": 0.8,
+   "side": 0.7,
+   "rear": 0.6
+  },
+  "stationary": {
+   "front": 0.8,
+   "side": 0.9,
+   "rear": 1.05
+  },
+  "moving": {
+   "front": 1.2,
+   "side": 0.9,
+   "rear": 0.9
+  }
+ },
+ "templates_normalised": {
+  "station_engaged": {
+   "front": 0.9499999999999998,
+   "side": 0.8312499999999998,
+   "rear": 0.7124999999999998
+  },
+  "stationary": {
+   "front": 0.7238095238095238,
+   "side": 0.8142857142857142,
+   "rear": 0.95
+  },
+  "moving": {
+   "front": 0.95,
+   "side": 0.7125,
+   "rear": 0.7125
+  }
+ },
+ "min_radius_m": 0.3,
+ "min_alpha_without_clip": 0.42105263157894746,
+ "extents_by_alpha": {
+  "0.50": {
+   "station_engaged": {
+    "front": 0.4749999999999999,
+    "side": 0.4156249999999999,
+    "rear": 0.3562499999999999
+   },
+   "stationary": {
+    "front": 0.3619047619047619,
+    "side": 0.4071428571428571,
+    "rear": 0.475
+   },
+   "moving": {
+    "front": 0.475,
+    "side": 0.35625,
+    "rear": 0.35625
+   }
+  },
+  "0.60": {
+   "station_engaged": {
+    "front": 0.5699999999999998,
+    "side": 0.49874999999999986,
+    "rear": 0.4274999999999999
+   },
+   "stationary": {
+    "front": 0.4342857142857143,
+    "side": 0.4885714285714285,
+    "rear": 0.57
+   },
+   "moving": {
+    "front": 0.57,
+    "side": 0.4275,
+    "rear": 0.4275
+   }
+  },
+  "0.70": {
+   "station_engaged": {
+    "front": 0.6649999999999998,
+    "side": 0.5818749999999998,
+    "rear": 0.4987499999999998
+   },
+   "stationary": {
+    "front": 0.5066666666666666,
+    "side": 0.5699999999999998,
+    "rear": 0.6649999999999999
+   },
+   "moving": {
+    "front": 0.6649999999999999,
+    "side": 0.49874999999999997,
+    "rear": 0.49874999999999997
+   }
+  },
+  "0.80": {
+   "station_engaged": {
+    "front": 0.7599999999999999,
+    "side": 0.6649999999999999,
+    "rear": 0.5699999999999998
+   },
+   "stationary": {
+    "front": 0.579047619047619,
+    "side": 0.6514285714285714,
+    "rear": 0.76
+   },
+   "moving": {
+    "front": 0.76,
+    "side": 0.5700000000000001,
+    "rear": 0.5700000000000001
+   }
+  },
+  "0.90": {
+   "station_engaged": {
+    "front": 0.8549999999999999,
+    "side": 0.7481249999999998,
+    "rear": 0.6412499999999999
+   },
+   "stationary": {
+    "front": 0.6514285714285715,
+    "side": 0.7328571428571428,
+    "rear": 0.855
+   },
+   "moving": {
+    "front": 0.855,
+    "side": 0.64125,
+    "rear": 0.64125
+   }
+  }
+ },
+ "reference": {
+  "stationary": "N22a_B",
+  "station_engaged": "N22a_B",
+  "moving": "N22b_E1"
+ },
+ "criteria": {
+  "primary_target": 5.0,
+  "sensitivity_targets": [
+   4.5,
+   5.5
+  ],
+  "joint_min": 0.8,
+  "nav_min": 0.8,
+  "joint_min_sensitivity": 0.9,
+  "min_distance_response_m": 0.1,
+  "reference_speed_tolerance_mps": 0.1
+ },
+ "references": [
+  "N22a_B: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study B (AGV) (standing still, robot 0.35 m/s); right a0 5.39 sigma 46.14 cm, front a0 5.62 sigma 44.13 cm, left a0 5.39 sigma 47.21 cm, back a0 4.58 sigma 39.11 cm",
+  "N22a_A: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study A (Pepper) (standing still, robot 0.35 m/s); right a0 6.15 sigma 47.25 cm, front a0 6.15 sigma 41.51 cm, left a0 6.04 sigma 49.52 cm, back a0 3.92 sigma 35.65 cm",
+  "N22b_E1: Neggers et al. 2022, Front Robot AI 9:915972, Exp. 1, Table 2 (eta = 0) (walking, passed head-on, robot 0.35 m/s); right a0 5.71 sigma 44.2 cm, front a0 5.71 sigma 44.2 cm, left a0 5.71 sigma 44.2 cm, back a0 5.71 sigma 44.2 cm"
+ ],
+ "amr_half_length_m": 0.35,
+ "amr_half_width_m": 0.24,
+ "human_radius_m": 0.25,
+ "frozen": {
+  "ST-F": {
+   "width_m": 2.6
+  },
+  "ST-S": {
+   "width_m": 2.6
+  },
+  "ST-R": {
+   "width_m": 2.6
+  },
+  "EN-R": {
+   "width_m": 2.6
+  },
+  "MV-P": {
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "status": "UNIDENTIFIABLE_GEOMETRY"
+  }
+ },
+ "scenarios": {
+  "ST-F": {
+   "state": "stationary",
+   "context": "c3",
+   "intended_sector": "front",
+   "primary": true,
+   "label": "Standing person, AMR passes in front",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.60",
+    "S3_a0.70",
+    "S3_a0.80",
+    "S3_a0.90"
+   ]
+  },
+  "ST-S": {
+   "state": "stationary",
+   "context": "c4",
+   "intended_sector": "side",
+   "primary": true,
+   "label": "Standing person, AMR passes at the side",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.60",
+    "S3_a0.70",
+    "S3_a0.80",
+    "S3_a0.90"
+   ]
+  },
+  "ST-R": {
+   "state": "stationary",
+   "context": "c2",
+   "intended_sector": "rear",
+   "primary": true,
+   "label": "Standing person, AMR passes behind",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.60",
+    "S3_a0.70",
+    "S3_a0.80",
+    "S3_a0.90"
+   ]
+  },
+  "EN-R": {
+   "state": "station_engaged",
+   "context": "c1",
+   "intended_sector": "rear",
+   "primary": true,
+   "label": "Worker at a real workstation (box on the +y wall), AMR passes behind (stationary-reference TRANSFER)",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.60",
+    "S3_a0.70",
+    "S3_a0.80",
+    "S3_a0.90"
+   ]
+  },
+  "MV-P": {
+   "state": "moving",
+   "context": null,
+   "intended_sector": "side",
+   "primary": true,
+   "label": "Counter-walking pass in a shared aisle (walker does not avoid)",
+   "status": "RUN",
+   "identification_at_pilot": "UNIDENTIFIABLE_GEOMETRY",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.60",
+    "S3_a0.70",
+    "S3_a0.80",
+    "S3_a0.90"
+   ]
+  }
+ },
+ "geometries": {
+  "ST-F_w2.60_s001": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 1,
+   "width_m": 2.6,
+   "facing_deg": -88.401,
+   "jitter": {
+    "person_x": 0.0112,
+    "facing_deg": 1.5991,
+    "path_offset": -0.0269,
+    "start_x": 0.0309
+   },
+   "station": null,
+   "start": [
+    -4.9691,
+    0.5269
+   ],
+   "goal": [
+    5.0309,
+    0.5269
+   ],
+   "person": {
+    "position": [
+     0.0112,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -88.401
+   },
+   "physical_signature": "7c7a4da0d8d2c4f6"
+  },
+  "ST-F_w2.60_s002": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 2,
+   "width_m": 2.6,
+   "facing_deg": -94.903,
+   "jitter": {
+    "person_x": -0.0807,
+    "facing_deg": -4.903,
+    "path_offset": -0.0138,
+    "start_x": -0.0017
+   },
+   "station": null,
+   "start": [
+    -5.0017,
+    0.5138
+   ],
+   "goal": [
+    4.9983,
+    0.5138
+   ],
+   "person": {
+    "position": [
+     -0.0807,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -94.903
+   },
+   "physical_signature": "30d72469f88d78b9"
+  },
+  "ST-F_w2.60_s003": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 3,
+   "width_m": 2.6,
+   "facing_deg": -90.183,
+   "jitter": {
+    "person_x": -0.2232,
+    "facing_deg": -0.1829,
+    "path_offset": -0.0149,
+    "start_x": -0.0173
+   },
+   "station": null,
+   "start": [
+    -5.0173,
+    0.5149
+   ],
+   "goal": [
+    4.9827,
+    0.5149
+   ],
+   "person": {
+    "position": [
+     -0.2232,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -90.183
+   },
+   "physical_signature": "224f7999477ae81d"
+  },
+  "ST-F_w2.60_s004": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 4,
+   "width_m": 2.6,
+   "facing_deg": -86.346,
+   "jitter": {
+    "person_x": -0.0093,
+    "facing_deg": 3.6538,
+    "path_offset": -0.0045,
+    "start_x": 0.1325
+   },
+   "station": null,
+   "start": [
+    -4.8675,
+    0.5045
+   ],
+   "goal": [
+    5.1325,
+    0.5045
+   ],
+   "person": {
+    "position": [
+     -0.0093,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -86.346
+   },
+   "physical_signature": "88eb40b0bd07cd55"
+  },
+  "ST-F_w2.60_s005": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 5,
+   "width_m": 2.6,
+   "facing_deg": -90.831,
+   "jitter": {
+    "person_x": -0.0668,
+    "facing_deg": -0.8314,
+    "path_offset": 0.0072,
+    "start_x": 0.0941
+   },
+   "station": null,
+   "start": [
+    -4.9059,
+    0.4928
+   ],
+   "goal": [
+    5.0941,
+    0.4928
+   ],
+   "person": {
+    "position": [
+     -0.0668,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -90.831
+   },
+   "physical_signature": "9b3665fbc2ca0134"
+  },
+  "ST-F_w2.60_s006": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 6,
+   "width_m": 2.6,
+   "facing_deg": -94.243,
+   "jitter": {
+    "person_x": -0.0574,
+    "facing_deg": -4.2431,
+    "path_offset": -0.0059,
+    "start_x": -0.0282
+   },
+   "station": null,
+   "start": [
+    -5.0282,
+    0.5059
+   ],
+   "goal": [
+    4.9718,
+    0.5059
+   ],
+   "person": {
+    "position": [
+     -0.0574,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -94.243
+   },
+   "physical_signature": "3e959c07b9325f96"
+  },
+  "ST-F_w2.60_s007": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 7,
+   "width_m": 2.6,
+   "facing_deg": -94.902,
+   "jitter": {
+    "person_x": 0.0656,
+    "facing_deg": -4.9025,
+    "path_offset": -0.0015,
+    "start_x": 0.1485
+   },
+   "station": null,
+   "start": [
+    -4.8515,
+    0.5015
+   ],
+   "goal": [
+    5.1485,
+    0.5015
+   ],
+   "person": {
+    "position": [
+     0.0656,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -94.902
+   },
+   "physical_signature": "a61b729e72ffbdd1"
+  },
+  "ST-F_w2.60_s008": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 8,
+   "width_m": 2.6,
+   "facing_deg": -86.781,
+   "jitter": {
+    "person_x": 0.2211,
+    "facing_deg": 3.2193,
+    "path_offset": -0.0127,
+    "start_x": 0.1505
+   },
+   "station": null,
+   "start": [
+    -4.8495,
+    0.5127
+   ],
+   "goal": [
+    5.1505,
+    0.5127
+   ],
+   "person": {
+    "position": [
+     0.2211,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -86.781
+   },
+   "physical_signature": "7d9231c8d00d4830"
+  },
+  "ST-F_w2.60_s009": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 9,
+   "width_m": 2.6,
+   "facing_deg": -90.784,
+   "jitter": {
+    "person_x": 0.1134,
+    "facing_deg": -0.7843,
+    "path_offset": -0.0001,
+    "start_x": -0.0567
+   },
+   "station": null,
+   "start": [
+    -5.0567,
+    0.5001
+   ],
+   "goal": [
+    4.9433,
+    0.5001
+   ],
+   "person": {
+    "position": [
+     0.1134,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -90.784
+   },
+   "physical_signature": "f43afa0179e48ac7"
+  },
+  "ST-F_w2.60_s010": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 10,
+   "width_m": 2.6,
+   "facing_deg": -91.644,
+   "jitter": {
+    "person_x": 0.204,
+    "facing_deg": -1.644,
+    "path_offset": 0.0193,
+    "start_x": 0.0676
+   },
+   "station": null,
+   "start": [
+    -4.9324,
+    0.4807
+   ],
+   "goal": [
+    5.0676,
+    0.4807
+   ],
+   "person": {
+    "position": [
+     0.204,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -91.644
+   },
+   "physical_signature": "ff06796a55d97e87"
+  },
+  "ST-F_w2.60_s011": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 11,
+   "width_m": 2.6,
+   "facing_deg": -88.978,
+   "jitter": {
+    "person_x": -0.2474,
+    "facing_deg": 1.0215,
+    "path_offset": -0.0244,
+    "start_x": -0.0354
+   },
+   "station": null,
+   "start": [
+    -5.0354,
+    0.5244
+   ],
+   "goal": [
+    4.9646,
+    0.5244
+   ],
+   "person": {
+    "position": [
+     -0.2474,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -88.978
+   },
+   "physical_signature": "a6157729b0a9ef82"
+  },
+  "ST-F_w2.60_s012": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 12,
+   "width_m": 2.6,
+   "facing_deg": -86.47,
+   "jitter": {
+    "person_x": -0.1802,
+    "facing_deg": 3.5296,
+    "path_offset": -0.0099,
+    "start_x": -0.0793
+   },
+   "station": null,
+   "start": [
+    -5.0793,
+    0.5099
+   ],
+   "goal": [
+    4.9207,
+    0.5099
+   ],
+   "person": {
+    "position": [
+     -0.1802,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -86.47
+   },
+   "physical_signature": "57b46d1f25ab2495"
+  },
+  "ST-F_w2.60_s013": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 13,
+   "width_m": 2.6,
+   "facing_deg": -91.274,
+   "jitter": {
+    "person_x": -0.2959,
+    "facing_deg": -1.2735,
+    "path_offset": -0.0288,
+    "start_x": -0.1111
+   },
+   "station": null,
+   "start": [
+    -5.1111,
+    0.5288
+   ],
+   "goal": [
+    4.8889,
+    0.5288
+   ],
+   "person": {
+    "position": [
+     -0.2959,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -91.274
+   },
+   "physical_signature": "5f7b5bc97d548943"
+  },
+  "ST-F_w2.60_s014": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 14,
+   "width_m": 2.6,
+   "facing_deg": -92.761,
+   "jitter": {
+    "person_x": 0.097,
+    "facing_deg": -2.7613,
+    "path_offset": 0.0175,
+    "start_x": 0.0713
+   },
+   "station": null,
+   "start": [
+    -4.9287,
+    0.4825
+   ],
+   "goal": [
+    5.0713,
+    0.4825
+   ],
+   "person": {
+    "position": [
+     0.097,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -92.761
+   },
+   "physical_signature": "63a55f5d6804e812"
+  },
+  "ST-F_w2.60_s015": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 15,
+   "width_m": 2.6,
+   "facing_deg": -94.247,
+   "jitter": {
+    "person_x": 0.2504,
+    "facing_deg": -4.247,
+    "path_offset": 0.023,
+    "start_x": 0.1154
+   },
+   "station": null,
+   "start": [
+    -4.8846,
+    0.477
+   ],
+   "goal": [
+    5.1154,
+    0.477
+   ],
+   "person": {
+    "position": [
+     0.2504,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -94.247
+   },
+   "physical_signature": "7eaf3384b0191c8b"
+  },
+  "ST-F_w2.60_s016": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 16,
+   "width_m": 2.6,
+   "facing_deg": -87.204,
+   "jitter": {
+    "person_x": 0.1438,
+    "facing_deg": 2.7958,
+    "path_offset": 0.0062,
+    "start_x": -0.1551
+   },
+   "station": null,
+   "start": [
+    -5.1551,
+    0.4938
+   ],
+   "goal": [
+    4.8449,
+    0.4938
+   ],
+   "person": {
+    "position": [
+     0.1438,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -87.204
+   },
+   "physical_signature": "cdbedb2f341a6687"
+  },
+  "ST-F_w2.60_s017": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 17,
+   "width_m": 2.6,
+   "facing_deg": -85.047,
+   "jitter": {
+    "person_x": -0.0493,
+    "facing_deg": 4.9527,
+    "path_offset": -0.0051,
+    "start_x": -0.1503
+   },
+   "station": null,
+   "start": [
+    -5.1503,
+    0.5051
+   ],
+   "goal": [
+    4.8497,
+    0.5051
+   ],
+   "person": {
+    "position": [
+     -0.0493,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -85.047
+   },
+   "physical_signature": "4ef1723d8fd88a87"
+  },
+  "ST-F_w2.60_s018": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 18,
+   "width_m": 2.6,
+   "facing_deg": -89.602,
+   "jitter": {
+    "person_x": -0.008,
+    "facing_deg": 0.398,
+    "path_offset": -0.0103,
+    "start_x": 0.0544
+   },
+   "station": null,
+   "start": [
+    -4.9456,
+    0.5103
+   ],
+   "goal": [
+    5.0544,
+    0.5103
+   ],
+   "person": {
+    "position": [
+     -0.008,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -89.602
+   },
+   "physical_signature": "c1fd91ed5da508a9"
+  },
+  "ST-F_w2.60_s019": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 19,
+   "width_m": 2.6,
+   "facing_deg": -94.1,
+   "jitter": {
+    "person_x": -0.2965,
+    "facing_deg": -4.0996,
+    "path_offset": 0.0082,
+    "start_x": 0.0342
+   },
+   "station": null,
+   "start": [
+    -4.9658,
+    0.4918
+   ],
+   "goal": [
+    5.0342,
+    0.4918
+   ],
+   "person": {
+    "position": [
+     -0.2965,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -94.1
+   },
+   "physical_signature": "c72a66677f45eb5a"
+  },
+  "ST-F_w2.60_s020": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 20,
+   "width_m": 2.6,
+   "facing_deg": -91.198,
+   "jitter": {
+    "person_x": 0.1592,
+    "facing_deg": -1.1981,
+    "path_offset": -0.0243,
+    "start_x": -0.1985
+   },
+   "station": null,
+   "start": [
+    -5.1985,
+    0.5243
+   ],
+   "goal": [
+    4.8015,
+    0.5243
+   ],
+   "person": {
+    "position": [
+     0.1592,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -91.198
+   },
+   "physical_signature": "0249bedd148f3101"
+  },
+  "ST-F_w2.60_s021": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 21,
+   "width_m": 2.6,
+   "facing_deg": -85.372,
+   "jitter": {
+    "person_x": 0.0006,
+    "facing_deg": 4.628,
+    "path_offset": -0.0031,
+    "start_x": 0.0693
+   },
+   "station": null,
+   "start": [
+    -4.9307,
+    0.5031
+   ],
+   "goal": [
+    5.0693,
+    0.5031
+   ],
+   "person": {
+    "position": [
+     0.0006,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -85.372
+   },
+   "physical_signature": "ee37dc42d840a8fc"
+  },
+  "ST-F_w2.60_s022": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 22,
+   "width_m": 2.6,
+   "facing_deg": -87.298,
+   "jitter": {
+    "person_x": -0.1646,
+    "facing_deg": 2.7025,
+    "path_offset": 0.0126,
+    "start_x": 0.164
+   },
+   "station": null,
+   "start": [
+    -4.836,
+    0.4874
+   ],
+   "goal": [
+    5.164,
+    0.4874
+   ],
+   "person": {
+    "position": [
+     -0.1646,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -87.298
+   },
+   "physical_signature": "6a47ec27795a90e0"
+  },
+  "ST-F_w2.60_s023": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 23,
+   "width_m": 2.6,
+   "facing_deg": -90.419,
+   "jitter": {
+    "person_x": 0.1763,
+    "facing_deg": -0.4194,
+    "path_offset": -0.0113,
+    "start_x": -0.1678
+   },
+   "station": null,
+   "start": [
+    -5.1678,
+    0.5113
+   ],
+   "goal": [
+    4.8322,
+    0.5113
+   ],
+   "person": {
+    "position": [
+     0.1763,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -90.419
+   },
+   "physical_signature": "d93174959b2c3bf4"
+  },
+  "ST-F_w2.60_s024": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 24,
+   "width_m": 2.6,
+   "facing_deg": -90.368,
+   "jitter": {
+    "person_x": 0.0188,
+    "facing_deg": -0.3685,
+    "path_offset": 0.0257,
+    "start_x": 0.0789
+   },
+   "station": null,
+   "start": [
+    -4.9211,
+    0.4743
+   ],
+   "goal": [
+    5.0789,
+    0.4743
+   ],
+   "person": {
+    "position": [
+     0.0188,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -90.368
+   },
+   "physical_signature": "6a7e9df779bedce7"
+  },
+  "ST-F_w2.60_s025": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 25,
+   "width_m": 2.6,
+   "facing_deg": -89.004,
+   "jitter": {
+    "person_x": -0.0398,
+    "facing_deg": 0.9963,
+    "path_offset": 0.0269,
+    "start_x": -0.1619
+   },
+   "station": null,
+   "start": [
+    -5.1619,
+    0.4731
+   ],
+   "goal": [
+    4.8381,
+    0.4731
+   ],
+   "person": {
+    "position": [
+     -0.0398,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -89.004
+   },
+   "physical_signature": "1c29c25ffa778b77"
+  },
+  "ST-F_w2.60_s026": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 26,
+   "width_m": 2.6,
+   "facing_deg": -94.122,
+   "jitter": {
+    "person_x": -0.173,
+    "facing_deg": -4.1215,
+    "path_offset": 0.0108,
+    "start_x": 0.1718
+   },
+   "station": null,
+   "start": [
+    -4.8282,
+    0.4892
+   ],
+   "goal": [
+    5.1718,
+    0.4892
+   ],
+   "person": {
+    "position": [
+     -0.173,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -94.122
+   },
+   "physical_signature": "8e59bd6393b9e512"
+  },
+  "ST-F_w2.60_s027": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 27,
+   "width_m": 2.6,
+   "facing_deg": -90.122,
+   "jitter": {
+    "person_x": -0.048,
+    "facing_deg": -0.1224,
+    "path_offset": 0.0064,
+    "start_x": -0.0392
+   },
+   "station": null,
+   "start": [
+    -5.0392,
+    0.4936
+   ],
+   "goal": [
+    4.9608,
+    0.4936
+   ],
+   "person": {
+    "position": [
+     -0.048,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -90.122
+   },
+   "physical_signature": "b3bb13d8e7df191f"
+  },
+  "ST-F_w2.60_s028": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 28,
+   "width_m": 2.6,
+   "facing_deg": -89.597,
+   "jitter": {
+    "person_x": -0.0991,
+    "facing_deg": 0.4032,
+    "path_offset": -0.0231,
+    "start_x": -0.0
+   },
+   "station": null,
+   "start": [
+    -5.0,
+    0.5231
+   ],
+   "goal": [
+    5.0,
+    0.5231
+   ],
+   "person": {
+    "position": [
+     -0.0991,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -89.597
+   },
+   "physical_signature": "9fa67f09c6972081"
+  },
+  "ST-F_w2.60_s029": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 29,
+   "width_m": 2.6,
+   "facing_deg": -89.855,
+   "jitter": {
+    "person_x": -0.1715,
+    "facing_deg": 0.1451,
+    "path_offset": -0.0033,
+    "start_x": -0.1923
+   },
+   "station": null,
+   "start": [
+    -5.1923,
+    0.5033
+   ],
+   "goal": [
+    4.8077,
+    0.5033
+   ],
+   "person": {
+    "position": [
+     -0.1715,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -89.855
+   },
+   "physical_signature": "218a5dabae2254c8"
+  },
+  "ST-F_w2.60_s030": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 30,
+   "width_m": 2.6,
+   "facing_deg": -92.635,
+   "jitter": {
+    "person_x": 0.1982,
+    "facing_deg": -2.6349,
+    "path_offset": 0.027,
+    "start_x": -0.074
+   },
+   "station": null,
+   "start": [
+    -5.074,
+    0.473
+   ],
+   "goal": [
+    4.926,
+    0.473
+   ],
+   "person": {
+    "position": [
+     0.1982,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -92.635
+   },
+   "physical_signature": "b0bb34797d2582c7"
+  },
+  "ST-S_w2.60_s001": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 1,
+   "width_m": 2.6,
+   "facing_deg": 3.371,
+   "jitter": {
+    "person_x": -0.0025,
+    "facing_deg": 3.3706,
+    "path_offset": -0.011,
+    "start_x": 0.0469
+   },
+   "station": null,
+   "start": [
+    -4.9531,
+    0.511
+   ],
+   "goal": [
+    5.0469,
+    0.511
+   ],
+   "person": {
+    "position": [
+     -0.0025,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 3.371
+   },
+   "physical_signature": "e54148fb2f6c6b34"
+  },
+  "ST-S_w2.60_s002": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 2,
+   "width_m": 2.6,
+   "facing_deg": -3.506,
+   "jitter": {
+    "person_x": 0.0917,
+    "facing_deg": -3.5057,
+    "path_offset": -0.0092,
+    "start_x": -0.129
+   },
+   "station": null,
+   "start": [
+    -5.129,
+    0.5092
+   ],
+   "goal": [
+    4.871,
+    0.5092
+   ],
+   "person": {
+    "position": [
+     0.0917,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -3.506
+   },
+   "physical_signature": "1300e62fe5622ae2"
+  },
+  "ST-S_w2.60_s003": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 3,
+   "width_m": 2.6,
+   "facing_deg": -4.253,
+   "jitter": {
+    "person_x": 0.2885,
+    "facing_deg": -4.2527,
+    "path_offset": -0.0216,
+    "start_x": -0.0186
+   },
+   "station": null,
+   "start": [
+    -5.0186,
+    0.5216
+   ],
+   "goal": [
+    4.9814,
+    0.5216
+   ],
+   "person": {
+    "position": [
+     0.2885,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -4.253
+   },
+   "physical_signature": "4f17107b85c660c7"
+  },
+  "ST-S_w2.60_s004": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 4,
+   "width_m": 2.6,
+   "facing_deg": -0.329,
+   "jitter": {
+    "person_x": -0.0386,
+    "facing_deg": -0.3293,
+    "path_offset": -0.0087,
+    "start_x": -0.1729
+   },
+   "station": null,
+   "start": [
+    -5.1729,
+    0.5087
+   ],
+   "goal": [
+    4.8271,
+    0.5087
+   ],
+   "person": {
+    "position": [
+     -0.0386,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -0.329
+   },
+   "physical_signature": "98f4cf2f1d83fa7d"
+  },
+  "ST-S_w2.60_s005": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 5,
+   "width_m": 2.6,
+   "facing_deg": 0.398,
+   "jitter": {
+    "person_x": 0.2874,
+    "facing_deg": 0.3984,
+    "path_offset": 0.0142,
+    "start_x": 0.0284
+   },
+   "station": null,
+   "start": [
+    -4.9716,
+    0.4858
+   ],
+   "goal": [
+    5.0284,
+    0.4858
+   ],
+   "person": {
+    "position": [
+     0.2874,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 0.398
+   },
+   "physical_signature": "39491db695b374a6"
+  },
+  "ST-S_w2.60_s006": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 6,
+   "width_m": 2.6,
+   "facing_deg": -2.558,
+   "jitter": {
+    "person_x": -0.1823,
+    "facing_deg": -2.5583,
+    "path_offset": 0.0024,
+    "start_x": -0.1727
+   },
+   "station": null,
+   "start": [
+    -5.1727,
+    0.4976
+   ],
+   "goal": [
+    4.8273,
+    0.4976
+   ],
+   "person": {
+    "position": [
+     -0.1823,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -2.558
+   },
+   "physical_signature": "4b9e565fe0831aae"
+  },
+  "ST-S_w2.60_s007": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 7,
+   "width_m": 2.6,
+   "facing_deg": -1.599,
+   "jitter": {
+    "person_x": 0.2645,
+    "facing_deg": -1.5994,
+    "path_offset": -0.0221,
+    "start_x": -0.0149
+   },
+   "station": null,
+   "start": [
+    -5.0149,
+    0.5221
+   ],
+   "goal": [
+    4.9851,
+    0.5221
+   ],
+   "person": {
+    "position": [
+     0.2645,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -1.599
+   },
+   "physical_signature": "9146a1f795b8c28e"
+  },
+  "ST-S_w2.60_s008": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 8,
+   "width_m": 2.6,
+   "facing_deg": -3.784,
+   "jitter": {
+    "person_x": -0.2512,
+    "facing_deg": -3.784,
+    "path_offset": 0.0189,
+    "start_x": 0.0696
+   },
+   "station": null,
+   "start": [
+    -4.9304,
+    0.4811
+   ],
+   "goal": [
+    5.0696,
+    0.4811
+   ],
+   "person": {
+    "position": [
+     -0.2512,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -3.784
+   },
+   "physical_signature": "11b1ad216e9b0bd8"
+  },
+  "ST-S_w2.60_s009": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 9,
+   "width_m": 2.6,
+   "facing_deg": 4.29,
+   "jitter": {
+    "person_x": -0.212,
+    "facing_deg": 4.2897,
+    "path_offset": -0.0156,
+    "start_x": 0.0254
+   },
+   "station": null,
+   "start": [
+    -4.9746,
+    0.5156
+   ],
+   "goal": [
+    5.0254,
+    0.5156
+   ],
+   "person": {
+    "position": [
+     -0.212,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 4.29
+   },
+   "physical_signature": "abf5c9999e1986d3"
+  },
+  "ST-S_w2.60_s010": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 10,
+   "width_m": 2.6,
+   "facing_deg": -2.966,
+   "jitter": {
+    "person_x": 0.2034,
+    "facing_deg": -2.9662,
+    "path_offset": 0.0158,
+    "start_x": 0.1672
+   },
+   "station": null,
+   "start": [
+    -4.8328,
+    0.4842
+   ],
+   "goal": [
+    5.1672,
+    0.4842
+   ],
+   "person": {
+    "position": [
+     0.2034,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -2.966
+   },
+   "physical_signature": "7a897a53f1a8d192"
+  },
+  "ST-S_w2.60_s011": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 11,
+   "width_m": 2.6,
+   "facing_deg": -0.411,
+   "jitter": {
+    "person_x": -0.113,
+    "facing_deg": -0.4109,
+    "path_offset": 0.0179,
+    "start_x": 0.0419
+   },
+   "station": null,
+   "start": [
+    -4.9581,
+    0.4821
+   ],
+   "goal": [
+    5.0419,
+    0.4821
+   ],
+   "person": {
+    "position": [
+     -0.113,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -0.411
+   },
+   "physical_signature": "2a293e34cd621c40"
+  },
+  "ST-S_w2.60_s012": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 12,
+   "width_m": 2.6,
+   "facing_deg": 3.963,
+   "jitter": {
+    "person_x": 0.0616,
+    "facing_deg": 3.9631,
+    "path_offset": 0.0204,
+    "start_x": -0.153
+   },
+   "station": null,
+   "start": [
+    -5.153,
+    0.4796
+   ],
+   "goal": [
+    4.847,
+    0.4796
+   ],
+   "person": {
+    "position": [
+     0.0616,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 3.963
+   },
+   "physical_signature": "bc0b1b143adcb67e"
+  },
+  "ST-S_w2.60_s013": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 13,
+   "width_m": 2.6,
+   "facing_deg": 2.046,
+   "jitter": {
+    "person_x": 0.1205,
+    "facing_deg": 2.046,
+    "path_offset": 0.0183,
+    "start_x": -0.1712
+   },
+   "station": null,
+   "start": [
+    -5.1712,
+    0.4817
+   ],
+   "goal": [
+    4.8288,
+    0.4817
+   ],
+   "person": {
+    "position": [
+     0.1205,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 2.046
+   },
+   "physical_signature": "df776bf24bf2f5b8"
+  },
+  "ST-S_w2.60_s014": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 14,
+   "width_m": 2.6,
+   "facing_deg": 4.665,
+   "jitter": {
+    "person_x": 0.2418,
+    "facing_deg": 4.6646,
+    "path_offset": 0.0239,
+    "start_x": 0.1921
+   },
+   "station": null,
+   "start": [
+    -4.8079,
+    0.4761
+   ],
+   "goal": [
+    5.1921,
+    0.4761
+   ],
+   "person": {
+    "position": [
+     0.2418,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 4.665
+   },
+   "physical_signature": "625c0ffd759ce82a"
+  },
+  "ST-S_w2.60_s015": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 15,
+   "width_m": 2.6,
+   "facing_deg": -3.253,
+   "jitter": {
+    "person_x": -0.1851,
+    "facing_deg": -3.2534,
+    "path_offset": 0.0097,
+    "start_x": -0.0944
+   },
+   "station": null,
+   "start": [
+    -5.0944,
+    0.4903
+   ],
+   "goal": [
+    4.9056,
+    0.4903
+   ],
+   "person": {
+    "position": [
+     -0.1851,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -3.253
+   },
+   "physical_signature": "1deadc841c68ce30"
+  },
+  "ST-S_w2.60_s016": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 16,
+   "width_m": 2.6,
+   "facing_deg": 0.049,
+   "jitter": {
+    "person_x": 0.127,
+    "facing_deg": 0.0494,
+    "path_offset": 0.0055,
+    "start_x": -0.0788
+   },
+   "station": null,
+   "start": [
+    -5.0788,
+    0.4945
+   ],
+   "goal": [
+    4.9212,
+    0.4945
+   ],
+   "person": {
+    "position": [
+     0.127,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 0.049
+   },
+   "physical_signature": "32fbabddf7fd0ffe"
+  },
+  "ST-S_w2.60_s017": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 17,
+   "width_m": 2.6,
+   "facing_deg": -1.253,
+   "jitter": {
+    "person_x": 0.0441,
+    "facing_deg": -1.2532,
+    "path_offset": -0.0178,
+    "start_x": -0.1994
+   },
+   "station": null,
+   "start": [
+    -5.1994,
+    0.5178
+   ],
+   "goal": [
+    4.8006,
+    0.5178
+   ],
+   "person": {
+    "position": [
+     0.0441,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -1.253
+   },
+   "physical_signature": "48b9f966f47f481e"
+  },
+  "ST-S_w2.60_s018": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 18,
+   "width_m": 2.6,
+   "facing_deg": 0.302,
+   "jitter": {
+    "person_x": 0.0511,
+    "facing_deg": 0.3021,
+    "path_offset": 0.0068,
+    "start_x": -0.1481
+   },
+   "station": null,
+   "start": [
+    -5.1481,
+    0.4932
+   ],
+   "goal": [
+    4.8519,
+    0.4932
+   ],
+   "person": {
+    "position": [
+     0.0511,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 0.302
+   },
+   "physical_signature": "8ef10da56dffb02a"
+  },
+  "ST-S_w2.60_s019": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 19,
+   "width_m": 2.6,
+   "facing_deg": -0.738,
+   "jitter": {
+    "person_x": -0.2551,
+    "facing_deg": -0.7381,
+    "path_offset": 0.0237,
+    "start_x": 0.071
+   },
+   "station": null,
+   "start": [
+    -4.929,
+    0.4763
+   ],
+   "goal": [
+    5.071,
+    0.4763
+   ],
+   "person": {
+    "position": [
+     -0.2551,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -0.738
+   },
+   "physical_signature": "5fada2ec3dcb59b0"
+  },
+  "ST-S_w2.60_s020": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 20,
+   "width_m": 2.6,
+   "facing_deg": 3.58,
+   "jitter": {
+    "person_x": 0.0794,
+    "facing_deg": 3.5796,
+    "path_offset": -0.0094,
+    "start_x": -0.0235
+   },
+   "station": null,
+   "start": [
+    -5.0235,
+    0.5094
+   ],
+   "goal": [
+    4.9765,
+    0.5094
+   ],
+   "person": {
+    "position": [
+     0.0794,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 3.58
+   },
+   "physical_signature": "177b5f36d8528b4c"
+  },
+  "ST-S_w2.60_s021": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 21,
+   "width_m": 2.6,
+   "facing_deg": 2.901,
+   "jitter": {
+    "person_x": -0.0835,
+    "facing_deg": 2.901,
+    "path_offset": 0.008,
+    "start_x": -0.036
+   },
+   "station": null,
+   "start": [
+    -5.036,
+    0.492
+   ],
+   "goal": [
+    4.964,
+    0.492
+   ],
+   "person": {
+    "position": [
+     -0.0835,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 2.901
+   },
+   "physical_signature": "7d6090193b0345b2"
+  },
+  "ST-S_w2.60_s022": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 22,
+   "width_m": 2.6,
+   "facing_deg": -1.304,
+   "jitter": {
+    "person_x": -0.0347,
+    "facing_deg": -1.3037,
+    "path_offset": 0.0087,
+    "start_x": 0.1604
+   },
+   "station": null,
+   "start": [
+    -4.8396,
+    0.4913
+   ],
+   "goal": [
+    5.1604,
+    0.4913
+   ],
+   "person": {
+    "position": [
+     -0.0347,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -1.304
+   },
+   "physical_signature": "7ca070c07ef38072"
+  },
+  "ST-S_w2.60_s023": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 23,
+   "width_m": 2.6,
+   "facing_deg": 0.446,
+   "jitter": {
+    "person_x": -0.0462,
+    "facing_deg": 0.4462,
+    "path_offset": -0.01,
+    "start_x": 0.1355
+   },
+   "station": null,
+   "start": [
+    -4.8645,
+    0.51
+   ],
+   "goal": [
+    5.1355,
+    0.51
+   ],
+   "person": {
+    "position": [
+     -0.0462,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 0.446
+   },
+   "physical_signature": "bb8915eca1b78f87"
+  },
+  "ST-S_w2.60_s024": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 24,
+   "width_m": 2.6,
+   "facing_deg": 1.867,
+   "jitter": {
+    "person_x": -0.0872,
+    "facing_deg": 1.8673,
+    "path_offset": -0.0106,
+    "start_x": 0.1314
+   },
+   "station": null,
+   "start": [
+    -4.8686,
+    0.5106
+   ],
+   "goal": [
+    5.1314,
+    0.5106
+   ],
+   "person": {
+    "position": [
+     -0.0872,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 1.867
+   },
+   "physical_signature": "74576022d2358d22"
+  },
+  "ST-S_w2.60_s025": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 25,
+   "width_m": 2.6,
+   "facing_deg": -0.558,
+   "jitter": {
+    "person_x": 0.0564,
+    "facing_deg": -0.5575,
+    "path_offset": -0.023,
+    "start_x": -0.1761
+   },
+   "station": null,
+   "start": [
+    -5.1761,
+    0.523
+   ],
+   "goal": [
+    4.8239,
+    0.523
+   ],
+   "person": {
+    "position": [
+     0.0564,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -0.558
+   },
+   "physical_signature": "d62db2d1c028e2f9"
+  },
+  "ST-S_w2.60_s026": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 26,
+   "width_m": 2.6,
+   "facing_deg": -1.202,
+   "jitter": {
+    "person_x": 0.2991,
+    "facing_deg": -1.202,
+    "path_offset": -0.0057,
+    "start_x": -0.137
+   },
+   "station": null,
+   "start": [
+    -5.137,
+    0.5057
+   ],
+   "goal": [
+    4.863,
+    0.5057
+   ],
+   "person": {
+    "position": [
+     0.2991,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -1.202
+   },
+   "physical_signature": "c2e734d55796109c"
+  },
+  "ST-S_w2.60_s027": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 27,
+   "width_m": 2.6,
+   "facing_deg": 1.554,
+   "jitter": {
+    "person_x": 0.0337,
+    "facing_deg": 1.554,
+    "path_offset": -0.0005,
+    "start_x": -0.0687
+   },
+   "station": null,
+   "start": [
+    -5.0687,
+    0.5005
+   ],
+   "goal": [
+    4.9313,
+    0.5005
+   ],
+   "person": {
+    "position": [
+     0.0337,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 1.554
+   },
+   "physical_signature": "ac39ea340468c47d"
+  },
+  "ST-S_w2.60_s028": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 28,
+   "width_m": 2.6,
+   "facing_deg": -2.952,
+   "jitter": {
+    "person_x": 0.0713,
+    "facing_deg": -2.9523,
+    "path_offset": 0.0174,
+    "start_x": 0.0263
+   },
+   "station": null,
+   "start": [
+    -4.9737,
+    0.4826
+   ],
+   "goal": [
+    5.0263,
+    0.4826
+   ],
+   "person": {
+    "position": [
+     0.0713,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -2.952
+   },
+   "physical_signature": "106e194e42d8aa5c"
+  },
+  "ST-S_w2.60_s029": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 29,
+   "width_m": 2.6,
+   "facing_deg": 1.007,
+   "jitter": {
+    "person_x": -0.0145,
+    "facing_deg": 1.0074,
+    "path_offset": 0.0034,
+    "start_x": 0.0527
+   },
+   "station": null,
+   "start": [
+    -4.9473,
+    0.4966
+   ],
+   "goal": [
+    5.0527,
+    0.4966
+   ],
+   "person": {
+    "position": [
+     -0.0145,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 1.007
+   },
+   "physical_signature": "d1a3d0ddda77b153"
+  },
+  "ST-S_w2.60_s030": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 30,
+   "width_m": 2.6,
+   "facing_deg": -0.063,
+   "jitter": {
+    "person_x": 0.298,
+    "facing_deg": -0.0631,
+    "path_offset": 0.0049,
+    "start_x": -0.0567
+   },
+   "station": null,
+   "start": [
+    -5.0567,
+    0.4951
+   ],
+   "goal": [
+    4.9433,
+    0.4951
+   ],
+   "person": {
+    "position": [
+     0.298,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -0.063
+   },
+   "physical_signature": "c4e6fdd37f5b8db4"
+  },
+  "ST-R_w2.60_s001": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 1,
+   "width_m": 2.6,
+   "facing_deg": 93.579,
+   "jitter": {
+    "person_x": -0.0582,
+    "facing_deg": 3.5785,
+    "path_offset": -0.0071,
+    "start_x": 0.1572
+   },
+   "station": null,
+   "start": [
+    -4.8428,
+    0.5071
+   ],
+   "goal": [
+    5.1572,
+    0.5071
+   ],
+   "person": {
+    "position": [
+     -0.0582,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 93.579
+   },
+   "physical_signature": "18c0e537ed66fa79"
+  },
+  "ST-R_w2.60_s002": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 2,
+   "width_m": 2.6,
+   "facing_deg": 87.269,
+   "jitter": {
+    "person_x": -0.0094,
+    "facing_deg": -2.7309,
+    "path_offset": 0.0248,
+    "start_x": -0.0686
+   },
+   "station": null,
+   "start": [
+    -5.0686,
+    0.4752
+   ],
+   "goal": [
+    4.9314,
+    0.4752
+   ],
+   "person": {
+    "position": [
+     -0.0094,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 87.269
+   },
+   "physical_signature": "e7c112a780a6a9ee"
+  },
+  "ST-R_w2.60_s003": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 3,
+   "width_m": 2.6,
+   "facing_deg": 93.804,
+   "jitter": {
+    "person_x": 0.1698,
+    "facing_deg": 3.804,
+    "path_offset": 0.0271,
+    "start_x": -0.1624
+   },
+   "station": null,
+   "start": [
+    -5.1624,
+    0.4729
+   ],
+   "goal": [
+    4.8376,
+    0.4729
+   ],
+   "person": {
+    "position": [
+     0.1698,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 93.804
+   },
+   "physical_signature": "c5de2056ad5ca165"
+  },
+  "ST-R_w2.60_s004": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 4,
+   "width_m": 2.6,
+   "facing_deg": 87.839,
+   "jitter": {
+    "person_x": -0.2327,
+    "facing_deg": -2.1606,
+    "path_offset": 0.0189,
+    "start_x": 0.0952
+   },
+   "station": null,
+   "start": [
+    -4.9048,
+    0.4811
+   ],
+   "goal": [
+    5.0952,
+    0.4811
+   ],
+   "person": {
+    "position": [
+     -0.2327,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 87.839
+   },
+   "physical_signature": "e79d64d2abbca4fe"
+  },
+  "ST-R_w2.60_s005": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 5,
+   "width_m": 2.6,
+   "facing_deg": 89.585,
+   "jitter": {
+    "person_x": -0.2364,
+    "facing_deg": -0.4152,
+    "path_offset": -0.0274,
+    "start_x": -0.0579
+   },
+   "station": null,
+   "start": [
+    -5.0579,
+    0.5274
+   ],
+   "goal": [
+    4.9421,
+    0.5274
+   ],
+   "person": {
+    "position": [
+     -0.2364,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 89.585
+   },
+   "physical_signature": "823decf8d939b567"
+  },
+  "ST-R_w2.60_s006": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 6,
+   "width_m": 2.6,
+   "facing_deg": 91.792,
+   "jitter": {
+    "person_x": 0.0809,
+    "facing_deg": 1.7924,
+    "path_offset": -0.0175,
+    "start_x": 0.1831
+   },
+   "station": null,
+   "start": [
+    -4.8169,
+    0.5175
+   ],
+   "goal": [
+    5.1831,
+    0.5175
+   ],
+   "person": {
+    "position": [
+     0.0809,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 91.792
+   },
+   "physical_signature": "ebb954b1a20f5014"
+  },
+  "ST-R_w2.60_s007": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 7,
+   "width_m": 2.6,
+   "facing_deg": 86.736,
+   "jitter": {
+    "person_x": 0.251,
+    "facing_deg": -3.264,
+    "path_offset": -0.0158,
+    "start_x": -0.1092
+   },
+   "station": null,
+   "start": [
+    -5.1092,
+    0.5158
+   ],
+   "goal": [
+    4.8908,
+    0.5158
+   ],
+   "person": {
+    "position": [
+     0.251,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 86.736
+   },
+   "physical_signature": "d5b13e51215233f9"
+  },
+  "ST-R_w2.60_s008": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 8,
+   "width_m": 2.6,
+   "facing_deg": 94.923,
+   "jitter": {
+    "person_x": -0.0524,
+    "facing_deg": 4.9234,
+    "path_offset": -0.0013,
+    "start_x": 0.0891
+   },
+   "station": null,
+   "start": [
+    -4.9109,
+    0.5013
+   ],
+   "goal": [
+    5.0891,
+    0.5013
+   ],
+   "person": {
+    "position": [
+     -0.0524,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 94.923
+   },
+   "physical_signature": "e220391a545035f8"
+  },
+  "ST-R_w2.60_s009": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 9,
+   "width_m": 2.6,
+   "facing_deg": 90.034,
+   "jitter": {
+    "person_x": -0.2477,
+    "facing_deg": 0.0336,
+    "path_offset": 0.0113,
+    "start_x": 0.1637
+   },
+   "station": null,
+   "start": [
+    -4.8363,
+    0.4887
+   ],
+   "goal": [
+    5.1637,
+    0.4887
+   ],
+   "person": {
+    "position": [
+     -0.2477,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 90.034
+   },
+   "physical_signature": "0a4dbc414e9a3f87"
+  },
+  "ST-R_w2.60_s010": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 10,
+   "width_m": 2.6,
+   "facing_deg": 90.788,
+   "jitter": {
+    "person_x": -0.0968,
+    "facing_deg": 0.7883,
+    "path_offset": -0.0236,
+    "start_x": 0.072
+   },
+   "station": null,
+   "start": [
+    -4.928,
+    0.5236
+   ],
+   "goal": [
+    5.072,
+    0.5236
+   ],
+   "person": {
+    "position": [
+     -0.0968,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 90.788
+   },
+   "physical_signature": "089e422b4d402c93"
+  },
+  "ST-R_w2.60_s011": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 11,
+   "width_m": 2.6,
+   "facing_deg": 88.872,
+   "jitter": {
+    "person_x": 0.212,
+    "facing_deg": -1.128,
+    "path_offset": -0.0281,
+    "start_x": 0.0423
+   },
+   "station": null,
+   "start": [
+    -4.9577,
+    0.5281
+   ],
+   "goal": [
+    5.0423,
+    0.5281
+   ],
+   "person": {
+    "position": [
+     0.212,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 88.872
+   },
+   "physical_signature": "c3dfb82f0b7cbda5"
+  },
+  "ST-R_w2.60_s012": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 12,
+   "width_m": 2.6,
+   "facing_deg": 85.915,
+   "jitter": {
+    "person_x": 0.0612,
+    "facing_deg": -4.0847,
+    "path_offset": -0.0253,
+    "start_x": 0.1734
+   },
+   "station": null,
+   "start": [
+    -4.8266,
+    0.5253
+   ],
+   "goal": [
+    5.1734,
+    0.5253
+   ],
+   "person": {
+    "position": [
+     0.0612,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 85.915
+   },
+   "physical_signature": "4114c01ce2eacd02"
+  },
+  "ST-R_w2.60_s013": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 13,
+   "width_m": 2.6,
+   "facing_deg": 88.31,
+   "jitter": {
+    "person_x": -0.1869,
+    "facing_deg": -1.6897,
+    "path_offset": -0.0001,
+    "start_x": 0.0675
+   },
+   "station": null,
+   "start": [
+    -4.9325,
+    0.5001
+   ],
+   "goal": [
+    5.0675,
+    0.5001
+   ],
+   "person": {
+    "position": [
+     -0.1869,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 88.31
+   },
+   "physical_signature": "d45c384d2bdd4364"
+  },
+  "ST-R_w2.60_s014": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 14,
+   "width_m": 2.6,
+   "facing_deg": 86.533,
+   "jitter": {
+    "person_x": -0.2705,
+    "facing_deg": -3.4669,
+    "path_offset": -0.0157,
+    "start_x": -0.1269
+   },
+   "station": null,
+   "start": [
+    -5.1269,
+    0.5157
+   ],
+   "goal": [
+    4.8731,
+    0.5157
+   ],
+   "person": {
+    "position": [
+     -0.2705,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 86.533
+   },
+   "physical_signature": "50c15ed32c86b926"
+  },
+  "ST-R_w2.60_s015": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 15,
+   "width_m": 2.6,
+   "facing_deg": 91.819,
+   "jitter": {
+    "person_x": -0.267,
+    "facing_deg": 1.8188,
+    "path_offset": -0.0061,
+    "start_x": 0.0764
+   },
+   "station": null,
+   "start": [
+    -4.9236,
+    0.5061
+   ],
+   "goal": [
+    5.0764,
+    0.5061
+   ],
+   "person": {
+    "position": [
+     -0.267,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 91.819
+   },
+   "physical_signature": "e1634d20c31ac44c"
+  },
+  "ST-R_w2.60_s016": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 16,
+   "width_m": 2.6,
+   "facing_deg": 86.375,
+   "jitter": {
+    "person_x": 0.016,
+    "facing_deg": -3.625,
+    "path_offset": -0.0,
+    "start_x": -0.1932
+   },
+   "station": null,
+   "start": [
+    -5.1932,
+    0.5
+   ],
+   "goal": [
+    4.8068,
+    0.5
+   ],
+   "person": {
+    "position": [
+     0.016,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 86.375
+   },
+   "physical_signature": "988f60dc3233efb0"
+  },
+  "ST-R_w2.60_s017": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 17,
+   "width_m": 2.6,
+   "facing_deg": 94.185,
+   "jitter": {
+    "person_x": 0.1591,
+    "facing_deg": 4.1855,
+    "path_offset": -0.0115,
+    "start_x": 0.0446
+   },
+   "station": null,
+   "start": [
+    -4.9554,
+    0.5115
+   ],
+   "goal": [
+    5.0446,
+    0.5115
+   ],
+   "person": {
+    "position": [
+     0.1591,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 94.185
+   },
+   "physical_signature": "c7b173d2acc275ae"
+  },
+  "ST-R_w2.60_s018": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 18,
+   "width_m": 2.6,
+   "facing_deg": 87.491,
+   "jitter": {
+    "person_x": 0.0773,
+    "facing_deg": -2.5088,
+    "path_offset": -0.0197,
+    "start_x": 0.1932
+   },
+   "station": null,
+   "start": [
+    -4.8068,
+    0.5197
+   ],
+   "goal": [
+    5.1932,
+    0.5197
+   ],
+   "person": {
+    "position": [
+     0.0773,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 87.491
+   },
+   "physical_signature": "6a0db544a7910262"
+  },
+  "ST-R_w2.60_s019": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 19,
+   "width_m": 2.6,
+   "facing_deg": 92.067,
+   "jitter": {
+    "person_x": -0.1779,
+    "facing_deg": 2.0674,
+    "path_offset": -0.0198,
+    "start_x": -0.1565
+   },
+   "station": null,
+   "start": [
+    -5.1565,
+    0.5198
+   ],
+   "goal": [
+    4.8435,
+    0.5198
+   ],
+   "person": {
+    "position": [
+     -0.1779,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 92.067
+   },
+   "physical_signature": "e9e2c48145bf0353"
+  },
+  "ST-R_w2.60_s020": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 20,
+   "width_m": 2.6,
+   "facing_deg": 86.707,
+   "jitter": {
+    "person_x": -0.2411,
+    "facing_deg": -3.2932,
+    "path_offset": -0.0286,
+    "start_x": 0.1253
+   },
+   "station": null,
+   "start": [
+    -4.8747,
+    0.5286
+   ],
+   "goal": [
+    5.1253,
+    0.5286
+   ],
+   "person": {
+    "position": [
+     -0.2411,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 86.707
+   },
+   "physical_signature": "741c472f4c9397a7"
+  },
+  "ST-R_w2.60_s021": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 21,
+   "width_m": 2.6,
+   "facing_deg": 93.644,
+   "jitter": {
+    "person_x": -0.0658,
+    "facing_deg": 3.6441,
+    "path_offset": 0.0059,
+    "start_x": 0.165
+   },
+   "station": null,
+   "start": [
+    -4.835,
+    0.4941
+   ],
+   "goal": [
+    5.165,
+    0.4941
+   ],
+   "person": {
+    "position": [
+     -0.0658,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 93.644
+   },
+   "physical_signature": "7e720976c279e60f"
+  },
+  "ST-R_w2.60_s022": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 22,
+   "width_m": 2.6,
+   "facing_deg": 85.958,
+   "jitter": {
+    "person_x": -0.1268,
+    "facing_deg": -4.0417,
+    "path_offset": 0.0199,
+    "start_x": -0.1977
+   },
+   "station": null,
+   "start": [
+    -5.1977,
+    0.4801
+   ],
+   "goal": [
+    4.8023,
+    0.4801
+   ],
+   "person": {
+    "position": [
+     -0.1268,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 85.958
+   },
+   "physical_signature": "169e633d1e61c687"
+  },
+  "ST-R_w2.60_s023": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 23,
+   "width_m": 2.6,
+   "facing_deg": 93.099,
+   "jitter": {
+    "person_x": 0.0879,
+    "facing_deg": 3.0985,
+    "path_offset": 0.0198,
+    "start_x": -0.109
+   },
+   "station": null,
+   "start": [
+    -5.109,
+    0.4802
+   ],
+   "goal": [
+    4.891,
+    0.4802
+   ],
+   "person": {
+    "position": [
+     0.0879,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 93.099
+   },
+   "physical_signature": "a9704ee7840a35da"
+  },
+  "ST-R_w2.60_s024": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 24,
+   "width_m": 2.6,
+   "facing_deg": 89.983,
+   "jitter": {
+    "person_x": 0.1756,
+    "facing_deg": -0.0167,
+    "path_offset": -0.0221,
+    "start_x": 0.1509
+   },
+   "station": null,
+   "start": [
+    -4.8491,
+    0.5221
+   ],
+   "goal": [
+    5.1509,
+    0.5221
+   ],
+   "person": {
+    "position": [
+     0.1756,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 89.983
+   },
+   "physical_signature": "4897ce1a67839099"
+  },
+  "ST-R_w2.60_s025": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 25,
+   "width_m": 2.6,
+   "facing_deg": 92.498,
+   "jitter": {
+    "person_x": -0.1878,
+    "facing_deg": 2.4983,
+    "path_offset": -0.0044,
+    "start_x": -0.1355
+   },
+   "station": null,
+   "start": [
+    -5.1355,
+    0.5044
+   ],
+   "goal": [
+    4.8645,
+    0.5044
+   ],
+   "person": {
+    "position": [
+     -0.1878,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 92.498
+   },
+   "physical_signature": "fd76eae2cf1cfce0"
+  },
+  "ST-R_w2.60_s026": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 26,
+   "width_m": 2.6,
+   "facing_deg": 91.099,
+   "jitter": {
+    "person_x": 0.2162,
+    "facing_deg": 1.0993,
+    "path_offset": -0.0002,
+    "start_x": 0.0462
+   },
+   "station": null,
+   "start": [
+    -4.9538,
+    0.5002
+   ],
+   "goal": [
+    5.0462,
+    0.5002
+   ],
+   "person": {
+    "position": [
+     0.2162,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 91.099
+   },
+   "physical_signature": "1c1eec23304251eb"
+  },
+  "ST-R_w2.60_s027": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 27,
+   "width_m": 2.6,
+   "facing_deg": 91.117,
+   "jitter": {
+    "person_x": 0.2482,
+    "facing_deg": 1.1168,
+    "path_offset": 0.0052,
+    "start_x": 0.1197
+   },
+   "station": null,
+   "start": [
+    -4.8803,
+    0.4948
+   ],
+   "goal": [
+    5.1197,
+    0.4948
+   ],
+   "person": {
+    "position": [
+     0.2482,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 91.117
+   },
+   "physical_signature": "f1a64206359ce724"
+  },
+  "ST-R_w2.60_s028": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 28,
+   "width_m": 2.6,
+   "facing_deg": 87.926,
+   "jitter": {
+    "person_x": 0.1486,
+    "facing_deg": -2.074,
+    "path_offset": 0.0067,
+    "start_x": -0.026
+   },
+   "station": null,
+   "start": [
+    -5.026,
+    0.4933
+   ],
+   "goal": [
+    4.974,
+    0.4933
+   ],
+   "person": {
+    "position": [
+     0.1486,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 87.926
+   },
+   "physical_signature": "2f86687a5cfcaf29"
+  },
+  "ST-R_w2.60_s029": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 29,
+   "width_m": 2.6,
+   "facing_deg": 87.195,
+   "jitter": {
+    "person_x": -0.216,
+    "facing_deg": -2.8046,
+    "path_offset": 0.0174,
+    "start_x": -0.1432
+   },
+   "station": null,
+   "start": [
+    -5.1432,
+    0.4826
+   ],
+   "goal": [
+    4.8568,
+    0.4826
+   ],
+   "person": {
+    "position": [
+     -0.216,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 87.195
+   },
+   "physical_signature": "6d3dcfba82c3e976"
+  },
+  "ST-R_w2.60_s030": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 30,
+   "width_m": 2.6,
+   "facing_deg": 91.601,
+   "jitter": {
+    "person_x": 0.1259,
+    "facing_deg": 1.6014,
+    "path_offset": -0.0028,
+    "start_x": -0.1467
+   },
+   "station": null,
+   "start": [
+    -5.1467,
+    0.5028
+   ],
+   "goal": [
+    4.8533,
+    0.5028
+   ],
+   "person": {
+    "position": [
+     0.1259,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 91.601
+   },
+   "physical_signature": "d3f2b0d539416713"
+  },
+  "EN-R_w2.60_s001": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 1,
+   "width_m": 2.6,
+   "facing_deg": 92.248,
+   "jitter": {
+    "person_x": 0.1815,
+    "facing_deg": 2.2482,
+    "path_offset": 0.0145,
+    "start_x": 0.1036
+   },
+   "station": {
+    "position": [
+     0.1815,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8964,
+    0.2355
+   ],
+   "goal": [
+    5.1036,
+    0.2355
+   ],
+   "person": {
+    "position": [
+     0.1815,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 92.248
+   },
+   "physical_signature": "a3bdf0c6cd2deabf"
+  },
+  "EN-R_w2.60_s002": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 2,
+   "width_m": 2.6,
+   "facing_deg": 89.864,
+   "jitter": {
+    "person_x": 0.285,
+    "facing_deg": -0.1363,
+    "path_offset": 0.0267,
+    "start_x": 0.1609
+   },
+   "station": {
+    "position": [
+     0.285,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8391,
+    0.2233
+   ],
+   "goal": [
+    5.1609,
+    0.2233
+   ],
+   "person": {
+    "position": [
+     0.285,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 89.864
+   },
+   "physical_signature": "68c0587859d10566"
+  },
+  "EN-R_w2.60_s003": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 3,
+   "width_m": 2.6,
+   "facing_deg": 86.416,
+   "jitter": {
+    "person_x": -0.199,
+    "facing_deg": -3.5842,
+    "path_offset": -0.027,
+    "start_x": 0.0686
+   },
+   "station": {
+    "position": [
+     -0.199,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9314,
+    0.277
+   ],
+   "goal": [
+    5.0686,
+    0.277
+   ],
+   "person": {
+    "position": [
+     -0.199,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 86.416
+   },
+   "physical_signature": "f48f579a9600b8d0"
+  },
+  "EN-R_w2.60_s004": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 4,
+   "width_m": 2.6,
+   "facing_deg": 90.976,
+   "jitter": {
+    "person_x": -0.0709,
+    "facing_deg": 0.9755,
+    "path_offset": 0.005,
+    "start_x": -0.127
+   },
+   "station": {
+    "position": [
+     -0.0709,
+     1.075
+    ]
+   },
+   "start": [
+    -5.127,
+    0.245
+   ],
+   "goal": [
+    4.873,
+    0.245
+   ],
+   "person": {
+    "position": [
+     -0.0709,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 90.976
+   },
+   "physical_signature": "c5c0e80fc3896c5d"
+  },
+  "EN-R_w2.60_s005": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 5,
+   "width_m": 2.6,
+   "facing_deg": 91.222,
+   "jitter": {
+    "person_x": -0.2337,
+    "facing_deg": 1.222,
+    "path_offset": -0.013,
+    "start_x": 0.1571
+   },
+   "station": {
+    "position": [
+     -0.2337,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8429,
+    0.263
+   ],
+   "goal": [
+    5.1571,
+    0.263
+   ],
+   "person": {
+    "position": [
+     -0.2337,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 91.222
+   },
+   "physical_signature": "5a074b1375c06575"
+  },
+  "EN-R_w2.60_s006": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 6,
+   "width_m": 2.6,
+   "facing_deg": 92.202,
+   "jitter": {
+    "person_x": -0.1918,
+    "facing_deg": 2.2016,
+    "path_offset": -0.0279,
+    "start_x": 0.0155
+   },
+   "station": {
+    "position": [
+     -0.1918,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9845,
+    0.2779
+   ],
+   "goal": [
+    5.0155,
+    0.2779
+   ],
+   "person": {
+    "position": [
+     -0.1918,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 92.202
+   },
+   "physical_signature": "5c572d9a23c6538b"
+  },
+  "EN-R_w2.60_s007": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 7,
+   "width_m": 2.6,
+   "facing_deg": 88.139,
+   "jitter": {
+    "person_x": -0.1724,
+    "facing_deg": -1.8607,
+    "path_offset": 0.0263,
+    "start_x": -0.1111
+   },
+   "station": {
+    "position": [
+     -0.1724,
+     1.075
+    ]
+   },
+   "start": [
+    -5.1111,
+    0.2237
+   ],
+   "goal": [
+    4.8889,
+    0.2237
+   ],
+   "person": {
+    "position": [
+     -0.1724,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 88.139
+   },
+   "physical_signature": "f12b86ceeebe09d2"
+  },
+  "EN-R_w2.60_s008": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 8,
+   "width_m": 2.6,
+   "facing_deg": 90.376,
+   "jitter": {
+    "person_x": -0.0313,
+    "facing_deg": 0.3758,
+    "path_offset": -0.0198,
+    "start_x": 0.0257
+   },
+   "station": {
+    "position": [
+     -0.0313,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9743,
+    0.2698
+   ],
+   "goal": [
+    5.0257,
+    0.2698
+   ],
+   "person": {
+    "position": [
+     -0.0313,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 90.376
+   },
+   "physical_signature": "65b3bbc7536d75ce"
+  },
+  "EN-R_w2.60_s009": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 9,
+   "width_m": 2.6,
+   "facing_deg": 94.288,
+   "jitter": {
+    "person_x": 0.0461,
+    "facing_deg": 4.2876,
+    "path_offset": 0.0145,
+    "start_x": 0.0991
+   },
+   "station": {
+    "position": [
+     0.0461,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9009,
+    0.2355
+   ],
+   "goal": [
+    5.0991,
+    0.2355
+   ],
+   "person": {
+    "position": [
+     0.0461,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 94.288
+   },
+   "physical_signature": "8ee43980c51bc1d4"
+  },
+  "EN-R_w2.60_s010": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 10,
+   "width_m": 2.6,
+   "facing_deg": 92.385,
+   "jitter": {
+    "person_x": 0.2548,
+    "facing_deg": 2.385,
+    "path_offset": -0.0141,
+    "start_x": 0.1082
+   },
+   "station": {
+    "position": [
+     0.2548,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8918,
+    0.2641
+   ],
+   "goal": [
+    5.1082,
+    0.2641
+   ],
+   "person": {
+    "position": [
+     0.2548,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 92.385
+   },
+   "physical_signature": "cfd2929c085e5b20"
+  },
+  "EN-R_w2.60_s011": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 11,
+   "width_m": 2.6,
+   "facing_deg": 91.775,
+   "jitter": {
+    "person_x": -0.2572,
+    "facing_deg": 1.7751,
+    "path_offset": 0.0054,
+    "start_x": 0.1889
+   },
+   "station": {
+    "position": [
+     -0.2572,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8111,
+    0.2446
+   ],
+   "goal": [
+    5.1889,
+    0.2446
+   ],
+   "person": {
+    "position": [
+     -0.2572,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 91.775
+   },
+   "physical_signature": "5561ee78f6166ec6"
+  },
+  "EN-R_w2.60_s012": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 12,
+   "width_m": 2.6,
+   "facing_deg": 86.494,
+   "jitter": {
+    "person_x": 0.0589,
+    "facing_deg": -3.5056,
+    "path_offset": -0.0249,
+    "start_x": -0.0011
+   },
+   "station": {
+    "position": [
+     0.0589,
+     1.075
+    ]
+   },
+   "start": [
+    -5.0011,
+    0.2749
+   ],
+   "goal": [
+    4.9989,
+    0.2749
+   ],
+   "person": {
+    "position": [
+     0.0589,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 86.494
+   },
+   "physical_signature": "b1753bcfd6e07a3d"
+  },
+  "EN-R_w2.60_s013": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 13,
+   "width_m": 2.6,
+   "facing_deg": 90.653,
+   "jitter": {
+    "person_x": 0.2108,
+    "facing_deg": 0.6526,
+    "path_offset": 0.0057,
+    "start_x": 0.1506
+   },
+   "station": {
+    "position": [
+     0.2108,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8494,
+    0.2443
+   ],
+   "goal": [
+    5.1506,
+    0.2443
+   ],
+   "person": {
+    "position": [
+     0.2108,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 90.653
+   },
+   "physical_signature": "e90957ad276bd076"
+  },
+  "EN-R_w2.60_s014": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 14,
+   "width_m": 2.6,
+   "facing_deg": 91.591,
+   "jitter": {
+    "person_x": -0.0651,
+    "facing_deg": 1.5907,
+    "path_offset": 0.024,
+    "start_x": -0.0931
+   },
+   "station": {
+    "position": [
+     -0.0651,
+     1.075
+    ]
+   },
+   "start": [
+    -5.0931,
+    0.226
+   ],
+   "goal": [
+    4.9069,
+    0.226
+   ],
+   "person": {
+    "position": [
+     -0.0651,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 91.591
+   },
+   "physical_signature": "757dd7cca4536167"
+  },
+  "EN-R_w2.60_s015": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 15,
+   "width_m": 2.6,
+   "facing_deg": 93.622,
+   "jitter": {
+    "person_x": -0.1127,
+    "facing_deg": 3.6216,
+    "path_offset": 0.0159,
+    "start_x": 0.0304
+   },
+   "station": {
+    "position": [
+     -0.1127,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9696,
+    0.2341
+   ],
+   "goal": [
+    5.0304,
+    0.2341
+   ],
+   "person": {
+    "position": [
+     -0.1127,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 93.622
+   },
+   "physical_signature": "4b63d4ec5de86bb7"
+  },
+  "EN-R_w2.60_s016": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 16,
+   "width_m": 2.6,
+   "facing_deg": 90.66,
+   "jitter": {
+    "person_x": -0.03,
+    "facing_deg": 0.66,
+    "path_offset": 0.02,
+    "start_x": -0.0968
+   },
+   "station": {
+    "position": [
+     -0.03,
+     1.075
+    ]
+   },
+   "start": [
+    -5.0968,
+    0.23
+   ],
+   "goal": [
+    4.9032,
+    0.23
+   ],
+   "person": {
+    "position": [
+     -0.03,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 90.66
+   },
+   "physical_signature": "436f6f180adb3152"
+  },
+  "EN-R_w2.60_s017": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 17,
+   "width_m": 2.6,
+   "facing_deg": 88.958,
+   "jitter": {
+    "person_x": -0.2678,
+    "facing_deg": -1.0424,
+    "path_offset": -0.0269,
+    "start_x": -0.0306
+   },
+   "station": {
+    "position": [
+     -0.2678,
+     1.075
+    ]
+   },
+   "start": [
+    -5.0306,
+    0.2769
+   ],
+   "goal": [
+    4.9694,
+    0.2769
+   ],
+   "person": {
+    "position": [
+     -0.2678,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 88.958
+   },
+   "physical_signature": "3c643bfe92c13600"
+  },
+  "EN-R_w2.60_s018": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 18,
+   "width_m": 2.6,
+   "facing_deg": 93.999,
+   "jitter": {
+    "person_x": -0.1687,
+    "facing_deg": 3.9993,
+    "path_offset": -0.0232,
+    "start_x": 0.1942
+   },
+   "station": {
+    "position": [
+     -0.1687,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8058,
+    0.2732
+   ],
+   "goal": [
+    5.1942,
+    0.2732
+   ],
+   "person": {
+    "position": [
+     -0.1687,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 93.999
+   },
+   "physical_signature": "9f034a37c849dc26"
+  },
+  "EN-R_w2.60_s019": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 19,
+   "width_m": 2.6,
+   "facing_deg": 92.813,
+   "jitter": {
+    "person_x": 0.0412,
+    "facing_deg": 2.813,
+    "path_offset": -0.0147,
+    "start_x": 0.033
+   },
+   "station": {
+    "position": [
+     0.0412,
+     1.075
+    ]
+   },
+   "start": [
+    -4.967,
+    0.2647
+   ],
+   "goal": [
+    5.033,
+    0.2647
+   ],
+   "person": {
+    "position": [
+     0.0412,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 92.813
+   },
+   "physical_signature": "545853f77278b02c"
+  },
+  "EN-R_w2.60_s020": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 20,
+   "width_m": 2.6,
+   "facing_deg": 89.649,
+   "jitter": {
+    "person_x": -0.2863,
+    "facing_deg": -0.351,
+    "path_offset": 0.0073,
+    "start_x": -0.0641
+   },
+   "station": {
+    "position": [
+     -0.2863,
+     1.075
+    ]
+   },
+   "start": [
+    -5.0641,
+    0.2427
+   ],
+   "goal": [
+    4.9359,
+    0.2427
+   ],
+   "person": {
+    "position": [
+     -0.2863,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 89.649
+   },
+   "physical_signature": "43a1fc65baad05a7"
+  },
+  "EN-R_w2.60_s021": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 21,
+   "width_m": 2.6,
+   "facing_deg": 87.697,
+   "jitter": {
+    "person_x": 0.1773,
+    "facing_deg": -2.3032,
+    "path_offset": -0.0036,
+    "start_x": 0.0459
+   },
+   "station": {
+    "position": [
+     0.1773,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9541,
+    0.2536
+   ],
+   "goal": [
+    5.0459,
+    0.2536
+   ],
+   "person": {
+    "position": [
+     0.1773,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 87.697
+   },
+   "physical_signature": "f4a7804ca59b8da9"
+  },
+  "EN-R_w2.60_s022": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 22,
+   "width_m": 2.6,
+   "facing_deg": 87.317,
+   "jitter": {
+    "person_x": 0.0371,
+    "facing_deg": -2.6833,
+    "path_offset": 0.0121,
+    "start_x": 0.1282
+   },
+   "station": {
+    "position": [
+     0.0371,
+     1.075
+    ]
+   },
+   "start": [
+    -4.8718,
+    0.2379
+   ],
+   "goal": [
+    5.1282,
+    0.2379
+   ],
+   "person": {
+    "position": [
+     0.0371,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 87.317
+   },
+   "physical_signature": "0aaa09ed3428b88d"
+  },
+  "EN-R_w2.60_s023": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 23,
+   "width_m": 2.6,
+   "facing_deg": 92.848,
+   "jitter": {
+    "person_x": 0.2825,
+    "facing_deg": 2.8476,
+    "path_offset": -0.0121,
+    "start_x": -0.1042
+   },
+   "station": {
+    "position": [
+     0.2825,
+     1.075
+    ]
+   },
+   "start": [
+    -5.1042,
+    0.2621
+   ],
+   "goal": [
+    4.8958,
+    0.2621
+   ],
+   "person": {
+    "position": [
+     0.2825,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 92.848
+   },
+   "physical_signature": "e2b8edb70fdc3c9f"
+  },
+  "EN-R_w2.60_s024": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 24,
+   "width_m": 2.6,
+   "facing_deg": 89.927,
+   "jitter": {
+    "person_x": 0.1811,
+    "facing_deg": -0.0726,
+    "path_offset": 0.0175,
+    "start_x": -0.0904
+   },
+   "station": {
+    "position": [
+     0.1811,
+     1.075
+    ]
+   },
+   "start": [
+    -5.0904,
+    0.2325
+   ],
+   "goal": [
+    4.9096,
+    0.2325
+   ],
+   "person": {
+    "position": [
+     0.1811,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 89.927
+   },
+   "physical_signature": "cc6cce821a1f54c0"
+  },
+  "EN-R_w2.60_s025": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 25,
+   "width_m": 2.6,
+   "facing_deg": 85.423,
+   "jitter": {
+    "person_x": -0.262,
+    "facing_deg": -4.5767,
+    "path_offset": -0.0253,
+    "start_x": -0.1435
+   },
+   "station": {
+    "position": [
+     -0.262,
+     1.075
+    ]
+   },
+   "start": [
+    -5.1435,
+    0.2753
+   ],
+   "goal": [
+    4.8565,
+    0.2753
+   ],
+   "person": {
+    "position": [
+     -0.262,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 85.423
+   },
+   "physical_signature": "480d4e4556f9f706"
+  },
+  "EN-R_w2.60_s026": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 26,
+   "width_m": 2.6,
+   "facing_deg": 94.709,
+   "jitter": {
+    "person_x": -0.0532,
+    "facing_deg": 4.7091,
+    "path_offset": -0.0173,
+    "start_x": -0.1599
+   },
+   "station": {
+    "position": [
+     -0.0532,
+     1.075
+    ]
+   },
+   "start": [
+    -5.1599,
+    0.2673
+   ],
+   "goal": [
+    4.8401,
+    0.2673
+   ],
+   "person": {
+    "position": [
+     -0.0532,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 94.709
+   },
+   "physical_signature": "8d8eb2044417f6d9"
+  },
+  "EN-R_w2.60_s027": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 27,
+   "width_m": 2.6,
+   "facing_deg": 87.754,
+   "jitter": {
+    "person_x": -0.2803,
+    "facing_deg": -2.2464,
+    "path_offset": 0.0208,
+    "start_x": 0.0052
+   },
+   "station": {
+    "position": [
+     -0.2803,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9948,
+    0.2292
+   ],
+   "goal": [
+    5.0052,
+    0.2292
+   ],
+   "person": {
+    "position": [
+     -0.2803,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 87.754
+   },
+   "physical_signature": "154d296667c76dc1"
+  },
+  "EN-R_w2.60_s028": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 28,
+   "width_m": 2.6,
+   "facing_deg": 86.985,
+   "jitter": {
+    "person_x": 0.0855,
+    "facing_deg": -3.015,
+    "path_offset": 0.0152,
+    "start_x": -0.1065
+   },
+   "station": {
+    "position": [
+     0.0855,
+     1.075
+    ]
+   },
+   "start": [
+    -5.1065,
+    0.2348
+   ],
+   "goal": [
+    4.8935,
+    0.2348
+   ],
+   "person": {
+    "position": [
+     0.0855,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 86.985
+   },
+   "physical_signature": "b2aafe02e21f2e66"
+  },
+  "EN-R_w2.60_s029": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 29,
+   "width_m": 2.6,
+   "facing_deg": 89.335,
+   "jitter": {
+    "person_x": -0.1199,
+    "facing_deg": -0.6652,
+    "path_offset": 0.0271,
+    "start_x": 0.0715
+   },
+   "station": {
+    "position": [
+     -0.1199,
+     1.075
+    ]
+   },
+   "start": [
+    -4.9285,
+    0.2229
+   ],
+   "goal": [
+    5.0715,
+    0.2229
+   ],
+   "person": {
+    "position": [
+     -0.1199,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 89.335
+   },
+   "physical_signature": "51200dd674004fb3"
+  },
+  "EN-R_w2.60_s030": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 30,
+   "width_m": 2.6,
+   "facing_deg": 89.012,
+   "jitter": {
+    "person_x": 0.0062,
+    "facing_deg": -0.988,
+    "path_offset": 0.0162,
+    "start_x": 0.046
+   },
+   "station": {
+    "position": [
+     0.0062,
+     1.075
+    ]
+   },
+   "start": [
+    -4.954,
+    0.2338
+   ],
+   "goal": [
+    5.046,
+    0.2338
+   ],
+   "person": {
+    "position": [
+     0.0062,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 89.012
+   },
+   "physical_signature": "6461f06a26163d1b"
+  },
+  "MV-P_w3.00_g0.40_s001": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 1,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1887,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.0098,
+    "walker_lane_y": -0.0113,
+    "amr_start_x": 0.1343
+   },
+   "start": [
+    -5.3657,
+    -0.2
+   ],
+   "goal": [
+    5.6343,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.9902,
+     0.1887
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1887
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "418b133d3a9ae0f8"
+  },
+  "MV-P_w3.00_g0.40_s002": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 2,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1849,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.2482,
+    "walker_lane_y": -0.0151,
+    "amr_start_x": 0.1306
+   },
+   "start": [
+    -5.3694,
+    -0.2
+   ],
+   "goal": [
+    5.6306,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.2482,
+     0.1849
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1849
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "1921d88f8d80dc0e"
+  },
+  "MV-P_w3.00_g0.40_s003": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 3,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1939,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.1554,
+    "walker_lane_y": -0.0061,
+    "amr_start_x": -0.1195
+   },
+   "start": [
+    -5.6195,
+    -0.2
+   ],
+   "goal": [
+    5.3805,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.8446,
+     0.1939
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1939
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "4f5f62eba5e707eb"
+  },
+  "MV-P_w3.00_g0.40_s004": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 4,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2197,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.3787,
+    "walker_lane_y": 0.0197,
+    "amr_start_x": 0.0894
+   },
+   "start": [
+    -5.4106,
+    -0.2
+   ],
+   "goal": [
+    5.5894,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.6213,
+     0.2197
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2197
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "c7aee79b241486b9"
+  },
+  "MV-P_w3.00_g0.40_s005": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 5,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2178,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.4458,
+    "walker_lane_y": 0.0178,
+    "amr_start_x": 0.1496
+   },
+   "start": [
+    -5.3504,
+    -0.2
+   ],
+   "goal": [
+    5.6496,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.5542,
+     0.2178
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2178
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "8f4f3d747046472e"
+  },
+  "MV-P_w3.00_g0.40_s006": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 6,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2051,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.1527,
+    "walker_lane_y": 0.0051,
+    "amr_start_x": -0.1918
+   },
+   "start": [
+    -5.6918,
+    -0.2
+   ],
+   "goal": [
+    5.3082,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.8473,
+     0.2051
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2051
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "3dd26909127b04ae"
+  },
+  "MV-P_w3.00_g0.40_s007": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 7,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2298,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.4882,
+    "walker_lane_y": 0.0298,
+    "amr_start_x": 0.165
+   },
+   "start": [
+    -5.335,
+    -0.2
+   ],
+   "goal": [
+    5.665,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.5118,
+     0.2298
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2298
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "23b33538d762e736"
+  },
+  "MV-P_w3.00_g0.40_s008": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 8,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1988,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.098,
+    "walker_lane_y": -0.0012,
+    "amr_start_x": 0.0335
+   },
+   "start": [
+    -5.4665,
+    -0.2
+   ],
+   "goal": [
+    5.5335,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.902,
+     0.1988
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1988
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "e6a065b087a8541b"
+  },
+  "MV-P_w3.00_g0.40_s009": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 9,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2001,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.4496,
+    "walker_lane_y": 0.0001,
+    "amr_start_x": -0.0584
+   },
+   "start": [
+    -5.5584,
+    -0.2
+   ],
+   "goal": [
+    5.4416,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.4496,
+     0.2001
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2001
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "624808361fb5dca2"
+  },
+  "MV-P_w3.00_g0.40_s010": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 10,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1995,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.3872,
+    "walker_lane_y": -0.0005,
+    "amr_start_x": -0.0705
+   },
+   "start": [
+    -5.5705,
+    -0.2
+   ],
+   "goal": [
+    5.4295,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.6128,
+     0.1995
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1995
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "7697844203747fb9"
+  },
+  "MV-P_w3.00_g0.40_s011": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 11,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1863,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.4414,
+    "walker_lane_y": -0.0137,
+    "amr_start_x": -0.1847
+   },
+   "start": [
+    -5.6847,
+    -0.2
+   ],
+   "goal": [
+    5.3153,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.5586,
+     0.1863
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1863
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "68124fab41ce842d"
+  },
+  "MV-P_w3.00_g0.40_s012": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 12,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1832,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.1165,
+    "walker_lane_y": -0.0168,
+    "amr_start_x": -0.0859
+   },
+   "start": [
+    -5.5859,
+    -0.2
+   ],
+   "goal": [
+    5.4141,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.8835,
+     0.1832
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1832
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "561c032ee5386635"
+  },
+  "MV-P_w3.00_g0.40_s013": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 13,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1923,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.2948,
+    "walker_lane_y": -0.0077,
+    "amr_start_x": -0.1948
+   },
+   "start": [
+    -5.6948,
+    -0.2
+   ],
+   "goal": [
+    5.3052,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.2948,
+     0.1923
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1923
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "44b9a9e1c757202a"
+  },
+  "MV-P_w3.00_g0.40_s014": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 14,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2271,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.2462,
+    "walker_lane_y": 0.0271,
+    "amr_start_x": 0.0926
+   },
+   "start": [
+    -5.4074,
+    -0.2
+   ],
+   "goal": [
+    5.5926,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.7538,
+     0.2271
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2271
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "6bc75f5764ec2e05"
+  },
+  "MV-P_w3.00_g0.40_s015": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 15,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1813,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.4885,
+    "walker_lane_y": -0.0187,
+    "amr_start_x": -0.0272
+   },
+   "start": [
+    -5.5272,
+    -0.2
+   ],
+   "goal": [
+    5.4728,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.4885,
+     0.1813
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1813
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "600b9d2699ad172b"
+  },
+  "MV-P_w3.00_g0.40_s016": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 16,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2155,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.3886,
+    "walker_lane_y": 0.0155,
+    "amr_start_x": -0.165
+   },
+   "start": [
+    -5.665,
+    -0.2
+   ],
+   "goal": [
+    5.335,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.6114,
+     0.2155
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2155
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "0769d8f869dd9125"
+  },
+  "MV-P_w3.00_g0.40_s017": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 17,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2117,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.0027,
+    "walker_lane_y": 0.0117,
+    "amr_start_x": -0.0732
+   },
+   "start": [
+    -5.5732,
+    -0.2
+   ],
+   "goal": [
+    5.4268,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.9973,
+     0.2117
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2117
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "c2b2c7d5298552a4"
+  },
+  "MV-P_w3.00_g0.40_s018": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 18,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2172,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.4569,
+    "walker_lane_y": 0.0172,
+    "amr_start_x": -0.1628
+   },
+   "start": [
+    -5.6628,
+    -0.2
+   ],
+   "goal": [
+    5.3372,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.5431,
+     0.2172
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2172
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "fa2f46414532757c"
+  },
+  "MV-P_w3.00_g0.40_s019": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 19,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1761,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.0264,
+    "walker_lane_y": -0.0239,
+    "amr_start_x": -0.0724
+   },
+   "start": [
+    -5.5724,
+    -0.2
+   ],
+   "goal": [
+    5.4276,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.9736,
+     0.1761
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1761
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "d6333d6948982257"
+  },
+  "MV-P_w3.00_g0.40_s020": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 20,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2045,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.1515,
+    "walker_lane_y": 0.0045,
+    "amr_start_x": -0.1871
+   },
+   "start": [
+    -5.6871,
+    -0.2
+   ],
+   "goal": [
+    5.3129,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.8485,
+     0.2045
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2045
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "e79d574624e9994a"
+  },
+  "MV-P_w3.00_g0.40_s021": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 21,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1813,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.321,
+    "walker_lane_y": -0.0187,
+    "amr_start_x": -0.0146
+   },
+   "start": [
+    -5.5146,
+    -0.2
+   ],
+   "goal": [
+    5.4854,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.679,
+     0.1813
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1813
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "00987b76b1a067c0"
+  },
+  "MV-P_w3.00_g0.40_s022": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 22,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1957,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.4372,
+    "walker_lane_y": -0.0043,
+    "amr_start_x": 0.0906
+   },
+   "start": [
+    -5.4094,
+    -0.2
+   ],
+   "goal": [
+    5.5906,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.4372,
+     0.1957
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1957
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "3797021dc5212bbc"
+  },
+  "MV-P_w3.00_g0.40_s023": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 23,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.194,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.3876,
+    "walker_lane_y": -0.006,
+    "amr_start_x": -0.1854
+   },
+   "start": [
+    -5.6854,
+    -0.2
+   ],
+   "goal": [
+    5.3146,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.6124,
+     0.194
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.194
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "2fb8102618e30a5a"
+  },
+  "MV-P_w3.00_g0.40_s024": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 24,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2219,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.2301,
+    "walker_lane_y": 0.0219,
+    "amr_start_x": -0.1033
+   },
+   "start": [
+    -5.6033,
+    -0.2
+   ],
+   "goal": [
+    5.3967,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.7699,
+     0.2219
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2219
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "575ebf8c6597b5dc"
+  },
+  "MV-P_w3.00_g0.40_s025": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 25,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1874,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": -0.289,
+    "walker_lane_y": -0.0126,
+    "amr_start_x": 0.1828
+   },
+   "start": [
+    -5.3172,
+    -0.2
+   ],
+   "goal": [
+    5.6828,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     6.711,
+     0.1874
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1874
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "14ab349c11313004"
+  },
+  "MV-P_w3.00_g0.40_s026": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 26,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1921,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.3634,
+    "walker_lane_y": -0.0079,
+    "amr_start_x": 0.0658
+   },
+   "start": [
+    -5.4342,
+    -0.2
+   ],
+   "goal": [
+    5.5658,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.3634,
+     0.1921
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1921
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "e3b425296c9bf58b"
+  },
+  "MV-P_w3.00_g0.40_s027": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 27,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2076,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.2105,
+    "walker_lane_y": 0.0076,
+    "amr_start_x": -0.1482
+   },
+   "start": [
+    -5.6482,
+    -0.2
+   ],
+   "goal": [
+    5.3518,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.2105,
+     0.2076
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2076
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "670db632e33e3c1e"
+  },
+  "MV-P_w3.00_g0.40_s028": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 28,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2194,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.2816,
+    "walker_lane_y": 0.0194,
+    "amr_start_x": -0.0468
+   },
+   "start": [
+    -5.5468,
+    -0.2
+   ],
+   "goal": [
+    5.4532,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.2816,
+     0.2194
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2194
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "fb21fa064b9ba71f"
+  },
+  "MV-P_w3.00_g0.40_s029": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 29,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2129,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.0041,
+    "walker_lane_y": 0.0129,
+    "amr_start_x": -0.0392
+   },
+   "start": [
+    -5.5392,
+    -0.2
+   ],
+   "goal": [
+    5.4608,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.0041,
+     0.2129
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2129
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "fe939840ce85fd3f"
+  },
+  "MV-P_w3.00_g0.40_s030": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 30,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2174,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.1934,
+    "walker_lane_y": 0.0174,
+    "amr_start_x": 0.1361
+   },
+   "start": [
+    -5.3639,
+    -0.2
+   ],
+   "goal": [
+    5.6361,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.1934,
+     0.2174
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2174
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "226d84df6d7cb405"
+  }
+ },
+ "seeds": {},
+ "conditions": {
+  "S3_a0.50": {
+   "label": "State-wise uniform scale alpha 0.50 of R_ref 0.950 (station_engaged F0.475 S0.416 R0.356; stationary F0.362 S0.407 R0.475; moving F0.475 S0.356 R0.356)",
+   "alpha": 0.5
+  },
+  "S3_a0.60": {
+   "label": "State-wise uniform scale alpha 0.60 of R_ref 0.950 (station_engaged F0.570 S0.499 R0.427; stationary F0.434 S0.489 R0.570; moving F0.570 S0.427 R0.427)",
+   "alpha": 0.6
+  },
+  "S3_a0.70": {
+   "label": "State-wise uniform scale alpha 0.70 of R_ref 0.950 (station_engaged F0.665 S0.582 R0.499; stationary F0.507 S0.570 R0.665; moving F0.665 S0.499 R0.499)",
+   "alpha": 0.7
+  },
+  "S3_a0.80": {
+   "label": "State-wise uniform scale alpha 0.80 of R_ref 0.950 (station_engaged F0.760 S0.665 R0.570; stationary F0.579 S0.651 R0.760; moving F0.760 S0.570 R0.570)",
+   "alpha": 0.8
+  },
+  "S3_a0.90": {
+   "label": "State-wise uniform scale alpha 0.90 of R_ref 0.950 (station_engaged F0.855 S0.748 R0.641; stationary F0.651 S0.733 R0.855; moving F0.855 S0.641 R0.641)",
+   "alpha": 0.9
+  }
+ },
+ "alphas": [
+  0.5,
+  0.6,
+  0.7,
+  0.8,
+  0.9
+ ],
+ "n_trials": 750,
+ "checksums": {
+  "manifest_sha256_16": "76eeb062b9be4298",
+  "config_sha256_16": "cd654c19b78810dc",
+  "files": {
+   "configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml": "11d0dbd4e99d3024",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.50.yaml": "3bfaebc961686653",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.60.yaml": "e1f39a8b2cd71681",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml": "4b2190a877771b45",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.80.yaml": "e44abfd1fb3d4147",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.90.yaml": "84ecfb1f55d685fc",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s001.yaml": "5a784341285427bb",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s002.yaml": "2967d243670b710b",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s003.yaml": "8624e7ee8de8fa6a",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s004.yaml": "982943a3e3ca93a1",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s005.yaml": "2dab99a87b808838",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s006.yaml": "a2f8df9135343144",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s007.yaml": "f1b27962cd5d73d9",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s008.yaml": "861fc4113fef2023",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s009.yaml": "af2dfb8605383d1e",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s010.yaml": "9c1bba39df639511",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s011.yaml": "34ae7b93f3e36d96",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s012.yaml": "418a71cf881aa80d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s013.yaml": "45094978ab26b979",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s014.yaml": "ce165a095502f743",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s015.yaml": "030b0265c6803b8a",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s016.yaml": "20e3ba5856d7c0cf",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s017.yaml": "a0340788e2b6fa95",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s018.yaml": "da8e8e19e28315ed",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s019.yaml": "8ed0d531d5f1adb8",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s020.yaml": "364fb34823e3ba19",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s021.yaml": "b9575c796e00eb03",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s022.yaml": "feef2057746f60e5",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s023.yaml": "bdb6e9252a842771",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s024.yaml": "fe87763f17da9ba3",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s025.yaml": "6369896f5124c5db",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s026.yaml": "f3f73b746da527a4",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s027.yaml": "e35e6a5b0cc8e3f3",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s028.yaml": "8c07aac4a1973a1d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s029.yaml": "5f35d098c63feee0",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s030.yaml": "5f5a37dd37d9a43d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s001.yaml": "d05ba04edd737bf5",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s002.yaml": "3a8c68b3610fde9d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s003.yaml": "b3ca2cbfd837283a",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s004.yaml": "0c414e663b7e5f26",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s005.yaml": "73885e4a89520f75",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s006.yaml": "5dc0447ab118d391",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s007.yaml": "0093ee531955a53c",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s008.yaml": "ea292e1db1903b14",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s009.yaml": "d244706abb8721ca",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s010.yaml": "6c1f6ee936a968fb",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s011.yaml": "7694a8df987c0914",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s012.yaml": "a3006a25fedf1187",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s013.yaml": "a35e94bd0fa37629",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s014.yaml": "57d6ff6c4ced8e40",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s015.yaml": "babe525afdbdc2e4",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s016.yaml": "18bd4fe7819ed0cc",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s017.yaml": "396cd229039bc5b4",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s018.yaml": "6db040de05de5d65",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s019.yaml": "44ea961e5ac95d65",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s020.yaml": "58321b08900042c5",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s021.yaml": "1db13630fef9a79a",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s022.yaml": "31600fe3e5fa53a7",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s023.yaml": "2cf5b17943b5fdcc",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s024.yaml": "e06c340a8b3933cc",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s025.yaml": "3a171031b7e87e01",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s026.yaml": "27a996affbefa3c9",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s027.yaml": "9905f9ddab747300",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s028.yaml": "29a081307522399a",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s029.yaml": "9ba5eff3e187f174",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s030.yaml": "6d367fcedc7f0aaf",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s001.yaml": "c35191eb4bbab937",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s002.yaml": "027e93ffb84e7fea",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s003.yaml": "b00593ff56f9e86f",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s004.yaml": "d64557cd75e0c95b",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s005.yaml": "15eefc7fd8c47394",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s006.yaml": "3cd62f351ddd3cb9",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s007.yaml": "29f82ac7ef82212d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s008.yaml": "bcb2ad062244f6d6",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s009.yaml": "ccd18b613898b46e",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s010.yaml": "866e285e230a4bbd",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s011.yaml": "15d020eabd146c97",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s012.yaml": "3985c86bfcab9a20",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s013.yaml": "0badf8b115aecf64",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s014.yaml": "269fea165211cb64",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s015.yaml": "7a6b88c6f6e6b76f",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s016.yaml": "7cf80a6bef09e422",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s017.yaml": "d1558bd6629caac6",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s018.yaml": "2dcc75c88c0be24b",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s019.yaml": "17deadab7ec0ec4a",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s020.yaml": "7ecfa412ac5fe4f5",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s021.yaml": "e781a5b7f5f937f9",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s022.yaml": "e1f46cf9150d77a3",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s023.yaml": "7974358c5a8cefa0",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s024.yaml": "4fb81a0fe3cd5a94",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s025.yaml": "85b453a30d7b0cce",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s026.yaml": "6e152f52ced35e4e",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s027.yaml": "d23891442132f4f3",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s028.yaml": "d8c43b97e72c1197",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s029.yaml": "a40f30fe39492c67",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s030.yaml": "c5f98032c6b43692",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s001.yaml": "859bc0f3415f3dc8",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s002.yaml": "64003c9144c7c43c",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s003.yaml": "d6088c9bff94b89b",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s004.yaml": "444b85a5343bfe13",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s005.yaml": "c8215add821e4592",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s006.yaml": "a78109c3782010b9",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s007.yaml": "46135b2bd3b28504",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s008.yaml": "444582e02a06f697",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s009.yaml": "f2206d599c944ce3",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s010.yaml": "785798e993dff380",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s011.yaml": "07c58e115c8cc3eb",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s012.yaml": "1f43a90d21dce691",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s013.yaml": "354e4f9a4c0d1cb7",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s014.yaml": "37b136f6cc514c8f",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s015.yaml": "47e05cbc3a0ad026",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s016.yaml": "9b971f240ae831b3",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s017.yaml": "9b65987d20817ff8",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s018.yaml": "9f58fa0a653569ff",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s019.yaml": "958b2043e937782f",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s020.yaml": "5d2f98e59bef0f68",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s021.yaml": "4a42a09bbee81a0e",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s022.yaml": "be0a5769401e2a5d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s023.yaml": "bffca70a5ed32f95",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s024.yaml": "7d8c11c5d2e32b03",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s025.yaml": "ca02f2f58de83ab7",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s026.yaml": "a7c8036e9fb48028",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s027.yaml": "6c91a403e2f4c067",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s028.yaml": "de169be8fe6f29d9",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s029.yaml": "53dfbbefccd4f332",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s030.yaml": "effdb4059c199c80",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s001.yaml": "410ecb94f0f6de23",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s002.yaml": "9b9f51ce3528e4aa",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s003.yaml": "499238d881313c44",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s004.yaml": "6f76e07bd5109c61",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s005.yaml": "6522b649d1378ca3",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s006.yaml": "0ef4accaedf18fd7",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s007.yaml": "b9b90cfbd9d926eb",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s008.yaml": "0a48b7ec16f4b0aa",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s009.yaml": "f2a1b0421da3650b",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s010.yaml": "482931a910adea2d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s011.yaml": "a9b767c9991280ec",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s012.yaml": "4c7efdaefcf39600",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s013.yaml": "ba8a5de9beac9fcc",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s014.yaml": "8e9f56969d0d119e",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s015.yaml": "cd45b3c18fcff144",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s016.yaml": "972c760f61876822",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s017.yaml": "ed09878a65ae791e",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s018.yaml": "898f166d558a80e5",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s019.yaml": "7181ad36f17e24f5",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s020.yaml": "5a2f0f7a89f2f461",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s021.yaml": "cacef3176c700c57",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s022.yaml": "8ada32d9e4d19cfc",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s023.yaml": "ab43e1d996b11a99",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s024.yaml": "69c09371e9c5f345",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s025.yaml": "2bafe37b5be98d0c",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s026.yaml": "79f00344fc28106c",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s027.yaml": "d5742460ea91e6e6",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s028.yaml": "c1c17e6de6c0e09d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s029.yaml": "3fa0c197cfefa69b",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s030.yaml": "e9819152e4258166"
+  }
+ }
+}

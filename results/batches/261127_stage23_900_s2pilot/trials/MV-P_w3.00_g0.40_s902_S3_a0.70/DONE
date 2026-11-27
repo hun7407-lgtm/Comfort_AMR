@@ -1,0 +1,19 @@
+{
+ "trial_id": "MV-P_w3.00_g0.40_s902_S3_a0.70",
+ "seed": 902,
+ "condition": "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml",
+ "config": "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s902.yaml",
+ "commit": "062a7b3",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 80,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 80,
+ "finished": "2026-11-27T23:19:03"
+}

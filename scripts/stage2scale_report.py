@@ -94,6 +94,10 @@ def score_launch(tdir: Path, plan: dict, geom: dict, scn: dict):
         "nav_class": A["class"], "class_detail": A.get("class_detail"), "result": A["result"],
         "completed": completed, "contact": (A.get("contact_s") or 0.0) > 0.0,
         "contact_s": A.get("contact_s"), "protective_stop_s": A.get("protective_stop_s"),
+        # who closed the last centimetre of the human-AMR touch (secondary sensitivity only;
+        # `contact` above is ALL human-AMR contact and is the primary figure)
+        "contact_robot_closed": (A.get("contact_robot_closed_s") or 0.0) > 0.0,
+        "contact_robot_closed_s": A.get("contact_robot_closed_s"),
         "terminal_protective_stop": A["class"] == "PROTECTIVE_STOP",
         "comfort_deadlock": A["class"] in fm.COMFORT_CLASSES,
         "hold_s": A["hold_s"], "travel_time_s": A["travel_time"],

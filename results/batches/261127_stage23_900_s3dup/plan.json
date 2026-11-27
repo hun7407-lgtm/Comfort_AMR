@@ -1,0 +1,331 @@
+{
+ "version": "stage23_900",
+ "phase": "s3dup",
+ "stage": 3,
+ "config": "configs/final_nav2only_stage23_900/stage23_900.yaml",
+ "commit_at_plan": "fee64d2",
+ "control_mode": "nav2_only",
+ "anchor_m": 0.95,
+ "anchor_provenance": "new_nav2_only_upper_abbreviated_261126",
+ "moving_reference_speed_mps": 1.0,
+ "templates_raw": {
+  "station_engaged": {
+   "front": 0.8,
+   "side": 0.7,
+   "rear": 0.6
+  },
+  "stationary": {
+   "front": 0.8,
+   "side": 0.9,
+   "rear": 1.05
+  },
+  "moving": {
+   "front": 1.2,
+   "side": 0.9,
+   "rear": 0.9
+  }
+ },
+ "templates_normalised": {
+  "station_engaged": {
+   "front": 0.9499999999999998,
+   "side": 0.8312499999999998,
+   "rear": 0.7124999999999998
+  },
+  "stationary": {
+   "front": 0.7238095238095238,
+   "side": 0.8142857142857142,
+   "rear": 0.95
+  },
+  "moving": {
+   "front": 0.95,
+   "side": 0.7125,
+   "rear": 0.7125
+  }
+ },
+ "min_radius_m": 0.3,
+ "min_alpha_without_clip": 0.42105263157894746,
+ "extents_by_alpha": {
+  "0.50": {
+   "station_engaged": {
+    "front": 0.4749999999999999,
+    "side": 0.4156249999999999,
+    "rear": 0.3562499999999999
+   },
+   "stationary": {
+    "front": 0.3619047619047619,
+    "side": 0.4071428571428571,
+    "rear": 0.475
+   },
+   "moving": {
+    "front": 0.475,
+    "side": 0.35625,
+    "rear": 0.35625
+   }
+  },
+  "0.60": {
+   "station_engaged": {
+    "front": 0.5699999999999998,
+    "side": 0.49874999999999986,
+    "rear": 0.4274999999999999
+   },
+   "stationary": {
+    "front": 0.4342857142857143,
+    "side": 0.4885714285714285,
+    "rear": 0.57
+   },
+   "moving": {
+    "front": 0.57,
+    "side": 0.4275,
+    "rear": 0.4275
+   }
+  },
+  "0.70": {
+   "station_engaged": {
+    "front": 0.6649999999999998,
+    "side": 0.5818749999999998,
+    "rear": 0.4987499999999998
+   },
+   "stationary": {
+    "front": 0.5066666666666666,
+    "side": 0.5699999999999998,
+    "rear": 0.6649999999999999
+   },
+   "moving": {
+    "front": 0.6649999999999999,
+    "side": 0.49874999999999997,
+    "rear": 0.49874999999999997
+   }
+  },
+  "0.80": {
+   "station_engaged": {
+    "front": 0.7599999999999999,
+    "side": 0.6649999999999999,
+    "rear": 0.5699999999999998
+   },
+   "stationary": {
+    "front": 0.579047619047619,
+    "side": 0.6514285714285714,
+    "rear": 0.76
+   },
+   "moving": {
+    "front": 0.76,
+    "side": 0.5700000000000001,
+    "rear": 0.5700000000000001
+   }
+  },
+  "0.90": {
+   "station_engaged": {
+    "front": 0.8549999999999999,
+    "side": 0.7481249999999998,
+    "rear": 0.6412499999999999
+   },
+   "stationary": {
+    "front": 0.6514285714285715,
+    "side": 0.7328571428571428,
+    "rear": 0.855
+   },
+   "moving": {
+    "front": 0.855,
+    "side": 0.64125,
+    "rear": 0.64125
+   }
+  }
+ },
+ "reference": {
+  "stationary": "N22a_B",
+  "station_engaged": "N22a_B",
+  "moving": "N22b_E1"
+ },
+ "criteria": {
+  "primary_target": 5.0,
+  "sensitivity_targets": [
+   4.5,
+   5.5
+  ],
+  "joint_min": 0.8,
+  "nav_min": 0.8,
+  "joint_min_sensitivity": 0.9,
+  "min_distance_response_m": 0.1,
+  "reference_speed_tolerance_mps": 0.1
+ },
+ "references": [
+  "N22a_B: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study B (AGV) (standing still, robot 0.35 m/s); right a0 5.39 sigma 46.14 cm, front a0 5.62 sigma 44.13 cm, left a0 5.39 sigma 47.21 cm, back a0 4.58 sigma 39.11 cm",
+  "N22a_A: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study A (Pepper) (standing still, robot 0.35 m/s); right a0 6.15 sigma 47.25 cm, front a0 6.15 sigma 41.51 cm, left a0 6.04 sigma 49.52 cm, back a0 3.92 sigma 35.65 cm",
+  "N22b_E1: Neggers et al. 2022, Front Robot AI 9:915972, Exp. 1, Table 2 (eta = 0) (walking, passed head-on, robot 0.35 m/s); right a0 5.71 sigma 44.2 cm, front a0 5.71 sigma 44.2 cm, left a0 5.71 sigma 44.2 cm, back a0 5.71 sigma 44.2 cm"
+ ],
+ "amr_half_length_m": 0.35,
+ "amr_half_width_m": 0.24,
+ "human_radius_m": 0.25,
+ "frozen": {
+  "ST-F": {
+   "width_m": 2.6
+  },
+  "ST-S": {
+   "width_m": 2.6
+  },
+  "ST-R": {
+   "width_m": 2.6
+  },
+  "EN-R": {
+   "width_m": 2.6
+  },
+  "MV-P": {
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "status": "UNIDENTIFIABLE_GEOMETRY"
+  }
+ },
+ "scenarios": {},
+ "geometries": {},
+ "seeds": {
+  "2002": {
+   "seed": 2002,
+   "family": "BOTTLENECK",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      7.3,
+      400.0
+     ],
+     "edge_start_at": [
+      9.45,
+      402.15
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S3",
+     "edge": "E2",
+     "belt_start_at": [
+      13.9,
+      400.0
+     ],
+     "edge_start_at": [
+      16.11,
+      402.21
+     ]
+    }
+   ],
+   "physical_signature": "77542fdfd761b72f"
+  },
+  "2003": {
+   "seed": 2003,
+   "family": "CROSSING",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N2",
+     "edge": "E1",
+     "belt_start_at": [
+      10.6,
+      4.4
+     ],
+     "edge_start_at": [
+      12.92,
+      6.72
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      10.3,
+      23.4
+     ],
+     "edge_start_at": [
+      12.56,
+      25.66
+     ]
+    }
+   ],
+   "physical_signature": "75ca7672efcaa384"
+  },
+  "2001": {
+   "seed": 2001,
+   "family": "NOMINAL",
+   "exchange_timing": [
+    {
+     "side": "north",
+     "belt": "N1",
+     "edge": "E1",
+     "belt_start_at": [
+      9.6,
+      9.6
+     ],
+     "edge_start_at": [
+      11.76,
+      11.76
+     ]
+    },
+    {
+     "side": "south",
+     "belt": "S1",
+     "edge": "E2",
+     "belt_start_at": [
+      14.5,
+      14.5
+     ],
+     "edge_start_at": [
+      16.68,
+      16.68
+     ]
+    }
+   ],
+   "physical_signature": "70157430c449ef13"
+  }
+ },
+ "policies": {
+  "C1": "B2_r0.950",
+  "C2": "S3_a0.60",
+  "C3": "S3_a0.70",
+  "C4": "S3_a0.80",
+  "C5": "S3_a0.90"
+ },
+ "conditions": {
+  "B2_r0.950": {
+   "label": "B2 static circle 0.950 m (R_ref, new_nav2_only_upper_abbreviated_261126)",
+   "alpha": null
+  },
+  "S3_a0.60": {
+   "label": "State-wise uniform scale alpha 0.60 of R_ref 0.950 (station_engaged F0.570 S0.499 R0.427; stationary F0.434 S0.489 R0.570; moving F0.570 S0.427 R0.427)",
+   "alpha": 0.6
+  },
+  "S3_a0.70": {
+   "label": "State-wise uniform scale alpha 0.70 of R_ref 0.950 (station_engaged F0.665 S0.582 R0.499; stationary F0.507 S0.570 R0.665; moving F0.665 S0.499 R0.499)",
+   "alpha": 0.7
+  },
+  "S3_a0.80": {
+   "label": "State-wise uniform scale alpha 0.80 of R_ref 0.950 (station_engaged F0.760 S0.665 R0.570; stationary F0.579 S0.651 R0.760; moving F0.760 S0.570 R0.570)",
+   "alpha": 0.8
+  },
+  "S3_a0.90": {
+   "label": "State-wise uniform scale alpha 0.90 of R_ref 0.950 (station_engaged F0.855 S0.748 R0.641; stationary F0.651 S0.733 R0.855; moving F0.855 S0.641 R0.641)",
+   "alpha": 0.9
+  }
+ },
+ "encounter": {
+  "radius_m": 1.5,
+  "scored_at": "closest"
+ },
+ "winner_rule": "Eligible policy: contact trials <= 1/30, nav completion (all 3 AMRs) >= 0.80, primary joint\n>= 0.80, encounter scoring coverage >= 0.90. None eligible -> NO_ACCEPTABLE_SCALE.\nAmong eligible: highest observed joint is the reference; every other eligible policy is\ncompared with it by exact paired McNemar (Holm over the comparisons). Policies not\nsignificantly worse (adjusted p >= 0.05) form the top set; the top set's Pareto front on\n(joint, nav, median capped system time) is reported; tie-break = smallest median capped\nsystem time (failures capped at the run limit). All comparisons are exploratory at n = 30.\n",
+ "n_trials": 6,
+ "checksums": {
+  "manifest_sha256_16": "3d9ef1007f467238",
+  "config_sha256_16": "cd654c19b78810dc",
+  "files": {
+   "configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml": "11d0dbd4e99d3024",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.50.yaml": "3bfaebc961686653",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.60.yaml": "e1f39a8b2cd71681",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml": "4b2190a877771b45",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.80.yaml": "e44abfd1fb3d4147",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.90.yaml": "84ecfb1f55d685fc",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml": "fdf31190d92b668d",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml": "486625d9133fa184",
+   "configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml": "9b73195fbc2b5ae1"
+  }
+ }
+}
