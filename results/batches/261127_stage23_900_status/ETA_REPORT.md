@@ -1,27 +1,27 @@
-# ETA_REPORT — stage23_900 (generated 2026-11-28 03:09:54 KST)
+# ETA_REPORT — stage23_900 (generated 2026-11-28 07:14:57 KST)
 
 **Estimate from measured wall-clock time, not a guarantee.** One Isaac Sim worker, trials in sequence.
 Hardware: NVIDIA GeForce RTX 5080, 580.173.02; 12th Gen Intel(R) Core(TM) i9-12900.
 
-**MAIN progress 13.3 %** (120/900 valid)
+**MAIN progress 33.3 %** (300/900 valid)
 
 | stage | target | done | valid | invalid | retried | timeouts | remaining | main started | live trials/h |
 |---|---:|---:|---:|---:|---:|---:|---:|---|---:|
-| Stage 2 | 750 | 120 | 120 | 0 | 0 | 0 | 630 | 2026-11-28 00:24 | 43.74 |
+| Stage 2 | 750 | 300 | 300 | 0 | 0 | 0 | 450 | 2026-11-28 00:24 | 43.98 |
 | Stage 3 | 150 | 0 | 0 | 0 | 0 | 0 | 150 | — | — |
 
 Measured wall time per launch (all launches so far, pilot + main, every outcome):
 
 | stage | samples | mean s | median s | P25 s | P90 s | min–max s | runner gap median / P90 s | trials/h (mean) |
 |---|---:|---:|---:|---:|---:|---|---|---:|
-| Stage 2 | 180 | 82.5 | 77.0 | 77.0 | 82.0 | 76–144 | 0.0 / 1.0 | 43.6 |
+| Stage 2 | 360 | 82.0 | 77.0 | 77.0 | 82.0 | 76–144 | 0.0 / 1.0 | 43.9 |
 | Stage 3 | 15 | 249.8 | 243.0 | 241.0 | 247.2 | 236–357 | 0.0 / 1.0 | 14.4 |
 
 | scenario | Stage 2 MAIN end | Stage 3 MAIN end | all runs (incl. duplicate control) | final analysis |
 |---|---|---|---|---|
-| optimistic | 2026-11-28 17:13 KST | 2026-11-29 03:35 KST | 2026-11-29 04:00 KST | **2026-11-29 04:30 KST** (25.34 h) |
-| central | 2026-11-28 18:09 KST | 2026-11-29 04:53 KST | 2026-11-29 05:18 KST | **2026-11-29 05:48 KST** (26.64 h) |
-| conservative | 2026-11-28 18:59 KST | 2026-11-29 06:11 KST | 2026-11-29 06:37 KST | **2026-11-29 07:07 KST** (27.96 h) |
+| optimistic | 2026-11-28 17:27 KST | 2026-11-29 03:49 KST | 2026-11-29 04:14 KST | **2026-11-29 04:44 KST** (21.48 h) |
+| central | 2026-11-28 18:03 KST | 2026-11-29 04:48 KST | 2026-11-29 05:13 KST | **2026-11-29 05:43 KST** (22.47 h) |
+| conservative | 2026-11-28 18:43 KST | 2026-11-29 05:55 KST | 2026-11-29 06:21 KST | **2026-11-29 06:51 KST** (23.6 h) |
 
 Batches:
 
@@ -29,7 +29,7 @@ Batches:
 |---|---:|---:|---:|
 | s2pilot | 60 | 60 | 0 |
 | s3pilot | 15 | 15 | 0 |
-| s2main | 750 | 120 | 0 |
+| s2main | 750 | 300 | 0 |
 | s3main | 150 | 0 | 0 |
 | s3dup | 6 | 0 | 0 |
 
