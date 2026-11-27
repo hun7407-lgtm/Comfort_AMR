@@ -1,0 +1,131 @@
+{
+ "generated_kst": "2026-11-28 01:08:53",
+ "hardware": {
+  "gpu": "NVIDIA GeForce RTX 5080, 580.173.02",
+  "cpu": "12th Gen Intel(R) Core(TM) i9-12900",
+  "workers": 1,
+  "mode": "Isaac Sim 5.1 + ROS 2 Jazzy + Nav2, one trial at a time (run_scenario.sh per trial)"
+ },
+ "note": "",
+ "progress_percent": 3.3,
+ "main_valid": 30,
+ "main_target": 900,
+ "stages": {
+  "2": {
+   "main_target": 750,
+   "main_done": 30,
+   "main_valid": 30,
+   "main_invalid": 0,
+   "main_retried": 0,
+   "main_timeouts": 0,
+   "main_remaining": 720,
+   "main_started_kst": "2026-11-28 00:24",
+   "live_trials_per_hour": 41.8
+  },
+  "3": {
+   "main_target": 150,
+   "main_done": 0,
+   "main_valid": 0,
+   "main_invalid": 0,
+   "main_retried": 0,
+   "main_timeouts": 0,
+   "main_remaining": 150,
+   "main_started_kst": null,
+   "live_trials_per_hour": null
+  }
+ },
+ "wall_time_stats": {
+  "2": {
+   "n_samples": 90,
+   "mean_s": 84.1,
+   "median_s": 77.0,
+   "p25_s": 77.0,
+   "p90_s": 89.2,
+   "min_s": 76.0,
+   "max_s": 144.0,
+   "gap_median_s": 0.0,
+   "gap_p90_s": 1.0,
+   "gap_measured": true
+  },
+  "3": {
+   "n_samples": 15,
+   "mean_s": 249.8,
+   "median_s": 243.0,
+   "p25_s": 241.0,
+   "p90_s": 247.2,
+   "min_s": 236.0,
+   "max_s": 357.0,
+   "gap_median_s": 0.0,
+   "gap_p90_s": 1.0,
+   "gap_measured": true
+  }
+ },
+ "batches": {
+  "s2pilot": {
+   "manifest": 60,
+   "done": 60,
+   "invalid": 0
+  },
+  "s3pilot": {
+   "manifest": 15,
+   "done": 15,
+   "invalid": 0
+  },
+  "s2main": {
+   "manifest": 750,
+   "done": 30,
+   "invalid": 0
+  },
+  "s3main": {
+   "manifest": 150,
+   "done": 0,
+   "invalid": 0
+  },
+  "s3dup": {
+   "manifest": 6,
+   "done": 0,
+   "invalid": 0
+  }
+ },
+ "eta_kst": {
+  "optimistic": {
+   "stage2_main_end": "2026-11-28 17:07",
+   "stage3_main_end": "2026-11-29 03:30",
+   "all_runs_end": "2026-11-29 03:54",
+   "final_analysis_end": "2026-11-29 04:24"
+  },
+  "central": {
+   "stage2_main_end": "2026-11-28 18:57",
+   "stage3_main_end": "2026-11-29 05:41",
+   "all_runs_end": "2026-11-29 06:06",
+   "final_analysis_end": "2026-11-29 06:36"
+  },
+  "conservative": {
+   "stage2_main_end": "2026-11-28 20:40",
+   "stage3_main_end": "2026-11-29 07:51",
+   "all_runs_end": "2026-11-29 08:18",
+   "final_analysis_end": "2026-11-29 08:48"
+  }
+ },
+ "eta_remaining_h": {
+  "optimistic": {
+   "stage2_main_end": 15.98,
+   "stage3_main_end": 26.36,
+   "all_runs_end": 26.76,
+   "final_analysis_end": 27.26
+  },
+  "central": {
+   "stage2_main_end": 17.81,
+   "stage3_main_end": 28.55,
+   "all_runs_end": 28.97,
+   "final_analysis_end": 29.47
+  },
+  "conservative": {
+   "stage2_main_end": 19.53,
+   "stage3_main_end": 30.72,
+   "all_runs_end": 31.15,
+   "final_analysis_end": 31.65
+  }
+ },
+ "method": "wall-clock time is used: every trial's DONE `wall_s` (Isaac Sim start,\nROS 2 bring-up, the run, teardown and data writing, all retries of that trial) and\nthe gap between one trial's end and the next one's start (runner overhead). One Isaac\nSim worker on one GPU: trials run one after another (no parallelism is assumed).\n\nPer stage, from all of its launches so far (pilot + main, every outcome incl. timeouts):\n    optimistic   = P25 wall + median gap        per remaining trial\n    central      = mean wall + median gap\n    conservative = P90 wall + P90 gap, + 5 % retry / infra margin\nOnce >= 30 MAIN trials of a stage exist, central also reports the live throughput\n(trials/hour over the main run's elapsed wall time). Remaining work is executed in the\ncampaign order below; a fixed allowance covers freeze / commit / analysis steps.\nNo sample -> that stage's ETA is NOT computed (stated as such)."
+}
