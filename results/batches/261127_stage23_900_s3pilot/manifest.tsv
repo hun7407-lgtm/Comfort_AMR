@@ -1,0 +1,17 @@
+# stage23_900 s3pilot
+# trial_id	repeat	condition	config
+s2003_B2_r0.950	2003	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml
+s2003_S3_a0.60	2003	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.60.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml
+s2003_S3_a0.70	2003	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml
+s2003_S3_a0.80	2003	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.80.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml
+s2003_S3_a0.90	2003	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.90.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2003.yaml
+s2002_S3_a0.60	2002	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.60.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml
+s2002_S3_a0.70	2002	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml
+s2002_S3_a0.80	2002	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.80.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml
+s2002_S3_a0.90	2002	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.90.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml
+s2002_B2_r0.950	2002	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2002.yaml
+s2001_S3_a0.70	2001	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml
+s2001_S3_a0.80	2001	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.80.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml
+s2001_S3_a0.90	2001	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.90.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml
+s2001_B2_r0.950	2001	configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml
+s2001_S3_a0.60	2001	configs/final_nav2only_stage23_900/generated/conditions/S3_a0.60.yaml	configs/final_nav2only_stage23_900/generated/stage3/seeds/s2001.yaml

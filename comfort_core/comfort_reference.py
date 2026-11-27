@@ -197,6 +197,12 @@ def required_extents(target: float, state: str, amr_half_width: float,
     return {k: (None if v is None else round(max(v, 0.0), 4)) for k, v in out.items()}
 
 
+def clearance_matched_distance(d_cc: float, amr_half_width: float, reference_half_width: float) -> float:
+    """Centre distance at which the REFERENCE robot would have the same lateral
+    clearance (d_cc - amr_half_width) as this AMR: d_cc - hw_this + hw_ref."""
+    return d_cc - amr_half_width + reference_half_width
+
+
 # ---------------------------------------------------------- trial scoring
 def score_passage(ticks: Sequence[Dict[str, Any]], amr: str, person: str,
                   amr_half_width: float, state_reference: Optional[Dict[str, Optional[str]]] = None,
@@ -291,9 +297,13 @@ def score_passage(ticks: Sequence[Dict[str, Any]], amr: str, person: str,
         lo, hi = r["tested_cm"]
         out["inside_tested_range"] = lo <= best["d_cc"] * 100.0 <= hi
         out["amr_speed_vs_reference"] = round(out["amr_speed_at_closest_mps"] - r["robot_speed_mps"], 3)
-        shift = amr_half_width - r["robot_half_width_m"]
+        # documented basis: d_equiv = d_cc - hw_this_amr + hw_reference_robot (same lateral
+        # clearance as the reference robot). Fixed 2026-11-27: this line used d_cc + (hw_this - hw_ref),
+        # the opposite sign. Secondary metric only; the primary predicted_comfort_at_closest is unchanged.
+        d_equiv = clearance_matched_distance(best["d_cc"], amr_half_width, r["robot_half_width_m"])
+        out["d_equiv_clearance_matched_m"] = round(d_equiv, 4)
         out["predicted_comfort_clearance_matched"] = (
-            None if rel is None else round(comfort(best["ref"], best["d_cc"] + shift, theta_from_rel(rel)), 3))
+            None if rel is None else round(comfort(best["ref"], d_equiv, theta_from_rel(rel)), 3))
     return out
 
 

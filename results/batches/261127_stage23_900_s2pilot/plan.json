@@ -1,0 +1,946 @@
+{
+ "version": "stage23_900",
+ "phase": "s2pilot",
+ "stage": 2,
+ "config": "configs/final_nav2only_stage23_900/stage23_900.yaml",
+ "commit_at_plan": "e085cf0",
+ "control_mode": "nav2_only",
+ "anchor_m": 0.95,
+ "anchor_provenance": "new_nav2_only_upper_abbreviated_261126",
+ "moving_reference_speed_mps": 1.0,
+ "templates_raw": {
+  "station_engaged": {
+   "front": 0.8,
+   "side": 0.7,
+   "rear": 0.6
+  },
+  "stationary": {
+   "front": 0.8,
+   "side": 0.9,
+   "rear": 1.05
+  },
+  "moving": {
+   "front": 1.2,
+   "side": 0.9,
+   "rear": 0.9
+  }
+ },
+ "templates_normalised": {
+  "station_engaged": {
+   "front": 0.9499999999999998,
+   "side": 0.8312499999999998,
+   "rear": 0.7124999999999998
+  },
+  "stationary": {
+   "front": 0.7238095238095238,
+   "side": 0.8142857142857142,
+   "rear": 0.95
+  },
+  "moving": {
+   "front": 0.95,
+   "side": 0.7125,
+   "rear": 0.7125
+  }
+ },
+ "min_radius_m": 0.3,
+ "min_alpha_without_clip": 0.42105263157894746,
+ "extents_by_alpha": {
+  "0.50": {
+   "station_engaged": {
+    "front": 0.4749999999999999,
+    "side": 0.4156249999999999,
+    "rear": 0.3562499999999999
+   },
+   "stationary": {
+    "front": 0.3619047619047619,
+    "side": 0.4071428571428571,
+    "rear": 0.475
+   },
+   "moving": {
+    "front": 0.475,
+    "side": 0.35625,
+    "rear": 0.35625
+   }
+  },
+  "0.60": {
+   "station_engaged": {
+    "front": 0.5699999999999998,
+    "side": 0.49874999999999986,
+    "rear": 0.4274999999999999
+   },
+   "stationary": {
+    "front": 0.4342857142857143,
+    "side": 0.4885714285714285,
+    "rear": 0.57
+   },
+   "moving": {
+    "front": 0.57,
+    "side": 0.4275,
+    "rear": 0.4275
+   }
+  },
+  "0.70": {
+   "station_engaged": {
+    "front": 0.6649999999999998,
+    "side": 0.5818749999999998,
+    "rear": 0.4987499999999998
+   },
+   "stationary": {
+    "front": 0.5066666666666666,
+    "side": 0.5699999999999998,
+    "rear": 0.6649999999999999
+   },
+   "moving": {
+    "front": 0.6649999999999999,
+    "side": 0.49874999999999997,
+    "rear": 0.49874999999999997
+   }
+  },
+  "0.80": {
+   "station_engaged": {
+    "front": 0.7599999999999999,
+    "side": 0.6649999999999999,
+    "rear": 0.5699999999999998
+   },
+   "stationary": {
+    "front": 0.579047619047619,
+    "side": 0.6514285714285714,
+    "rear": 0.76
+   },
+   "moving": {
+    "front": 0.76,
+    "side": 0.5700000000000001,
+    "rear": 0.5700000000000001
+   }
+  },
+  "0.90": {
+   "station_engaged": {
+    "front": 0.8549999999999999,
+    "side": 0.7481249999999998,
+    "rear": 0.6412499999999999
+   },
+   "stationary": {
+    "front": 0.6514285714285715,
+    "side": 0.7328571428571428,
+    "rear": 0.855
+   },
+   "moving": {
+    "front": 0.855,
+    "side": 0.64125,
+    "rear": 0.64125
+   }
+  }
+ },
+ "reference": {
+  "stationary": "N22a_B",
+  "station_engaged": "N22a_B",
+  "moving": "N22b_E1"
+ },
+ "criteria": {
+  "primary_target": 5.0,
+  "sensitivity_targets": [
+   4.5,
+   5.5
+  ],
+  "joint_min": 0.8,
+  "nav_min": 0.8,
+  "joint_min_sensitivity": 0.9,
+  "min_distance_response_m": 0.1,
+  "reference_speed_tolerance_mps": 0.1
+ },
+ "references": [
+  "N22a_B: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study B (AGV) (standing still, robot 0.35 m/s); right a0 5.39 sigma 46.14 cm, front a0 5.62 sigma 44.13 cm, left a0 5.39 sigma 47.21 cm, back a0 4.58 sigma 39.11 cm",
+  "N22a_A: Neggers et al. 2022, Int J Soc Robot 14:561, Table 1, study A (Pepper) (standing still, robot 0.35 m/s); right a0 6.15 sigma 47.25 cm, front a0 6.15 sigma 41.51 cm, left a0 6.04 sigma 49.52 cm, back a0 3.92 sigma 35.65 cm",
+  "N22b_E1: Neggers et al. 2022, Front Robot AI 9:915972, Exp. 1, Table 2 (eta = 0) (walking, passed head-on, robot 0.35 m/s); right a0 5.71 sigma 44.2 cm, front a0 5.71 sigma 44.2 cm, left a0 5.71 sigma 44.2 cm, back a0 5.71 sigma 44.2 cm"
+ ],
+ "amr_half_length_m": 0.35,
+ "amr_half_width_m": 0.24,
+ "human_radius_m": 0.25,
+ "frozen": {},
+ "scenarios": {
+  "ST-F": {
+   "state": "stationary",
+   "context": "c3",
+   "intended_sector": "front",
+   "primary": true,
+   "label": "Standing person, AMR passes in front",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.70",
+    "S3_a0.90"
+   ]
+  },
+  "ST-S": {
+   "state": "stationary",
+   "context": "c4",
+   "intended_sector": "side",
+   "primary": true,
+   "label": "Standing person, AMR passes at the side",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.70",
+    "S3_a0.90"
+   ]
+  },
+  "ST-R": {
+   "state": "stationary",
+   "context": "c2",
+   "intended_sector": "rear",
+   "primary": true,
+   "label": "Standing person, AMR passes behind",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.70",
+    "S3_a0.90"
+   ]
+  },
+  "EN-R": {
+   "state": "station_engaged",
+   "context": "c1",
+   "intended_sector": "rear",
+   "primary": true,
+   "label": "Worker at a real workstation (box on the +y wall), AMR passes behind (stationary-reference TRANSFER)",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.70",
+    "S3_a0.90"
+   ]
+  },
+  "MV-P": {
+   "state": "moving",
+   "context": null,
+   "intended_sector": "side",
+   "primary": true,
+   "label": "Counter-walking pass in a shared aisle (walker does not avoid)",
+   "status": "RUN",
+   "run_conditions": [
+    "S3_a0.50",
+    "S3_a0.70",
+    "S3_a0.90"
+   ]
+  }
+ },
+ "geometries": {
+  "ST-F_w2.60_s901": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 901,
+   "width_m": 2.6,
+   "facing_deg": -94.98,
+   "jitter": {
+    "person_x": 0.0777,
+    "facing_deg": -4.9804,
+    "path_offset": -0.0046,
+    "start_x": 0.1534
+   },
+   "station": null,
+   "start": [
+    -4.8466,
+    0.5046
+   ],
+   "goal": [
+    5.1534,
+    0.5046
+   ],
+   "person": {
+    "position": [
+     0.0777,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -94.98
+   },
+   "physical_signature": "d98bbe0f8ddffce1"
+  },
+  "ST-F_w2.60_s902": {
+   "scenario": "ST-F",
+   "geometry": "w2.60",
+   "seed": 902,
+   "width_m": 2.6,
+   "facing_deg": -88.807,
+   "jitter": {
+    "person_x": -0.123,
+    "facing_deg": 1.1929,
+    "path_offset": 0.0047,
+    "start_x": -0.1551
+   },
+   "station": null,
+   "start": [
+    -5.1551,
+    0.4953
+   ],
+   "goal": [
+    4.8449,
+    0.4953
+   ],
+   "person": {
+    "position": [
+     -0.123,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -88.807
+   },
+   "physical_signature": "b28819dfaed8758f"
+  },
+  "ST-F_w2.20_s901": {
+   "scenario": "ST-F",
+   "geometry": "w2.20",
+   "seed": 901,
+   "width_m": 2.2,
+   "facing_deg": -94.98,
+   "jitter": {
+    "person_x": 0.0777,
+    "facing_deg": -4.9804,
+    "path_offset": -0.0046,
+    "start_x": 0.1534
+   },
+   "station": null,
+   "start": [
+    -4.8466,
+    0.3046
+   ],
+   "goal": [
+    5.1534,
+    0.3046
+   ],
+   "person": {
+    "position": [
+     0.0777,
+     0.6
+    ],
+    "state": "stationary",
+    "facing_deg": -94.98
+   },
+   "physical_signature": "5b156c298f774077"
+  },
+  "ST-F_w2.20_s902": {
+   "scenario": "ST-F",
+   "geometry": "w2.20",
+   "seed": 902,
+   "width_m": 2.2,
+   "facing_deg": -88.807,
+   "jitter": {
+    "person_x": -0.123,
+    "facing_deg": 1.1929,
+    "path_offset": 0.0047,
+    "start_x": -0.1551
+   },
+   "station": null,
+   "start": [
+    -5.1551,
+    0.2953
+   ],
+   "goal": [
+    4.8449,
+    0.2953
+   ],
+   "person": {
+    "position": [
+     -0.123,
+     0.6
+    ],
+    "state": "stationary",
+    "facing_deg": -88.807
+   },
+   "physical_signature": "b4f0ed187ae54f44"
+  },
+  "ST-S_w2.60_s901": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 901,
+   "width_m": 2.6,
+   "facing_deg": -4.727,
+   "jitter": {
+    "person_x": -0.2033,
+    "facing_deg": -4.7267,
+    "path_offset": 0.0082,
+    "start_x": 0.1224
+   },
+   "station": null,
+   "start": [
+    -4.8776,
+    0.4918
+   ],
+   "goal": [
+    5.1224,
+    0.4918
+   ],
+   "person": {
+    "position": [
+     -0.2033,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -4.727
+   },
+   "physical_signature": "fea69d6f6a296126"
+  },
+  "ST-S_w2.60_s902": {
+   "scenario": "ST-S",
+   "geometry": "w2.60",
+   "seed": 902,
+   "width_m": 2.6,
+   "facing_deg": -1.633,
+   "jitter": {
+    "person_x": 0.1944,
+    "facing_deg": -1.6332,
+    "path_offset": -0.0189,
+    "start_x": 0.1596
+   },
+   "station": null,
+   "start": [
+    -4.8404,
+    0.5189
+   ],
+   "goal": [
+    5.1596,
+    0.5189
+   ],
+   "person": {
+    "position": [
+     0.1944,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": -1.633
+   },
+   "physical_signature": "9255d96b2b6bf736"
+  },
+  "ST-S_w2.20_s901": {
+   "scenario": "ST-S",
+   "geometry": "w2.20",
+   "seed": 901,
+   "width_m": 2.2,
+   "facing_deg": -4.727,
+   "jitter": {
+    "person_x": -0.2033,
+    "facing_deg": -4.7267,
+    "path_offset": 0.0082,
+    "start_x": 0.1224
+   },
+   "station": null,
+   "start": [
+    -4.8776,
+    0.2918
+   ],
+   "goal": [
+    5.1224,
+    0.2918
+   ],
+   "person": {
+    "position": [
+     -0.2033,
+     0.6
+    ],
+    "state": "stationary",
+    "facing_deg": -4.727
+   },
+   "physical_signature": "5ea4a36836d0dfc6"
+  },
+  "ST-S_w2.20_s902": {
+   "scenario": "ST-S",
+   "geometry": "w2.20",
+   "seed": 902,
+   "width_m": 2.2,
+   "facing_deg": -1.633,
+   "jitter": {
+    "person_x": 0.1944,
+    "facing_deg": -1.6332,
+    "path_offset": -0.0189,
+    "start_x": 0.1596
+   },
+   "station": null,
+   "start": [
+    -4.8404,
+    0.3189
+   ],
+   "goal": [
+    5.1596,
+    0.3189
+   ],
+   "person": {
+    "position": [
+     0.1944,
+     0.6
+    ],
+    "state": "stationary",
+    "facing_deg": -1.633
+   },
+   "physical_signature": "823744c4a30ce5e1"
+  },
+  "ST-R_w2.60_s901": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 901,
+   "width_m": 2.6,
+   "facing_deg": 86.972,
+   "jitter": {
+    "person_x": -0.1422,
+    "facing_deg": -3.028,
+    "path_offset": 0.0018,
+    "start_x": 0.1682
+   },
+   "station": null,
+   "start": [
+    -4.8318,
+    0.4982
+   ],
+   "goal": [
+    5.1682,
+    0.4982
+   ],
+   "person": {
+    "position": [
+     -0.1422,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 86.972
+   },
+   "physical_signature": "4d6a1fbdbccee54e"
+  },
+  "ST-R_w2.60_s902": {
+   "scenario": "ST-R",
+   "geometry": "w2.60",
+   "seed": 902,
+   "width_m": 2.6,
+   "facing_deg": 90.308,
+   "jitter": {
+    "person_x": -0.22,
+    "facing_deg": 0.3085,
+    "path_offset": 0.0029,
+    "start_x": -0.0965
+   },
+   "station": null,
+   "start": [
+    -5.0965,
+    0.4971
+   ],
+   "goal": [
+    4.9035,
+    0.4971
+   ],
+   "person": {
+    "position": [
+     -0.22,
+     0.8
+    ],
+    "state": "stationary",
+    "facing_deg": 90.308
+   },
+   "physical_signature": "c73593a8f85fec2c"
+  },
+  "ST-R_w2.20_s901": {
+   "scenario": "ST-R",
+   "geometry": "w2.20",
+   "seed": 901,
+   "width_m": 2.2,
+   "facing_deg": 86.972,
+   "jitter": {
+    "person_x": -0.1422,
+    "facing_deg": -3.028,
+    "path_offset": 0.0018,
+    "start_x": 0.1682
+   },
+   "station": null,
+   "start": [
+    -4.8318,
+    0.2982
+   ],
+   "goal": [
+    5.1682,
+    0.2982
+   ],
+   "person": {
+    "position": [
+     -0.1422,
+     0.6
+    ],
+    "state": "stationary",
+    "facing_deg": 86.972
+   },
+   "physical_signature": "a292722f28c24a4c"
+  },
+  "ST-R_w2.20_s902": {
+   "scenario": "ST-R",
+   "geometry": "w2.20",
+   "seed": 902,
+   "width_m": 2.2,
+   "facing_deg": 90.308,
+   "jitter": {
+    "person_x": -0.22,
+    "facing_deg": 0.3085,
+    "path_offset": 0.0029,
+    "start_x": -0.0965
+   },
+   "station": null,
+   "start": [
+    -5.0965,
+    0.2971
+   ],
+   "goal": [
+    4.9035,
+    0.2971
+   ],
+   "person": {
+    "position": [
+     -0.22,
+     0.6
+    ],
+    "state": "stationary",
+    "facing_deg": 90.308
+   },
+   "physical_signature": "01373964cd56c675"
+  },
+  "EN-R_w2.60_s901": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 901,
+   "width_m": 2.6,
+   "facing_deg": 89.098,
+   "jitter": {
+    "person_x": -0.182,
+    "facing_deg": -0.9019,
+    "path_offset": -0.0195,
+    "start_x": -0.1167
+   },
+   "station": {
+    "position": [
+     -0.182,
+     1.075
+    ]
+   },
+   "start": [
+    -5.1167,
+    0.2695
+   ],
+   "goal": [
+    4.8833,
+    0.2695
+   ],
+   "person": {
+    "position": [
+     -0.182,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 89.098
+   },
+   "physical_signature": "a824b763b4273e66"
+  },
+  "EN-R_w2.60_s902": {
+   "scenario": "EN-R",
+   "geometry": "w2.60",
+   "seed": 902,
+   "width_m": 2.6,
+   "facing_deg": 85.693,
+   "jitter": {
+    "person_x": -0.2701,
+    "facing_deg": -4.3071,
+    "path_offset": 0.0014,
+    "start_x": -0.1556
+   },
+   "station": {
+    "position": [
+     -0.2701,
+     1.075
+    ]
+   },
+   "start": [
+    -5.1556,
+    0.2486
+   ],
+   "goal": [
+    4.8444,
+    0.2486
+   ],
+   "person": {
+    "position": [
+     -0.2701,
+     0.55
+    ],
+    "state": "station_engaged",
+    "facing_deg": 85.693
+   },
+   "physical_signature": "bb171aefce0c5814"
+  },
+  "EN-R_w2.20_s901": {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "seed": 901,
+   "width_m": 2.2,
+   "facing_deg": 89.098,
+   "jitter": {
+    "person_x": -0.182,
+    "facing_deg": -0.9019,
+    "path_offset": -0.0195,
+    "start_x": -0.1167
+   },
+   "station": {
+    "position": [
+     -0.182,
+     0.875
+    ]
+   },
+   "start": [
+    -5.1167,
+    0.0695
+   ],
+   "goal": [
+    4.8833,
+    0.0695
+   ],
+   "person": {
+    "position": [
+     -0.182,
+     0.35
+    ],
+    "state": "station_engaged",
+    "facing_deg": 89.098
+   },
+   "physical_signature": "a69b69faae3daf0e"
+  },
+  "EN-R_w2.20_s902": {
+   "scenario": "EN-R",
+   "geometry": "w2.20",
+   "seed": 902,
+   "width_m": 2.2,
+   "facing_deg": 85.693,
+   "jitter": {
+    "person_x": -0.2701,
+    "facing_deg": -4.3071,
+    "path_offset": 0.0014,
+    "start_x": -0.1556
+   },
+   "station": {
+    "position": [
+     -0.2701,
+     0.875
+    ]
+   },
+   "start": [
+    -5.1556,
+    0.0486
+   ],
+   "goal": [
+    4.8444,
+    0.0486
+   ],
+   "person": {
+    "position": [
+     -0.2701,
+     0.35
+    ],
+    "state": "station_engaged",
+    "facing_deg": 85.693
+   },
+   "physical_signature": "0152480210c1134e"
+  },
+  "MV-P_w3.00_g0.40_s901": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 901,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.2057,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.2826,
+    "walker_lane_y": 0.0057,
+    "amr_start_x": 0.0067
+   },
+   "start": [
+    -5.4933,
+    -0.2
+   ],
+   "goal": [
+    5.5067,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.2826,
+     0.2057
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.2057
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "544e539f7075557f"
+  },
+  "MV-P_w3.00_g0.40_s902": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.40",
+   "seed": 902,
+   "width_m": 3.0,
+   "lane_gap_m": 0.4,
+   "human_lane_y": 0.1718,
+   "amr_lane_y": -0.2,
+   "jitter": {
+    "walker_start_x": 0.3592,
+    "walker_lane_y": -0.0282,
+    "amr_start_x": -0.0901
+   },
+   "start": [
+    -5.5901,
+    -0.2
+   ],
+   "goal": [
+    5.4099,
+    -0.2
+   ],
+   "person": {
+    "position": [
+     7.3592,
+     0.1718
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1718
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "04ed128c7e4bccb6"
+  },
+  "MV-P_w3.00_g0.25_s901": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.25",
+   "seed": 901,
+   "width_m": 3.0,
+   "lane_gap_m": 0.25,
+   "human_lane_y": 0.1307,
+   "amr_lane_y": -0.125,
+   "jitter": {
+    "walker_start_x": 0.2826,
+    "walker_lane_y": 0.0057,
+    "amr_start_x": 0.0067
+   },
+   "start": [
+    -5.4933,
+    -0.125
+   ],
+   "goal": [
+    5.5067,
+    -0.125
+   ],
+   "person": {
+    "position": [
+     7.2826,
+     0.1307
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.1307
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "638c3201ed853aec"
+  },
+  "MV-P_w3.00_g0.25_s902": {
+   "scenario": "MV-P",
+   "geometry": "w3.00_g0.25",
+   "seed": 902,
+   "width_m": 3.0,
+   "lane_gap_m": 0.25,
+   "human_lane_y": 0.0968,
+   "amr_lane_y": -0.125,
+   "jitter": {
+    "walker_start_x": 0.3592,
+    "walker_lane_y": -0.0282,
+    "amr_start_x": -0.0901
+   },
+   "start": [
+    -5.5901,
+    -0.125
+   ],
+   "goal": [
+    5.4099,
+    -0.125
+   ],
+   "person": {
+    "position": [
+     7.3592,
+     0.0968
+    ],
+    "state": "moving",
+    "route": [
+     [
+      -7.0,
+      0.0968
+     ]
+    ],
+    "avoid_robot": false
+   },
+   "physical_signature": "ca4531beaebc5ef8"
+  }
+ },
+ "seeds": {},
+ "conditions": {
+  "S3_a0.50": {
+   "label": "State-wise uniform scale alpha 0.50 of R_ref 0.950 (station_engaged F0.475 S0.416 R0.356; stationary F0.362 S0.407 R0.475; moving F0.475 S0.356 R0.356)",
+   "alpha": 0.5
+  },
+  "S3_a0.70": {
+   "label": "State-wise uniform scale alpha 0.70 of R_ref 0.950 (station_engaged F0.665 S0.582 R0.499; stationary F0.507 S0.570 R0.665; moving F0.665 S0.499 R0.499)",
+   "alpha": 0.7
+  },
+  "S3_a0.90": {
+   "label": "State-wise uniform scale alpha 0.90 of R_ref 0.950 (station_engaged F0.855 S0.748 R0.641; stationary F0.651 S0.733 R0.855; moving F0.855 S0.641 R0.641)",
+   "alpha": 0.9
+  }
+ },
+ "alphas": [
+  0.5,
+  0.7,
+  0.9
+ ],
+ "n_trials": 60,
+ "checksums": {
+  "manifest_sha256_16": "256765e8ec96e8b3",
+  "config_sha256_16": "f0779103be03e2aa",
+  "files": {
+   "configs/final_nav2only_stage23_900/generated/conditions/B2_r0.950.yaml": "11d0dbd4e99d3024",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.50.yaml": "3bfaebc961686653",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.60.yaml": "e1f39a8b2cd71681",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.70.yaml": "4b2190a877771b45",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.80.yaml": "e44abfd1fb3d4147",
+   "configs/final_nav2only_stage23_900/generated/conditions/S3_a0.90.yaml": "84ecfb1f55d685fc",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.20_s901.yaml": "e4403af829231a12",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.20_s902.yaml": "b7ad459279b6859b",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s901.yaml": "55392878f1a5d8cb",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/EN-R_w2.60_s902.yaml": "53c91a619617ee15",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.25_s901.yaml": "accfde7824637f18",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.25_s902.yaml": "857914255f5acbd8",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s901.yaml": "1b86766fde113023",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/MV-P_w3.00_g0.40_s902.yaml": "6d7de18252fd16c4",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.20_s901.yaml": "c23c9a46d19b52d4",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.20_s902.yaml": "8ad4364bf0d78191",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s901.yaml": "4bd8612c1fc1872d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-F_w2.60_s902.yaml": "d79c8eb2a9d134fa",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.20_s901.yaml": "c0bf9374c684c882",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.20_s902.yaml": "800d3a89b048ea09",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s901.yaml": "2ebafc266e18369d",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-R_w2.60_s902.yaml": "0a7d90acb5614301",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.20_s901.yaml": "5db9685da53c80f0",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.20_s902.yaml": "c266d7a4fbd39288",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s901.yaml": "e5fb609535544a5c",
+   "configs/final_nav2only_stage23_900/generated/stage2/envs/ST-S_w2.60_s902.yaml": "2d3e984b75f5ea77"
+  }
+ }
+}

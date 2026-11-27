@@ -145,5 +145,8 @@ results/batches/261126_stage2sim*/**/*_frames.jsonl
 results/batches/261126_stage2scale*/**/trial_log.jsonl
 results/batches/261126_stage2scale*/**/*_frames.jsonl
 results/batches/261126_nav2only*/**/trial_log.jsonl
+results/batches/261127_stage23_900*/**/trial_log.jsonl
+results/batches/261127_stage23_900*/**/*_frames.jsonl
 results/batches/261126_nav2only*/**/*_frames.jsonl
 configs/stage2scale/v2_nav2only/.check/
+configs/final_nav2only_stage23_900/generated/.check/

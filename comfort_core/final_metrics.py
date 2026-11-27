@@ -79,7 +79,11 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 COMFORT_CLASSES = ("PERSISTENT_COMFORT_HOLD", "COMFORT_OVERLAP_BLOCK", "SINGLE_HUMAN_COMFORT_BLOCK")
-SUCCESS_CLASSES = ("SUCCESS", "NORMAL_YIELD", "TEMPORARY_HOLD")
+# NORMAL_YIELD / TEMPORARY_HOLD: legacy names (a gate could YIELD). Under
+# control.mode nav2_only there is no yield; the same idle bands are
+# SUCCESS_IDLE / SUCCESS_LONG_IDLE (standing = speed < 0.05 m/s, Nav2's own
+# behaviour or the collision monitor, never a custom yield).
+SUCCESS_CLASSES = ("SUCCESS", "NORMAL_YIELD", "TEMPORARY_HOLD", "SUCCESS_IDLE", "SUCCESS_LONG_IDLE")
 CM_STOP = 1
 NEAR_M = 2.5
 RES = 0.05
@@ -331,6 +335,8 @@ def analyse_trial(tdir: Path, spatial: bool = True) -> Dict[str, Any]:
     D = load(tdir)
     done, ticks = D["done"], D["ticks"]
     cfg = config(done["condition"], done["config"])
+    from comfort_core.control_mode import nav2_only as _nav2_only
+    nav2only = _nav2_only(cfg)
     hl, hw = float(cfg["amr"]["footprint_length"]) / 2, float(cfg["amr"]["footprint_width"]) / 2
     grow = hw
     t_start = float(cfg["navigation"].get("trial_start_sim_time", 0.0))
@@ -386,8 +392,9 @@ def analyse_trial(tdir: Path, spatial: bool = True) -> Dict[str, Any]:
                         "first_plan_m": ps[0]["len"] if ps else None, "planned": bool(ps)})
 
     # ---- standing time (every AMR, same rule): speed < 0.05 m/s between
-    # set-off and verdict. AMR 1's gate seconds stay in gate_yield_s.
-    amrs["AMR1"]["gate_yield_s"] = amrs["AMR1"]["hold_s"]
+    # set-off and verdict. AMR 1's gate seconds stay in gate_yield_s
+    # (legacy only: under nav2_only there is no gate, so it is None).
+    amrs["AMR1"]["gate_yield_s"] = None if nav2only else amrs["AMR1"]["hold_s"]
     for n in names:
         a = amrs[n]
         hold, prev_t = 0.0, None
@@ -397,6 +404,7 @@ def analyse_trial(tdir: Path, spatial: bool = True) -> Dict[str, Any]:
                 hold += t - prev_t
             prev_t = t
         a["hold_s"] = round(hold, 2)
+        a["idle_s"] = a["hold_s"]
 
     # ---- interactions
     inters = []
@@ -422,7 +430,7 @@ def analyse_trial(tdir: Path, spatial: bool = True) -> Dict[str, Any]:
                     if pen > 0:
                         e["intr_s"] += dt
                         e["pen"] = max(e["pen"], pen)
-                    standing = (gate == "YIELDING") if n == "AMR1" else spd[n][i] < 0.05
+                    standing = (gate == "YIELDING") if (n == "AMR1" and not nav2only) else spd[n][i] < 0.05
                     if standing:
                         e["hold_s"] += dt
                     if c < e["min"]:
@@ -504,7 +512,7 @@ def analyse_trial(tdir: Path, spatial: bool = True) -> Dict[str, Any]:
     # ---- classes
     for n in names:
         amrs[n]["class"], amrs[n]["class_detail"] = _classify(n, amrs[n], ticks, heads, D["plans"], spd,
-                                                              hl, hw, grow, names, cfg)
+                                                              hl, hw, grow, names, cfg, nav2only)
         if True:
             w = [x for t, x, _a in resid[n] if amrs[n]["t_verdict"] - WINDOW_S <= t <= amrs[n]["t_verdict"]]
             amrs[n]["residual_width_at_verdict_m"] = min(w) if w else None
@@ -514,7 +522,8 @@ def analyse_trial(tdir: Path, spatial: bool = True) -> Dict[str, Any]:
             "infra_failure": done.get("infra_failure"), "system_success": system,
             "comfort_deadlock": bool(comfort), "comfort_deadlock_amrs": comfort,
             "any_failure": not system, "amrs": amrs, "spatial": sp, "interactions": inters,
-            "has_comfort_space": has_space, "n_ticks": len(ticks)}
+            "has_comfort_space": has_space, "n_ticks": len(ticks),
+            "control_mode": "nav2_only" if nav2only else "legacy_gate"}
 
 
 def _f(v):
@@ -558,11 +567,18 @@ def _fleet_fail_time(evs, name):
     return None
 
 
-def _classify(n, a, ticks, heads, plans, spd, hl, hw, grow, names, cfg):
+def success_class(hold_s: float, nav2only: bool) -> str:
+    h = hold_s or 0.0
+    if nav2only:
+        return "SUCCESS" if h < 1.0 else "SUCCESS_IDLE" if h < 10.0 else "SUCCESS_LONG_IDLE"
+    return "SUCCESS" if h < 1.0 else "NORMAL_YIELD" if h < 10.0 else "TEMPORARY_HOLD"
+
+
+def _classify(n, a, ticks, heads, plans, spd, hl, hw, grow, names, cfg, nav2only=False):
     res = a["result"]
     if res == "SUCCESS":
         h = a.get("hold_s") or 0.0
-        return ("SUCCESS" if h < 1.0 else "NORMAL_YIELD" if h < 10.0 else "TEMPORARY_HOLD"), f"hold {h:.1f} s"
+        return success_class(h, nav2only), f"{'idle' if nav2only else 'hold'} {h:.1f} s"
     if a.get("nav2_abort") or res in ("ABORTED", "PLANNING_FAILURE"):
         return "NAV2_ABORT", res
     tv = a["t_verdict"]
@@ -584,7 +600,7 @@ def _classify(n, a, ticks, heads, plans, spd, hl, hw, grow, names, cfg):
     body_near = 0
     for i, tk in win:
         pose = tk["amr"][n]
-        if n == "AMR1" and tk.get("gate") == "YIELDING":
+        if n == "AMR1" and not nav2only and tk.get("gate") == "YIELDING":
             yielding += 1
         pl = plan_at(plans, n, tk["t"])
         ahead = path_ahead(pl["pts"], pose, 3.0) if pl else []

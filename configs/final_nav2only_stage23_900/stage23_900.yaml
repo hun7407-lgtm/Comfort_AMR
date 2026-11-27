@@ -1,0 +1,129 @@
+# FINAL Stage 2 (750) + Stage 3 (150) Nav2-only experiment -- the single source of
+# every number the generator, runner and analysis use. Written 2026-11-27 BEFORE
+# any pilot or main data of this campaign.
+# Authority: docs/FINAL_STAGE2_STAGE3_NAV2_ONLY_PROTOCOL_20261127.md
+# Generator: scripts/final_stage23_900_plan.py   (never edits historical batches)
+version: stage23_900
+out_dir: configs/final_nav2only_stage23_900/generated
+batch_prefix: results/batches/261127_stage23_900
+control_overlay: configs/nav2only/control_overlay.yaml   # nav2_only, buffer 0.10, no gate / yield / evade / backoff / off-lane
+immutable_outputs: true
+
+# R_ref: abbreviated 2026-11-26 Nav2-only Stage 1 (10 seeds) -- a FIXED preliminary
+# engineering normalisation reference, NOT a confirmed navigation upper bound.
+anchor_m: 0.95
+anchor_provenance: new_nav2_only_upper_abbreviated_261126
+moving_reference_speed_mps: 1.0
+alphas: [0.50, 0.60, 0.70, 0.80, 0.90]          # Stage 2: exactly these, no B1 / B2 / 0.45 / 1.00
+stage3_alphas: [0.60, 0.70, 0.80, 0.90]          # Stage 3 B3 cases; plus B2 circle r = anchor_m
+
+reference:                                        # comfort_core/comfort_reference.py
+  stationary: N22a_B
+  station_engaged: N22a_B                         # TRANSFER from a standing-person reference
+  moving: N22b_E1
+criteria:
+  primary_target: 5.0
+  sensitivity_targets: [4.5, 5.5]
+  joint_min: 0.80
+  nav_min: 0.80
+  joint_min_sensitivity: 0.90
+  min_distance_response_m: 0.10
+  reference_speed_tolerance_mps: 0.10
+
+# ------------------------------------------------------------------ Stage 2
+stage2:
+  contexts:                                       # 1 person, 1 AMR (AMR1); fleet off
+    ST-F: {state: stationary,      context: c3,               intended_sector: front, primary: true,
+           label: "Standing person, AMR passes in front"}
+    ST-S: {state: stationary,      context: c4,               intended_sector: side,  primary: true,
+           label: "Standing person, AMR passes at the side"}
+    ST-R: {state: stationary,      context: c2,               intended_sector: rear,  primary: true,
+           label: "Standing person, AMR passes behind"}
+    EN-R: {state: station_engaged, context: c1,               intended_sector: rear,  primary: true,
+           station: true,
+           label: "Worker at a real workstation (box on the +y wall), AMR passes behind (stationary-reference TRANSFER)"}
+    MV-P: {state: moving,          context: null,             intended_sector: side,  primary: true,
+           label: "Counter-walking pass in a shared aisle (walker does not avoid)"}
+  geometry:
+    static:
+      corridor_length_m: 12.0
+      person_wall_gap_m: 0.50                     # ST-*: person centre to the +y wall
+      path_offset_m: 0.30                         # nominal AMR line this far below the person
+      start_x: -5.0
+      goal_x: 5.0
+      station:                                    # EN-R only: configs/common.yaml station box
+        size: [0.8, 0.45, 0.9]                    #   collider; back on the +y wall
+        stand_gap_m: 0.30                         #   person 0.30 m clear of its face, facing it
+    moving:
+      corridor_length_m: 16.0
+      walker_start_x: 7.0
+      walker_end_x: -7.0
+      amr_start_x: -5.5
+      amr_goal_x: 5.5
+      lane_centre_y: 0.0
+      human_side: 1.0
+  # Policy-neutral geometry pilot (seeds 901-902, NOT main seeds). Candidates in the
+  # order they are preferred; the first VALID and SENSITIVE one is frozen.
+  pilot:
+    seeds: [901, 902]
+    alphas: [0.50, 0.70, 0.90]
+    static_widths: [2.6, 2.2]                     # wider first (less wall confounding)
+    moving_width: 3.0
+    moving_lane_gaps: [0.40, 0.25]                # shared-aisle offsets; 0.65 m was unidentifiable (0.074 m)
+  freeze_rule: |
+    Per context, over all pilot launches of a candidate geometry (every alpha pooled, so
+    no alpha is favoured):
+      VALID     no human-AMR contact in any launch, pooled completion >= 0.50, and every
+                completed launch passes on the intended side and in the intended sector;
+      SENSITIVE median d_cc(alpha 0.90) - median d_cc(alpha 0.50) >= min_distance_response_m
+                (completed launches; if 0.90 never completes, the largest completed alpha >= 0.70).
+    The first VALID and SENSITIVE candidate in declared order is frozen. None ->
+    UNIDENTIFIABLE_GEOMETRY for that context; it is still run in MAIN at the first VALID
+    candidate (or the first candidate if none is valid) so its 150 launches are reported, and
+    is labelled unidentifiable. The choice never looks at comfort or at which alpha passes.
+  # 30 matched parameterised scenario seeds per context: a predeclared jitter drawn from
+  # random.Random("stage23_900|stage2|<context>|<seed>"); identical for every alpha.
+  main_seeds: [1, 30]
+  jitter:
+    static: {person_x_m: 0.30, facing_deg: 5.0, path_offset_m: 0.03, start_x_m: 0.20}
+    moving: {walker_start_x_m: 0.50, walker_lane_y_m: 0.03, amr_start_x_m: 0.20}
+frozen: {}                                        # written by final_stage23_900_freeze.py after the Stage 2 pilot
+
+# ------------------------------------------------------------------ Stage 3
+stage3:
+  # 8 people / 3 AMRs (AMR1, a1, a2) in configs/factory_u.yaml, cross mission of
+  # scripts/make_cross_campaign.py (people / exchanges / walker speeds / fleet start from the seed).
+  main_seeds: [1001, 1030]
+  pilot_seeds: [2001, 2002, 2003]                 # one per family; also the duplicate-control seeds
+  # Families: exchange start times relative to the trial start (sim t = trial_start_sim_time).
+  # AMR 1 drives the north aisle at about +4..+20 s and reaches the south rows at about +30..+35 s
+  # (Stage 1 nav2-only seed 1 log). Draws from random.Random("stage23_900|stage3|<seed>").
+  families:
+    NOMINAL:    {seeds: [1001, 1010], pilot: 2001,
+                 note: "generator timing (exchanges about +7..+12 s)"}
+    BOTTLENECK: {seeds: [1011, 1020], pilot: 2002, exchange_start_s: 400.0,
+                 note: "no exchange during the missions: the 6 belt workers stay station_engaged and the 2 edge workers stationary; robots pass the engaged workers in the station aisles"}
+    CROSSING:   {seeds: [1021, 1030], pilot: 2003, north_start_s: [3.0, 6.0], south_start_s: [22.0, 28.0],
+                 note: "north exchange while AMR 1 is in the north aisle, south exchange when it reaches the south rows"}
+  policies:                                       # C1..C5; same seed, same everything but the mask
+    C1: B2
+    C2: "0.60"
+    C3: "0.70"
+    C4: "0.80"
+    C5: "0.90"
+  encounter:
+    radius_m: 1.5                                 # an (AMR, person) pair is an encounter if min d_cc < 1.5 m
+                                                  # while that AMR is on its mission (t_begin..t_verdict)
+    scored_at: closest                            # predicted comfort at the closest d_cc, actual bearing + state
+  winner_rule: |
+    Eligible policy: contact trials <= 1/30, nav completion (all 3 AMRs) >= 0.80, primary joint
+    >= 0.80, encounter scoring coverage >= 0.90. None eligible -> NO_ACCEPTABLE_SCALE.
+    Among eligible: highest observed joint is the reference; every other eligible policy is
+    compared with it by exact paired McNemar (Holm over the comparisons). Policies not
+    significantly worse (adjusted p >= 0.05) form the top set; the top set's Pareto front on
+    (joint, nav, median capped system time) is reported; tie-break = smallest median capped
+    system time (failures capped at the run limit). All comparisons are exploratory at n = 30.
+  duplicate_control:
+    policy: B2
+    seeds: [2001, 2002, 2003]
+    repeats: 2                                    # outside the 150; quantifies runtime nondeterminism

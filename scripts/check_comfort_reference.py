@@ -79,6 +79,18 @@ def test_score_passage_straight_pass():
     assert abs(s["amr_speed_at_closest_mps"] - 0.5) < 1e-6
 
 
+def test_clearance_matched_sign():
+    # our AMR half width 0.24, AGV reference 0.325: same clearance -> the reference robot's centre is
+    # 0.085 m FARTHER away, so the matched comfort is higher than the centre-distance comfort.
+    assert abs(cr.clearance_matched_distance(0.80, 0.24, 0.325) - 0.885) < 1e-12
+    assert abs(cr.clearance_matched_distance(0.80, 0.24, 0.24) - 0.80) < 1e-12
+    ticks = [{"t": float(i), "amr": {"AMR1": [-2.0 + 0.2 * i, -0.8, 0.0]},
+              "people": {"a": {"x": 0.0, "y": 0.0, "h": 0.0, "s": "stationary"}}} for i in range(21)]
+    sc = cr.score_passage(ticks, "AMR1", "a", 0.24, {"stationary": "N22a_B"})
+    assert abs(sc["d_equiv_clearance_matched_m"] - (sc["min_cc_m"] + 0.085)) < 1e-3
+    assert sc["predicted_comfort_clearance_matched"] > sc["predicted_comfort_at_closest"]
+
+
 if __name__ == "__main__":
     n = 0
     for k, f in list(globals().items()):
