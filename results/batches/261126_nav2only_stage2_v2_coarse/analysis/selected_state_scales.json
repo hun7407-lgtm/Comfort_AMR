@@ -403,13 +403,14 @@
       0.9,
       1.0
      ],
-     "status": "COMMON_ALPHA_OPERATIONAL_ONLY",
-     "alpha_star": 0.45,
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": 0.45,
      "context_status": {
       "ST-S": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
-      "ST-R": "FLOOR_LIMITED_BOUND_NOT_OBSERVED"
-     },
-     "claim": "operational candidate only: not every context shows an identified comfort bracket; NOT a comfort lower bound"
+      "ST-R": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "ST-F": "UNIDENTIFIABLE_GEOMETRY"
+     }
     },
     "4.5": {
      "contexts": [
@@ -425,13 +426,14 @@
       0.9,
       1.0
      ],
-     "status": "COMMON_ALPHA_OPERATIONAL_ONLY",
-     "alpha_star": 0.45,
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": 0.45,
      "context_status": {
       "ST-S": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
-      "ST-R": "FLOOR_LIMITED_BOUND_NOT_OBSERVED"
-     },
-     "claim": "operational candidate only: not every context shows an identified comfort bracket; NOT a comfort lower bound"
+      "ST-R": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "ST-F": "UNIDENTIFIABLE_GEOMETRY"
+     }
     },
     "5.5": {
      "contexts": [
@@ -443,11 +445,13 @@
       0.9,
       1.0
      ],
-     "status": "COMMON_ALPHA_IDENTIFIED",
-     "alpha_star": 0.8,
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": 0.8,
      "context_status": {
       "ST-S": "IDENTIFIED_BRACKET",
-      "ST-R": "IDENTIFIED_BRACKET"
+      "ST-R": "IDENTIFIED_BRACKET",
+      "ST-F": "UNIDENTIFIABLE_GEOMETRY"
      }
     }
    }

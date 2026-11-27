@@ -1,0 +1,163 @@
+{
+ "rule": "the coarse selection criteria applied to the confirmation cells):\n    alpha* REPRODUCED   iff joint rate >= joint_min and nav rate >= nav_min at alpha*\n    bracket REPRODUCED  iff (IDENTIFIED_BRACKET only) the next smaller alpha fails\n                        (joint rate < joint_min) and that failure is a comfort failure\n                        (nav rate >= nav_min), so it is not a navigation-only bound\n    CONFIRMED  = both reproduced (bracket contexts) / alpha* reproduced (floor-limited:\n                 still NOT a comfort lower bound; the status stays FLOOR_LIMITED)\n    NOT_CONFIRMED otherwise. Sensitivity: joint >= 0.90 and C* 4.5 / 5.5 reported.",
+ "contexts": {
+  "ST-F": {
+   "status": "UNIDENTIFIABLE_GEOMETRY",
+   "verdict": "NOT_RUN"
+  },
+  "ST-S": {
+   "geometry": "w2.60",
+   "by_target": {
+    "5.0": {
+     "coarse_status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "alpha_star": 0.45,
+     "next_smaller": null,
+     "alpha_star_cell": {
+      "n": 10,
+      "joint_k": 10,
+      "joint_ci": [
+       0.7225,
+       1.0
+      ],
+      "nav_k": 10,
+      "median_cc": 0.7814,
+      "median_C": 5.093,
+      "contact_k": 0
+     },
+     "verdict": "OPERATIONAL_ALPHA_REPRODUCED",
+     "joint_0.90_sensitivity": true
+    },
+    "4.5": {
+     "coarse_status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "alpha_star": 0.45,
+     "next_smaller": null,
+     "alpha_star_cell": {
+      "n": 10,
+      "joint_k": 10,
+      "joint_ci": [
+       0.7225,
+       1.0
+      ],
+      "nav_k": 10,
+      "median_cc": 0.7814,
+      "median_C": 5.093,
+      "contact_k": 0
+     },
+     "verdict": "OPERATIONAL_ALPHA_REPRODUCED",
+     "joint_0.90_sensitivity": true
+    },
+    "5.5": {
+     "coarse_status": "IDENTIFIED_BRACKET",
+     "alpha_star": 0.6,
+     "next_smaller": 0.5,
+     "verdict": "NOT_IN_CONFIRM_BATCH"
+    }
+   }
+  },
+  "ST-R": {
+   "geometry": "w2.60",
+   "by_target": {
+    "5.0": {
+     "coarse_status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "alpha_star": 0.45,
+     "next_smaller": null,
+     "alpha_star_cell": {
+      "n": 10,
+      "joint_k": 10,
+      "joint_ci": [
+       0.7225,
+       1.0
+      ],
+      "nav_k": 10,
+      "median_cc": 0.8282,
+      "median_C": 5.0925,
+      "contact_k": 0
+     },
+     "verdict": "OPERATIONAL_ALPHA_REPRODUCED",
+     "joint_0.90_sensitivity": true
+    },
+    "4.5": {
+     "coarse_status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "alpha_star": 0.45,
+     "next_smaller": null,
+     "alpha_star_cell": {
+      "n": 10,
+      "joint_k": 10,
+      "joint_ci": [
+       0.7225,
+       1.0
+      ],
+      "nav_k": 10,
+      "median_cc": 0.8282,
+      "median_C": 5.0925,
+      "contact_k": 0
+     },
+     "verdict": "OPERATIONAL_ALPHA_REPRODUCED",
+     "joint_0.90_sensitivity": true
+    },
+    "5.5": {
+     "coarse_status": "IDENTIFIED_BRACKET",
+     "alpha_star": 0.8,
+     "next_smaller": 0.7,
+     "verdict": "NOT_IN_CONFIRM_BATCH"
+    }
+   }
+  },
+  "EN-R": {
+   "geometry": "w2.20",
+   "by_target": {
+    "5.0": {
+     "coarse_status": "IDENTIFIED_BRACKET",
+     "alpha_star": 0.6,
+     "next_smaller": 0.5,
+     "alpha_star_cell": {
+      "n": 10,
+      "joint_k": 10,
+      "joint_ci": [
+       0.7225,
+       1.0
+      ],
+      "nav_k": 10,
+      "median_cc": 0.8351,
+      "median_C": 5.1115,
+      "contact_k": 0
+     },
+     "next_cell": {
+      "n": 10,
+      "joint_k": 0,
+      "joint_ci": [
+       0.0,
+       0.2775
+      ],
+      "nav_k": 10,
+      "median_cc": 0.7439,
+      "median_C": 4.83
+     },
+     "verdict": "CONFIRMED",
+     "joint_0.90_sensitivity": true
+    },
+    "4.5": {
+     "coarse_status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "alpha_star": 0.45,
+     "next_smaller": null,
+     "verdict": "NOT_IN_CONFIRM_BATCH"
+    },
+    "5.5": {
+     "coarse_status": "IDENTIFIED_BRACKET",
+     "alpha_star": 1.0,
+     "next_smaller": 0.9,
+     "verdict": "NOT_IN_CONFIRM_BATCH"
+    }
+   }
+  },
+  "MV-P": {
+   "geometry": "w3.00_g0.65",
+   "status": "UNIDENTIFIABLE_GEOMETRY",
+   "verdict": "NOT_RUN"
+  },
+  "MV-O": {
+   "status": "INFEASIBLE",
+   "verdict": "NOT_RUN"
+  }
+ }
+}

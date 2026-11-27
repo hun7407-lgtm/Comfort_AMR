@@ -1,0 +1,19 @@
+{
+ "trial_id": "EN-R_w2.20_S3_a0.60_rep04",
+ "seed": 4,
+ "condition": "configs/stage2scale/v2_nav2only/conditions/S3_a0.60.yaml",
+ "config": "configs/stage2scale/v2_nav2only/envs/EN-R_w2.20.yaml",
+ "commit": "5c7456a",
+ "result": "SUCCESS",
+ "infra_failure": null,
+ "fleet": {},
+ "attempts": [
+  {
+   "attempt": 1,
+   "wall_s": 136,
+   "infra_failure": null
+  }
+ ],
+ "wall_s": 136,
+ "finished": "2026-11-27T10:03:01"
+}

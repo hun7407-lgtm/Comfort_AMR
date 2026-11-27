@@ -69,10 +69,15 @@ B2 vs B3-O MID McNemar 4 vs 5, p = 1.0 → **차이 없음**.
 - R_nav_upper를 "급증 지점"으로 정할지 논의됨 → 사전등록 규칙 유지. 로지스틱 R₅%/R₅₀% 보조 분석은 아직 안 함.
 - Stage 3 영상 case A(B2 comfort deadlock & B3-O 성공)는 발생하지 않아 만들지 않음.
 
-**Stage 2 재설계 (2026-11-26, 진행 중):** 상태별 Comfort Space 모양을 0.90 m로 정규화하고 α 하나로 전체 크기를 줄이는
-uniform-scale 실험. 설계 `docs/STAGE2_UNIFORM_SCALE_PROTOCOL.md`, 구현·smoke 결과 `docs/STAGE2_SCALE_IMPLEMENTATION.md`,
-코드 `comfort_core/stage2scale.py`, `scripts/stage2scale_{plan,report}.py`, 테스트 `scripts/check_stage2scale.py`.
-smoke만 완료(`results/batches/261126_stage2scale_v1_smoke`); pilot·본실험은 사용자 승인 전 실행하지 않음.
+**Stage 2 재설계 (2026-11-26):** 상태별 Comfort Space 모양을 정규화하고 α 하나로 전체 크기를 줄이는 uniform-scale 실험.
+설계 `docs/STAGE2_UNIFORM_SCALE_PROTOCOL.md`, v1(gate 체인) smoke `docs/STAGE2_SCALE_IMPLEMENTATION.md`.
+
+**Nav2-only 본실험 (2026-11-26 밤 → 11-27, 약식 완료):** 결과 `docs/NAV2ONLY_STAGE2_RESULTS.md`, 기록·사전등록 규칙 `docs/NAV2ONLY_RUN_LOG.md`.
+`control.mode: nav2_only` → comfort_gate 미실행(yield / evade / backoff / off-lane 없음), 모든 AMR controller → collision_monitor, 실행 중 ROS graph 검사.
+- Stage 1 재검증(seed 1–10): **R_nav_upper(nav2-only) = 0.95 m**, transition 1.00 → Stage 2 R_ref = 0.95.
+- Stage 2(pilot 110 → coarse 180 → confirm 100): station_engaged **α\* = 0.60 식별·재현** (EN-R 2.2 m; F/S/R 0.57 / 0.50 / 0.43 m);
+  stationary **UNIDENTIFIABLE** (ST-F 환경 고정 실패, 옆·뒤는 α 0.45까지 통과 = 하한 아님); moving **UNIDENTIFIABLE** (거리 반응 0.074 m). Stage 3 미실행.
+- B2·S3 318 launch 접촉 0, 접촉은 B1에서만. 2.2 m에서 B2 0.95는 confirm 10/10 교착.
 
 ## 3. 읽는 순서
 

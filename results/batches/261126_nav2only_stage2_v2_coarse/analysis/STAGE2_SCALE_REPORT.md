@@ -66,7 +66,7 @@ Phase **coarse**. Launches 180 (infra-excluded 0).
 
 | state | geometry | status | alpha* | per-context status |
 |---|---|---|---|---|
-| stationary | w2.60 | COMMON_ALPHA_OPERATIONAL_ONLY | 0.45 | {'ST-S': 'FLOOR_LIMITED_BOUND_NOT_OBSERVED', 'ST-R': 'FLOOR_LIMITED_BOUND_NOT_OBSERVED'} |
+| stationary | w2.60 | UNIDENTIFIABLE_GEOMETRY | None | {'ST-S': 'FLOOR_LIMITED_BOUND_NOT_OBSERVED', 'ST-R': 'FLOOR_LIMITED_BOUND_NOT_OBSERVED', 'ST-F': 'UNIDENTIFIABLE_GEOMETRY'} |
 | station_engaged | w2.20 | COMMON_ALPHA_IDENTIFIED | 0.6 | {'EN-R': 'IDENTIFIED_BRACKET'} |
 | moving | w3.00_g0.65 | UNIDENTIFIABLE_GEOMETRY | None | {'MV-P': 'UNIDENTIFIABLE_GEOMETRY'} |
 
