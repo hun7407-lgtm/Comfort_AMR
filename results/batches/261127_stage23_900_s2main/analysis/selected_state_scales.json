@@ -1,0 +1,546 @@
+{
+ "criteria": {
+  "primary_target": 5.0,
+  "sensitivity_targets": [
+   4.5,
+   5.5
+  ],
+  "joint_min": 0.8,
+  "nav_min": 0.8,
+  "joint_min_sensitivity": 0.9,
+  "min_distance_response_m": 0.1,
+  "reference_speed_tolerance_mps": 0.1
+ },
+ "contexts": {
+  "ST-F": {
+   "w2.60": {
+    "5.0": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "distance_response_m": 0.2866,
+     "min_response_m": 0.1,
+     "alpha_star": 0.5,
+     "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "sensitivity_joint_0.90": {
+      "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "alpha_star": 0.5
+     }
+    },
+    "4.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "distance_response_m": 0.2866,
+     "min_response_m": 0.1,
+     "alpha_star": 0.5,
+     "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "sensitivity_joint_0.90": {
+      "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "alpha_star": 0.5
+     }
+    },
+    "5.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6
+     ],
+     "distance_response_m": 0.2866,
+     "min_response_m": 0.1,
+     "alpha_star": 0.6,
+     "next_smaller_alpha": 0.5,
+     "status": "IDENTIFIED_BRACKET",
+     "bracket": [
+      0.5,
+      0.6
+     ],
+     "sensitivity_joint_0.90": {
+      "status": "IDENTIFIED_BRACKET",
+      "alpha_star": 0.6
+     }
+    }
+   }
+  },
+  "ST-S": {
+   "w2.60": {
+    "5.0": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "distance_response_m": 0.3507,
+     "min_response_m": 0.1,
+     "alpha_star": 0.5,
+     "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "sensitivity_joint_0.90": {
+      "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "alpha_star": 0.5
+     }
+    },
+    "4.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "distance_response_m": 0.3507,
+     "min_response_m": 0.1,
+     "alpha_star": 0.5,
+     "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "sensitivity_joint_0.90": {
+      "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "alpha_star": 0.5
+     }
+    },
+    "5.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6
+     ],
+     "distance_response_m": 0.3507,
+     "min_response_m": 0.1,
+     "alpha_star": 0.6,
+     "next_smaller_alpha": 0.5,
+     "status": "IDENTIFIED_BRACKET",
+     "bracket": [
+      0.5,
+      0.6
+     ],
+     "sensitivity_joint_0.90": {
+      "status": "IDENTIFIED_BRACKET",
+      "alpha_star": 0.7
+     }
+    }
+   }
+  },
+  "ST-R": {
+   "w2.60": {
+    "5.0": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "distance_response_m": 0.3929,
+     "min_response_m": 0.1,
+     "alpha_star": 0.5,
+     "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "sensitivity_joint_0.90": {
+      "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "alpha_star": 0.5
+     }
+    },
+    "4.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "distance_response_m": 0.3929,
+     "min_response_m": 0.1,
+     "alpha_star": 0.5,
+     "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "sensitivity_joint_0.90": {
+      "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "alpha_star": 0.5
+     }
+    },
+    "5.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8
+     ],
+     "distance_response_m": 0.3929,
+     "min_response_m": 0.1,
+     "alpha_star": 0.8,
+     "next_smaller_alpha": 0.7,
+     "status": "IDENTIFIED_BRACKET",
+     "bracket": [
+      0.7,
+      0.8
+     ],
+     "sensitivity_joint_0.90": {
+      "status": "IDENTIFIED_BRACKET",
+      "alpha_star": 0.8
+     }
+    }
+   }
+  },
+  "EN-R": {
+   "w2.60": {
+    "5.0": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6
+     ],
+     "distance_response_m": 0.3038,
+     "min_response_m": 0.1,
+     "alpha_star": 0.6,
+     "next_smaller_alpha": 0.5,
+     "status": "IDENTIFIED_BRACKET",
+     "bracket": [
+      0.5,
+      0.6
+     ],
+     "sensitivity_joint_0.90": {
+      "status": "IDENTIFIED_BRACKET",
+      "alpha_star": 0.6
+     }
+    },
+    "4.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "distance_response_m": 0.3038,
+     "min_response_m": 0.1,
+     "alpha_star": 0.5,
+     "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+     "sensitivity_joint_0.90": {
+      "status": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "alpha_star": 0.5
+     }
+    },
+    "5.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [],
+     "distance_response_m": 0.3038,
+     "min_response_m": 0.1,
+     "status": "NO_FEASIBLE_ALPHA",
+     "alpha_star": null,
+     "sensitivity_joint_0.90": {
+      "status": "NO_FEASIBLE_ALPHA",
+      "alpha_star": null
+     }
+    }
+   }
+  },
+  "MV-P": {
+   "w3.00_g0.40": {
+    "5.0": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [],
+     "distance_response_m": 0.0833,
+     "min_response_m": 0.1,
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": null,
+     "sensitivity_joint_0.90": {
+      "status": "UNIDENTIFIABLE_GEOMETRY",
+      "alpha_star": null
+     }
+    },
+    "4.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [],
+     "distance_response_m": 0.0833,
+     "min_response_m": 0.1,
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": null,
+     "sensitivity_joint_0.90": {
+      "status": "UNIDENTIFIABLE_GEOMETRY",
+      "alpha_star": null
+     }
+    },
+    "5.5": {
+     "tested_alpha": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5
+     ],
+     "passing_alpha": [],
+     "distance_response_m": 0.0833,
+     "min_response_m": 0.1,
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": null,
+     "sensitivity_joint_0.90": {
+      "status": "UNIDENTIFIABLE_GEOMETRY",
+      "alpha_star": null
+     }
+    }
+   }
+  }
+ },
+ "states": {
+  "stationary": {
+   "w2.60": {
+    "5.0": {
+     "contexts": [
+      "ST-F",
+      "ST-R",
+      "ST-S"
+     ],
+     "common_alpha": [
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+     ],
+     "status": "COMMON_ALPHA_OPERATIONAL_ONLY",
+     "alpha_star": 0.5,
+     "context_status": {
+      "ST-F": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "ST-S": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "ST-R": "FLOOR_LIMITED_BOUND_NOT_OBSERVED"
+     },
+     "claim": "operational candidate only: not every context shows an identified comfort bracket; NOT a comfort lower bound"
+    },
+    "4.5": {
+     "contexts": [
+      "ST-F",
+      "ST-R",
+      "ST-S"
+     ],
+     "common_alpha": [
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+     ],
+     "status": "COMMON_ALPHA_OPERATIONAL_ONLY",
+     "alpha_star": 0.5,
+     "context_status": {
+      "ST-F": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "ST-S": "FLOOR_LIMITED_BOUND_NOT_OBSERVED",
+      "ST-R": "FLOOR_LIMITED_BOUND_NOT_OBSERVED"
+     },
+     "claim": "operational candidate only: not every context shows an identified comfort bracket; NOT a comfort lower bound"
+    },
+    "5.5": {
+     "contexts": [
+      "ST-F",
+      "ST-R",
+      "ST-S"
+     ],
+     "common_alpha": [
+      0.8,
+      0.9
+     ],
+     "status": "COMMON_ALPHA_IDENTIFIED",
+     "alpha_star": 0.8,
+     "context_status": {
+      "ST-F": "IDENTIFIED_BRACKET",
+      "ST-S": "IDENTIFIED_BRACKET",
+      "ST-R": "IDENTIFIED_BRACKET"
+     }
+    }
+   }
+  },
+  "station_engaged": {
+   "w2.60": {
+    "5.0": {
+     "contexts": [
+      "EN-R"
+     ],
+     "common_alpha": [
+      0.6,
+      0.7,
+      0.8,
+      0.9
+     ],
+     "status": "COMMON_ALPHA_IDENTIFIED",
+     "alpha_star": 0.6,
+     "context_status": {
+      "EN-R": "IDENTIFIED_BRACKET"
+     }
+    },
+    "4.5": {
+     "contexts": [
+      "EN-R"
+     ],
+     "common_alpha": [
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+     ],
+     "status": "COMMON_ALPHA_OPERATIONAL_ONLY",
+     "alpha_star": 0.5,
+     "context_status": {
+      "EN-R": "FLOOR_LIMITED_BOUND_NOT_OBSERVED"
+     },
+     "claim": "operational candidate only: not every context shows an identified comfort bracket; NOT a comfort lower bound"
+    },
+    "5.5": {
+     "contexts": [
+      "EN-R"
+     ],
+     "common_alpha": [],
+     "status": "NO_COMMON_FEASIBLE_ALPHA",
+     "alpha_star": null,
+     "context_status": {
+      "EN-R": "NO_FEASIBLE_ALPHA"
+     }
+    }
+   }
+  },
+  "moving": {
+   "w3.00_g0.40": {
+    "5.0": {
+     "contexts": [
+      "MV-P"
+     ],
+     "common_alpha": [],
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": null,
+     "context_status": {
+      "MV-P": "UNIDENTIFIABLE_GEOMETRY"
+     }
+    },
+    "4.5": {
+     "contexts": [
+      "MV-P"
+     ],
+     "common_alpha": [],
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": null,
+     "context_status": {
+      "MV-P": "UNIDENTIFIABLE_GEOMETRY"
+     }
+    },
+    "5.5": {
+     "contexts": [
+      "MV-P"
+     ],
+     "common_alpha": [],
+     "status": "UNIDENTIFIABLE_GEOMETRY",
+     "alpha_star": null,
+     "operational_min_alpha": null,
+     "context_status": {
+      "MV-P": "UNIDENTIFIABLE_GEOMETRY"
+     }
+    }
+   }
+  }
+ }
+}

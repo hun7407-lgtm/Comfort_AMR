@@ -141,16 +141,18 @@ def main() -> int:
         import matplotlib.pyplot as plt
         ctxs = sorted({e["context"] for e in tab})
         fig, ax = plt.subplots(1, 3, figsize=(15, 4.2))
-        for c in ctxs:
+        for i, c in enumerate(ctxs):
+            col = f"C{i}"    # one fixed colour per context in all three panels
             es = sorted([e for e in tab if e["context"] == c], key=lambda e: e["alpha"])
             x = [e["alpha"] for e in es]
-            ax[0].plot(x, [e["median_d_cc_m"] for e in es], "o-", label=c)
-            ax[1].plot(x, [e["median_comfort"] for e in es], "o-", label=c)
-            ax[2].plot(x, [e["joint@5.0"]["rate"] for e in es], "o-", label=f"{c} joint")
-            ax[2].plot(x, [e["nav"]["rate"] for e in es], "x:", alpha=0.6)
+            j = 0.006 * (i - (len(ctxs) - 1) / 2)    # small vertical offset so overlapping rates stay visible
+            ax[0].plot(x, [e["median_d_cc_m"] for e in es], "o-", color=col, label=c)
+            ax[1].plot(x, [e["median_comfort"] for e in es], "o-", color=col, label=c)
+            ax[2].plot(x, [e["joint@5.0"]["rate"] + j for e in es], "o-", color=col, label=c)
+            ax[2].plot(x, [e["nav"]["rate"] + j for e in es], "x:", color=col, alpha=0.6)
         ax[1].axhline(crit["primary_target"], color="red", lw=1)
         for i, t in enumerate(("median actual closest centre distance (m)",
-                               "median predicted comfort (literature curve)", "joint @5.0 (solid), nav (dotted)")):
+                               "median predicted comfort (literature curve)", "joint @5.0 (solid), nav (dotted); offset ±0.01 for visibility")):
             ax[i].set_xlabel("alpha (uniform scale of R_ref 0.95 m template)")
             ax[i].set_title(t, fontsize=10)
             ax[i].grid(alpha=0.3)
